@@ -1102,6 +1102,17 @@
       color: var(--accent);
     }
 
+    .availability a {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .availability a:hover {
+      opacity: 0.8;
+    }
+
     /* ========== FOOTER ========== */
 
     .site-footer {
@@ -1448,7 +1459,7 @@
             <iframe src="https://player.vimeo.com/video/1126515830?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
               frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
               style="position:absolute;top:0;left:0;width:100%;height:100%;"
-              title="A Door County Love Story"></iframe>
+              title="A Door County Love Story" loading="lazy"></iframe>
           </div>
           <p class="film-title">A Door County Love Story</p>
         </div>
@@ -1459,7 +1470,7 @@
               <iframe src="https://player.vimeo.com/video/1104226234?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
                 frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
-                title="Epic at The Green Bay Country Club"></iframe>
+                title="Epic at The Green Bay Country Club" loading="lazy"></iframe>
             </div>
             <p class="film-title">Epic at The Green Bay Country Club</p>
           </div>
@@ -1468,7 +1479,7 @@
               <iframe src="https://player.vimeo.com/video/998504145?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
                 frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
-                title="A Marine Marries His Duchess"></iframe>
+                title="A Marine Marries His Duchess" loading="lazy"></iframe>
             </div>
             <p class="film-title">A Marine Marries His Duchess</p>
           </div>
@@ -1476,6 +1487,10 @@
 
         <div class="films-more reveal-child">
           <a href="https://www.youtube.com/@FlyinIris/playlists" class="text-link" target="_blank" rel="noopener noreferrer">View more films on YouTube &rarr;</a>
+        </div>
+
+        <div class="reveal-child" style="text-align:center;margin-top:32px">
+          <a href="#quiz" class="btn">Want Something Like This? &#10022;</a>
         </div>
       </div>
     </section>
@@ -1612,6 +1627,10 @@
           <button class="carousel-arrow carousel-arrow--prev" aria-label="Previous testimonial">&#8249;</button>
           <button class="carousel-arrow carousel-arrow--next" aria-label="Next testimonial">&#8250;</button>
         </div>
+
+        <div class="reveal-child" style="text-align:center;margin-top:32px">
+          <a href="#quiz" class="btn">Let&#8217;s Talk About Your Day &#10022;</a>
+        </div>
       </div>
     </section>
 
@@ -1635,7 +1654,9 @@
 
     <!-- ========== AVAILABILITY ========== -->
     <section class="availability reveal" aria-label="Booking availability">
-      <p>2026: Almost Full <span class="gold-dot">&middot;</span> 2027: Filling Fast</p>
+      <a href="#quiz">
+        <p>2026: Almost Full <span class="gold-dot">&middot;</span> 2027: Filling Fast</p>
+      </a>
     </section>
 
     <!-- ========== QUIZ / CALCULATOR ========== -->
@@ -2033,14 +2054,6 @@
             {emoji:"\ud83d\udcc5",label:"2027 or later",desc:"Planning ahead \u2014 smart move"},
             {emoji:"\ud83d\udc8d",label:"Just got engaged!",desc:"No date yet \u2014 just exploring"}
           ], valueMessage:{"Spring 2026":"Spring light in Wisconsin is gorgeous for film \u2014 soft, warm, golden. Let\u2019s check availability!","Summer 2026":"Summer weekends are our busiest \u2014 they fill up fast. Good thing you\u2019re starting early.","Fall 2026":"Fall in Wisconsin? The colors, the light, the cozy energy. Perfection for video.","Winter 2026/27":"Winter weddings are SO underrated on film. Snow, warm light, sparkler exits \u2014 cinematic magic.","2027 or later":"Smart to start early! The best videographers book 12+ months out.","Just got engaged!":"Congrats!! No rush. We\u2019d love to be on your radar \u2014 reach out whenever."}},
-          { id:"found", label:"Almost Done", question:"How\u2019d you find us?", subtext:"Helps us know where to show up more so couples like you can find us!", type:"single", options:[
-            {emoji:"\ud83d\udcf1",label:"Instagram",desc:""},
-            {emoji:"\ud83d\udd0d",label:"Google search",desc:""},
-            {emoji:"\ud83d\udc92",label:"Our venue recommended you",desc:""},
-            {emoji:"\ud83d\udc70",label:"A friend or past couple",desc:""},
-            {emoji:"\ud83d\udccb",label:"The Knot / WeddingWire",desc:""},
-            {emoji:"\ud83c\udfb2",label:"Somewhere else",desc:""}
-          ], valueMessage:{"Instagram":"We put a lot of love into our content \u2014 so glad it reached you!","Google search":"Glad we showed up when it mattered!","Our venue recommended you":"Venue referrals mean the world \u2014 we work hard to be the team venues trust.","A friend or past couple":"Word of mouth is the best compliment. Clearly we did something right!","The Knot / WeddingWire":"Glad our profile caught your eye!","Somewhere else":"However you found us, we\u2019re glad you\u2019re here!"}},
           { id:"contact", label:"Let\u2019s Talk!", question:"Last step \u2014 let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster \u2014 we get excited.", type:"contact" }
         ];
 
@@ -2114,7 +2127,7 @@
           contactInfo: null,
           calcStep: 0, calcAnswers: {},
           contactFormTried: false,
-          contactForm: { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"" }
+          contactForm: { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" }
         };
         var quizApp = document.getElementById("quizApp");
 
@@ -2141,7 +2154,6 @@
         function getVM(step, answer) {
           if (!step || !step.valueMessage) return "";
           if (step.type === "multi") { if (!answer || !answer.length) return ""; return step.valueMessage[answer[answer.length - 1]] || ""; }
-          if (step.id === "found" && answer === "A friend or past couple") return "";
           return step.valueMessage[answer] || "";
         }
 
@@ -2243,17 +2255,9 @@
           }
           h += '</div>';
 
-          // Value message or referral box
-          if (step.id === "found" && cur === "A friend or past couple") {
-            h += '<div class="quiz-referral-box">';
-            h += '<p><span class="vm-icon">\u2726 </span>Word of mouth is the best compliment. Clearly we did something right!</p>';
-            h += '<label>Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
-            h += '<input type="text" class="quiz-referral-input" data-field="referralName" placeholder="Their name">';
-            h += '</div>';
-          } else {
-            var vm = getVM(step, cur);
-            if (vm) h += '<div class="quiz-value-msg"><p><span class="vm-icon">\u2726 </span>' + vm + '</p></div>';
-          }
+          // Value message
+          var vm = getVM(step, cur);
+          if (vm) h += '<div class="quiz-value-msg"><p><span class="vm-icon">\u2726 </span>' + vm + '</p></div>';
 
           // Running total
           if (isCalc && state.calcAnswers.quality) {
@@ -2315,6 +2319,24 @@
           h += '<input type="date" id="quiz-date" class="quiz-form-input" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
           h += '<div id="availability-msg" style="margin-top:8px;min-height:20px"></div>';
           if (t && !dOk) h += '<p class="quiz-form-error">We need your anticipated wedding date to check availability!</p>';
+          h += '</div>';
+          // How'd you find us (optional dropdown)
+          h += '<div><label class="quiz-form-label">How\u2019d you find us?</label>';
+          h += '<select class="quiz-form-input" data-field="found">';
+          h += '<option value="">Select one (optional)</option>';
+          h += '<option value="Google search"' + (f.found === "Google search" ? ' selected' : '') + '>Google search</option>';
+          h += '<option value="Instagram"' + (f.found === "Instagram" ? ' selected' : '') + '>Instagram</option>';
+          h += '<option value="TikTok"' + (f.found === "TikTok" ? ' selected' : '') + '>TikTok</option>';
+          h += '<option value="Referral"' + (f.found === "Referral" ? ' selected' : '') + '>Referral</option>';
+          h += '<option value="Wedding show/expo"' + (f.found === "Wedding show/expo" ? ' selected' : '') + '>Wedding show/expo</option>';
+          h += '<option value="The Knot/WeddingWire"' + (f.found === "The Knot/WeddingWire" ? ' selected' : '') + '>The Knot/WeddingWire</option>';
+          h += '<option value="Other"' + (f.found === "Other" ? ' selected' : '') + '>Other</option>';
+          h += '</select>';
+          if (f.found === "Referral") {
+            h += '<div style="margin-top:8px"><label class="quiz-form-label">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
+            h += '<input type="text" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
+            h += '</div>';
+          }
           h += '</div>';
           // Notes
           h += '<div><label class="quiz-form-label">Anything else?</label>';
@@ -2395,12 +2417,15 @@
           // 6. Answer summary
           h += '<div class="quiz-box" style="text-align:left">';
           h += '<p class="quiz-box-label-muted">Your answers</p>';
-          var labels = {excited:"Most excited about",vibe:"Vibe",priority:"Film priorities",date:"Date",found:"Found us via"};
+          var labels = {excited:"Most excited about",vibe:"Vibe",priority:"Film priorities",date:"Date"};
           for (var key in qa) {
             if (qa.hasOwnProperty(key)) {
               var val = Array.isArray(qa[key]) ? qa[key].join(", ") : qa[key];
               h += '<div class="quiz-answer-row"><span class="quiz-answer-key">' + esc(labels[key] || key) + '</span><span class="quiz-answer-val">' + esc(val) + '</span></div>';
             }
+          }
+          if (state.contactForm.found) {
+            h += '<div class="quiz-answer-row"><span class="quiz-answer-key">Found us via</span><span class="quiz-answer-val">' + esc(state.contactForm.found) + '</span></div>';
           }
           if (state.referralName) {
             h += '<div class="quiz-answer-row"><span class="quiz-answer-key">Referred by</span><span class="quiz-answer-val">' + esc(state.referralName) + '</span></div>';
@@ -2526,7 +2551,6 @@
               delete state.calcAnswers.extra;
             }
             state[answersKey][step.id] = label;
-            if (step.id === "found" && label !== "A friend or past couple") state.referralName = "";
           }
         }
 
@@ -2604,6 +2628,16 @@
           else if (state.contactForm[f] !== undefined) { state.contactForm[f] = e.target.value; }
         });
 
+        quizApp.addEventListener("change", function(e) {
+          var f = e.target.getAttribute("data-field");
+          if (f === "found") {
+            saveFormFields();
+            state.contactForm.found = e.target.value;
+            if (e.target.value !== "Referral") state.referralName = "";
+            render();
+          }
+        });
+
         quizApp.addEventListener("click", function(e) {
           var btn = e.target.closest("[data-action]");
           if (!btn) return;
@@ -2651,7 +2685,7 @@
               vibe: state.quizAnswers.vibe || '',
               priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
               date: state.quizAnswers.date || '',
-              found: state.quizAnswers.found || '',
+              found: state.contactForm.found || '',
               referralName: state.referralName || ''
             };
             if (SHEET_URL !== 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_URL') {
@@ -2669,7 +2703,7 @@
           if (action === "start-over") {
             state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {};
-            state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"" };
+            state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" };
             render(); scrollToQuiz(); return;
           }
         });
