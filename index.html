@@ -467,7 +467,9 @@
 
     .btn:hover,
     .btn:focus {
-      filter: brightness(1.15);
+      background-color: #D4960A;
+      filter: none;
+      transition: all 0.3s ease;
     }
 
     .btn-full {
@@ -887,12 +889,7 @@
     }
 
     .carousel-quote::before {
-      content: '\201C';
-      display: block;
-      font-size: 3rem;
-      color: var(--accent);
-      line-height: 1;
-      margin-bottom: 12px;
+      display: none;
     }
 
     .carousel-attr {
@@ -1211,6 +1208,11 @@
         font-size: 0.75rem;
         line-height: 1.8;
       }
+
+      .carousel-arrow--prev,
+      .carousel-arrow--next {
+        display: none;
+      }
     }
 
     @media (max-width: 480px) {
@@ -1254,7 +1256,7 @@
     .quiz-intro-chip { display: flex; align-items: center; gap: 5px; font-size: 0.6875rem; color: #C4BFB6; font-weight: 500; font-family: 'Outfit', sans-serif; }
     .quiz-intro-chip span { font-size: 0.875rem; }
     .quiz-start-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-size: 0.9375rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif; transition: filter 0.3s ease; }
-    .quiz-start-btn:hover { filter: brightness(1.15); }
+    .quiz-start-btn:hover { background-color: #D4960A; filter: none; transition: all 0.3s ease; }
     .quiz-intro-note { font-size: 0.625rem; color: #444; margin-top: 16px; font-family: 'Outfit', sans-serif; }
     .quiz-header { text-align: center; margin-bottom: 4px; }
     .quiz-brand { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-size: 1.125rem; font-weight: 700; }
@@ -1315,7 +1317,7 @@
     .quiz-checkbox-label { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
     .quiz-checkbox.checked + .quiz-checkbox-label { color: var(--text-primary); }
     .quiz-submit-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9375rem; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: filter 0.3s ease; }
-    .quiz-submit-btn:hover { filter: brightness(1.15); }
+    .quiz-submit-btn:hover { background-color: #D4960A; filter: none; transition: all 0.3s ease; }
     .quiz-form-hint { font-size: 0.625rem; color: #444; text-align: center; font-family: 'Outfit', sans-serif; }
     .quiz-form-submit-error { font-size: 0.6875rem; color: #e74c3c; text-align: center; font-family: 'Outfit', sans-serif; }
     .quiz-box { background-color: #0f0f0f; border-radius: 12px; padding: 20px 16px; border: 1px solid #1a1a1a; margin-bottom: 16px; }
