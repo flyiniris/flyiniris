@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wisconsin Wedding Videographer | Cinematic Wedding Films | Flyin' Iris</title>
-  <meta name="description" content="Flyin' Iris creates cinematic, emotional wedding films for couples across Wisconsin and Chicago. Custom packages starting at $2,800. Now booking 2026 & 2027.">
+  <title>Milwaukee Wedding Videographer | Cinematic Wedding Films | Flyin' Iris</title>
+  <meta name="description" content="Milwaukee husband-and-wife wedding videographers crafting cinematic wedding films across Wisconsin. 5.0 stars, 100+ love stories filmed. Now booking 2026 & 2027.">
   <meta name="keywords" content="Wisconsin wedding videographer, Milwaukee wedding videographer, cinematic wedding films, wedding video Wisconsin, Door County wedding videographer, Madison wedding videographer, Chicago wedding videographer">
   <link rel="canonical" href="https://www.flyiniris.com/">
   <meta name="robots" content="index, follow">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Wisconsin Wedding Videographer | Flyin' Iris">
-  <meta property="og:description" content="Cinematic wedding films that feel like the day did. Custom packages starting at $2,800.">
+  <meta property="og:title" content="Milwaukee Wedding Videographer | Flyin' Iris">
+  <meta property="og:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/">
-  <meta property="og:image" content="olivia-austin.jpg">
+  <meta property="og:image" content="https://www.flyiniris.com/olivia-austin.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Wisconsin Wedding Videographer | Flyin' Iris">
-  <meta name="twitter:description" content="Cinematic wedding films that feel like the day did. Custom packages starting at $2,800.">
-  <meta name="twitter:image" content="olivia-austin.jpg">
+  <meta name="twitter:title" content="Milwaukee Wedding Videographer | Flyin' Iris">
+  <meta name="twitter:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
+  <meta name="twitter:image" content="https://www.flyiniris.com/olivia-austin.jpg">
+  <meta name="theme-color" content="#0A0A0A">
 
   <link rel="icon" type="image/png" href="favicon.png">
 
@@ -56,8 +57,8 @@
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "VideoProductionCompany"],
     "name": "Flyin' Iris Media Productions LLC",
-    "description": "Premium cinematic wedding videography serving Wisconsin, Northern Illinois, and Chicago. Custom packages starting at $2,800.",
-    "url": "https://www.flyiniris.com",
+    "description": "Premium cinematic wedding videography serving Wisconsin, Northern Illinois, and Chicago. Custom packages starting at $3,000.",
+    "url": "https://www.flyiniris.com/",
     "telephone": "+14149162163",
     "address": {
       "@type": "PostalAddress",
@@ -71,7 +72,7 @@
       "latitude": 43.2967,
       "longitude": -87.9862
     },
-    "priceRange": "$2,800 - $8,000",
+    "priceRange": "$3,000 - $8,000",
     "areaServed": [
       "Milwaukee, WI",
       "Madison, WI",
@@ -79,7 +80,10 @@
       "Door County, WI",
       "Chicago, IL",
       "Wisconsin",
-      "Northern Illinois"
+      "Northern Illinois",
+      "Lake Geneva, WI",
+      "Waukesha, WI",
+      "Kohler, WI"
     ],
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -183,6 +187,30 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    @keyframes hitReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(8px) scale(0.95);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.02);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .hero h1 .hit {
+      color: #FFBD1D;
+      font-style: italic;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+      animation: hitReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
     }
 
     /* ========== NAVIGATION ========== */
@@ -814,7 +842,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       column-gap: 64px;
-      align-items: start;
+      align-items: center;
       margin-top: 48px;
     }
 
@@ -830,8 +858,6 @@
       align-self: center;
     }
 
-    .about-content {
-    }
 
     .about-content p {
       font-family: 'Outfit', sans-serif;
@@ -1136,6 +1162,7 @@
       font-size: 0.85rem;
       color: var(--text-secondary);
       margin-top: 12px;
+      letter-spacing: 0.04em;
     }
 
     .footer-social {
@@ -1215,6 +1242,10 @@
         text-align: center;
       }
 
+      .about-content p {
+        font-size: 1.15rem;
+      }
+
       .social-proof p {
         font-size: 0.75rem;
         line-height: 1.8;
@@ -1250,6 +1281,10 @@
 
       .carousel-quote {
         font-size: 1.05rem;
+      }
+
+      .about-content p {
+        font-size: 1.1rem;
       }
     }
 
@@ -1381,6 +1416,129 @@
       .quiz-intro-chips { flex-direction: column; align-items: center; gap: 8px; }
       .quiz-option-emoji { font-size: 1.125rem; }
     }
+
+    /* Date picker dark theme */
+    input[type="date"] { color-scheme: dark; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+    /* Availability spinner */
+    @keyframes av-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .av-spinner-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 4px 0;
+    }
+    .av-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,189,29,0.25);
+      border-top: 2px solid #FFBD1D;
+      border-radius: 50%;
+      animation: av-spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    .av-spinner-text {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-style: italic;
+      font-family: 'Outfit', sans-serif;
+    }
+    .av-result-fade {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .av-result-fade.visible {
+      opacity: 1;
+    }
+
+    /* Footer SEO */
+    .footer-seo {
+      border-top: 1px solid var(--border);
+      margin-top: 32px;
+      padding-top: 28px;
+    }
+    .footer-seo-heading {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .footer-seo-cities,
+    .footer-seo-services {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      letter-spacing: 0.3px;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.7;
+    }
+    .footer-seo-services {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      opacity: 0.55;
+    }
+
+    /* Confirmation cover blocks (styled like The Difference section) */
+    .confirm-cover {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .confirm-cover-block {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 28px;
+      align-items: flex-start;
+    }
+    .confirm-cover-block:last-child {
+      margin-bottom: 0;
+    }
+    .confirm-cover-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.5rem;
+      color: var(--border);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 48px;
+    }
+    .confirm-cover-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .confirm-cover-desc {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Footer services keyword line */
+    .footer-services {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      letter-spacing: 0.05em;
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
@@ -1417,21 +1575,13 @@
     <!-- ========== HERO ========== -->
     <section class="hero" aria-label="Hero">
       <div class="hero-video-wrap hero-video-desktop">
-        <iframe src="https://player.vimeo.com/video/1164143894?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
-          frameborder="0" allow="autoplay; fullscreen" allowfullscreen
-          style="position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);">
-        </iframe>
       </div>
       <div class="hero-video-wrap hero-video-mobile">
-        <iframe src="https://player.vimeo.com/video/1164224164?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
-          frameborder="0" allow="autoplay; fullscreen" allowfullscreen
-          style="position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);">
-        </iframe>
       </div>
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <p class="hero-label">Wisconsin Wedding Videographer</p>
-        <h1>Wedding Films That Hit Different.</h1>
+        <p class="hero-label">Milwaukee &amp; Wisconsin Wedding Videographer</p>
+        <h1>Wedding Films That <span class="hit">Hit</span> Different.</h1>
         <p class="hero-sub">The nerves before the walk. The crack in the vows. The moment the dance floor lost its mind. You lived it once — we make sure you feel it forever.</p>
         <div class="hero-cta">
           <a href="#quiz" class="btn">Check Availability</a>
@@ -1459,7 +1609,7 @@
             <iframe src="https://player.vimeo.com/video/1126515830?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
               frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
               style="position:absolute;top:0;left:0;width:100%;height:100%;"
-              title="A Door County Love Story" loading="lazy"></iframe>
+              title="Door County Wisconsin wedding film by Flyin' Iris" loading="lazy"></iframe>
           </div>
           <p class="film-title">A Door County Love Story</p>
         </div>
@@ -1470,7 +1620,7 @@
               <iframe src="https://player.vimeo.com/video/1104226234?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
                 frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
-                title="Epic at The Green Bay Country Club" loading="lazy"></iframe>
+                title="Green Bay Wisconsin wedding film by Flyin' Iris" loading="lazy"></iframe>
             </div>
             <p class="film-title">Epic at The Green Bay Country Club</p>
           </div>
@@ -1479,18 +1629,14 @@
               <iframe src="https://player.vimeo.com/video/998504145?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
                 frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
-                title="A Marine Marries His Duchess" loading="lazy"></iframe>
+                title="Marine Corps wedding film by Flyin' Iris" loading="lazy"></iframe>
             </div>
             <p class="film-title">A Marine Marries His Duchess</p>
           </div>
         </div>
 
-        <div class="films-more reveal-child">
-          <a href="https://www.youtube.com/@FlyinIris/playlists" class="text-link" target="_blank" rel="noopener noreferrer">View more films on YouTube &rarr;</a>
-        </div>
-
         <div class="reveal-child" style="text-align:center;margin-top:32px">
-          <a href="#quiz" class="btn">Want Something Like This? &#10022;</a>
+          <a href="#quiz" class="btn">Your Turn &#10022;</a>
         </div>
       </div>
     </section>
@@ -1539,7 +1685,7 @@
         </div>
 
         <div class="why-cta">
-          <p class="why-cta-text"><span style="font-size:2rem;font-weight:600;letter-spacing:1px;display:block;margin-bottom:12px">Still scrolling? Good.</span><span style="color:#FFBD1D">So do we.</span></p>
+          <p class="why-cta-text"><span style="font-size:2rem;font-weight:600;letter-spacing:1px;display:block;margin-bottom:0">Still scrolling? <span style="color:#FFBD1D">Good.</span></span><span style="display:block;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:1.85rem;color:var(--text-secondary);margin:14px 0">That means you care about this.</span><span style="display:block;color:#FFBD1D;margin-bottom:36px">So do we.</span></p>
           <a href="#quiz" class="btn">See If Your Date Is Available</a>
         </div>
 
@@ -1561,13 +1707,10 @@
           <h2 class="section-heading reveal-child">We're Sean &amp; Sierra.</h2>
         </div>
         <div class="about-grid reveal">
-          <img src="sean-sierra.jpg" alt="Sean and Sierra, wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy">
+          <img src="sean-sierra.jpg" alt="Sean and Sierra Herkenrath - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy">
           <div class="about-content reveal-child">
-            <p>Husband and wife. Milwaukee-based. Absolutely obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee's CBS affiliate — so she doesn't just know how to make things look pretty, she knows how to tell a story that makes you feel something. Sean built the business with a finance degree and the kind of perfectionism that borders on unreasonable.</p>
-            <p>Our couples don't describe us as their videographers. They call us friends they happened to hire. We learn your vibe before the wedding day, we match your energy on it, and we deliver a film that feels so much like you that you'll wonder how we pulled it off.</p>
-            <p>We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
-            <p>If you want a videographer who shows up, sets a tripod in the corner, and calls it a day — we're not your people. But if you want a team who's in the mix with you, who makes the day better just by being there, and who delivers a film that wrecks you in the best way possible — yeah. That's us.</p>
-            <a href="https://www.instagram.com/flyin.iris/" class="text-link" target="_blank" rel="noopener noreferrer">Follow our work &rarr;</a>
+            <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean built this business with the kind of perfectionism that keeps him editing at 2am because the music hit one beat too late.</p>
+            <p>Our couples don&rsquo;t call us their videographers &mdash; they call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
           </div>
         </div>
       </div>
@@ -1629,7 +1772,7 @@
         </div>
 
         <div class="reveal-child" style="text-align:center;margin-top:32px">
-          <a href="#quiz" class="btn">Let&#8217;s Talk About Your Day &#10022;</a>
+          <a href="#quiz" class="btn">Check Your Date &#10022;</a>
         </div>
       </div>
     </section>
@@ -1643,9 +1786,9 @@
         <h2 class="section-heading reveal-child">Your film. Your way. No cookie cutters.</h2>
         <div class="investment-text">
           <p class="reveal-child">Every couple is different — so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish — we'll build it around you.</p>
-          <p class="investment-price reveal-child">Starting at $2,800</p>
+          <p class="investment-price reveal-child">Film Packages Starting at $3,000</p>
           <p class="reveal-child" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:1rem;color:var(--text-secondary);line-height:1.7;margin-bottom:16px">Drone coverage, professional audio, licensed music, and a pre-wedding planning session all come standard. Your teaser? Delivered within a week — because waiting months to relive your day isn't how we do things.</p>
-          <div class="reveal-child">
+          <div class="reveal-child" style="margin-top:36px">
             <a href="#quiz" class="btn">Let's Build Yours</a>
           </div>
         </div>
@@ -1670,7 +1813,7 @@
   <!-- ========== FOOTER ========== -->
   <footer class="site-footer">
     <p class="footer-brand">FLYIN' IRIS</p>
-    <p class="footer-location">Milwaukee, Wisconsin &middot; Serving Wisconsin, Northern Illinois &amp; Chicago</p>
+    <p class="footer-location">Milwaukee Wedding Videographer &middot; Wisconsin Wedding Films &middot; Serving Door County, Green Bay, Madison, Lake Geneva, Waukesha, Kohler, Appleton, Kenosha &amp; Chicago</p>
     <div class="footer-social">
       <a href="https://www.instagram.com/flyin.iris/" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
@@ -1683,17 +1826,33 @@
       </a>
     </div>
     <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+    <p class="footer-services">Cinematic Wedding Films &middot; Wedding Highlight Videos &middot; Elopement Videography &middot; Drone Wedding Coverage &middot; Destination Wedding Videographer</p>
   </footer>
 
-  <script src="https://player.vimeo.com/api/player.js"></script>
+  <script src="https://player.vimeo.com/api/player.js" defer></script>
 
   <script>
     (function() {
       'use strict';
 
+      // ========== HERO VIDEO — LOAD ONLY ONE ==========
+      (function() {
+        var isMobile = window.innerWidth <= 768;
+        var videoId = isMobile ? '1164502279' : '1164502302';
+        var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
+        if (wrapper) {
+          var iframe = document.createElement('iframe');
+          iframe.src = 'https://player.vimeo.com/video/' + videoId + '?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1';
+          iframe.frameBorder = '0';
+          iframe.allow = 'autoplay; fullscreen';
+          iframe.allowFullscreen = true;
+          iframe.style.cssText = 'position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);';
+          wrapper.appendChild(iframe);
+        }
+      })();
+
       // ========== NAV SCROLL BEHAVIOR ==========
       var nav = document.querySelector('.nav');
-      var lastScrollY = 0;
 
       function handleNavScroll() {
         var scrollY = window.scrollY || window.pageYOffset;
@@ -1702,7 +1861,7 @@
         } else {
           nav.classList.remove('scrolled');
         }
-        lastScrollY = scrollY;
+
       }
 
       // ========== HAMBURGER MENU ==========
@@ -1891,7 +2050,8 @@
         function checkAvailability(dateStr) {
           var msgEl = document.getElementById('availability-msg');
           if (!msgEl || !dateStr) return;
-          msgEl.innerHTML = '<span style="color:var(--text-secondary);font-size:0.75rem;font-style:italic">Checking availability...</span>';
+          msgEl.innerHTML = '<div class="av-spinner-wrap"><div class="av-spinner"></div><span class="av-spinner-text">Checking your date...</span></div>';
+          var startTime = Date.now();
           fetch(AVAILABILITY_URL + '?date=' + dateStr)
             .then(function(r) { return r.json(); })
             .then(function(data) {
@@ -1911,13 +2071,22 @@
               } else {
                 color = 'var(--text-secondary)'; icon = ''; msg = '';
               }
-              if (msg) {
-                msgEl.innerHTML = '<span style="color:' + color + ';font-size:0.8rem;font-weight:500">' + icon + ' ' + msg + '</span>';
-              }
+              var elapsed = Date.now() - startTime;
+              var delay = Math.max(0, 1750 - elapsed);
+              setTimeout(function() {
+                if (msg) {
+                  msgEl.innerHTML = '<span class="av-result-fade" style="color:' + color + ';font-size:0.8rem;font-weight:500">' + icon + ' ' + msg + '</span>';
+                  setTimeout(function() { var s = msgEl.querySelector('.av-result-fade'); if (s) s.classList.add('visible'); }, 30);
+                } else {
+                  msgEl.innerHTML = '';
+                }
+              }, delay);
             })
             .catch(function(err) {
               console.log('Availability check error:', err);
-              msgEl.innerHTML = '';
+              var elapsed = Date.now() - startTime;
+              var delay = Math.max(0, 1750 - elapsed);
+              setTimeout(function() { msgEl.innerHTML = ''; }, delay);
             });
         }
 
@@ -1927,6 +2096,13 @@
           var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
           var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
           return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+        }
+
+        function formatDateForSheet(dateStr) {
+          if (!dateStr) return '';
+          var parts = dateStr.split('-');
+          if (parts.length === 3) return parts[1] + '/' + parts[2] + '/' + parts[0];
+          return dateStr;
         }
 
         // --- PRICING ---
@@ -2046,14 +2222,6 @@
             {emoji:"\ud83d\udcd6",label:"Our story, not just the day",desc:"Who we are as a couple \u2014 the real stuff"},
             {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all \u2014 is that too much to ask?"}
           ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story \u2014 the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt \u2014 your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all \u2014 that\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
-          { id:"date", label:"Your Date", question:"When\u2019s the big day?", subtext:"Even a rough idea helps us check availability. We book 8-14 months out.", type:"single", options:[
-            {emoji:"\ud83c\udf38",label:"Spring 2026",desc:"March \u2013 May"},
-            {emoji:"\u2600\ufe0f",label:"Summer 2026",desc:"June \u2013 August"},
-            {emoji:"\ud83c\udf42",label:"Fall 2026",desc:"September \u2013 November"},
-            {emoji:"\u2744\ufe0f",label:"Winter 2026/27",desc:"December \u2013 February"},
-            {emoji:"\ud83d\udcc5",label:"2027 or later",desc:"Planning ahead \u2014 smart move"},
-            {emoji:"\ud83d\udc8d",label:"Just got engaged!",desc:"No date yet \u2014 just exploring"}
-          ], valueMessage:{"Spring 2026":"Spring light in Wisconsin is gorgeous for film \u2014 soft, warm, golden. Let\u2019s check availability!","Summer 2026":"Summer weekends are our busiest \u2014 they fill up fast. Good thing you\u2019re starting early.","Fall 2026":"Fall in Wisconsin? The colors, the light, the cozy energy. Perfection for video.","Winter 2026/27":"Winter weddings are SO underrated on film. Snow, warm light, sparkler exits \u2014 cinematic magic.","2027 or later":"Smart to start early! The best videographers book 12+ months out.","Just got engaged!":"Congrats!! No rush. We\u2019d love to be on your radar \u2014 reach out whenever."}},
           { id:"contact", label:"Let\u2019s Talk!", question:"Last step \u2014 let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster \u2014 we get excited.", type:"contact" }
         ];
 
@@ -2205,7 +2373,7 @@
           return '<div class="quiz-intro">' +
             '<p class="quiz-intro-label">Flyin\u2019 Iris \u2726 Milwaukee, WI</p>' +
             '<h2 class="quiz-intro-title">Let\u2019s see if we\u2019re<br><span>your kind of videographers.</span></h2>' +
-            '<p class="quiz-intro-desc">Quick questions about your day. We\u2019ll match films to your vibe, check our availability, and reach out personally \u2014 no spam, no sales pitch.</p>' +
+            '<p class="quiz-intro-desc">Answer a few quick ones and we\u2019ll check if your date is still open. We\u2019ll match films to your vibe, check our availability, and reach out personally \u2014 no spam, no sales pitch.</p>' +
             '<div class="quiz-intro-chips">' +
               '<div class="quiz-intro-chip"><span>\u23f1</span> <span>60 seconds</span></div>' +
               '<div class="quiz-intro-chip"><span>\ud83c\udfac</span> <span>See films for your vibe</span></div>' +
@@ -2282,7 +2450,7 @@
 
         function renderContactForm(step) {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = f.found && f.found.length > 0;
           var h = '<div class="quiz-step">';
           h += '<h2 class="quiz-question" style="font-size:1.625rem">' + step.question + '</h2>';
           h += '<p class="quiz-subtext">' + step.subtext + '</p>';
@@ -2313,25 +2481,27 @@
           h += '<div><label class="quiz-form-label">Venue (if you have one picked!)</label>';
           h += '<input type="text" class="quiz-form-input" data-field="venue" placeholder="The Venue Name \u00b7 City, WI"></div>';
           // Wedding Date
-          var minDate = new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0];
+          var minDate = new Date().toISOString().split('T')[0];
           var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
           h += '<div><label class="quiz-form-label">Anticipated Wedding Date <span style="color:var(--accent)">*</span></label>';
           h += '<input type="date" id="quiz-date" class="quiz-form-input" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
           h += '<div id="availability-msg" style="margin-top:8px;min-height:20px"></div>';
           if (t && !dOk) h += '<p class="quiz-form-error">We need your anticipated wedding date to check availability!</p>';
           h += '</div>';
-          // How'd you find us (optional dropdown)
-          h += '<div><label class="quiz-form-label">How\u2019d you find us?</label>';
-          h += '<select class="quiz-form-input" data-field="found">';
-          h += '<option value="">Select one (optional)</option>';
+          // How'd you hear about us (required)
+          h += '<div><label class="quiz-form-label">How\u2019d you hear about us? <span style="color:var(--accent)">*</span></label>';
+          h += '<select class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
+          h += '<option value="">Select one</option>';
           h += '<option value="Google search"' + (f.found === "Google search" ? ' selected' : '') + '>Google search</option>';
           h += '<option value="Instagram"' + (f.found === "Instagram" ? ' selected' : '') + '>Instagram</option>';
+          h += '<option value="Facebook"' + (f.found === "Facebook" ? ' selected' : '') + '>Facebook</option>';
           h += '<option value="TikTok"' + (f.found === "TikTok" ? ' selected' : '') + '>TikTok</option>';
           h += '<option value="Referral"' + (f.found === "Referral" ? ' selected' : '') + '>Referral</option>';
           h += '<option value="Wedding show/expo"' + (f.found === "Wedding show/expo" ? ' selected' : '') + '>Wedding show/expo</option>';
           h += '<option value="The Knot/WeddingWire"' + (f.found === "The Knot/WeddingWire" ? ' selected' : '') + '>The Knot/WeddingWire</option>';
           h += '<option value="Other"' + (f.found === "Other" ? ' selected' : '') + '>Other</option>';
           h += '</select>';
+          if (t && !fOk) h += '<p class="quiz-form-error">Please let us know how you heard about us!</p>';
           if (f.found === "Referral") {
             h += '<div style="margin-top:8px"><label class="quiz-form-label">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
             h += '<input type="text" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
@@ -2343,7 +2513,7 @@
           h += '<textarea class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
           // Submit
           h += '<button class="quiz-submit-btn" data-action="submit-contact">Send It \u2726</button>';
-          if (t && !(nOk && eOk && pOk && dOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
+          if (t && !(nOk && eOk && pOk && dOk && fOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
           h += '<p class="quiz-form-hint">No spam ever. Just a real conversation about your day.</p>';
           h += '</div>';
           // Back button
@@ -2358,66 +2528,69 @@
 
           var h = '<div class="quiz-confirm">';
 
-          // 1. Header
-          h += '<div class="quiz-confirm-icon">\ud83c\udf89</div>';
-          h += '<h2 class="quiz-confirm-title" style="font-size:2rem;margin-bottom:6px">' + (firstName ? esc(firstName) + ', you\u2019re in!' : 'You\u2019re in!') + '</h2>';
+          // Section A — Confirmation + Availability Check
+          h += '<div style="font-size:3.5rem;color:var(--accent);margin-bottom:16px;font-weight:700">\u2713</div>';
+          h += '<h2 class="quiz-confirm-title" style="font-size:2.25rem;margin-bottom:20px">' + (firstName ? esc(firstName) + ', you\u2019re in!' : 'You\u2019re in!') + '</h2>';
 
-          // 2. Wedding date + availability (gold box)
-          if (ci && ci.weddingDate) {
-            h += '<div class="quiz-gold-box" style="text-align:center;margin-top:16px;margin-bottom:20px">';
-            h += '<p style="font-family:\'Cormorant Garamond\',serif;font-size:1.375rem;font-weight:600;color:var(--text-primary);margin-bottom:4px">' + esc(formatWeddingDate(ci.weddingDate)) + '</p>';
-            h += '<div id="confirmation-availability" style="min-height:24px"></div>';
-            h += '</div>';
-          }
+          // Spinner (shown for ~2 seconds, then fades to availability result)
+          h += '<div id="confirm-spinner-wrap" style="margin-bottom:8px">';
+          h += '<div class="av-spinner-wrap"><div class="av-spinner" style="width:28px;height:28px;border-width:3px"></div><span class="av-spinner-text">Checking availability for your date...</span></div>';
+          h += '</div>';
+          h += '<div id="confirm-availability-result" style="margin-bottom:32px;min-height:28px;opacity:0;transition:opacity 0.5s ease"></div>';
 
-          // 3. Discovery call — what to expect
-          h += '<div style="text-align:center;margin-bottom:24px">';
+          // Section B — Discovery Call CTA + Calendar (immediately)
+          h += '<div style="text-align:center;margin-bottom:20px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Your next step: Book a discovery call.</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. Zero pressure. Just a real conversation.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. Just a real conversation about your day.</p>';
           h += '</div>';
 
-          h += '<div style="text-align:left;max-width:420px;margin:0 auto 28px;padding:0 8px">';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.8125rem;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">Here\u2019s what we\u2019ll cover:</p>';
-
-          h += '<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px">';
-          h += '<span style="font-size:1.25rem;line-height:1">\ud83d\udc9b</span>';
-          h += '<div><p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--text-primary);margin-bottom:2px">Get to know you both</p><p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);line-height:1.5">How you met, why you fell in love, what makes your relationship yours. The good stuff.</p></div>';
-          h += '</div>';
-
-          h += '<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px">';
-          h += '<span style="font-size:1.25rem;line-height:1">\ud83c\udfac</span>';
-          h += '<div><p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--text-primary);margin-bottom:2px">Learn what you want in your film</p><p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);line-height:1.5">The vibe, the moments that matter most, the stuff you\u2019d never forgive yourself for missing.</p></div>';
-          h += '</div>';
-
-          h += '<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px">';
-          h += '<span style="font-size:1.25rem;line-height:1">\u2728</span>';
-          h += '<div><p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--text-primary);margin-bottom:2px">Show you what\u2019s possible</p><p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);line-height:1.5">We\u2019ll walk through options and build a custom package around your day \u2014 not a one-size-fits-all menu.</p></div>';
-          h += '</div>';
-
-          h += '<div style="display:flex;gap:12px;align-items:flex-start">';
-          h += '<span style="font-size:1.25rem;line-height:1">\ud83e\udd1d</span>';
-          h += '<div><p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--text-primary);margin-bottom:2px">Make sure we\u2019re the right fit</p><p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);line-height:1.5">No sales pitch. If we\u2019re not the right match, we\u2019ll tell you \u2014 and point you somewhere great.</p></div>';
-          h += '</div>';
-
-          h += '</div>';
-
-          // 4. Primary CTA — Embedded GoHighLevel discovery call calendar
-          h += '<div style="text-align:center;margin-bottom:12px">';
-          h += '<div style="width:100%;max-width:520px;margin:0 auto;border-radius:10px;overflow:hidden;min-height:1000px">';
+          // Calendar iframe — immediately after subtext
+          h += '<div style="width:100%;max-width:520px;margin:0 auto 40px;border-radius:10px;overflow:hidden;min-height:1000px">';
           h += '<iframe src="https://link.lo-ai.co/widget/booking/g1VimYkOh0ccj758huZN" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-secondary);margin-top:10px">Our calendar fills fast \u2014 don\u2019t sleep on this.</p>';
+
+          // Section C — Here's what we'll cover (styled like The Difference section)
+          h += '<div style="text-align:center;margin-bottom:32px">';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.8125rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px">Here\u2019s what we\u2019ll cover</p>';
           h += '</div>';
 
-          // 5. Secondary CTA — calculator link
-          h += '<div style="text-align:center;margin-top:16px;margin-bottom:24px">';
+          h += '<div class="confirm-cover">';
+
+          h += '<div class="confirm-cover-block">';
+          h += '<span class="confirm-cover-num">01</span>';
+          h += '<div><p class="confirm-cover-title">Get to know you both</p>';
+          h += '<p class="confirm-cover-desc">How you met, how you fell in love, what makes your relationship yours. The good stuff.</p></div>';
+          h += '</div>';
+
+          h += '<div class="confirm-cover-block">';
+          h += '<span class="confirm-cover-num">02</span>';
+          h += '<div><p class="confirm-cover-title">Learn what you want in your film</p>';
+          h += '<p class="confirm-cover-desc">The vibe, the moments that matter most, the little things that make your day yours.</p></div>';
+          h += '</div>';
+
+          h += '<div class="confirm-cover-block">';
+          h += '<span class="confirm-cover-num">03</span>';
+          h += '<div><p class="confirm-cover-title">Show you what\u2019s possible</p>';
+          h += '<p class="confirm-cover-desc">We\u2019ll build a custom package around your day \u2014 not a one-size-fits-all menu.</p></div>';
+          h += '</div>';
+
+          h += '<div class="confirm-cover-block">';
+          h += '<span class="confirm-cover-num">04</span>';
+          h += '<div><p class="confirm-cover-title">Make sure we\u2019re the right fit</p>';
+          h += '<p class="confirm-cover-desc">No sales pitch. If we\u2019re not the right match, we\u2019ll be straight with you \u2014 and point you somewhere great.</p></div>';
+          h += '</div>';
+
+          h += '</div>';
+
+          // Calculator link
+          h += '<div style="text-align:center;margin-top:24px;margin-bottom:24px">';
           h += '<button data-action="start-calc" style="background:none;border:none;color:var(--accent);font-family:\'Outfit\',sans-serif;font-size:0.875rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px">Curious about pricing? Try our investment calculator \u2192</button>';
           h += '</div>';
 
-          // 6. Answer summary
+          // Answer summary
           h += '<div class="quiz-box" style="text-align:left">';
           h += '<p class="quiz-box-label-muted">Your answers</p>';
-          var labels = {excited:"Most excited about",vibe:"Vibe",priority:"Film priorities",date:"Date"};
+          var labels = {excited:"Most excited about",vibe:"Vibe",priority:"Film priorities"};
           for (var key in qa) {
             if (qa.hasOwnProperty(key)) {
               var val = Array.isArray(qa[key]) ? qa[key].join(", ") : qa[key];
@@ -2435,26 +2608,60 @@
           }
           h += '</div></div>';
 
-          // Trigger availability check
+          // Trigger availability check — spinner shows ~2 seconds then fades to result
           setTimeout(function() {
-            var el = document.getElementById('confirmation-availability');
-            if (el && ci && ci.weddingDate) {
-              fetch(AVAILABILITY_URL + '?date=' + ci.weddingDate)
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                  var color, icon, msg;
-                  if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
-                  else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
-                  else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
-                  else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability \u2014 let\u2019s chat!'; }
-                  else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast \u2014 let\u2019s chat about your timeline!'; }
-                  else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead \u2014 we love it!'; }
-                  else { msg = ''; }
-                  if (msg) el.innerHTML = '<span style="color:' + color + ';font-size:1rem;font-weight:500">' + icon + ' ' + msg + '</span>';
-                })
-                .catch(function() {});
+            var spinnerWrap = document.getElementById('confirm-spinner-wrap');
+            var resultEl = document.getElementById('confirm-availability-result');
+            if (!spinnerWrap || !resultEl || !ci || !ci.weddingDate) {
+              if (spinnerWrap) spinnerWrap.style.display = 'none';
+              return;
             }
+            var startTime = Date.now();
+            fetch(AVAILABILITY_URL + '?date=' + ci.weddingDate)
+              .then(function(r) { return r.json(); })
+              .then(function(data) {
+                var color, icon, msg;
+                if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
+                else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
+                else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
+                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability \u2014 let\u2019s chat!'; }
+                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast \u2014 let\u2019s chat about your timeline!'; }
+                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead \u2014 we love it!'; }
+                else { msg = ''; }
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(0, 2000 - elapsed);
+                setTimeout(function() {
+                  spinnerWrap.style.transition = 'opacity 0.4s ease';
+                  spinnerWrap.style.opacity = '0';
+                  setTimeout(function() {
+                    spinnerWrap.style.display = 'none';
+                    if (msg) {
+                      resultEl.innerHTML = '<span style="color:' + color + ';font-size:1rem;font-weight:500">' + icon + ' ' + msg + '</span>';
+                      resultEl.style.opacity = '1';
+                    }
+                  }, 400);
+                }, delay);
+              })
+              .catch(function() {
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(0, 2000 - elapsed);
+                setTimeout(function() {
+                  spinnerWrap.style.transition = 'opacity 0.4s ease';
+                  spinnerWrap.style.opacity = '0';
+                  setTimeout(function() { spinnerWrap.style.display = 'none'; }, 400);
+                }, delay);
+              });
           }, 100);
+
+          // Defer-load GoHighLevel embed script
+          setTimeout(function() {
+            if (!document.getElementById('ghl-embed-script')) {
+              var s = document.createElement('script');
+              s.id = 'ghl-embed-script';
+              s.src = 'https://link.lo-ai.co/js/form_embed.js';
+              document.body.appendChild(s);
+            }
+          }, 50);
 
           return h;
         }
@@ -2662,7 +2869,7 @@
             saveFormFields();
             state.contactFormTried = true;
             var f = state.contactForm;
-            var canSubmit = f.name.trim().length >= 2 && isValidEmail(f.email) && isValidPhone(f.phone) && f.weddingDate && f.weddingDate.length > 0;
+            var canSubmit = f.name.trim().length >= 2 && isValidEmail(f.email) && isValidPhone(f.phone) && f.weddingDate && f.weddingDate.length > 0 && f.found && f.found.length > 0;
             if (!canSubmit) { render(); return; }
             var dateVal = document.getElementById('quiz-date');
             if (dateVal) state.contactForm.weddingDate = dateVal.value;
@@ -2680,11 +2887,11 @@
               textOk: state.contactInfo.textOk ? 'Yes' : 'No',
               venue: state.contactInfo.venue || '',
               note: state.contactInfo.note || '',
-              weddingDate: state.contactInfo.weddingDate || '',
+              weddingDate: formatDateForSheet(state.contactInfo.weddingDate) || '',
               excited: state.quizAnswers.excited || '',
               vibe: state.quizAnswers.vibe || '',
               priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
-              date: state.quizAnswers.date || '',
+
               found: state.contactForm.found || '',
               referralName: state.referralName || ''
             };
@@ -2714,6 +2921,5 @@
 
     })();
   </script>
-<script src="https://link.lo-ai.co/js/form_embed.js" type="text/javascript"></script>
 </body>
 </html>
