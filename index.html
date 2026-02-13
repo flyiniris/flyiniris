@@ -695,7 +695,36 @@
       margin-bottom: 100px;
       position: relative;
       text-align: center;
+      overflow: hidden;
+      border-radius: 12px;
+      padding: 60px 24px;
     }
+
+    .why-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.12;
+      z-index: 0;
+      transition: opacity 0.7s ease;
+    }
+
+    .why-block.visible::before {
+      opacity: 0.18;
+    }
+
+    .why-block > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .why-block:nth-child(3)::before { background-image: url('Taylor-Kane.jpg'); }
+    .why-block:nth-child(4)::before { background-image: url('Bobby-emily.jpg'); }
+    .why-block:nth-child(5)::before { background-image: url('Cody-Sarah.jpg'); }
+    .why-block:nth-child(6)::before { background-image: url('Izzy-Hunter.jpg'); }
+    .why-block:nth-child(7)::before { background-image: url('Kayla-Jason.jpg'); }
 
     .why-block:last-child {
       margin-bottom: 0;
@@ -1606,12 +1635,12 @@
 
         <div class="film-featured reveal-child">
           <div style="padding:56.25% 0 0 0;position:relative;">
-            <iframe src="https://player.vimeo.com/video/1126515830?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
+            <iframe src="https://player.vimeo.com/video/1147527131?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
               frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
               style="position:absolute;top:0;left:0;width:100%;height:100%;"
-              title="Door County Wisconsin wedding film by Flyin' Iris" loading="lazy"></iframe>
+              title="Wisconsin wedding film by Flyin' Iris" loading="lazy"></iframe>
           </div>
-          <p class="film-title">A Door County Love Story</p>
+          <p class="film-title">A Wisconsin Love Story</p>
         </div>
 
         <div class="films-grid">
@@ -1622,7 +1651,7 @@
                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
                 title="Green Bay Wisconsin wedding film by Flyin' Iris" loading="lazy"></iframe>
             </div>
-            <p class="film-title">Epic at The Green Bay Country Club</p>
+            <p class="film-title">Main Characters at The Green Bay Country Club</p>
           </div>
           <div class="reveal-child">
             <div style="padding:56.25% 0 0 0;position:relative;">
@@ -1659,7 +1688,7 @@
         <div class="why-block" data-why-reveal>
           <span class="why-num">02</span>
           <h3 class="why-headline">We don't do <span class="accent">templates.</span></h3>
-          <p class="why-body">Same venue. Same weekend. Two completely different films. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film won't just look like your wedding — it'll feel like you.</p>
+          <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you — not like everyone else's.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -1679,8 +1708,8 @@
 
         <div class="why-block" data-why-reveal>
           <span class="why-num">05</span>
-          <h3 class="why-headline">Not sure you even <span class="accent">need a wedding film?</span></h3>
-          <p class="why-body">That's what every one of our couples said before they saw theirs. Your photographer will freeze the moments — we'll make you live them again. Don't be the couple who wishes they had.</p>
+          <h3 class="why-headline">The #1 regret? <span class="accent">Not hiring a videographer.</span></h3>
+          <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments — we'll make you live them again. Don't be the couple who wishes they had.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -1709,7 +1738,7 @@
         <div class="about-grid reveal">
           <img src="sean-sierra.jpg" alt="Sean and Sierra Herkenrath - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy">
           <div class="about-content reveal-child">
-            <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean built this business with the kind of perfectionism that keeps him editing at 2am because the music hit one beat too late.</p>
+            <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean is the reason every detail of your experience is dialed &mdash; from the first time you reach out to the moment your film lands in your inbox, he&rsquo;s obsessing over every detail so nothing falls through the cracks.</p>
             <p>Our couples don&rsquo;t call us their videographers &mdash; they call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
           </div>
         </div>
@@ -1733,38 +1762,32 @@
         <div class="carousel carousel-arrows reveal-child" aria-label="Testimonial carousel" role="region">
           <div class="carousel-slide active">
             <blockquote>
-              <p class="carousel-quote">I can't stop watching it. It brings happy tears, so much joy, laughter, and love to me. I've probably watched it at least 3 times a day since getting it. Their work is just incredible.</p>
+              <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now — DO IT. I've watched it every day and I cry every time.</p>
+              <cite class="carousel-attr">&mdash; Google Review</cite>
+            </blockquote>
+          </div>
+          <div class="carousel-slide">
+            <blockquote>
+              <p class="carousel-quote">I can't stop watching it. Happy tears, so much joy, laughter and love. I've watched it at least 3 times a day since getting it.</p>
               <cite class="carousel-attr">&mdash; Mariah K.</cite>
             </blockquote>
           </div>
           <div class="carousel-slide">
             <blockquote>
-              <p class="carousel-quote">There are no words to describe how incredible Sierra and Sean were throughout the entire process. Their attention to detail is remarkable. The feeling of seeing your wedding played back like it's a trailer for a motion picture film is remarkable.</p>
-              <cite class="carousel-attr">&mdash; Katlin F.</cite>
+              <p class="carousel-quote">Molly's grandma has watched it several times and cried during every viewing.</p>
+              <cite class="carousel-attr">&mdash; Molly C.</cite>
             </blockquote>
           </div>
           <div class="carousel-slide">
             <blockquote>
-              <p class="carousel-quote">When I was first planning my wedding, I wasn't 100% sure if I even wanted video. When I stumbled upon their page, I knew I needed to have videography. The teaser was INCREDIBLE. Every single one of my vendor team RAVED about how amazing they were.</p>
+              <p class="carousel-quote">I wasn't sure I even wanted video. When I found their page, I knew I needed it. The teaser was INCREDIBLE.</p>
               <cite class="carousel-attr">&mdash; Summer A.</cite>
             </blockquote>
           </div>
           <div class="carousel-slide">
             <blockquote>
-              <p class="carousel-quote">They had great communication throughout the whole process and took the time to get to know us before our wedding day. They captured us and the vibe of our wedding perfectly. You can tell they just love what they do.</p>
-              <cite class="carousel-attr">&mdash; Shelby O.</cite>
-            </blockquote>
-          </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">On the day of, they were so much more than just videographers. They truly took it upon themselves to help ensure the day went smoothly. You will not be disappointed.</p>
+              <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film — remarkable.</p>
               <cite class="carousel-attr">&mdash; Katlin F.</cite>
-            </blockquote>
-          </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">Sierra and Sean make us want to get married every week! Sierra was always keeping us on track and Sean was always making sure we looked picture ready. They both have an eye for the little details — and the big ones.</p>
-              <cite class="carousel-attr">&mdash; Molly C.</cite>
             </blockquote>
           </div>
           <button class="carousel-arrow carousel-arrow--prev" aria-label="Previous testimonial">&#8249;</button>
@@ -1947,7 +1970,7 @@
       var testimonialsBg = document.querySelector('.testimonials-bg');
 
       // Background images per slide pair
-      var slideBgs = ['olivia-austin.jpg', 'olivia-austin.jpg', 'sarah-carson.jpg', 'sarah-carson.jpg', 'grace-sage.jpg', 'grace-sage.jpg'];
+      var slideBgs = ['olivia-austin.jpg', 'olivia-austin.jpg', 'sarah-carson.jpg', 'grace-sage.jpg', 'grace-sage.jpg'];
 
       function goToSlide(index) {
         slides[currentSlide].classList.remove('active');
@@ -1969,7 +1992,7 @@
 
       function startAutoAdvance() {
         stopAutoAdvance();
-        autoAdvanceInterval = setInterval(nextSlideFunc, 7000);
+        autoAdvanceInterval = setInterval(nextSlideFunc, 4000);
       }
 
       function stopAutoAdvance() {
