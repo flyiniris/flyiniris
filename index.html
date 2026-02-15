@@ -104,21 +104,20 @@
     :root {
       --bg-primary: #0A0A0A;
       --bg-secondary: #111110;
-      --bg-warm: #FAF6F0;
       --text-primary: #F5F0EB;
-      --text-secondary: #8A8578;
+      --text-secondary: #C8C3B9E6;
+      --text-muted: rgba(200, 195, 185, 0.9);
       --accent: #FFBD1D;
-      --accent-hover: #D99E0A;
       --accent-light: #FFF0C9;
       --accent-dark: #D99E0A;
       --border: #2A2A28;
-      --form-bg: #1A1A18;
     }
 
     *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      accent-color: #ffbd1d;
     }
 
     html {
@@ -205,7 +204,7 @@
     }
 
     .hero h1 .hit {
-      color: #FFBD1D;
+      color: var(--accent);
       font-style: italic;
       display: inline-block;
       opacity: 0;
@@ -240,7 +239,7 @@
     .nav-brand {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       letter-spacing: 0.05em;
       color: var(--text-primary);
       text-decoration: none;
@@ -432,7 +431,7 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: clamp(1rem, 2vw, 1.25rem);
-      color: rgba(200, 195, 185, 0.9);
+      color: var(--text-muted);
       max-width: 550px;
       margin: 24px auto;
       line-height: 1.7;
@@ -450,7 +449,7 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.8rem;
-      color: rgba(200, 195, 185, 0.7);
+      color: var(--text-secondary);
       margin-top: 16px;
       opacity: 0;
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;
@@ -490,14 +489,12 @@
       border-radius: 8px;
       cursor: pointer;
       text-decoration: none;
-      transition: filter 0.3s ease;
+      transition: background-color 0.3s ease, filter 0.3s ease;
     }
 
     .btn:hover,
     .btn:focus {
-      background-color: #D4960A;
-      filter: none;
-      transition: all 0.3s ease;
+      background-color: var(--accent-dark);
     }
 
     .btn-full {
@@ -590,7 +587,7 @@
     /* ========== SOCIAL PROOF BAR ========== */
 
     .social-proof {
-      padding: 32px 24px;
+      padding: 40px 24px;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       background-color: var(--bg-primary);
@@ -752,7 +749,7 @@
     .why-body {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--text-secondary);
       line-height: 1.8;
       max-width: 640px;
@@ -959,7 +956,7 @@
     }
 
     .reviews-stars {
-      color: #FFBD1D;
+      color: var(--accent);
       font-size: 1.1rem;
       letter-spacing: 2px;
     }
@@ -996,14 +993,13 @@
 
     /* ========== CAROUSEL ARROWS ========== */
 
-    .carousel-arrows {
+    .carousel-content {
       position: relative;
     }
 
     .carousel-arrow {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 18px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text-secondary);
@@ -1128,7 +1124,7 @@
     /* ========== AVAILABILITY ========== */
 
     .availability {
-      padding: 48px 24px;
+      padding: 40px 24px;
       background-color: var(--bg-secondary);
       text-align: center;
     }
@@ -1258,10 +1254,6 @@
         text-align: center;
       }
 
-      .about-content p {
-        font-size: 1.15rem;
-      }
-
       .social-proof p {
         font-size: 0.75rem;
         line-height: 1.8;
@@ -1298,13 +1290,11 @@
       .carousel-quote {
         font-size: 1.05rem;
       }
-
-      .about-content p {
-        font-size: 1.1rem;
-      }
     }
 
-    /* ========== QUIZ / CALCULATOR ========== */
+    /* ========== QUIZ / CALCULATOR ==========
+       Type scale: 0.625rem | 0.75rem | 0.875rem | 1rem | 1.375rem | clamp() | 2rem | 2.625rem
+    */
     .quiz-section {
       background: linear-gradient(180deg, var(--bg-secondary) 0%, #0f0f0e 100%);
     }
@@ -1315,20 +1305,20 @@
     .quiz-intro-title span { color: var(--accent); }
     .quiz-intro-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; max-width: 360px; margin: 0 auto 28px; font-family: 'Outfit', sans-serif; }
     .quiz-intro-chips { display: flex; gap: 14px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
-    .quiz-intro-chip { display: flex; align-items: center; gap: 5px; font-size: 0.6875rem; color: #C4BFB6; font-weight: 500; font-family: 'Outfit', sans-serif; }
+    .quiz-intro-chip { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #C4BFB6; font-weight: 500; font-family: 'Outfit', sans-serif; }
     .quiz-intro-chip span { font-size: 0.875rem; }
-    .quiz-start-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-size: 0.9375rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif; transition: filter 0.3s ease; }
-    .quiz-start-btn:hover { background-color: #D4960A; filter: none; transition: all 0.3s ease; }
-    .quiz-intro-note { font-size: 0.625rem; color: #444; margin-top: 16px; font-family: 'Outfit', sans-serif; }
+    .quiz-start-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-size: 0.9375rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif; transition: background-color 0.3s ease, filter 0.3s ease; }
+    .quiz-start-btn:hover { background-color: var(--accent-dark); }
+    .quiz-intro-note { font-size: 0.625rem; color: #6B6B6B; margin-top: 16px; font-family: 'Outfit', sans-serif; }
     .quiz-header { text-align: center; margin-bottom: 4px; }
-    .quiz-brand { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-size: 1.125rem; font-weight: 700; }
-    .quiz-calc-greeting { font-size: 0.6875rem; color: var(--text-secondary); margin-top: 4px; font-family: 'Outfit', sans-serif; }
+    .quiz-brand { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; }
+    .quiz-calc-greeting { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; font-family: 'Outfit', sans-serif; }
     .quiz-progress { height: 3px; background-color: #1a1a1a; border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
     .quiz-progress-fill { height: 100%; background-color: var(--accent); border-radius: 2px; transition: width 0.5s ease; }
     .quiz-step { margin-top: 12px; }
     .quiz-question { font-family: 'Cormorant Garamond', serif; font-size: 1.375rem; color: var(--text-primary); font-weight: 600; margin-bottom: 6px; line-height: 1.2; }
-    .quiz-subtext { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6; font-family: 'Outfit', sans-serif; }
-    .quiz-multi-hint { font-size: 0.6875rem; color: var(--accent); margin-top: 4px; font-weight: 500; font-family: 'Outfit', sans-serif; }
+    .quiz-subtext { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; font-family: 'Outfit', sans-serif; }
+    .quiz-multi-hint { font-size: 0.75rem; color: var(--accent); margin-top: 4px; font-weight: 500; font-family: 'Outfit', sans-serif; }
     .quiz-options { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
     .quiz-option { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border-radius: 10px; border: 2px solid #1a1a1a; background-color: #0f0f0f; cursor: pointer; text-align: left; transition: all 0.2s ease; position: relative; overflow: hidden; font-family: 'Outfit', sans-serif; }
     .quiz-option:hover { border-color: #333; }
@@ -1340,48 +1330,63 @@
     .quiz-option-label-row { display: flex; align-items: center; flex-wrap: wrap; }
     .quiz-option-label { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
     .quiz-option.selected .quiz-option-label { color: var(--accent); }
-    .quiz-option-desc { font-size: 0.75rem; color: #9a9590; line-height: 1.4; margin-top: 1px; }
+    .quiz-option-desc { font-size: 0.75rem; color: #A8A29A; line-height: 1.4; margin-top: 1px; }
     .quiz-option.selected .quiz-option-desc { color: var(--text-secondary); }
     .quiz-option-check { width: 20px; height: 20px; border-radius: 50%; background-color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .quiz-option-check span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 800; }
-    .quiz-price-tag { font-size: 0.5625rem; color: var(--accent-dark); font-family: 'Outfit', sans-serif; font-weight: 700; background-color: rgba(255,189,29,0.07); padding: 2px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.3px; white-space: nowrap; }
+    .quiz-price-tag { font-size: 0.625rem; color: var(--accent-dark); font-family: 'Outfit', sans-serif; font-weight: 700; background-color: rgba(255,189,29,0.07); padding: 2px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.3px; white-space: nowrap; }
     .quiz-value-msg { background-color: #1a1700; border: 1px solid rgba(217,158,10,0.2); border-radius: 10px; padding: 13px 16px; margin-top: 10px; }
-    .quiz-value-msg p { font-size: 0.8125rem; color: var(--accent-light); font-family: 'Outfit', sans-serif; line-height: 1.6; margin: 0; }
+    .quiz-value-msg p { font-size: 0.875rem; color: var(--accent-light); font-family: 'Outfit', sans-serif; line-height: 1.6; margin: 0; }
     .quiz-value-msg .vm-icon { color: var(--accent); font-weight: 700; }
     .quiz-referral-box { background-color: #1a1700; border: 1px solid rgba(217,158,10,0.2); border-radius: 10px; padding: 14px 16px; margin-top: 10px; }
-    .quiz-referral-box p { font-size: 0.8125rem; color: var(--accent-light); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-bottom: 10px; }
-    .quiz-referral-box label { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); font-family: 'Outfit', sans-serif; margin-bottom: 5px; display: block; }
+    .quiz-referral-box p { font-size: 0.875rem; color: var(--accent-light); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-bottom: 10px; }
+    .quiz-referral-box label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); font-family: 'Outfit', sans-serif; margin-bottom: 5px; display: block; }
     .quiz-referral-input { width: 100%; padding: 11px 14px; border-radius: 8px; border: 2px solid rgba(255,189,29,0.2); background-color: #0f0f0f; color: var(--text-primary); font-size: 0.875rem; font-family: 'Outfit', sans-serif; outline: none; box-sizing: border-box; }
     .quiz-referral-input:focus { border-color: var(--accent); }
     .quiz-running-total { background-color: #1a1700; border: 1px solid rgba(255,189,29,0.2); border-radius: 10px; padding: 12px 16px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .quiz-running-total-label { font-size: 0.6875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; font-weight: 500; }
+    .quiz-running-total-label { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; font-weight: 500; }
     .quiz-running-total-amount { font-size: 1rem; color: var(--accent); font-family: 'Cormorant Garamond', serif; font-weight: 700; }
     .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
     .quiz-nav-back { background: transparent; border: none; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; padding: 8px 0; }
     .quiz-nav-back.hidden { color: transparent; cursor: default; }
-    .quiz-nav-step { font-size: 0.625rem; color: #333; font-family: 'Outfit', sans-serif; }
-    .quiz-nav-next { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.3s ease; }
-    .quiz-nav-next.disabled { background-color: #1a1a1a; color: #444; cursor: not-allowed; }
+    .quiz-nav-step { font-size: 0.625rem; color: #5A5A5A; font-family: 'Outfit', sans-serif; }
+    .quiz-nav-next { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: background-color 0.3s ease; }
+    .quiz-nav-next.disabled { background-color: #1a1a1a; color: #6B6B6B; cursor: not-allowed; }
     .quiz-form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
     .quiz-form-row { display: flex; gap: 10px; }
     .quiz-form-group { flex: 1; }
-    .quiz-form-label { font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); font-family: 'Outfit', sans-serif; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
+    .quiz-form-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); font-family: 'Outfit', sans-serif; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
     .quiz-form-input, .quiz-form-textarea { width: 100%; padding: 13px 14px; border-radius: 8px; border: 2px solid #1a1a1a; background-color: #0f0f0f; color: var(--text-primary); font-size: 0.875rem; font-family: 'Outfit', sans-serif; outline: none; box-sizing: border-box; }
     .quiz-form-input:focus, .quiz-form-textarea:focus { border-color: var(--accent); }
     .quiz-form-input.error, .quiz-form-textarea.error { border-color: #e74c3c; }
-    .quiz-form-input::placeholder, .quiz-form-textarea::placeholder { color: #555; }
+    .quiz-form-input::placeholder, .quiz-form-textarea::placeholder { color: #6B6B6B; }
     .quiz-form-textarea { resize: vertical; min-height: 80px; }
-    .quiz-form-error { font-size: 0.6875rem; color: #e74c3c; font-family: 'Outfit', sans-serif; margin-top: 4px; }
+    .quiz-form-error { font-size: 0.75rem; color: #e74c3c; font-family: 'Outfit', sans-serif; margin-top: 4px; }
+    select.quiz-form-input {
+      accent-color: #ffbd1d;
+    }
+    select.quiz-form-input option {
+      background-color: #0f0f0f;
+      color: var(--text-primary);
+    }
+    select.quiz-form-input option:hover,
+    select.quiz-form-input option:checked {
+      background-color: #ffbd1d;
+      color: #0a0a0a;
+    }
+    select.quiz-form-input:focus {
+      border-color: #ffbd1d;
+    }
     .quiz-checkbox-wrap { display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer; background: none; border: none; padding: 0; }
     .quiz-checkbox { width: 20px; height: 20px; border-radius: 4px; border: 2px solid #333; background-color: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; }
     .quiz-checkbox.checked { border-color: var(--accent); background-color: var(--accent); }
     .quiz-checkbox.checked span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 800; }
     .quiz-checkbox-label { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
     .quiz-checkbox.checked + .quiz-checkbox-label { color: var(--text-primary); }
-    .quiz-submit-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9375rem; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: filter 0.3s ease; }
-    .quiz-submit-btn:hover { background-color: #D4960A; filter: none; transition: all 0.3s ease; }
-    .quiz-form-hint { font-size: 0.625rem; color: #444; text-align: center; font-family: 'Outfit', sans-serif; }
-    .quiz-form-submit-error { font-size: 0.6875rem; color: #e74c3c; text-align: center; font-family: 'Outfit', sans-serif; }
+    .quiz-submit-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9375rem; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: background-color 0.3s ease, filter 0.3s ease; }
+    .quiz-submit-btn:hover { background-color: var(--accent-dark); }
+    .quiz-form-hint { font-size: 0.625rem; color: #6B6B6B; text-align: center; font-family: 'Outfit', sans-serif; }
+    .quiz-form-submit-error { font-size: 0.75rem; color: #e74c3c; text-align: center; font-family: 'Outfit', sans-serif; }
     .quiz-box { background-color: #0f0f0f; border-radius: 12px; padding: 20px 16px; border: 1px solid #1a1a1a; margin-bottom: 16px; }
     .quiz-gold-box { background-color: #1a1700; border: 1px solid rgba(255,189,29,0.2); border-radius: 12px; padding: 24px 20px; text-align: center; margin-bottom: 16px; }
     .quiz-box-label { font-size: 0.625rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; margin-bottom: 14px; }
@@ -1390,37 +1395,37 @@
     .quiz-confirm-icon { width: 64px; height: 64px; border-radius: 50%; background-color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.75rem; }
     .quiz-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
     .quiz-confirm-text { font-family: 'Outfit', sans-serif; font-size: 1rem; color: var(--text-primary); line-height: 1.7; max-width: 440px; margin: 0 auto; }
-    .quiz-confirm-sms { font-family: 'Outfit', sans-serif; font-size: 0.8125rem; color: var(--text-secondary); margin-top: 8px; }
+    .quiz-confirm-sms { font-family: 'Outfit', sans-serif; font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px; }
     .quiz-film-card { background-color: #151515; border-radius: 10px; padding: 14px 16px; border: 1px solid #1f1f1f; display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
-    .quiz-film-thumb { width: 44px; height: 44px; border-radius: 8px; background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,189,29,0.2); flex-shrink: 0; font-size: 1.125rem; }
+    .quiz-film-thumb { width: 44px; height: 44px; border-radius: 8px; background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,189,29,0.2); flex-shrink: 0; font-size: 1rem; }
     .quiz-film-info { flex: 1; }
-    .quiz-film-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); font-family: 'Outfit', sans-serif; margin-bottom: 2px; }
-    .quiz-film-desc { font-size: 0.6875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
-    .quiz-film-tag { font-size: 0.5625rem; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; background-color: rgba(255,189,29,0.08); padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
+    .quiz-film-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); font-family: 'Outfit', sans-serif; margin-bottom: 2px; }
+    .quiz-film-desc { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
+    .quiz-film-tag { font-size: 0.625rem; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; background-color: rgba(255,189,29,0.08); padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
     .quiz-answer-row { display: flex; justify-content: space-between; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #151515; gap: 8px; }
-    .quiz-answer-key { font-size: 0.6875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; flex-shrink: 0; }
-    .quiz-answer-val { font-size: 0.6875rem; color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 600; text-align: right; }
+    .quiz-answer-key { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; flex-shrink: 0; }
+    .quiz-answer-val { font-size: 0.75rem; color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 600; text-align: right; }
     .calc-estimate-label { font-size: 0.625rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; margin-bottom: 8px; }
     .calc-estimate-amount { font-family: 'Cormorant Garamond', serif; font-size: 2.625rem; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
-    .calc-estimate-note { font-size: 0.8125rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
-    .calc-tier-badge { display: inline-block; background-color: var(--accent); color: var(--bg-primary); padding: 4px 14px; border-radius: 20px; font-size: 0.6875rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
-    .calc-tier-desc { font-size: 0.8125rem; color: var(--text-primary); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-top: 12px; }
+    .calc-estimate-note { font-size: 0.875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
+    .calc-tier-badge { display: inline-block; background-color: var(--accent); color: var(--bg-primary); padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+    .calc-tier-desc { font-size: 0.875rem; color: var(--text-primary); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-top: 12px; }
     .calc-deliverable { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .calc-deliverable-icon { color: var(--accent); font-size: 0.875rem; }
-    .calc-deliverable-text { font-size: 0.8125rem; color: var(--text-primary); font-family: 'Outfit', sans-serif; }
+    .calc-deliverable-text { font-size: 0.875rem; color: var(--text-primary); font-family: 'Outfit', sans-serif; }
     .calc-driver { margin-bottom: 12px; padding-left: 12px; border-left: 2px solid rgba(255,189,29,0.13); }
     .calc-driver-header { display: flex; justify-content: space-between; margin-bottom: 2px; }
     .calc-driver-name { font-size: 0.75rem; color: var(--text-primary); font-weight: 600; font-family: 'Outfit', sans-serif; }
-    .calc-driver-pct { font-size: 0.6875rem; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; }
-    .calc-driver-desc { font-size: 0.6875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; line-height: 1.5; }
+    .calc-driver-pct { font-size: 0.75rem; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; }
+    .calc-driver-desc { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; line-height: 1.5; }
     .calc-fact { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; line-height: 1.6; padding-left: 12px; border-left: 2px solid rgba(255,189,29,0.13); margin-bottom: 8px; }
     .calc-back-btn { background-color: transparent; border: 1px solid #333; color: var(--text-secondary); padding: 10px 20px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; transition: border-color 0.3s ease; }
     .calc-back-btn:hover { border-color: var(--text-secondary); }
-    .calc-reset-btn { background: none; border: none; color: #555; font-family: 'Outfit', sans-serif; font-size: 0.6875rem; cursor: pointer; width: 100%; padding: 8px; }
+    .calc-reset-btn { background: none; border: none; color: #6B6B6B; font-family: 'Outfit', sans-serif; font-size: 0.75rem; cursor: pointer; width: 100%; padding: 8px; }
     .calc-reset-btn:hover { color: var(--text-secondary); }
-    .calc-cta-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--text-primary); font-weight: 600; margin-bottom: 8px; }
-    .calc-cta-desc { font-size: 0.8125rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-bottom: 16px; }
-    .calc-cta-note { font-size: 0.625rem; color: #555; font-family: 'Outfit', sans-serif; margin-top: 10px; }
+    .calc-cta-title { font-family: 'Cormorant Garamond', serif; font-size: 1.375rem; color: var(--text-primary); font-weight: 600; margin-bottom: 8px; }
+    .calc-cta-desc { font-size: 0.875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-bottom: 16px; }
+    .calc-cta-note { font-size: 0.625rem; color: #6B6B6B; font-family: 'Outfit', sans-serif; margin-top: 10px; }
 
     @media (max-width: 768px) {
       .quiz-form-row { flex-direction: column; gap: 14px; }
@@ -1434,8 +1439,24 @@
     }
 
     /* Date picker dark theme */
-    input[type="date"] { color-scheme: dark; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    input[type="date"] {
+      color-scheme: dark;
+      accent-color: #ffbd1d;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8) sepia(1) saturate(5) hue-rotate(10deg) brightness(1.1);
+      cursor: pointer;
+      opacity: 0.85;
+      padding: 4px;
+      width: 20px;
+      height: 20px;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+    ::-webkit-datetime-edit-fields-wrapper { color: var(--text-primary); }
+    ::-webkit-datetime-edit { color: var(--text-primary); }
+    input[type="date"]:focus { accent-color: #ffbd1d; }
 
     /* Availability spinner */
     @keyframes av-spin {
@@ -1454,7 +1475,7 @@
       width: 18px;
       height: 18px;
       border: 2px solid rgba(255,189,29,0.25);
-      border-top: 2px solid #FFBD1D;
+      border-top: 2px solid var(--accent);
       border-radius: 50%;
       animation: av-spin 0.8s linear infinite;
       flex-shrink: 0;
@@ -1503,7 +1524,7 @@
     .footer-seo-services {
       margin-top: 10px;
       font-size: 0.75rem;
-      opacity: 0.55;
+      opacity: 0.7;
     }
 
     /* Confirmation cover blocks (styled like The Difference section) */
@@ -1533,14 +1554,14 @@
     .confirm-cover-title {
       font-family: 'Outfit', sans-serif;
       font-weight: 600;
-      font-size: 0.9375rem;
+      font-size: 1rem;
       color: var(--text-primary);
       margin-bottom: 4px;
     }
     .confirm-cover-desc {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       color: var(--text-secondary);
       line-height: 1.6;
     }
@@ -1553,7 +1574,51 @@
       color: var(--text-secondary);
       margin-top: 12px;
       letter-spacing: 0.05em;
-      opacity: 0.6;
+      opacity: 0.7;
+    }
+
+    /* ========== UTILITY CLASSES ========== */
+
+    .cta-center {
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .investment-desc {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .why-cta-headline {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 0;
+    }
+
+    .why-cta-highlight {
+      color: var(--accent);
+    }
+
+    .why-cta-subline {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.85rem;
+      color: var(--text-secondary);
+      margin: 14px 0;
+    }
+
+    .why-cta-accent {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 36px;
     }
   </style>
 </head>
@@ -1651,7 +1716,7 @@
           </div>
         </div>
 
-        <div class="reveal-child" style="text-align:center;margin-top:32px">
+        <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Your Turn &#10022;</a>
         </div>
       </div>
@@ -1696,7 +1761,7 @@
         </div>
 
         <div class="why-cta">
-          <p class="why-cta-text"><span style="font-size:2rem;font-weight:600;letter-spacing:1px;display:block;margin-bottom:0">Still scrolling? <span style="color:#FFBD1D">Good.</span></span><span style="display:block;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:1.85rem;color:var(--text-secondary);margin:14px 0">That means you care about this.</span><span style="display:block;color:#FFBD1D;margin-bottom:36px">So do we.</span></p>
+          <p class="why-cta-text"><span class="why-cta-headline">Still scrolling? <span class="why-cta-highlight">Good.</span></span><span class="why-cta-subline">That means you care about this.</span><span class="why-cta-accent">So do we.</span></p>
           <a href="#quiz" class="btn">See If Your Date Is Available</a>
         </div>
 
@@ -1731,7 +1796,7 @@
 
     <!-- ========== TESTIMONIALS ========== -->
     <section class="section testimonials" aria-label="Testimonials">
-      <div class="testimonials-bg" style="background-image: url('olivia-austin.jpg');" aria-hidden="true"></div>
+      <div class="testimonials-bg" style="background-image: url('grace-sage.jpg');" aria-hidden="true"></div>
       <div class="testimonials-bg-overlay" aria-hidden="true"></div>
       <div class="section-inner reveal">
         <p class="section-label reveal-child">Straight From Our Couples</p>
@@ -1741,42 +1806,44 @@
           <span class="reviews-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
           <span class="reviews-label">5.0 on Google</span>
         </div>
-        <div class="carousel carousel-arrows reveal-child" aria-label="Testimonial carousel" role="region">
-          <div class="carousel-slide active">
-            <blockquote>
-              <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now — DO IT. I've watched it every day and I cry every time.</p>
-              <cite class="carousel-attr">&mdash; Google Review</cite>
-            </blockquote>
+        <div class="carousel reveal-child" aria-label="Testimonial carousel" role="region">
+          <div class="carousel-content">
+            <div class="carousel-slide active">
+              <blockquote>
+                <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now — DO IT. I've watched it every day and I cry every time.</p>
+                <cite class="carousel-attr">&mdash; Google Review</cite>
+              </blockquote>
+            </div>
+            <div class="carousel-slide">
+              <blockquote>
+                <p class="carousel-quote">I can't stop watching it. Happy tears, so much joy, laughter and love. I've watched it at least 3 times a day since getting it.</p>
+                <cite class="carousel-attr">&mdash; Mariah K.</cite>
+              </blockquote>
+            </div>
+            <div class="carousel-slide">
+              <blockquote>
+                <p class="carousel-quote">Molly's grandma has watched it several times and cried during every viewing.</p>
+                <cite class="carousel-attr">&mdash; Molly C.</cite>
+              </blockquote>
+            </div>
+            <div class="carousel-slide">
+              <blockquote>
+                <p class="carousel-quote">I wasn't sure I even wanted video. When I found their page, I knew I needed it. The teaser was INCREDIBLE.</p>
+                <cite class="carousel-attr">&mdash; Summer A.</cite>
+              </blockquote>
+            </div>
+            <div class="carousel-slide">
+              <blockquote>
+                <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film — remarkable.</p>
+                <cite class="carousel-attr">&mdash; Katlin F.</cite>
+              </blockquote>
+            </div>
+            <button class="carousel-arrow carousel-arrow--prev" aria-label="Previous testimonial">&#8249;</button>
+            <button class="carousel-arrow carousel-arrow--next" aria-label="Next testimonial">&#8250;</button>
           </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">I can't stop watching it. Happy tears, so much joy, laughter and love. I've watched it at least 3 times a day since getting it.</p>
-              <cite class="carousel-attr">&mdash; Mariah K.</cite>
-            </blockquote>
-          </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">Molly's grandma has watched it several times and cried during every viewing.</p>
-              <cite class="carousel-attr">&mdash; Molly C.</cite>
-            </blockquote>
-          </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">I wasn't sure I even wanted video. When I found their page, I knew I needed it. The teaser was INCREDIBLE.</p>
-              <cite class="carousel-attr">&mdash; Summer A.</cite>
-            </blockquote>
-          </div>
-          <div class="carousel-slide">
-            <blockquote>
-              <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film — remarkable.</p>
-              <cite class="carousel-attr">&mdash; Katlin F.</cite>
-            </blockquote>
-          </div>
-          <button class="carousel-arrow carousel-arrow--prev" aria-label="Previous testimonial">&#8249;</button>
-          <button class="carousel-arrow carousel-arrow--next" aria-label="Next testimonial">&#8250;</button>
         </div>
 
-        <div class="reveal-child" style="text-align:center;margin-top:32px">
+        <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Check Your Date &#10022;</a>
         </div>
       </div>
@@ -1792,8 +1859,8 @@
         <div class="investment-text">
           <p class="reveal-child">Every couple is different — so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish — we'll build it around you.</p>
           <p class="investment-price reveal-child">Film Packages Starting at $3,000</p>
-          <p class="reveal-child" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:1rem;color:var(--text-secondary);line-height:1.7;margin-bottom:16px">Drone coverage, professional audio, licensed music, and a pre-wedding planning session all come standard. Your teaser? Delivered within a week — because waiting months to relive your day isn't how we do things.</p>
-          <div class="reveal-child" style="margin-top:36px">
+          <p class="reveal-child investment-desc">Drone coverage, professional audio, licensed music, and a pre-wedding planning session all come standard. Your teaser? Delivered within a week — because waiting months to relive your day isn't how we do things.</p>
+          <div class="reveal-child cta-center">
             <a href="#quiz" class="btn">Let's Build Yours</a>
           </div>
         </div>
@@ -1949,19 +2016,10 @@
       var carousel = document.querySelector('.carousel');
       var prevArrow = document.querySelector('.carousel-arrow--prev');
       var nextArrow = document.querySelector('.carousel-arrow--next');
-      var testimonialsBg = document.querySelector('.testimonials-bg');
-
-      // Background images per slide pair
-      var slideBgs = ['olivia-austin.jpg', 'olivia-austin.jpg', 'sarah-carson.jpg', 'grace-sage.jpg', 'grace-sage.jpg'];
-
       function goToSlide(index) {
         slides[currentSlide].classList.remove('active');
         currentSlide = index;
         slides[currentSlide].classList.add('active');
-        // Update background image
-        if (testimonialsBg && slideBgs[currentSlide]) {
-          testimonialsBg.style.backgroundImage = "url('" + slideBgs[currentSlide] + "')";
-        }
       }
 
       function nextSlideFunc() {
@@ -2049,7 +2107,11 @@
       // ========== QUIZ / CALCULATOR APP ==========
       (function() {
         // --- GOOGLE SHEETS WEBHOOK ---
-        var SHEET_URL = 'https://script.google.com/macros/s/AKfycbw6KwsAAI2Zs-lW_LymlR1KH54jykxSF6KFL7dYJzRjUaCBgdXWVbGnXO-hxXC8Ej4OaQ/exec';
+        var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyikKxXZKzH6uRnXRy5vXDkhqhQ9tQPr0wKKv-Ygd8NAz04CA3VtXf_d2Lenssc3Md-yw/exec';
+        // TODO: Update Apps Script availability checker:
+        // - If a date is NOT found in the "Booked Dates" tab of "Flyin' Iris Leads" sheet, assume AVAILABLE
+        // - Return dual status: { ss_status: "available|limited|booked", team_status: "available|limited|booked" }
+        // - Current script URL below
         var AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbxgDTIO1ayGAnwLlN8DlLsIrV6t3Ks8eyGlXkuM7m4205vJczc9nm-Ugb82RAq7xXtX4Q/exec';
 
         function checkAvailability(dateStr) {
@@ -2111,32 +2173,32 @@
         }
 
         // --- PRICING ---
-        // Team pricing (Make it beautiful)
-        var TEAM_BASE_PRICE = 2200;
-        var TEAM_BASE_COST = 1100;
-        var TEAM_HOURS = { 6:{price:0,cost:0}, 8:{price:300,cost:200}, 10:{price:600,cost:400}, 12:{price:900,cost:600} };
+        // Team pricing (We want an incredible wedding film)
+        var TEAM_BASE_PRICE = 3000;
+        var TEAM_BASE_COST = 1500;
+        var TEAM_HOURS = { 6:{price:0,cost:0}, 8:{price:200,cost:150}, 10:{price:400,cost:300}, 12:{price:600,cost:450} };
         var TEAM_HIGHLIGHT = {
-          "No highlight film":{price:0,cost:0}, "4-5 min":{price:500,cost:500}, "6-8 min":{price:650,cost:600},
-          "9-12 min":{price:800,cost:700}, "13-15 min":{price:1000,cost:800}, "15-20 min":{price:1250,cost:850}
+          "3-5 min":{price:0,cost:0}, "6-8 min":{price:250,cost:200},
+          "9-12 min":{price:450,cost:350}, "13-15 min":{price:650,cost:500}, "15-20 min":{price:900,cost:600}
         };
-        var TEAM_ADDONS = { teaser:{price:600,cost:300}, storySession:{price:1000,cost:500}, archival:{price:500,cost:249} };
-        // S&S pricing (Make it unforgettable)
+        var TEAM_ADDONS = { teaser:{price:450,cost:250}, storySession:{price:800,cost:400}, fomo:{price:500,cost:200} };
+        // S&S pricing (We want Sierra & Sean creating with us)
         var SS_BASE_PRICE = 5000;
         var SS_HOURS = { 6:0, 8:300, 10:500, 12:700 };
         var SS_HIGHLIGHT = { "3-5 min":0, "6-8 min":400, "9-12 min":800, "13-20 min":1200 };
-        var SS_ADDONS = { teaser:500, storySession:1000, fomo:700 };
+        var SS_ADDONS = { teaser:500, storySession:1000, fomo:1000 };
 
         function getHoursNum(label) {
           if (!label) return 6;
-          if (label.indexOf("11-12") >= 0 || label === "12 hours") return 12;
-          if (label.indexOf("9-10") >= 0 || label === "10 hours") return 10;
-          if (label.indexOf("7-8") >= 0 || label === "8 hours") return 8;
+          if (label.indexOf("12") >= 0) return 12;
+          if (label.indexOf("10") >= 0) return 10;
+          if (label.indexOf("8") >= 0) return 8;
           return 6;
         }
 
         function calcPrice(a) {
-          var isTeam = a.quality === "Make it beautiful";
-          var isSS = a.quality === "Make it unforgettable";
+          var isTeam = a.quality === "We want an incredible wedding film";
+          var isSS = a.quality === "We want Sierra & Sean creating with us";
           if (!isTeam && !isSS) return { price:0, savings:0, rawPrice:0, breakdown:[] };
           var hours = getHoursNum(a.hours);
           var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
@@ -2148,27 +2210,58 @@
             var hld = TEAM_HIGHLIGHT[a.highlight] || {price:0,cost:0};
             var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0, tc = hasTeas ? TEAM_ADDONS.teaser.cost : 0;
             var sp = hasStory ? TEAM_ADDONS.storySession.price : 0, sc = hasStory ? TEAM_ADDONS.storySession.cost : 0;
-            var ap = hasExtra ? TEAM_ADDONS.archival.price : 0, ac = hasExtra ? TEAM_ADDONS.archival.cost : 0;
+            var ap = hasExtra ? TEAM_ADDONS.fomo.price : 0, ac = hasExtra ? TEAM_ADDONS.fomo.cost : 0;
             var rawPrice = TEAM_BASE_PRICE + hd.price + hld.price + tp + sp + ap;
             var rawCost = TEAM_BASE_COST + hd.cost + hld.cost + tc + sc + ac;
+            var addOnCount = 0;
+            if (hasTeas) addOnCount++;
+            if (hasExtra) addOnCount++;
+            if (hld.price > 0) addOnCount++;
             var discount = 0;
-            if (hours >= 8) discount += 0.08;
-            if (hours >= 10) discount += 0.04;
-            if (hasStory) discount += 0.06;
-            if (hasTeas) discount += 0.01;
-            discount = Math.min(discount, 0.26);
+            if (addOnCount >= 4) discount = 0.12;
+            else if (addOnCount >= 3) discount = 0.08;
+            else if (addOnCount >= 2) discount = 0.05;
             var discountedPrice = Math.ceil(rawPrice * (1 - discount) / 10) * 10;
             var profit = discountedPrice - rawCost;
             var finalPrice = (profit < 1000) ? Math.ceil((rawCost + 1000) / 10) * 10 : discountedPrice;
             var savings = rawPrice - finalPrice;
             var bd = [];
-            bd.push({label:"Base package (6 hrs)", value:TEAM_BASE_PRICE});
-            if (a.hours) { bd.push(hd.price > 0 ? {label:hours+" hours coverage", value:hd.price, prefix:"+"} : {label:"6 hours coverage", value:0, display:"Included"}); }
-            if (a.highlight) { bd.push(hld.price > 0 ? {label:a.highlight+" highlight film", value:hld.price, prefix:"+"} : {label:a.highlight, value:0, display:a.highlight==="No highlight film"?"Not selected":"Included"}); }
-            bd.push(hasTeas ? {label:"Teaser film", value:tp, prefix:"+"} : {label:"Teaser film", value:0, display:"Not selected"});
-            bd.push(hasStory ? {label:"Story session", value:sp, prefix:"+"} : {label:"Story session", value:0, display:"Not selected"});
-            bd.push(hasExtra ? {label:"Archival footage upgrade", value:ap, prefix:"+"} : {label:"Archival footage upgrade", value:0, display:"Not selected"});
-            if (savings > 0) bd.push({label:"Bundle savings", value:savings, prefix:"\u2212"});
+            bd.push({label:"Base package", value:TEAM_BASE_PRICE});
+            if (a.hours) {
+              var h = getHoursNum(a.hours);
+              if (h > 6) {
+                bd.push({label: h + " hours of total coverage", value: hd.price, prefix: "+"});
+              } else {
+                bd.push({label: "6 hours of coverage", value: 0, display: "Included"});
+              }
+            }
+            if (a.highlight) {
+              if (hld.price > 0) {
+                bd.push({label: a.highlight + " highlight film", value: hld.price, prefix: "+"});
+              } else {
+                bd.push({label: "3-5 min highlight film", value: 0, display: "Included"});
+              }
+            }
+            if (hasTeas) {
+              bd.push({label:"Teaser film", value:tp, prefix:"+"});
+            } else {
+              bd.push({label:"Teaser film", value:0, display:"Declined"});
+            }
+            if (hasExtra) {
+              bd.push({label:"FOMO Documentary Edit", value:ap, prefix:"+"});
+            } else if (a.extra && a.extra.indexOf("Tell me more") >= 0) {
+              bd.push({label:"FOMO Documentary Edit", value:0, display:"Ask on the call \u2753"});
+            } else {
+              bd.push({label:"FOMO Documentary Edit", value:0, display:"Declined"});
+            }
+            if (hasStory) {
+              bd.push({label:"Story Session", value:sp, prefix:"+"});
+            } else if (a.storySession && a.storySession.indexOf("Tell me more") >= 0) {
+              bd.push({label:"Story Session", value:0, display:"Ask on the call \u2753"});
+            } else {
+              bd.push({label:"Story Session", value:0, display:"Declined"});
+            }
+            if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
             return { price:finalPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
           }
           // S&S path
@@ -2190,13 +2283,42 @@
           var discountedPrice = Math.ceil(rawPrice * (1 - discount) / 10) * 10;
           var savings = rawPrice - discountedPrice;
           var bd = [];
-          bd.push({label:"Base package (6 hrs, 3-5 min highlight)", value:SS_BASE_PRICE});
-          if (a.hours) { bd.push(hp > 0 ? {label:hours+" hours coverage", value:hp, prefix:"+"} : {label:"6 hours coverage", value:0, display:"Included"}); }
-          if (a.highlight) { bd.push(hlp > 0 ? {label:a.highlight+" highlight film upgrade", value:hlp, prefix:"+"} : {label:(a.highlight||"3-5 min")+" highlight film", value:0, display:"Included"}); }
-          bd.push(hasTeas ? {label:"Teaser film", value:tp2, prefix:"+"} : {label:"Teaser film", value:0, display:"Not selected"});
-          bd.push(hasStory ? {label:"Story session", value:sp2, prefix:"+"} : {label:"Story session", value:0, display:"Not selected"});
-          bd.push(hasExtra ? {label:"FOMO Documentary Edit", value:fp2, prefix:"+"} : {label:"FOMO Documentary Edit", value:0, display:"Not selected"});
-          if (savings > 0) bd.push({label:"Bundle savings", value:savings, prefix:"\u2212"});
+          bd.push({label:"Base package", value:SS_BASE_PRICE});
+          if (a.hours) {
+            var hourNum = hours;
+            if (hourNum > 6) {
+              bd.push({label: hourNum + " hours of total coverage", value: hp, prefix: "+"});
+            } else {
+              bd.push({label: "6 hours of coverage", value: 0, display: "Included"});
+            }
+          }
+          if (a.highlight) {
+            if (hlp > 0) {
+              bd.push({label: a.highlight + " highlight film", value: hlp, prefix: "+"});
+            } else {
+              bd.push({label: "3-5 min highlight film", value: 0, display: "Included"});
+            }
+          }
+          if (hasTeas) {
+            bd.push({label:"Teaser film", value:tp2, prefix:"+"});
+          } else {
+            bd.push({label:"Teaser film", value:0, display:"Declined"});
+          }
+          if (hasExtra) {
+            bd.push({label:"FOMO Documentary Edit", value:fp2, prefix:"+"});
+          } else if (a.extra && a.extra.indexOf("Tell me more") >= 0) {
+            bd.push({label:"FOMO Documentary Edit", value:0, display:"Ask on the call \u2753"});
+          } else {
+            bd.push({label:"FOMO Documentary Edit", value:0, display:"Declined"});
+          }
+          if (hasStory) {
+            bd.push({label:"Story Session", value:sp2, prefix:"+"});
+          } else if (a.storySession && a.storySession.indexOf("Tell me more") >= 0) {
+            bd.push({label:"Story Session", value:0, display:"Ask on the call \u2753"});
+          } else {
+            bd.push({label:"Story Session", value:0, display:"Declined"});
+          }
+          if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
           return { price:discountedPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
         }
         function fp(n) { return "$" + n.toLocaleString(); }
@@ -2227,13 +2349,19 @@
             {emoji:"\ud83d\udcd6",label:"Our story, not just the day",desc:"Who we are as a couple \u2014 the real stuff"},
             {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all \u2014 is that too much to ask?"}
           ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story \u2014 the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt \u2014 your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all \u2014 that\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
+          { id:"budget", label:"Budget", question:"What are you thinking for video investment?", subtext:"Just helps us understand what to put together for you.", type:"single", options:[
+            {emoji:"\ud83d\udcb0",label:"Under $3,000",desc:""},
+            {emoji:"\ud83c\udfac",label:"$3,000 \u2013 $5,000",desc:""},
+            {emoji:"\u2728",label:"$5,000 \u2013 $8,000",desc:""},
+            {emoji:"\ud83d\udc8e",label:"$8,000+",desc:""}
+          ]},
           { id:"contact", label:"Let\u2019s Talk!", question:"Last step \u2014 let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster \u2014 we get excited.", type:"contact" }
         ];
 
         // --- CALCULATOR DATA ---
         function getCalcSteps() {
           var ca = state.calcAnswers;
-          var isTeam = ca.quality === "Make it beautiful";
+          var isTeam = ca.quality === "We want an incredible wedding film";
           return [
             { id:"hook", question:"If you could relive one moment from your wedding day forever \u2014 what would it be?", subtext:"Not a trick question. This is how we think about wedding films.", type:"single", options:[
               {emoji:"\ud83d\ude2d",label:"The first time we see each other",desc:"That look. That reaction. The one you can\u2019t fake."},
@@ -2243,53 +2371,49 @@
               {emoji:"\ud83c\udf05",label:"The quiet moments nobody else saw",desc:"A stolen glance, a whisper, a hand squeeze"},
               {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
             ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows \u2014 every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious \u2014 even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
-            { id:"quality", question:"What level of care do you want in your wedding film?", subtext:"The single biggest factor in cost. Be honest \u2014 no wrong answer.", type:"single", options:[
-              {emoji:"\u2728",label:"Make it beautiful",desc:"Our expert team captures your day with the same Flyin\u2019 Iris cinematic style \u2014 edited in-house with Sierra\u2019s final touch."},
-              {emoji:"\ud83d\udc8e",label:"Make it unforgettable",desc:"Sierra & Sean personally film and edit your story \u2014 limited availability, founder-level storytelling from start to finish."}
-            ], valueMessage:{"Make it beautiful":"The sweet spot. A skilled editor with great gear makes a massive difference.","Make it unforgettable":"Top tier. They study your relationship, plan every shot, hand-craft every edit."}},
+            { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment \u2014 and there\u2019s no wrong answer.", type:"single", options:[
+              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision \u2014 then Sierra edits your footage into a cinematic story with her signature style."},
+              {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sierra is in the room feeling your energy, hearing the vows, watching your family cry. When she edits, she\u2019s not guessing \u2014 she was there. That\u2019s the difference."}
+            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts \u2014 hundreds of weddings filmed. Sierra personally edits every frame, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra\u2019s there in person, she feels every moment \u2014 the music, the energy, the tears. Your film won\u2019t just look like your wedding. It\u2019ll feel like it."}},
             isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", type:"single", showPriceImpact:true, options:[
               {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances \u2014 our most popular starting point"},
-              {emoji:"\ud83d\udc84",label:"7-8 hours",desc:"Getting ready through the reception highlights"},
-              {emoji:"\ud83c\udf05",label:"9-10 hours",desc:"Full day coverage \u2014 pre-ceremony through the party"},
-              {emoji:"\ud83c\udf1f",label:"11-12 hours",desc:"The whole thing \u2014 first moment to last song"}
-            ], valueMessage:{"6 hours":"Great starting point \u2014 ceremony, toasts, first dances.","7-8 hours":"Getting ready through the reception highlights.","9-10 hours":"The full story \u2014 pre-ceremony through the party.","11-12 hours":"Every chapter, first moment to last song."}}
+              {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
+              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage \u2014 pre-ceremony through the party"},
+              {emoji:"\ud83c\udf1f",label:"Up to 12 hours",desc:"The whole thing \u2014 first moment to last song"}
+            ], valueMessage:{"6 hours":"Great starting point \u2014 ceremony, toasts, first dances.","8 hours":"Getting ready through the reception highlights.","10 hours":"The full story \u2014 pre-ceremony through the party.","Up to 12 hours":"Every chapter, first moment to last song."}}
             : { id:"hours", question:"How long is your wedding day?", subtext:"Sean & Sierra will be there for every moment you choose.", type:"single", showPriceImpact:true, options:[
               {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day \u2014 ceremony through first dances"},
               {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day \u2014 getting ready through reception"},
               {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day \u2014 we\u2019ll be there for everything"},
               {emoji:"\ud83c\udf1f",label:"12 hours",desc:"Epic day \u2014 first moment to last song"}
             ], valueMessage:{"6 hours":"Intimate and intentional.","8 hours":"Classic day \u2014 getting ready through reception.","10 hours":"Full day \u2014 we\u2019ll be there for everything.","12 hours":"Epic day \u2014 first moment to last song."}},
-            isTeam ? { id:"highlight", question:"How long do you want your highlight film?", subtext:"THE film \u2014 cinematic, polished, music-driven. The one you\u2019ll share, rewatch, and cry over.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udeab",label:"No highlight film",desc:"Skip the highlight \u2014 focus on other deliverables"},
-              {emoji:"\u26a1",label:"4-5 min",desc:"Punchy, powerful, perfect for sharing"},
+            isTeam ? { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every package. The cinematic, music-driven film you\u2019ll share and rewatch forever. Most couples in Wisconsin choose between 3\u201312 minutes based on our experience filming hundreds of weddings.", type:"single", showPriceImpact:true, options:[
+              {emoji:"\u26a1",label:"3-5 min",desc:"Punchy, powerful, perfect for sharing \u2014 included in your package"},
               {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
               {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film \u2014 the full emotional arc"},
               {emoji:"\ud83d\udcd6",label:"13-15 min",desc:"Extended story \u2014 every chapter, nothing rushed"},
               {emoji:"\ud83c\udfc6",label:"15-20 min",desc:"The ultimate \u2014 every detail, nothing left out"}
-            ], valueMessage:{"No highlight film":"All investment goes into your other deliverables.","4-5 min":"Packs emotion into a short window. Friends will watch on repeat.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story \u2014 every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}}
-            : { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every S&S package. The cinematic, music-driven film you\u2019ll share and rewatch forever.", type:"single", showPriceImpact:true, options:[
+            ], valueMessage:{"3-5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story \u2014 every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}}
+            : { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every S&S package. The cinematic, music-driven film you\u2019ll share and rewatch forever. Most couples in Wisconsin choose between 3\u201312 minutes based on our experience filming hundreds of weddings.", type:"single", showPriceImpact:true, options:[
               {emoji:"\u26a1",label:"3-5 min",desc:"Punchy, powerful, perfect for sharing \u2014 included in your package"},
               {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
               {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film \u2014 the full emotional arc"},
               {emoji:"\ud83d\udcd6",label:"13-20 min",desc:"The ultimate \u2014 every chapter, nothing left out"}
             ], valueMessage:{"3-5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}},
-            { id:"teaser", question:"Do you want a social media teaser?", subtext:"A 30-second to 2-minute sneak peek to share while your full film is being edited.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udd25",label:"Yes \u2014 give me something to post!",desc:"Quick cinematic preview while the full film is in the works"},
+            { id:"teaser", question:"Do you want a social media teaser?", subtext:"A cinematic sneak peek to share while your full film is being edited. Something to post while everyone\u2019s still talking about your wedding.", type:"single", showPriceImpact:true, options:[
+              {emoji:"\ud83d\udd25",label:"Yes \u2014 give me something to post!",desc:"A cinematic preview to share while the full film is in the works"},
               {emoji:"\ud83d\ude45",label:"No \u2014 I\u2019ll wait for the full film",desc:"All focus goes into the main film"}
             ], valueMessage:{"Yes \u2014 give me something to post!":"Post a cinematic preview while everyone\u2019s still talking about the wedding. Instant hype.","No \u2014 I\u2019ll wait for the full film":"Everything goes into making your main film incredible."}},
-            { id:"storySession", question:"Would you want a filmed story session before the wedding?", subtext:"A 90-minute pre-wedding session where we get to know you as a couple, film cinematic portraits, and capture your love story on camera \u2014 all woven into your final wedding film.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83c\udfac",label:"Yes \u2014 I want the full love story experience",desc:"90-minute session: filmed interviews, cinematic portraits woven into your film"},
-              {emoji:"\ud83d\udc92",label:"No \u2014 just the wedding day",desc:"All the focus and budget goes into making the wedding day coverage incredible"},
-              {emoji:"\ud83e\udd14",label:"Tell me more later",desc:"Sounds interesting but I\u2019d want to talk about it first"}
-            ], valueMessage:{"Yes \u2014 I want the full love story experience":"This is the difference between a wedding video and a love story. When you meet your filmmakers before the day, they understand your energy, your humor, your dynamic \u2014 and the final film reflects all of it. It\u2019s the most personal upgrade you can make.","No \u2014 just the wedding day":"The wedding day gives us plenty to work with. All the energy and investment goes into making that one day as cinematic as possible.","Tell me more later":"We\u2019d love to walk you through it. Story sessions are one of our favorite things \u2014 and couples consistently say it\u2019s the part of the process they didn\u2019t know they needed."}},
-            isTeam ? { id:"extra", question:"Would you like a full archival footage upgrade?", subtext:"Every major moment captured in full \u2014 ceremony, speeches, dances \u2014 multi-angle, audio enhanced, color graded. Beyond what\u2019s included in your base package.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\u2705",label:"Yes \u2014 give me everything",desc:"Full archival footage of every major moment"},
-              {emoji:"\ud83d\udeab",label:"No \u2014 the base coverage is enough",desc:"Stick with the mini archival footage included in your package"}
-            ], valueMessage:{"Yes \u2014 give me everything":"Every major moment, multi-angle, enhanced audio, color graded. Generations will treasure this.","No \u2014 the base coverage is enough":"Your base package still includes mini archival footage of ceremony, vows, first look, cake cutting, speeches, and grand entrance."}}
-            : { id:"extra", question:"Would you like the FOMO Documentary Edit?", subtext:"Your full wedding story in one continuous film \u2014 a documentary-style edit that captures the complete day from start to finish, so you never have to wonder what you missed.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\u2705",label:"Yes \u2014 I want the full story",desc:"Your complete wedding day as one continuous documentary film"},
-              {emoji:"\ud83d\udeab",label:"No \u2014 the highlight film is enough",desc:"All focus goes into making your highlight film incredible"}
-            ], valueMessage:{"Yes \u2014 I want the full story":"The FOMO Documentary Edit is the ultimate keepsake \u2014 your full wedding day, nothing cut, nothing missed.","No \u2014 the highlight film is enough":"Everything goes into making your highlight film incredible."}}
+            { id:"extra", question:"Do you want to relive every major moment from your wedding day?", subtext:"\u2b50 Our most popular add-on. The FOMO Documentary Edit is your entire wedding day in one cinematic, continuous film. You get every major moment in full: ceremony, vows, first look, grand entrance, toasts, speeches, first dances, parent dances, cake cutting, bouquet toss, send-off, and everything in between. Multi-angle. Professional audio. Color-graded. The kind of thing your kids will watch someday and feel like they were there.", type:"single", showPriceImpact:true, options:[
+              {emoji:"\ud83c\udfac",label:"Yes \u2014 I never want to miss a thing",desc:"Your full day preserved as one beautiful, continuous film"},
+              {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds interesting \u2014 I\u2019d want to talk about it first"},
+              {emoji:"\u270b",label:"Not right now",desc:"All focus goes into making my highlight film incredible"}
+            ], valueMessage:{"Yes \u2014 I never want to miss a thing":"Smart. This is the one thing couples tell us they\u2019re most grateful they added. You\u2019ll have your highlight film for sharing \u2014 and this for reliving every single second.","Tell me more on the call":"We\u2019d love to walk you through it. It\u2019s our most popular add-on and couples consistently say it\u2019s the thing they didn\u2019t know they needed.","Not right now":"Everything goes into making your highlight film incredible."}},
+            { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"Our most immersive film experience. Think of it like an engagement shoot \u2014 but for video. We meet up with you both in a place that feels like yours, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film. It takes your film from \u2018great wedding video\u2019 to \u2018this is our actual love story.\u2019", type:"single", showPriceImpact:true, options:[
+              {emoji:"\ud83c\udfac",label:"Yes \u2014 make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
+              {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds amazing but I\u2019d want to talk about it first"},
+              {emoji:"\ud83d\udc92",label:"No \u2014 just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
+            ], valueMessage:{"Yes \u2014 make it a Love Story":"This is the difference between a wedding video and a Love Story. When we know you before the day, your film has a depth that\u2019s impossible to fake. Couples consistently say it\u2019s the thing they didn\u2019t know they needed.","No \u2014 just the wedding day":"The wedding day gives us plenty to work with. All the energy and investment goes into making that one day as cinematic as possible.","Tell me more on the call":"We\u2019d love to walk you through it. The Love Story Session is one of our favorite things \u2014 and once you hear how it works, it usually sells itself."}}
           ];
         }
 
@@ -2299,6 +2423,7 @@
           quizStep: 0, quizAnswers: {}, referralName: "",
           contactInfo: null,
           calcStep: 0, calcAnswers: {},
+          calcSubmitted: false,
           contactFormTried: false,
           contactForm: { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" }
         };
@@ -2306,21 +2431,6 @@
 
         // --- PRICE TAG HELPER ---
         function getCalcPriceTag(step, opt) {
-          var ca = state.calcAnswers;
-          if (!ca.quality || !step.showPriceImpact) return "";
-          var isTeam = ca.quality === "Make it beautiful";
-          if (step.id === "hours") {
-            var h = getHoursNum(opt.label);
-            if (isTeam) { var p = TEAM_HOURS[h] ? TEAM_HOURS[h].price : 0; return p === 0 ? "Included" : "+" + fp(p); }
-            else { var p = SS_HOURS[h] || 0; return p === 0 ? "Included" : "+" + fp(p); }
-          }
-          if (step.id === "highlight") {
-            if (isTeam) { var d = TEAM_HIGHLIGHT[opt.label]; return d ? (d.price === 0 ? (opt.label === "No highlight film" ? "" : "Included") : "+" + fp(d.price)) : ""; }
-            else { var p = SS_HIGHLIGHT[opt.label]; return (p === undefined) ? "" : (p === 0 ? "Included" : "+" + fp(p)); }
-          }
-          if (step.id === "teaser") return opt.label.indexOf("Yes") >= 0 ? "+" + fp(isTeam ? TEAM_ADDONS.teaser.price : SS_ADDONS.teaser) : "";
-          if (step.id === "storySession") return opt.label.indexOf("Yes") >= 0 ? "+" + fp(isTeam ? TEAM_ADDONS.storySession.price : SS_ADDONS.storySession) : "";
-          if (step.id === "extra") return opt.label.indexOf("Yes") >= 0 ? "+" + fp(isTeam ? TEAM_ADDONS.archival.price : SS_ADDONS.fomo) : "";
           return "";
         }
 
@@ -2368,9 +2478,7 @@
             dateInput._avBound = true;
             dateInput.addEventListener('change', function() {
               state.contactForm.weddingDate = this.value;
-              checkAvailability(this.value);
             });
-            if (dateInput.value) checkAvailability(dateInput.value);
           }
         }
 
@@ -2385,7 +2493,7 @@
               '<div class="quiz-intro-chip"><span>\ud83d\udc9b</span> <span>Zero pressure</span></div>' +
             '</div>' +
             '<button class="quiz-start-btn" data-action="start-quiz">Let\u2019s Go \u2726</button>' +
-            '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel in WI</p>' +
+            '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel within 200 mi</p>' +
           '</div>';
         }
 
@@ -2432,13 +2540,8 @@
           var vm = getVM(step, cur);
           if (vm) h += '<div class="quiz-value-msg"><p><span class="vm-icon">\u2726 </span>' + vm + '</p></div>';
 
-          // Running total
-          if (isCalc && state.calcAnswers.quality) {
-            var est = calcPrice(state.calcAnswers);
-            if (est.price > 0) {
-              h += '<div class="quiz-running-total"><span class="quiz-running-total-label">Estimated investment</span>';
-              h += '<span class="quiz-running-total-amount">' + fp(est.price) + '</span></div>';
-            }
+          if (isCalc && step.id === "quality" && cur) {
+            h += '<p style="font-size:0.75rem;color:var(--text-secondary);font-family:\'Outfit\',sans-serif;text-align:center;margin-top:10px;font-style:italic">The more you add, the better the value \u2014 we\u2019ll show you everything at the end.</p>';
           }
 
           // Navigation
@@ -2490,7 +2593,6 @@
           var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
           h += '<div><label class="quiz-form-label">Anticipated Wedding Date <span style="color:var(--accent)">*</span></label>';
           h += '<input type="date" id="quiz-date" class="quiz-form-input" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
-          h += '<div id="availability-msg" style="margin-top:8px;min-height:20px"></div>';
           if (t && !dOk) h += '<p class="quiz-form-error">We need your anticipated wedding date to check availability!</p>';
           h += '</div>';
           // How'd you hear about us (required)
@@ -2537,59 +2639,48 @@
           h += '<div style="font-size:3.5rem;color:var(--accent);margin-bottom:16px;font-weight:700">\u2713</div>';
           h += '<h2 class="quiz-confirm-title" style="font-size:2.25rem;margin-bottom:20px">' + (firstName ? esc(firstName) + ', you\u2019re in!' : 'You\u2019re in!') + '</h2>';
 
+          if (ci && ci.weddingDate) {
+            h += '<p style="font-family:\'Outfit\',sans-serif;font-size:1rem;color:var(--text-primary);font-weight:500;margin-bottom:12px">' + esc(formatWeddingDate(ci.weddingDate)) + '</p>';
+          }
+
           // Spinner (shown for ~2 seconds, then fades to availability result)
           h += '<div id="confirm-spinner-wrap" style="margin-bottom:8px">';
           h += '<div class="av-spinner-wrap"><div class="av-spinner" style="width:28px;height:28px;border-width:3px"></div><span class="av-spinner-text">Checking availability for your date...</span></div>';
           h += '</div>';
+          // TODO: Update after Apps Script returns dual availability (ss_status + team_status)
+          // Will show two lines: "S&S Experience: [status]" and "Team Package: [status]"
+          // with color coding per status (green=available, orange=limited, red=booked)
           h += '<div id="confirm-availability-result" style="margin-bottom:32px;min-height:28px;opacity:0;transition:opacity 0.5s ease"></div>';
 
-          // Section B — Discovery Call CTA + Calendar (immediately)
+          // Section B — Discovery Call CTA
           h += '<div style="text-align:center;margin-bottom:20px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Your next step: Book a discovery call.</p>';
           h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. Just a real conversation about your day.</p>';
           h += '</div>';
 
-          // Calendar iframe — immediately after subtext
-          h += '<div style="width:100%;max-width:520px;margin:0 auto 40px;border-radius:10px;overflow:hidden;min-height:1000px">';
+          // Here's what we'll cover (moved above calendar)
+          h += '<div style="text-align:center;margin-bottom:32px">';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.875rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px">Here\u2019s what we\u2019ll cover</p>';
+          h += '</div>';
+
+          h += '<div style="text-align:center;max-width:400px;margin:0 auto">';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">1.</strong> Get to know you both</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">2.</strong> Learn what you want in your film</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">3.</strong> Show you what\u2019s possible</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:0"><strong style="color:var(--accent)">4.</strong> Make sure we\u2019re the right fit</p>';
+          h += '</div>';
+          h += '<div style="height:40px"></div>';
+
+          // Calendar iframe
+          h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
           h += '<iframe src="https://link.lo-ai.co/widget/booking/g1VimYkOh0ccj758huZN" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
 
-          // Section C — Here's what we'll cover (styled like The Difference section)
-          h += '<div style="text-align:center;margin-bottom:32px">';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.8125rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px">Here\u2019s what we\u2019ll cover</p>';
-          h += '</div>';
-
-          h += '<div class="confirm-cover">';
-
-          h += '<div class="confirm-cover-block">';
-          h += '<span class="confirm-cover-num">01</span>';
-          h += '<div><p class="confirm-cover-title">Get to know you both</p>';
-          h += '<p class="confirm-cover-desc">How you met, how you fell in love, what makes your relationship yours. The good stuff.</p></div>';
-          h += '</div>';
-
-          h += '<div class="confirm-cover-block">';
-          h += '<span class="confirm-cover-num">02</span>';
-          h += '<div><p class="confirm-cover-title">Learn what you want in your film</p>';
-          h += '<p class="confirm-cover-desc">The vibe, the moments that matter most, the little things that make your day yours.</p></div>';
-          h += '</div>';
-
-          h += '<div class="confirm-cover-block">';
-          h += '<span class="confirm-cover-num">03</span>';
-          h += '<div><p class="confirm-cover-title">Show you what\u2019s possible</p>';
-          h += '<p class="confirm-cover-desc">We\u2019ll build a custom package around your day \u2014 not a one-size-fits-all menu.</p></div>';
-          h += '</div>';
-
-          h += '<div class="confirm-cover-block">';
-          h += '<span class="confirm-cover-num">04</span>';
-          h += '<div><p class="confirm-cover-title">Make sure we\u2019re the right fit</p>';
-          h += '<p class="confirm-cover-desc">No sales pitch. If we\u2019re not the right match, we\u2019ll be straight with you \u2014 and point you somewhere great.</p></div>';
-          h += '</div>';
-
-          h += '</div>';
-
-          // Calculator link
-          h += '<div style="text-align:center;margin-top:24px;margin-bottom:24px">';
-          h += '<button data-action="start-calc" style="background:none;border:none;color:var(--accent);font-family:\'Outfit\',sans-serif;font-size:0.875rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px">Curious about pricing? Try our investment calculator \u2192</button>';
+          // Calculator CTA
+          h += '<div class="quiz-gold-box" style="border-color:rgba(255,189,29,0.2);margin-top:16px;margin-bottom:24px">';
+          h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.375rem;color:var(--text-primary);margin-bottom:8px">Still hesitant about booking a call?</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);line-height:1.6;margin-bottom:16px">See what your dream package looks like first. Build a custom estimate in 60 seconds \u2014 then decide if you\u2019re ready to chat.</p>';
+          h += '<button class="quiz-start-btn" data-action="start-calc" style="padding:12px 32px;font-size:0.875rem">Build My Package \u2726</button>';
           h += '</div>';
 
           // Answer summary
@@ -2674,8 +2765,8 @@
         function renderCalcResults() {
           var a = state.calcAnswers;
           var est = calcPrice(a);
-          var isTop = a.quality === "Make it unforgettable";
-          var isTeam = a.quality === "Make it beautiful";
+          var isTop = a.quality === "We want Sierra & Sean creating with us";
+          var isTeam = a.quality === "We want an incredible wedding film";
           var hours = getHoursNum(a.hours);
 
           var h = '<div style="text-align:center;margin-bottom:20px">';
@@ -2685,9 +2776,9 @@
 
           h += '<div style="text-align:center;margin-bottom:24px">';
           h += '<p class="calc-estimate-label">Your estimated investment</p>';
-          h += '<p class="calc-estimate-amount">' + fp(est.price) + '</p>';
-          if (est.savings > 0) h += '<p class="calc-estimate-note" style="color:var(--accent)">Includes ' + fp(est.savings) + ' in bundle savings</p>';
-          h += '<p class="calc-estimate-note">This is an estimate \u2014 your final investment may vary based on your specific needs.</p>';
+          h += '<p class="calc-estimate-amount">' + fp(est.price) + '*</p>';
+          if (est.savings > 0) h += '<p class="calc-estimate-note" style="color:var(--accent)">Includes ' + fp(est.savings) + ' in estimated bundle savings*</p>';
+          h += '<p class="calc-estimate-note">* This is an estimate \u2014 your final investment may vary. Schedule a discovery call with us to get your final, custom package pricing.</p>';
           h += '</div>';
 
           // Tier badge
@@ -2702,32 +2793,33 @@
           for (var i = 0; i < est.breakdown.length; i++) {
             var item = est.breakdown[i];
             var valStr = "";
-            if (item.display) { valStr = item.display; }
+            if (item.display) {
+              if (item.display === "Declined") {
+                valStr = '<span style="color:#6B6B6B;font-style:italic">' + item.display + '</span>';
+              } else if (item.display.indexOf("Ask on the call") >= 0) {
+                valStr = '<span style="color:var(--accent);font-style:italic">' + item.display + '</span>';
+              } else {
+                valStr = item.display;
+              }
+            }
             else if (item.prefix === "\u2212") { valStr = "\u2212" + fp(item.value); }
             else if (item.prefix === "+") { valStr = "+" + fp(item.value); }
             else { valStr = fp(item.value); }
             h += '<div class="quiz-answer-row"><span class="quiz-answer-key">' + esc(item.label) + '</span><span class="quiz-answer-val"' + (item.prefix === "\u2212" ? ' style="color:#4CAF50"' : '') + '>' + valStr + '</span></div>';
           }
           h += '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">';
-          h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fp(est.price) + '</span></div>';
+          h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fp(est.price) + '*</span></div>';
           h += '</div></div>';
+          h += '<button class="calc-back-btn" data-action="start-calc" style="border:2px solid var(--accent);color:var(--accent);background:transparent;margin-bottom:20px;margin-top:12px">Redo My Estimate \u2726</button>';
 
           // CTA
           h += '<div class="quiz-gold-box" style="border-color:rgba(255,189,29,0.27)">';
-          if (isTop) {
-            h += '<p class="quiz-box-label">You want the best</p>';
-            h += '<h3 class="calc-cta-title">That\u2019s exactly what we do.</h3>';
-            h += '<p class="calc-cta-desc">Every Flyin\u2019 Iris film is hand-crafted, vibe-matched, and edited with obsessive care.</p>';
-          } else {
-            h += '<h3 class="calc-cta-title">You\u2019ve already inquired \u2014 we\u2019ll be in touch soon!</h3>';
-            h += '<p class="calc-cta-desc">We\u2019ll reference your calculator results when we reach out. Can\u2019t wait to chat!</p>';
-          }
-          h += '<p class="calc-cta-note">flyiniris.com \u00b7 Milwaukee, WI \u00b7 Free travel statewide</p>';
+          h += '<p class="quiz-box-label">\u2726 Your package is ready</p>';
+          h += '<h3 class="calc-cta-title">This is where it gets real.</h3>';
+          h += '<button class="quiz-start-btn" data-action="back-to-confirm" style="margin-top:16px;width:100%">Book Your Discovery Call \u2726</button>';
+          h += '<p class="calc-cta-desc" style="margin-top:14px">15\u201320 minutes. No sales pitch. We\u2019ll walk through your estimate, answer every question, and make sure we\u2019re the right fit \u2014 together.</p>';
+          h += '<p class="calc-cta-note" style="margin-top:12px">flyiniris.com \u00b7 Milwaukee, WI</p>';
           h += '</div>';
-
-          // Buttons
-          h += '<button class="calc-back-btn" data-action="back-to-confirm">Back to Quiz Results</button>';
-          h += '<button class="calc-reset-btn" data-action="start-over">Start Over</button>';
           return h;
         }
 
@@ -2772,33 +2864,36 @@
             if (state.calcStep < getCalcSteps().length - 1) { state.calcStep++; }
             else {
               // Send calculator results to Google Sheets
-              var est = calcPrice(state.calcAnswers);
-              var calcData = {
-                timestamp: new Date().toISOString(),
-                email: state.contactInfo ? state.contactInfo.email : 'unknown',
-                name: state.contactInfo ? state.contactInfo.name : 'unknown',
-                weddingDate: state.contactInfo ? (state.contactInfo.weddingDate || '') : '',
-                type: 'calculator',
-                hook: state.calcAnswers.hook || '',
-                quality: state.calcAnswers.quality || '',
-                hours: state.calcAnswers.hours || '',
-                teaser: state.calcAnswers.teaser || '',
-                highlight: state.calcAnswers.highlight || '',
-                storySession: state.calcAnswers.storySession || '',
-                extra: state.calcAnswers.extra || '',
-                estimatedPrice: est.price,
-                bundleSavings: est.savings
-              };
-              if (SHEET_URL !== 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_URL') {
-                fetch(SHEET_URL, {
-                  method: 'POST',
-                  mode: 'no-cors',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(calcData)
-                }).catch(function(err) { console.log('Calc sheet submission error:', err); });
+              if (!state.calcSubmitted) {
+                var est = calcPrice(state.calcAnswers);
+                var calcData = {
+                  timestamp: new Date().toISOString(),
+                  email: state.contactInfo ? state.contactInfo.email : 'unknown',
+                  name: state.contactInfo ? state.contactInfo.name : 'unknown',
+                  weddingDate: state.contactInfo ? (state.contactInfo.weddingDate || '') : '',
+                  type: 'calculator',
+                  hook: state.calcAnswers.hook || '',
+                  quality: state.calcAnswers.quality || '',
+                  hours: state.calcAnswers.hours || '',
+                  teaser: state.calcAnswers.teaser || '',
+                  highlight: state.calcAnswers.highlight || '',
+                  storySession: state.calcAnswers.storySession || '',
+                  extra: state.calcAnswers.extra || '',
+                  estimatedPrice: est.price,
+                  bundleSavings: est.savings
+                };
+                if (SHEET_URL !== 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_URL') {
+                  fetch(SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(calcData)
+                  }).catch(function(err) { console.log('Calc sheet submission error:', err); });
+                }
+                state.calcSubmitted = true;
               }
               // Track calculator completion
-              if (window.dataLayer) { dataLayer.push({ event: 'calc_completed', estimated_price: est.price, bundle_savings: est.savings }); }
+              if (window.dataLayer) { dataLayer.push({ event: 'calc_completed', estimated_price: calcPrice(state.calcAnswers).price, bundle_savings: calcPrice(state.calcAnswers).savings }); }
               state.mode = "calcResults";
             }
           }
@@ -2856,7 +2951,31 @@
           var action = btn.getAttribute("data-action");
 
           if (action === "start-quiz") { if (window.dataLayer) { dataLayer.push({ event: 'quiz_started' }); } state.mode = "quiz"; state.quizStep = 0; render(); scrollToQuiz(); return; }
-          if (action === "select") { saveFormFields(); handleSelect(btn.getAttribute("data-value")); render(); return; }
+          if (action === "select") {
+            saveFormFields();
+            var selectedValue = btn.getAttribute("data-value");
+            handleSelect(selectedValue);
+            var isCalcMode = state.mode === "calculator";
+            var currentSteps = isCalcMode ? getCalcSteps() : quizSteps;
+            var currentStepIdx = isCalcMode ? state.calcStep : state.quizStep;
+            var currentStep = currentSteps[currentStepIdx];
+            if (currentStep && currentStep.id === "budget") {
+              if (typeof fbq === "function") {
+                fbq("trackCustom", "BudgetSelected", {
+                  budget_range: selectedValue,
+                  qualified: selectedValue !== "Under $3,000"
+                });
+              }
+              if (window.dataLayer) {
+                dataLayer.push({
+                  event: "budget_selected",
+                  budget_range: selectedValue,
+                  budget_qualified: selectedValue !== "Under $3,000"
+                });
+              }
+            }
+            render(); return;
+          }
           if (action === "next") {
             var isCalc = state.mode === "calculator";
             var steps = isCalc ? getCalcSteps() : quizSteps;
@@ -2896,7 +3015,7 @@
               excited: state.quizAnswers.excited || '',
               vibe: state.quizAnswers.vibe || '',
               priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
-
+              budget: state.quizAnswers.budget || '',
               found: state.contactForm.found || '',
               referralName: state.referralName || ''
             };
@@ -2910,11 +3029,11 @@
             }
             state.mode = "confirmation"; render(); scrollToQuiz(); return;
           }
-          if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.mode = "calculator"; render(); scrollToQuiz(); return; }
+          if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }
           if (action === "back-to-confirm") { state.mode = "confirmation"; render(); scrollToQuiz(); return; }
           if (action === "start-over") {
             state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
-            state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {};
+            state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
             state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" };
             render(); scrollToQuiz(); return;
           }
