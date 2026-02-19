@@ -665,7 +665,7 @@
       width: 100%;
     }
 
-    /* ========== WHY SECTION — CINEMATIC SCROLL ========== */
+    /* ========== WHY SECTION â€” CINEMATIC SCROLL ========== */
     .why-section {
       background-color: var(--bg-primary);
       padding: 0;
@@ -1436,6 +1436,7 @@
       .quiz-option { padding: 12px 14px; gap: 12px; }
       .quiz-question { font-size: 1.25rem; }
       .calc-estimate-amount { font-size: 2.25rem; }
+      .quiz-form-input, .quiz-form-textarea, select.quiz-form-input { font-size: 16px; }
     }
     @media (max-width: 480px) {
       .quiz-intro-chips { flex-direction: column; align-items: center; gap: 8px; }
@@ -1697,7 +1698,7 @@
       <div class="hero-content">
         <p class="hero-label">Milwaukee &amp; Wisconsin Wedding Videographer</p>
         <h1>Wedding Films That <span class="hit">Hit</span> Different.</h1>
-        <p class="hero-sub">The nerves before the walk. The crack in the vows. The moment the dance floor lost its mind. You lived it once — we make sure you feel it forever.</p>
+        <p class="hero-sub">The nerves before the walk. The crack in the vows. The moment the dance floor lost its mind. You lived it once â€” we make sure you feel it forever.</p>
         <div class="hero-cta">
           <a href="#quiz" class="btn">Check Availability</a>
         </div>
@@ -1772,7 +1773,7 @@
 
         <div class="why-block" data-why-reveal id="why-02">
           <h3 class="why-headline">We don't do <span class="accent">templates.</span></h3>
-          <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you — not like everyone else's.</p>
+          <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you â€” not like everyone else's.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -1790,7 +1791,7 @@
 
         <div class="why-block" data-why-reveal id="why-05">
           <h3 class="why-headline">The #1 regret? <span class="accent">Not hiring a videographer.</span></h3>
-          <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments — we'll make you live them again. Don't be the couple who wishes they had.</p>
+          <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments â€” we'll make you live them again. Don't be the couple who wishes they had.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -1844,7 +1845,7 @@
           <div class="carousel-content">
             <div class="carousel-slide active">
               <blockquote>
-                <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now — DO IT. I've watched it every day and I cry every time.</p>
+                <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now â€” DO IT. I've watched it every day and I cry every time.</p>
                 <cite class="carousel-attr">&mdash; Google Review</cite>
               </blockquote>
             </div>
@@ -1868,7 +1869,7 @@
             </div>
             <div class="carousel-slide">
               <blockquote>
-                <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film — remarkable.</p>
+                <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film â€” remarkable.</p>
                 <cite class="carousel-attr">&mdash; Katlin F.</cite>
               </blockquote>
             </div>
@@ -1891,9 +1892,9 @@
         <p class="section-label reveal-child">Investment</p>
         <h2 class="section-heading reveal-child">Your film. Your way. No cookie cutters.</h2>
         <div class="investment-text">
-          <p class="reveal-child">Every couple is different — so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish — we'll build it around you.</p>
+          <p class="reveal-child">Every couple is different â€” so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish â€” we'll build it around you.</p>
           <p class="investment-price reveal-child">Film Packages Starting at $3,000</p>
-          <p class="reveal-child investment-desc">Drone coverage, professional audio, licensed music, and a pre-wedding planning session all come standard. Your teaser? Delivered within a week — because waiting months to relive your day isn't how we do things.</p>
+          <p class="reveal-child investment-desc">Drone coverage, professional audio, licensed music, and a pre-wedding planning session all come standard. Your teaser? Delivered within a week â€” because waiting months to relive your day isn't how we do things.</p>
           <div class="reveal-child cta-center">
             <a href="#quiz" class="btn">Let's Build Yours</a>
           </div>
@@ -1943,7 +1944,7 @@
     (function() {
       'use strict';
 
-      // ========== HERO VIDEO — LOAD ONLY ONE ==========
+      // ========== HERO VIDEO â€” LOAD ONLY ONE ==========
       (function() {
         var isMobile = window.innerWidth <= 768;
         var videoId = isMobile ? '1164502279' : '1164502302';
@@ -2026,7 +2027,7 @@
         revealObserver.observe(el);
       });
 
-      // ========== WHY SECTION — INDIVIDUAL BLOCK REVEALS ==========
+      // ========== WHY SECTION â€” INDIVIDUAL BLOCK REVEALS ==========
       var whyBlocks = document.querySelectorAll('[data-why-reveal]');
       var whyObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
@@ -2160,17 +2161,17 @@
             .then(function(data) {
               var color, icon, msg;
               if (data.status === 'available') {
-                color = '#4CAF50'; icon = '✅'; msg = data.message;
+                color = '#4CAF50'; icon = 'âœ…'; msg = data.message;
               } else if (data.status === 'limited') {
-                color = '#FF9800'; icon = '⚡'; msg = data.message;
+                color = '#FF9800'; icon = 'âš¡'; msg = data.message;
               } else if (data.status === 'booked') {
-                color = '#f44336'; icon = '📅'; msg = data.message;
+                color = '#f44336'; icon = 'ðŸ“…'; msg = data.message;
               } else if (data.status === 'weekday') {
-                color = 'var(--accent)'; icon = '💛'; msg = 'Weekday weddings have flexible availability — let\'s chat about your vision!';
+                color = 'var(--accent)'; icon = 'ðŸ’›'; msg = 'Weekday weddings have flexible availability â€” let\'s chat about your vision!';
               } else if (data.status === 'too_soon') {
-                color = 'var(--text-secondary)'; icon = '⏰'; msg = 'That\'s coming up fast! Let\'s chat about your timeline on a call.';
+                color = 'var(--text-secondary)'; icon = 'â°'; msg = 'That\'s coming up fast! Let\'s chat about your timeline on a call.';
               } else if (data.status === 'too_far') {
-                color = 'var(--text-secondary)'; icon = '🔮'; msg = 'Planning ahead — love it! Reach out and we\'ll get you on the calendar.';
+                color = 'var(--text-secondary)'; icon = 'ðŸ”®'; msg = 'Planning ahead â€” love it! Reach out and we\'ll get you on the calendar.';
               } else {
                 color = 'var(--text-secondary)'; icon = ''; msg = '';
               }
@@ -2680,7 +2681,7 @@
 
           var h = '<div class="quiz-confirm">';
 
-          // Section A — Confirmation + Availability Check
+          // Section A â€” Confirmation + Availability Check
           h += '<div style="font-size:3.5rem;color:var(--accent);margin-bottom:16px;font-weight:700">\u2713</div>';
           h += '<h2 class="quiz-confirm-title" style="font-size:2.25rem;margin-bottom:20px">' + (firstName ? esc(firstName) + ', you\u2019re in!' : 'You\u2019re in!') + '</h2>';
 
@@ -2697,7 +2698,7 @@
           // with color coding per status (green=available, orange=limited, red=booked)
           h += '<div id="confirm-availability-result" style="margin-bottom:32px;min-height:28px;opacity:0;transition:opacity 0.5s ease"></div>';
 
-          // Section B — Discovery Call CTA
+          // Section B â€” Discovery Call CTA
           h += '<div style="text-align:center;margin-bottom:20px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Your next step: Book a discovery call.</p>';
           h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. Just a real conversation about your day.</p>';
@@ -2749,7 +2750,7 @@
           }
           h += '</div></div>';
 
-          // Trigger availability check — spinner shows ~2 seconds then fades to result
+          // Trigger availability check â€” spinner shows ~2 seconds then fades to result
           setTimeout(function() {
             var spinnerWrap = document.getElementById('confirm-spinner-wrap');
             var resultEl = document.getElementById('confirm-availability-result');
@@ -2978,6 +2979,24 @@
           if (f === "referralName") { state.referralName = e.target.value; }
           else if (f === "phone") { state.contactForm.phone = fmtPhone(e.target.value); e.target.value = state.contactForm.phone; }
           else if (state.contactForm[f] !== undefined) { state.contactForm[f] = e.target.value; }
+        });
+
+        // Enter key advances to next form field (mobile return key + desktop Enter)
+        quizApp.addEventListener("keydown", function(e) {
+          if (e.key !== "Enter") return;
+          var el = e.target;
+          if (el.tagName === "TEXTAREA") return; // allow Enter in textarea
+          if (el.classList.contains("quiz-form-input") || el.tagName === "SELECT") {
+            e.preventDefault();
+            var inputs = Array.prototype.slice.call(quizApp.querySelectorAll(".quiz-form-input, .quiz-form-textarea, select.quiz-form-input"));
+            var idx = inputs.indexOf(el);
+            if (idx >= 0 && idx < inputs.length - 1) {
+              inputs[idx + 1].focus();
+            } else if (idx === inputs.length - 1) {
+              // Last field — blur to dismiss keyboard on mobile
+              el.blur();
+            }
+          }
         });
 
         quizApp.addEventListener("change", function(e) {
