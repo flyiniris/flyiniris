@@ -2363,6 +2363,16 @@
         function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
         function isValidPhone(p) { return p.replace(/\D/g, "").length >= 10; }
         function fmtPhone(v) { var d = v.replace(/\D/g, "").slice(0, 10); if (!d.length) return ""; if (d.length <= 3) return "(" + d; if (d.length <= 6) return "(" + d.slice(0,3) + ") " + d.slice(3); return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6); }
+        function buildCalendarUrl(widgetId) {
+          var base = 'https://link.lo-ai.co/widget/booking/' + widgetId;
+          if (!state.contactInfo) return base;
+          var ci = state.contactInfo;
+          var parts = (ci.name || '').split(' ');
+          var first = parts[0] || '';
+          var last = parts.slice(1).join(' ') || '';
+          var phone = (ci.phone || '').replace(/\D/g, '');
+          return base + '?first_name=' + encodeURIComponent(first) + '&last_name=' + encodeURIComponent(last) + '&email=' + encodeURIComponent(ci.email || '') + '&phone=' + encodeURIComponent(phone);
+        }
 
         // --- QUIZ DATA ---
         var quizSteps = [
@@ -2620,11 +2630,11 @@
           h += '<input type="tel" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234">';
           if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
           h += '<div style="margin-top:8px">';
-          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing">';
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing" role="checkbox" aria-checked="' + (f.smsNonMarketing ? 'true' : 'false') + '">';
           h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>\u2713</span>' : '') + '</div>';
           h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive non-marketing text messages from Flyin\u2019 Iris Media Productions LLC about wedding videography booking updates, scheduling, and appointment reminders. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
           h += '</button>';
-          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-marketing" style="margin-top:6px">';
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-marketing" role="checkbox" aria-checked="' + (f.smsMarketing ? 'true' : 'false') + '" style="margin-top:6px">';
           h += '<div class="quiz-checkbox' + (f.smsMarketing ? ' checked' : '') + '">' + (f.smsMarketing ? '<span>\u2713</span>' : '') + '</div>';
           h += '<span class="quiz-checkbox-label" style="color:' + (f.smsMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive marketing text messages from Flyin\u2019 Iris Media Productions LLC at the phone number provided. Frequency may vary. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
           h += '</button>';
@@ -2717,9 +2727,9 @@
           h += '</div>';
           h += '<div style="height:40px"></div>';
 
-          // Calendar iframe
+          // Calendar iframe (pre-populated with contact info)
           h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
-          h += '<iframe src="https://link.lo-ai.co/widget/booking/Kd7zWqsXzAswGHR1HuDR" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
+          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
 
           // Calculator CTA
@@ -2805,11 +2815,16 @@
             }
           }, 50);
 
+          // Meta Pixel + dataLayer tracking
+          if (typeof fbq === "function") { fbq("trackCustom", "CalendarViewed", { calendar: "post_inquiry" }); }
+          if (window.dataLayer) { dataLayer.push({ event: "calendar_viewed", calendar: "post_inquiry" }); }
+
           return h;
         }
 
         function renderCalcResults() {
           var a = state.calcAnswers;
+          var ci = state.contactInfo;
           var est = calcPrice(a);
           var isTop = a.quality === "We want Sierra & Sean creating with us";
           var isTeam = a.quality === "We want an incredible wedding film";
@@ -2856,16 +2871,100 @@
           h += '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">';
           h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fp(est.price) + '*</span></div>';
           h += '</div></div>';
-          h += '<button class="calc-back-btn" data-action="start-calc" style="border:2px solid var(--accent);color:var(--accent);background:transparent;margin-bottom:20px;margin-top:12px">Redo My Estimate \u2726</button>';
+          h += '<button class="calc-back-btn" data-action="start-calc" style="border:2px solid var(--accent);color:var(--accent);background:transparent;margin-bottom:48px;margin-top:12px">Redo My Estimate \u2726</button>';
 
-          // CTA
-          h += '<div class="quiz-gold-box" style="border-color:rgba(255,189,29,0.27)">';
-          h += '<p class="quiz-box-label">\u2726 Your package is ready</p>';
-          h += '<h3 class="calc-cta-title">This is where it gets real.</h3>';
-          h += '<button class="quiz-start-btn" data-action="back-to-confirm" style="margin-top:16px;width:100%">Book Your Discovery Call \u2726</button>';
-          h += '<p class="calc-cta-desc" style="margin-top:14px">15\u201320 minutes. No sales pitch. We\u2019ll walk through your estimate, answer every question, and make sure we\u2019re the right fit \u2014 together.</p>';
-          h += '<p class="calc-cta-note" style="margin-top:12px">flyiniris.com \u00b7 Milwaukee, WI</p>';
+          // Availability re-check
+          if (ci && ci.weddingDate) {
+            h += '<p style="font-family:\'Outfit\',sans-serif;font-size:1rem;color:var(--text-primary);font-weight:500;margin-bottom:12px;text-align:center">' + esc(formatWeddingDate(ci.weddingDate)) + '</p>';
+          }
+          h += '<div id="calc-spinner-wrap" style="margin-bottom:8px;text-align:center">';
+          h += '<div class="av-spinner-wrap"><div class="av-spinner" style="width:28px;height:28px;border-width:3px"></div><span class="av-spinner-text">Checking availability for your date...</span></div>';
           h += '</div>';
+          h += '<div id="calc-availability-result" style="margin-bottom:32px;min-height:28px;opacity:0;transition:opacity 0.5s ease;text-align:center"></div>';
+
+          // Post-calculator copy
+          h += '<div style="text-align:center;margin-bottom:20px">';
+          h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Love what you see? Let\u2019s make it real.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. We\u2019ll walk through your custom estimate, answer every question, and make sure we\u2019re the right fit.</p>';
+          h += '</div>';
+
+          // Here's what we'll cover
+          h += '<div style="text-align:center;margin-bottom:32px">';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.875rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px">Here\u2019s what we\u2019ll cover</p>';
+          h += '</div>';
+
+          h += '<div style="text-align:center;max-width:400px;margin:0 auto">';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">1.</strong> Get to know you both</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">2.</strong> Learn what you want in your film</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">3.</strong> Show you what\u2019s possible</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:0"><strong style="color:var(--accent)">4.</strong> Make sure we\u2019re the right fit</p>';
+          h += '</div>';
+          h += '<div style="height:40px"></div>';
+
+          // Calendar 2 iframe (Discovery Call - Post Calculator)
+          h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
+          h += '<iframe src="' + buildCalendarUrl('V3H7cSaX3iSNqMlRA8O8') + '" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-calc-cal"></iframe>';
+          h += '</div>';
+
+          // Meta Pixel + dataLayer tracking
+          if (typeof fbq === "function") { fbq("trackCustom", "CalendarViewed", { calendar: "post_calculator" }); }
+          if (window.dataLayer) { dataLayer.push({ event: "calendar_viewed", calendar: "post_calculator" }); }
+
+          // Trigger availability check for calc results
+          setTimeout(function() {
+            var spinnerWrap = document.getElementById('calc-spinner-wrap');
+            var resultEl = document.getElementById('calc-availability-result');
+            if (!spinnerWrap || !resultEl || !ci || !ci.weddingDate) {
+              if (spinnerWrap) spinnerWrap.style.display = 'none';
+              return;
+            }
+            var startTime = Date.now();
+            fetch(AVAILABILITY_URL + '?date=' + ci.weddingDate)
+              .then(function(r) { return r.json(); })
+              .then(function(data) {
+                var color, icon, msg;
+                if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
+                else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
+                else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
+                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability \u2014 let\u2019s chat!'; }
+                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast \u2014 let\u2019s chat about your timeline!'; }
+                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead \u2014 we love it!'; }
+                else { msg = ''; }
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(0, 2000 - elapsed);
+                setTimeout(function() {
+                  spinnerWrap.style.transition = 'opacity 0.4s ease';
+                  spinnerWrap.style.opacity = '0';
+                  setTimeout(function() {
+                    spinnerWrap.style.display = 'none';
+                    if (msg) {
+                      resultEl.innerHTML = '<span style="color:' + color + ';font-size:1rem;font-weight:500">' + icon + ' ' + msg + '</span>';
+                      resultEl.style.opacity = '1';
+                    }
+                  }, 400);
+                }, delay);
+              })
+              .catch(function() {
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(0, 2000 - elapsed);
+                setTimeout(function() {
+                  spinnerWrap.style.transition = 'opacity 0.4s ease';
+                  spinnerWrap.style.opacity = '0';
+                  setTimeout(function() { spinnerWrap.style.display = 'none'; }, 400);
+                }, delay);
+              });
+          }, 100);
+
+          // Defer-load GoHighLevel embed script
+          setTimeout(function() {
+            if (!document.getElementById('ghl-embed-script')) {
+              var s = document.createElement('script');
+              s.id = 'ghl-embed-script';
+              s.src = 'https://link.lo-ai.co/js/form_embed.js';
+              document.body.appendChild(s);
+            }
+          }, 50);
+
           return h;
         }
 
@@ -2983,8 +3082,24 @@
 
         // Enter key advances to next form field (mobile return key + desktop Enter)
         quizApp.addEventListener("keydown", function(e) {
-          if (e.key !== "Enter") return;
           var el = e.target;
+          // Space toggles SMS consent checkboxes
+          if (e.key === " " || e.keyCode === 32) {
+            var act = el.getAttribute("data-action");
+            if (act === "toggle-sms-nonmarketing") {
+              e.preventDefault();
+              saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render();
+              var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus();
+              return;
+            }
+            if (act === "toggle-sms-marketing") {
+              e.preventDefault();
+              saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render();
+              var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus();
+              return;
+            }
+          }
+          if (e.key !== "Enter") return;
           if (el.tagName === "TEXTAREA") return; // allow Enter in textarea
           if (el.classList.contains("quiz-form-input") || el.tagName === "SELECT") {
             e.preventDefault();
@@ -3052,8 +3167,8 @@
             saveFormFields(); goNext(); render(); scrollToQuiz(); return;
           }
           if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); return; }
-          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render(); return; }
-          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render(); return; }
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
           if (action === "submit-contact") {
             saveFormFields();
             state.contactFormTried = true;
@@ -3096,7 +3211,6 @@
             state.mode = "confirmation"; render(); scrollToQuiz(); return;
           }
           if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }
-          if (action === "back-to-confirm") { state.mode = "confirmation"; render(); scrollToQuiz(); return; }
           if (action === "start-over") {
             state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
