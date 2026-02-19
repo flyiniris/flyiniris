@@ -14,11 +14,11 @@
   <meta property="og:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/">
-  <meta property="og:image" content="https://glittery-yeot-592ddf.netlify.app/Cody-Sarah.jpg">
+  <meta property="og:image" content="https://www.flyiniris.com/Cody-Sarah.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Milwaukee Wedding Videographer | Flyin' Iris">
   <meta name="twitter:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
-  <meta name="twitter:image" content="https://glittery-yeot-592ddf.netlify.app/Cody-Sarah.jpg">
+  <meta name="twitter:image" content="https://www.flyiniris.com/Cody-Sarah.jpg">
   <meta name="theme-color" content="#0A0A0A">
 
   <link rel="icon" type="image/png" href="favicon.png">
@@ -59,7 +59,7 @@
     "name": "Flyin' Iris Media Productions LLC",
     "description": "Premium cinematic wedding videography serving Wisconsin, Northern Illinois, and Chicago. Custom packages starting at $3,000.",
     "url": "https://www.flyiniris.com/",
-    "telephone": "+14149162163",
+    "telephone": "+12623845079",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Cedarburg",
@@ -1233,9 +1233,13 @@
         padding: 80px 20px;
       }
 
+      .film-featured {
+        margin-bottom: 40px;
+      }
+
       .films-grid {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 40px;
       }
 
       .about-grid {
@@ -1566,6 +1570,21 @@
       line-height: 1.6;
     }
 
+    /* Footer contact info line */
+    .footer-contact {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.625rem;
+      color: rgba(200,195,185,0.5);
+      margin-bottom: 12px;
+    }
+    .footer-contact a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .footer-contact a:hover {
+      text-decoration: underline;
+    }
+
     /* Footer services keyword line */
     .footer-services {
       font-family: 'Outfit', sans-serif;
@@ -1575,6 +1594,21 @@
       margin-top: 12px;
       letter-spacing: 0.05em;
       opacity: 0.7;
+    }
+
+    /* Footer legal links */
+    .footer-legal {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.625rem;
+      color: rgba(200,195,185,0.4);
+      margin-top: 16px;
+    }
+    .footer-legal a {
+      color: rgba(200,195,185,0.4);
+      text-decoration: none;
+    }
+    .footer-legal a:hover {
+      text-decoration: underline;
     }
 
     /* ========== UTILITY CLASSES ========== */
@@ -1898,7 +1932,9 @@
       </a>
     </div>
     <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+    <p class="footer-contact">758 Hillside Ct, Cedarburg, WI 53012 &middot; <a href="mailto:flyin.iris.mp@gmail.com">flyin.iris.mp@gmail.com</a> &middot; <a href="tel:+12623845079">(262) 384-5079</a></p>
     <p class="footer-services">Cinematic Wedding Films &middot; Wedding Highlight Videos &middot; Elopement Videography &middot; Drone Wedding Coverage &middot; Destination Wedding Videographer</p>
+    <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
   </footer>
 
   <script src="https://player.vimeo.com/api/player.js" defer></script>
@@ -2107,7 +2143,7 @@
       // ========== QUIZ / CALCULATOR APP ==========
       (function() {
         // --- GOOGLE SHEETS WEBHOOK ---
-        var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyikKxXZKzH6uRnXRy5vXDkhqhQ9tQPr0wKKv-Ygd8NAz04CA3VtXf_d2Lenssc3Md-yw/exec';
+        var SHEET_URL = 'https://script.google.com/macros/s/AKfycbxIN5Txz77eIVPqzg4Sc7kHxPWqWCkyTmFicsHb_nm-Js7t6a0wOGjYlHCeT-cuYnedqQ/exec';
         // TODO: Update Apps Script availability checker:
         // - If a date is NOT found in the "Booked Dates" tab of "Flyin' Iris Leads" sheet, assume AVAILABLE
         // - Return dual status: { ss_status: "available|limited|booked", team_status: "available|limited|booked" }
@@ -2425,7 +2461,7 @@
           calcStep: 0, calcAnswers: {},
           calcSubmitted: false,
           contactFormTried: false,
-          contactForm: { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" }
+          contactForm: { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" }
         };
         var quizApp = document.getElementById("quizApp");
 
@@ -2558,36 +2594,45 @@
 
         function renderContactForm(step) {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = f.found && f.found.length > 0;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = f.found && f.found.length > 0, vOk = f.venue.trim().length >= 2;
           var h = '<div class="quiz-step">';
           h += '<h2 class="quiz-question" style="font-size:1.625rem">' + step.question + '</h2>';
           h += '<p class="quiz-subtext">' + step.subtext + '</p>';
           h += '<div class="quiz-form">';
           // Name row
           h += '<div class="quiz-form-row">';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label">Your name *</label>';
-          h += '<input type="text" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="First name">';
-          if (t && !nOk) h += '<p class="quiz-form-error">We need at least your first name!</p>';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label">Your Full Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="First & Last Name">';
+          if (t && !nOk) h += '<p class="quiz-form-error">We need your first & last name!</p>';
           h += '</div>';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label">Partner\u2019s name</label>';
-          h += '<input type="text" class="quiz-form-input" data-field="partner" placeholder="Their first name">';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label">Your Partner\u2019s Full Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Partner\'s First & Last Name">';
+          if (t && !paOk) h += '<p class="quiz-form-error">We need your partner\'s name too!</p>';
           h += '</div></div>';
           // Email
-          h += '<div><label class="quiz-form-label">Email *</label>';
+          h += '<div><label class="quiz-form-label">Email <span style="color:var(--accent)">*</span></label>';
           h += '<input type="email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com">';
           if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn\u2019t look right \u2014 double check?' : 'We need your email to reach out!') + '</p>';
           h += '</div>';
           // Phone
-          h += '<div><label class="quiz-form-label">Phone *</label>';
+          h += '<div><label class="quiz-form-label">Phone <span style="color:var(--accent)">*</span></label>';
           h += '<input type="tel" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234">';
           if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
-          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-text-ok">';
-          h += '<div class="quiz-checkbox' + (f.textOk ? ' checked' : '') + '">' + (f.textOk ? '<span>\u2713</span>' : '') + '</div>';
-          h += '<span class="quiz-checkbox-label" style="color:' + (f.textOk ? 'var(--text-primary)' : 'var(--text-secondary)') + '">Totally cool to text me! \ud83d\udcf1</span>';
-          h += '</button></div>';
+          h += '<div style="margin-top:8px">';
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing">';
+          h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>\u2713</span>' : '') + '</div>';
+          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive non-marketing text messages from Flyin\u2019 Iris Media Productions LLC about wedding videography booking updates, scheduling, and appointment reminders. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
+          h += '</button>';
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-marketing" style="margin-top:6px">';
+          h += '<div class="quiz-checkbox' + (f.smsMarketing ? ' checked' : '') + '">' + (f.smsMarketing ? '<span>\u2713</span>' : '') + '</div>';
+          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive marketing text messages from Flyin\u2019 Iris Media Productions LLC at the phone number provided. Frequency may vary. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
+          h += '</button>';
+          h += '</div></div>';
           // Venue
-          h += '<div><label class="quiz-form-label">Venue (if you have one picked!)</label>';
-          h += '<input type="text" class="quiz-form-input" data-field="venue" placeholder="The Venue Name \u00b7 City, WI"></div>';
+          h += '<div><label class="quiz-form-label">Venue <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" class="quiz-form-input' + (t && !vOk ? ' error' : '') + '" data-field="venue" placeholder="Venue Name \u00b7 City, WI (or TBD)">';
+          if (t && !vOk) h += '<p class="quiz-form-error">We need to know your venue (or \'TBD\' if undecided)!</p>';
+          h += '</div>';
           // Wedding Date
           var minDate = new Date().toISOString().split('T')[0];
           var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
@@ -2599,17 +2644,16 @@
           h += '<div><label class="quiz-form-label">How\u2019d you hear about us? <span style="color:var(--accent)">*</span></label>';
           h += '<select class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
           h += '<option value="">Select one</option>';
-          h += '<option value="Google search"' + (f.found === "Google search" ? ' selected' : '') + '>Google search</option>';
+          h += '<option value="Google"' + (f.found === "Google" ? ' selected' : '') + '>Google</option>';
           h += '<option value="Instagram"' + (f.found === "Instagram" ? ' selected' : '') + '>Instagram</option>';
           h += '<option value="Facebook"' + (f.found === "Facebook" ? ' selected' : '') + '>Facebook</option>';
-          h += '<option value="TikTok"' + (f.found === "TikTok" ? ' selected' : '') + '>TikTok</option>';
           h += '<option value="Referral"' + (f.found === "Referral" ? ' selected' : '') + '>Referral</option>';
-          h += '<option value="Wedding show/expo"' + (f.found === "Wedding show/expo" ? ' selected' : '') + '>Wedding show/expo</option>';
+          h += '<option value="Wedding Planner"' + (f.found === "Wedding Planner" ? ' selected' : '') + '>Wedding Planner</option>';
           h += '<option value="The Knot/WeddingWire"' + (f.found === "The Knot/WeddingWire" ? ' selected' : '') + '>The Knot/WeddingWire</option>';
           h += '<option value="Other"' + (f.found === "Other" ? ' selected' : '') + '>Other</option>';
           h += '</select>';
           if (t && !fOk) h += '<p class="quiz-form-error">Please let us know how you heard about us!</p>';
-          if (f.found === "Referral") {
+          if (f.found === "Referral" || f.found === "Wedding Planner") {
             h += '<div style="margin-top:8px"><label class="quiz-form-label">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
             h += '<input type="text" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
             h += '</div>';
@@ -2620,8 +2664,9 @@
           h += '<textarea class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
           // Submit
           h += '<button class="quiz-submit-btn" data-action="submit-contact">Send It \u2726</button>';
-          if (t && !(nOk && eOk && pOk && dOk && fOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
+          if (t && !(nOk && paOk && eOk && pOk && dOk && fOk && vOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
           h += '<p class="quiz-form-hint">No spam ever. Just a real conversation about your day.</p>';
+          h += '<p style="font-size:0.5625rem;color:rgba(200,195,185,0.4);text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Terms & Conditions</a></p>';
           h += '</div>';
           // Back button
           h += '<div class="quiz-nav" style="margin-top:12px"><button class="quiz-nav-back" data-action="prev">\u2190 Back</button><span class="quiz-nav-step">' + quizSteps.length + ' of ' + quizSteps.length + '</span><span></span></div>';
@@ -2673,7 +2718,7 @@
 
           // Calendar iframe
           h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
-          h += '<iframe src="https://link.lo-ai.co/widget/booking/g1VimYkOh0ccj758huZN" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
+          h += '<iframe src="https://link.lo-ai.co/widget/booking/Kd7zWqsXzAswGHR1HuDR" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
 
           // Calculator CTA
@@ -2940,7 +2985,7 @@
           if (f === "found") {
             saveFormFields();
             state.contactForm.found = e.target.value;
-            if (e.target.value !== "Referral") state.referralName = "";
+            if (e.target.value !== "Referral" && e.target.value !== "Wedding Planner") state.referralName = "";
             render();
           }
         });
@@ -2988,16 +3033,17 @@
             saveFormFields(); goNext(); render(); scrollToQuiz(); return;
           }
           if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); return; }
-          if (action === "toggle-text-ok") { saveFormFields(); state.contactForm.textOk = !state.contactForm.textOk; render(); return; }
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render(); return; }
+          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render(); return; }
           if (action === "submit-contact") {
             saveFormFields();
             state.contactFormTried = true;
             var f = state.contactForm;
-            var canSubmit = f.name.trim().length >= 2 && isValidEmail(f.email) && isValidPhone(f.phone) && f.weddingDate && f.weddingDate.length > 0 && f.found && f.found.length > 0;
+            var canSubmit = f.name.trim().length >= 2 && f.partner.trim().length >= 2 && isValidEmail(f.email) && isValidPhone(f.phone) && f.weddingDate && f.weddingDate.length > 0 && f.found && f.found.length > 0 && f.venue.trim().length >= 2;
             if (!canSubmit) { render(); return; }
             var dateVal = document.getElementById('quiz-date');
             if (dateVal) state.contactForm.weddingDate = dateVal.value;
-            state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, textOk: f.textOk, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
+            state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
             // Analytics
             if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
             if (typeof fbq === "function") { fbq("track", "Lead"); }
@@ -3008,7 +3054,8 @@
               partner: state.contactInfo.partner || '',
               email: state.contactInfo.email,
               phone: state.contactInfo.phone,
-              textOk: state.contactInfo.textOk ? 'Yes' : 'No',
+              smsNonMarketing: state.contactInfo.smsNonMarketing ? 'Yes' : 'No',
+              smsMarketing: state.contactInfo.smsMarketing ? 'Yes' : 'No',
               venue: state.contactInfo.venue || '',
               note: state.contactInfo.note || '',
               weddingDate: formatDateForSheet(state.contactInfo.weddingDate) || '',
@@ -3034,7 +3081,7 @@
           if (action === "start-over") {
             state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
-            state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", textOk:true, venue:"", note:"", weddingDate:"", found:"" };
+            state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
             render(); scrollToQuiz(); return;
           }
         });
