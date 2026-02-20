@@ -745,7 +745,7 @@
   <script>
     // --- Data ---
     const VIDEOS = [{"id":"rb-teaser","title":"Rachel \u0026 Brandon\u0027s Wedding Teaser","category":"teaser","duration":"2:00","order":-1,"featured":true},{"id":"highlight","title":"Amanda \u0026 Boris\u0027s Wedding","category":"highlight","duration":"11:01","order":0},{"id":"teaser","title":"Teaser","category":"teaser","duration":"5:46","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"8:09","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"3:28","order":3},{"id":"first-look-vows","title":"First Look \u0026 Vows","category":"archival","duration":"7:41","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"7:08","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"16:15","order":6},{"id":"grand-march-first-dance","title":"Grand March \u0026 First Dance","category":"archival","duration":"9:04","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"26:03","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"8:19","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"10:08","order":10}];
-    const WORKER_BASE = 'https://video.flyiniris.com';
+    const WORKER_BASE = 'https://fi-video-serve.flyin-iris-mp.workers.dev';
     const SLUG = 'amanda-boris';
 
     const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
