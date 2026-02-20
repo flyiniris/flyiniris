@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amanda & Boris | Flyin' Iris</title>
+  <meta name="description" content="Watch Amanda & Boris's wedding films — streamed in cinematic quality by Flyin' Iris.">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Amanda & Boris | Flyin' Iris">
+  <meta property="og:description" content="Watch Amanda & Boris's wedding films — August 31, 2025">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.flyiniris.com/films/amanda-boris/">
+  <meta property="og:image" content="https://video.flyiniris.com/couples/amanda-boris/thumbs/highlight.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="/favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vidstack Player -->
+  <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
+  <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
+  <script type="module" src="https://cdn.vidstack.io/player"></script>
+
+  <style>
+    /* ========== Reset & Base ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0A0A0A;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ========== Film Grain Overlay ========== */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-5px, 5px); }
+      50% { transform: translate(5px, -5px); }
+      75% { transform: translate(-5px, -5px); }
+    }
+
+    /* ========== Typography ========== */
+    h1, h2, h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== Container ========== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== Navbar ========== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      transition: background 0.25s ease, padding 0.25s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 32px;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #F5F0EB;
+    }
+    .nav-couple {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .navbar.scrolled .nav-couple { opacity: 1; }
+    .nav-date {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
+      letter-spacing: 0.05em;
+    }
+
+    /* ========== Hero ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+    .hero-names {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .hero-date {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      color: #C8C3B9;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .hero-cta {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #F5F0EB;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+    .hero-cta:hover {
+      background: #FFBD1D;
+      color: #0A0A0A;
+      transform: translateY(-2px);
+    }
+    .hero-cta:active { transform: translateY(0); background: #D99E0A; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.4;
+      animation: float 2s ease-in-out infinite;
+    }
+    .hero-scroll-hint svg { width: 24px; height: 24px; stroke: #C8C3B9; }
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ========== Section Shared ========== */
+    .section {
+      padding: 100px 0;
+    }
+    .section-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #FFBD1D;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 48px;
+    }
+
+    /* ========== Featured Film ========== */
+    .featured {
+      background: #111110;
+    }
+    .featured-player-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2A2A28;
+    }
+    .featured-player-wrap media-player {
+      --media-brand: #FFBD1D;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .featured-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 0;
+    }
+    .featured-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    .featured-duration {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
+    }
+
+    /* ========== Archival Collection ========== */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .film-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .film-card:hover {
+      transform: scale(1.03);
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .film-card-thumb {
+      aspect-ratio: 16/9;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A19;
+      position: relative;
+    }
+    .film-card-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+    }
+    .film-card-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      background: rgba(10, 10, 10, 0.3);
+    }
+    .film-card:hover .film-card-play { opacity: 1; }
+    .film-card-play svg {
+      width: 48px;
+      height: 48px;
+      fill: #FFBD1D;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+    .film-card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.7rem;
+      background: rgba(10, 10, 10, 0.75);
+      backdrop-filter: blur(4px);
+      color: #F5F0EB;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .film-card-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255, 189, 29, 0.15);
+      color: #FFBD1D;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .film-card-body {
+      padding: 16px;
+    }
+    .film-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    /* ========== Video Modal ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #C8C3B9;
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.25s ease;
+    }
+    .modal-close:hover { color: #FFBD1D; }
+    .modal-close svg { width: 28px; height: 28px; }
+    .modal-player-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2A2A28;
+    }
+    .modal-player-wrap media-player {
+      --media-brand: #FFBD1D;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-top: 16px;
+    }
+
+    /* ========== Photo Gallery Placeholder ========== */
+    .photos-placeholder {
+      text-align: center;
+      padding: 80px 24px;
+      border: 1px dashed #2A2A28;
+      border-radius: 8px;
+      background: #111110;
+    }
+    .photos-placeholder svg {
+      width: 48px;
+      height: 48px;
+      stroke: #C8C3B9;
+      margin-bottom: 20px;
+    }
+    .photos-placeholder-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: #C8C3B9;
+    }
+    .photos-placeholder-text {
+      color: rgba(200, 195, 185, 0.5);
+      font-size: 0.95rem;
+    }
+
+    /* ========== Download Section ========== */
+    .download-gate {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .download-gate p {
+      color: #C8C3B9;
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+    .download-form {
+      display: flex;
+      gap: 12px;
+    }
+    .download-input {
+      flex: 1;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9rem;
+      padding: 14px 18px;
+      background: #111110;
+      border: 1px solid #2A2A28;
+      border-radius: 8px;
+      color: #F5F0EB;
+      outline: none;
+      transition: border-color 0.25s ease;
+    }
+    .download-input:focus { border-color: #FFBD1D; }
+    .download-input::placeholder { color: rgba(200, 195, 185, 0.4); }
+    .download-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      color: #F5F0EB;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+      white-space: nowrap;
+    }
+    .download-btn:hover { background: #FFBD1D; color: #0A0A0A; }
+    .download-btn:active { background: #D99E0A; }
+    .download-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: #3A3A38;
+    }
+    .download-btn:disabled:hover { background: transparent; color: #F5F0EB; }
+    .download-error {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+    }
+    .download-error.visible { display: block; }
+
+    /* Download links (shown after auth) */
+    .download-links {
+      display: none;
+    }
+    .download-links.visible { display: block; }
+    .download-all-wrap {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .download-all-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 16px 48px;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      color: #F5F0EB;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .download-all-btn:hover { background: #FFBD1D; color: #0A0A0A; }
+    .download-all-btn:active { background: #D99E0A; }
+    .download-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .download-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      border-radius: 8px;
+      transition: border-color 0.25s ease;
+    }
+    .download-item:hover { border-color: #3A3A38; }
+    .download-item-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .download-item-title {
+      font-weight: 400;
+      font-size: 0.95rem;
+    }
+    .download-item-duration {
+      font-size: 0.8rem;
+      color: rgba(200, 195, 185, 0.5);
+    }
+    .download-item-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid #2A2A28;
+      border-radius: 6px;
+      color: #C8C3B9;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    .download-item-btn:hover { border-color: #FFBD1D; color: #FFBD1D; }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      border-top: 1px solid #2A2A28;
+      padding: 60px 0;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .footer-socials a {
+      color: #C8C3B9;
+      transition: color 0.25s ease;
+    }
+    .footer-socials a:hover { color: #FFBD1D; }
+    .footer-socials svg { width: 20px; height: 20px; }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(200, 195, 185, 0.5);
+    }
+
+    /* ========== Scroll Reveal ========== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== Responsive ========== */
+    @media (min-width: 640px) {
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .download-list { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1024px) {
+      .collection-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 16px 20px; }
+      .navbar.scrolled { padding: 12px 20px; }
+      .nav-couple { display: none; }
+      .nav-date { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-cta { padding: 14px 32px; font-size: 0.8rem; }
+      .section { padding: 72px 0; }
+      .modal-content { max-width: 100%; }
+      .modal-close { top: -40px; }
+      .download-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== Navbar ========== -->
+  <nav class="navbar" id="navbar">
+    <span class="nav-logo">Flyin' Iris</span>
+    <span class="nav-couple">Amanda & Boris</span>
+    <span class="nav-date">08.31.2025</span>
+  </nav>
+
+  <!-- ========== Hero ========== -->
+  <section class="hero" id="hero">
+    <h1 class="hero-names">Amanda & Boris</h1>
+    <p class="hero-date">August 31, 2025</p>
+    <button class="hero-cta" id="hero-cta">Watch the Highlight Film</button>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Featured Film ========== -->
+  <section class="section featured" id="featured">
+    <div class="container reveal">
+      <p class="section-label">Featured Film</p>
+      <div class="featured-player-wrap" id="featured-player-wrap">
+        <!-- Vidstack player injected by JS -->
+      </div>
+      <div class="featured-info" id="featured-info">
+        <!-- Title + duration injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Archival Collection ========== -->
+  <section class="section" id="collection">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">The Collection</p>
+        <h2 class="section-title">All Your Films</h2>
+      </div>
+      <div class="collection-grid" id="collection-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Photo Gallery Placeholder ========== -->
+  <section class="section" id="photos">
+    <div class="container reveal">
+      <p class="section-label">Photo Gallery</p>
+      <h2 class="section-title">Photos</h2>
+      <div class="photos-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        <p class="photos-placeholder-title">Coming Soon</p>
+        <p class="photos-placeholder-text">Your photos from the big day will be viewable here soon.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Download Section ========== -->
+  <section class="section" id="downloads">
+    <div class="container reveal">
+      <p class="section-label">Downloads</p>
+      <h2 class="section-title">Download Your Films</h2>
+
+      <!-- Password Gate -->
+      <div class="download-gate" id="download-gate">
+        <p>Enter your password to access full-resolution downloads.</p>
+        <div class="download-form" id="download-form">
+          <input type="password" class="download-input" id="download-password" placeholder="Enter password" autocomplete="off">
+          <button class="download-btn" id="download-submit">Unlock</button>
+        </div>
+        <p class="download-error" id="download-error">Incorrect password. Please try again.</p>
+      </div>
+
+      <!-- Download Links (hidden until auth) -->
+      <div class="download-links" id="download-links">
+        <div class="download-all-wrap">
+          <button class="download-all-btn" id="download-all-btn">Download All Films</button>
+        </div>
+        <div class="download-list" id="download-list">
+          <!-- Items injected by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Footer ========== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-logo">Flyin' Iris</p>
+      <div class="footer-socials">
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/flyiniris/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/flyiniris/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@flyiniris" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"></path>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+          </svg>
+        </a>
+      </div>
+      <p class="footer-copy">&copy; 2025 Flyin' Iris Media Productions LLC. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ========== Video Modal ========== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal-player-wrap" id="modal-player-wrap">
+        <!-- Vidstack player injected by JS -->
+      </div>
+      <p class="modal-title" id="modal-title"></p>
+    </div>
+  </div>
+
+  <!-- ========== Scripts ========== -->
+  <script>
+    // --- Data ---
+    const VIDEOS = [{"id":"highlight","title":"Amanda \u0026 Boris\u0027s Wedding","category":"highlight","duration":"11:01","order":0,"featured":true},{"id":"teaser","title":"Teaser","category":"teaser","duration":"5:46","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"8:09","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"3:28","order":3},{"id":"first-look-vows","title":"First Look \u0026 Vows","category":"archival","duration":"7:41","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"7:08","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"16:15","order":6},{"id":"grand-march-first-dance","title":"Grand March \u0026 First Dance","category":"archival","duration":"9:04","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"26:03","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"8:19","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"10:08","order":10}];
+    const WORKER_BASE = 'https://video.flyiniris.com';
+    const SLUG = 'amanda-boris';
+
+    const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
+    const collection = VIDEOS.filter(v => v !== featured).sort((a, b) => a.order - b.order);
+
+    function hlsUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
+    }
+    function thumbUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+    }
+
+    // --- Featured Player ---
+    (function initFeatured() {
+      const wrap = document.getElementById('featured-player-wrap');
+      const info = document.getElementById('featured-info');
+
+      wrap.innerHTML =
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline>' +
+        '  <media-provider>' +
+        '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
+        '  </media-provider>' +
+        '  <media-video-layout></media-video-layout>' +
+        '</media-player>';
+
+      info.innerHTML =
+        '<span class="featured-title">' + escapeHtml(featured.title) + '</span>' +
+        '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>';
+    })();
+
+    // --- Collection Grid ---
+    (function initCollection() {
+      var grid = document.getElementById('collection-grid');
+      var html = '';
+      for (var i = 0; i < collection.length; i++) {
+        var v = collection[i];
+        html +=
+          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
+          '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
+          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
+          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
+          '    <div class="film-card-play">' +
+          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '    </div>' +
+          '  </div>' +
+          '  <div class="film-card-body">' +
+          '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
+          '  </div>' +
+          '</div>';
+      }
+      grid.innerHTML = html;
+    })();
+
+    // --- Modal ---
+    var modalOverlay = document.getElementById('modal-overlay');
+    var modalPlayerWrap = document.getElementById('modal-player-wrap');
+    var modalTitle = document.getElementById('modal-title');
+
+    function openModal(videoId, title) {
+      modalPlayerWrap.innerHTML =
+        '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay>' +
+        '  <media-provider>' +
+        '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
+        '  </media-provider>' +
+        '  <media-video-layout></media-video-layout>' +
+        '</media-player>';
+      modalTitle.textContent = title;
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+      // Give transition time to finish before clearing
+      setTimeout(function() {
+        modalPlayerWrap.innerHTML = '';
+        modalTitle.textContent = '';
+      }, 300);
+    }
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Card click delegation
+    document.getElementById('collection-grid').addEventListener('click', function(e) {
+      var card = e.target.closest('.film-card');
+      if (!card) return;
+      openModal(card.dataset.videoId, card.dataset.videoTitle);
+    });
+
+    // --- Navbar Scroll ---
+    (function initNavbar() {
+      var navbar = document.getElementById('navbar');
+      var ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          requestAnimationFrame(function() {
+            if (window.scrollY > 100) {
+              navbar.classList.add('scrolled');
+            } else {
+              navbar.classList.remove('scrolled');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+
+    // --- Hero CTA ---
+    document.getElementById('hero-cta').addEventListener('click', function() {
+      document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // --- Scroll Reveal ---
+    (function initReveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: show everything
+        for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('revealed');
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            entries[i].target.classList.add('revealed');
+            observer.unobserve(entries[i].target);
+          }
+        }
+      }, { threshold: 0.15 });
+      for (var i = 0; i < reveals.length; i++) observer.observe(reveals[i]);
+    })();
+
+    // --- Download Auth ---
+    (function initDownloads() {
+      var gate = document.getElementById('download-gate');
+      var linksWrap = document.getElementById('download-links');
+      var passwordInput = document.getElementById('download-password');
+      var submitBtn = document.getElementById('download-submit');
+      var errorMsg = document.getElementById('download-error');
+      var downloadList = document.getElementById('download-list');
+      var authToken = null;
+
+      // Render download list items
+      function renderDownloadList() {
+        var html = '';
+        for (var i = 0; i < VIDEOS.length; i++) {
+          var v = VIDEOS[i];
+          html +=
+            '<div class="download-item">' +
+            '  <div class="download-item-info">' +
+            '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
+            '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' +
+            '  </div>' +
+            '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
+            '</div>';
+        }
+        downloadList.innerHTML = html;
+      }
+
+      // Auth submit
+      function submitPassword() {
+        var password = passwordInput.value.trim();
+        if (!password) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '...';
+        errorMsg.classList.remove('visible');
+
+        fetch(WORKER_BASE + '/couples/' + SLUG + '/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password })
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error('auth_failed');
+          return res.json();
+        })
+        .then(function(data) {
+          authToken = data.token;
+          gate.style.display = 'none';
+          renderDownloadList();
+          linksWrap.classList.add('visible');
+        })
+        .catch(function() {
+          errorMsg.classList.add('visible');
+          passwordInput.value = '';
+          passwordInput.focus();
+        })
+        .finally(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Unlock';
+        });
+      }
+
+      submitBtn.addEventListener('click', submitPassword);
+      passwordInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitPassword();
+      });
+
+      // Individual downloads
+      downloadList.addEventListener('click', function(e) {
+        var btn = e.target.closest('.download-item-btn');
+        if (!btn) return;
+        triggerDownload(btn.dataset.videoId, btn);
+      });
+
+      // Download All (sequential to avoid overwhelming memory)
+      document.getElementById('download-all-btn').addEventListener('click', async function() {
+        var allBtn = this;
+        allBtn.disabled = true;
+        allBtn.textContent = 'Downloading...';
+        var btns = downloadList.querySelectorAll('.download-item-btn');
+        for (var i = 0; i < btns.length; i++) {
+          await triggerDownload(btns[i].dataset.videoId, btns[i]);
+        }
+        allBtn.disabled = false;
+        allBtn.textContent = 'Download All Films';
+      });
+
+      async function triggerDownload(videoId, btn) {
+        var origText = btn.textContent;
+        btn.textContent = 'Downloading...';
+        btn.disabled = true;
+
+        try {
+          var res = await fetch(WORKER_BASE + '/couples/' + SLUG + '/download/' + videoId, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + authToken }
+          });
+          if (!res.ok) throw new Error('download_failed');
+          var blob = await res.blob();
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = videoId + '.mp4';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // If token expired, reset to password gate
+          linksWrap.classList.remove('visible');
+          gate.style.display = '';
+          errorMsg.textContent = 'Session expired. Please re-enter your password.';
+          errorMsg.classList.add('visible');
+          authToken = null;
+        } finally {
+          btn.textContent = origText;
+          btn.disabled = false;
+        }
+      }
+    })();
+
+    // --- PWA Service Worker ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function() {});
+    }
+
+    // --- Helpers ---
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    function escapeAttr(str) {
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+</html>

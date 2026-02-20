@@ -1,0 +1,17 @@
+node_modules/
+delivery/test-output/
+delivery/output/
+delivery/workers/video-serve/node_modules/
+.wrangler/
+index_backup_*.html
+index_version_*.html
+index - *.html
+elfsight-combined-preview.html
+
+# Large video/media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.ts
+*.m3u8

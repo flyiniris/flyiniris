@@ -1,0 +1,19 @@
+name = "fi-video-serve"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+workers_dev = true
+
+# Custom domain route
+routes = [
+  { pattern = "video.flyiniris.com/*", zone_name = "flyiniris.com" }
+]
+
+# R2 bucket binding
+[[r2_buckets]]
+binding = "FI_FILMS"
+bucket_name = "fi-films"
+
+# KV namespace for couple passwords
+[[kv_namespaces]]
+binding = "PASSWORDS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
