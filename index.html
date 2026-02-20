@@ -156,7 +156,7 @@
 
     @keyframes scrollBounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
+      50% { transform: translateY(12px); }
     }
 
     @keyframes shimmer {
@@ -468,10 +468,6 @@
 
     .scroll-indicator span {
       display: block;
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, transparent, var(--text-secondary));
-      animation: scrollBounce 2s ease-in-out infinite;
     }
 
     /* ========== BUTTONS ========== */
@@ -757,6 +753,23 @@
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+    }
+
+    .why-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.05rem;
+      color: #F0C850;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s;
+    }
+
+    .why-block.visible .why-quote {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .why-divider {
@@ -1705,7 +1718,10 @@
         <p class="hero-booking">Now Booking 2026 &amp; 2027</p>
       </div>
       <div class="scroll-indicator" aria-hidden="true">
-        <span></span>
+        <div style="display:flex;flex-direction:column;align-items:center;animation:scrollBounce 2s ease-in-out infinite;">
+          <span style="display:block;width:2px;height:56px;background:linear-gradient(to bottom,transparent,rgba(200,195,185,0.9));animation:none;"></span>
+          <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:8px solid rgba(200,195,185,0.9);"></div>
+        </div>
       </div>
     </section>
 
@@ -1768,30 +1784,35 @@
         <div class="why-block" data-why-reveal id="why-01">
           <h3 class="why-headline">One editor. <span class="accent">Every film.</span></h3>
           <p class="why-body">Sierra edits every single Flyin' Iris film. The music. The pacing. The half-second glance between you and your mom that nobody else caught. Your film doesn't go through an assembly line. It goes through her. That's why every film has a heartbeat.</p>
+          <p class="why-quote">&ldquo;They didn&rsquo;t just document our wedding; they told our story in a way that we&rsquo;ll cherish for the rest of our lives.&rdquo;<br>&mdash; Kane K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-02">
           <h3 class="why-headline">We don't do <span class="accent">templates.</span></h3>
           <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you &mdash; not like everyone else's.</p>
+          <p class="why-quote">&ldquo;They captured our wedding in a way that felt so us. Nothing felt rehearsed or forced. It was raw, real, and full of personality.&rdquo;<br>&mdash; Sally K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-03">
           <h3 class="why-headline">You'll forget <span class="accent">we're filming.</span></h3>
           <p class="why-body">Your camera-shy partner? They'll be fine. We're hyping up the bridal party, making grandma laugh, catching the moments that only happen when people stop performing. The best stuff in your film? You won't even know we caught it.</p>
+          <p class="why-quote">&ldquo;It felt like we had two close friends with us rather than vendors.&rdquo;<br>&mdash; Rachel R.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-04">
           <h3 class="why-headline">You'll watch it and <span class="accent">feel it all again.</span></h3>
           <p class="why-body">The teaser lands within a week. The full film? You'll ugly-cry. You'll hear his voice crack during the vows again. You'll watch your dad's face when he sees you for the first time. Your kids will watch this one day. Their kids, too.</p>
+          <p class="why-quote">&ldquo;I can&rsquo;t stop watching it. Happy tears, so much joy, laughter and love. I&rsquo;ve watched it at least 3 times a day since getting it.&rdquo;<br>&mdash; Mariah K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-05">
           <h3 class="why-headline">The #1 regret? <span class="accent">Not hiring a videographer.</span></h3>
           <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments &mdash; we'll make you live them again. Don't be the couple who wishes they had.</p>
+          <p class="why-quote">&ldquo;We debated on even having a videographer. I&rsquo;m telling you right now &mdash; DO IT. I&rsquo;ve watched it every day and I cry every time.&rdquo;<br>&mdash; Danielle J.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -1841,43 +1862,10 @@
           <span class="reviews-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
           <span class="reviews-label">5.0 on Google</span>
         </div>
-        <div class="carousel reveal-child" aria-label="Testimonial carousel" role="region">
-          <div class="carousel-content">
-            <div class="carousel-slide active">
-              <blockquote>
-                <p class="carousel-quote">We debated on even having a videographer. I'm telling you right now &mdash; DO IT. I've watched it every day and I cry every time.</p>
-                <cite class="carousel-attr">&mdash; Google Review</cite>
-              </blockquote>
-            </div>
-            <div class="carousel-slide">
-              <blockquote>
-                <p class="carousel-quote">I can't stop watching it. Happy tears, so much joy, laughter and love. I've watched it at least 3 times a day since getting it.</p>
-                <cite class="carousel-attr">&mdash; Mariah K.</cite>
-              </blockquote>
-            </div>
-            <div class="carousel-slide">
-              <blockquote>
-                <p class="carousel-quote">Molly's grandma has watched it several times and cried during every viewing.</p>
-                <cite class="carousel-attr">&mdash; Molly C.</cite>
-              </blockquote>
-            </div>
-            <div class="carousel-slide">
-              <blockquote>
-                <p class="carousel-quote">I wasn't sure I even wanted video. When I found their page, I knew I needed it. The teaser was INCREDIBLE.</p>
-                <cite class="carousel-attr">&mdash; Summer A.</cite>
-              </blockquote>
-            </div>
-            <div class="carousel-slide">
-              <blockquote>
-                <p class="carousel-quote">Seeing your wedding played back like a trailer for a motion picture film - remarkable.</p>
-                <cite class="carousel-attr">&mdash; Katlin F.</cite>
-              </blockquote>
-            </div>
-            <button class="carousel-arrow carousel-arrow--prev" aria-label="Previous testimonial">&#8249;</button>
-            <button class="carousel-arrow carousel-arrow--next" aria-label="Next testimonial">&#8250;</button>
-          </div>
+        <div class="reveal-child">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div class="elfsight-app-fb2d57a6-a5d9-4ac3-85a0-146ee0086522" data-elfsight-app-lazy></div>
         </div>
-
         <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Check Your Date &#10022;</a>
         </div>
@@ -2044,90 +2032,6 @@
       whyBlocks.forEach(function(el) {
         whyObserver.observe(el);
       });
-
-      // ========== TESTIMONIAL CAROUSEL ==========
-      var slides = document.querySelectorAll('.carousel-slide');
-      var currentSlide = 0;
-      var autoAdvanceInterval;
-      var autoAdvanceTimeout;
-      var carousel = document.querySelector('.carousel');
-      var prevArrow = document.querySelector('.carousel-arrow--prev');
-      var nextArrow = document.querySelector('.carousel-arrow--next');
-      function goToSlide(index) {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = index;
-        slides[currentSlide].classList.add('active');
-      }
-
-      function nextSlideFunc() {
-        goToSlide((currentSlide + 1) % slides.length);
-      }
-
-      function prevSlideFunc() {
-        goToSlide((currentSlide - 1 + slides.length) % slides.length);
-      }
-
-      function startAutoAdvance() {
-        stopAutoAdvance();
-        autoAdvanceInterval = setInterval(nextSlideFunc, 4000);
-      }
-
-      function stopAutoAdvance() {
-        clearInterval(autoAdvanceInterval);
-        clearTimeout(autoAdvanceTimeout);
-      }
-
-      function userInteracted() {
-        stopAutoAdvance();
-        autoAdvanceTimeout = setTimeout(startAutoAdvance, 10000);
-      }
-
-      if (prevArrow) {
-        prevArrow.addEventListener('click', function() {
-          userInteracted();
-          prevSlideFunc();
-        });
-      }
-
-      if (nextArrow) {
-        nextArrow.addEventListener('click', function() {
-          userInteracted();
-          nextSlideFunc();
-        });
-      }
-
-      // Touch swipe support
-      if (carousel) {
-        var touchStartX = 0;
-        var touchEndX = 0;
-        var touchStartY = 0;
-        var isSwiping = false;
-
-        carousel.addEventListener('touchstart', function(e) {
-          touchStartX = e.changedTouches[0].screenX;
-          touchStartY = e.changedTouches[0].screenY;
-          isSwiping = false;
-        }, { passive: true });
-
-        carousel.addEventListener('touchmove', function(e) {
-          var dx = Math.abs(e.changedTouches[0].screenX - touchStartX);
-          var dy = Math.abs(e.changedTouches[0].screenY - touchStartY);
-          if (dx > dy && dx > 10) isSwiping = true;
-        }, { passive: true });
-
-        carousel.addEventListener('touchend', function(e) {
-          if (!isSwiping) return;
-          touchEndX = e.changedTouches[0].screenX;
-          var diff = touchStartX - touchEndX;
-          if (Math.abs(diff) > 50) {
-            userInteracted();
-            if (diff > 0) nextSlideFunc();
-            else prevSlideFunc();
-          }
-        }, { passive: true });
-      }
-
-      startAutoAdvance();
 
       // ========== COMBINED SCROLL HANDLER ==========
       var ticking = false;
