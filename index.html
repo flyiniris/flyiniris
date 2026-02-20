@@ -1935,16 +1935,20 @@
       // ========== HERO VIDEO - LOAD ONLY ONE ==========
       (function() {
         var isMobile = window.innerWidth <= 768;
-        var videoId = isMobile ? '1164502279' : '1164502302';
+        var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
+        var videoSrc = isMobile ? cdnBase + '/hero-9x16-v1.mp4' : cdnBase + '/hero-16x9-v1.mp4';
         var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
         if (wrapper) {
-          var iframe = document.createElement('iframe');
-          iframe.src = 'https://player.vimeo.com/video/' + videoId + '?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1';
-          iframe.frameBorder = '0';
-          iframe.allow = 'autoplay; fullscreen';
-          iframe.allowFullscreen = true;
-          iframe.style.cssText = 'position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);';
-          wrapper.appendChild(iframe);
+          var video = document.createElement('video');
+          video.src = videoSrc;
+          video.autoplay = true;
+          video.loop = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.setAttribute('playsinline', '');
+          video.setAttribute('webkit-playsinline', '');
+          video.style.cssText = 'position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;';
+          wrapper.appendChild(video);
         }
       })();
 
