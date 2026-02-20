@@ -16,4 +16,4 @@ bucket_name = "fi-films"
 # KV namespace for couple passwords
 [[kv_namespaces]]
 binding = "PASSWORDS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "6258df80d4cf4a1385b7cbe29b146064"
