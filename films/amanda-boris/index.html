@@ -763,8 +763,9 @@
       const wrap = document.getElementById('featured-player-wrap');
       const info = document.getElementById('featured-info');
 
+      var cors = featured.src ? '' : ' crossorigin';
       wrap.innerHTML =
-        '<media-player title="' + escapeAttr(featured.title) + '" src="' + videoSrc(featured) + '" crossorigin playsinline>' +
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + videoSrc(featured) + '"' + cors + ' playsinline>' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
         '  </media-provider>' +
@@ -807,8 +808,9 @@
     function openModal(videoId, title) {
       var vid = VIDEOS.find(function(v) { return v.id === videoId; });
       var src = (vid && vid.src) ? vid.src : hlsUrl(videoId);
+      var cors = (vid && vid.src) ? '' : ' crossorigin';
       modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(title) + '" src="' + src + '" crossorigin playsinline autoplay>' +
+        '<media-player title="' + escapeAttr(title) + '" src="' + src + '"' + cors + ' playsinline autoplay>' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
         '  </media-provider>' +
