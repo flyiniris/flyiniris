@@ -24,6 +24,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Google Cast SDK (Chromecast) -->
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1" async></script>
+
   <!-- Vidstack Player -->
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
@@ -741,7 +744,7 @@
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    const VIDEOS = [{"id":"rb-teaser","title":"Rachel \u0026 Brandon\u0027s Wedding Teaser","category":"teaser","duration":"3:30","order":-1,"featured":true,"src":"https://pub-3341f3d8ad7e4901ad7a54fdac1d90ef.r2.dev/rb-teaser.mp4"},{"id":"highlight","title":"Amanda \u0026 Boris\u0027s Wedding","category":"highlight","duration":"11:01","order":0},{"id":"teaser","title":"Teaser","category":"teaser","duration":"5:46","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"8:09","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"3:28","order":3},{"id":"first-look-vows","title":"First Look \u0026 Vows","category":"archival","duration":"7:41","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"7:08","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"16:15","order":6},{"id":"grand-march-first-dance","title":"Grand March \u0026 First Dance","category":"archival","duration":"9:04","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"26:03","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"8:19","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"10:08","order":10}];
+    const VIDEOS = [{"id":"rb-teaser","title":"Rachel \u0026 Brandon\u0027s Wedding Teaser","category":"teaser","duration":"2:00","order":-1,"featured":true},{"id":"highlight","title":"Amanda \u0026 Boris\u0027s Wedding","category":"highlight","duration":"11:01","order":0},{"id":"teaser","title":"Teaser","category":"teaser","duration":"5:46","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"8:09","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"3:28","order":3},{"id":"first-look-vows","title":"First Look \u0026 Vows","category":"archival","duration":"7:41","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"7:08","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"16:15","order":6},{"id":"grand-march-first-dance","title":"Grand March \u0026 First Dance","category":"archival","duration":"9:04","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"26:03","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"8:19","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"10:08","order":10}];
     const WORKER_BASE = 'https://video.flyiniris.com';
     const SLUG = 'amanda-boris';
 
@@ -754,6 +757,16 @@
     function videoSrc(v) {
       return v.src || hlsUrl(v.id);
     }
+
+    // --- Google Cast ---
+    window['__onGCastApiAvailable'] = function(isAvailable) {
+      if (isAvailable) {
+        cast.framework.CastContext.getInstance().setOptions({
+          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+        });
+      }
+    };
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
     }
@@ -763,11 +776,11 @@
       const wrap = document.getElementById('featured-player-wrap');
       const info = document.getElementById('featured-info');
 
-      var cors = featured.src ? '' : ' crossorigin';
       wrap.innerHTML =
-        '<media-player title="' + escapeAttr(featured.title) + '" src="' + videoSrc(featured) + '"' + cors + ' playsinline>' +
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + videoSrc(featured) + '" crossorigin playsinline>' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
+        '    <media-google-cast-provider></media-google-cast-provider>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
@@ -808,11 +821,11 @@
     function openModal(videoId, title) {
       var vid = VIDEOS.find(function(v) { return v.id === videoId; });
       var src = (vid && vid.src) ? vid.src : hlsUrl(videoId);
-      var cors = (vid && vid.src) ? '' : ' crossorigin';
       modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(title) + '" src="' + src + '"' + cors + ' playsinline autoplay>' +
+        '<media-player title="' + escapeAttr(title) + '" src="' + src + '" crossorigin playsinline autoplay>' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
+        '    <media-google-cast-provider></media-google-cast-provider>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
