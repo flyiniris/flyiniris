@@ -17,9 +17,9 @@ export default {
         return handleAuth(request, env, authMatch[1]);
       }
 
-      // Route: POST /couples/{slug}/download/{videoId}
+      // Route: GET /couples/{slug}/download/{videoId}
       const downloadMatch = path.match(/^\/couples\/([^/]+)\/download\/([^/]+)$/);
-      if (downloadMatch && request.method === 'POST') {
+      if (downloadMatch && request.method === 'GET') {
         return handleDownload(request, env, downloadMatch[1], downloadMatch[2]);
       }
 
