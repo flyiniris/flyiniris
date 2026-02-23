@@ -19,6 +19,13 @@ import shutil
 import sys
 import webbrowser
 
+# Month name → number mapping for auto-generating date_short
+MONTH_MAP = {
+    "january": "01", "february": "02", "march": "03", "april": "04",
+    "may": "05", "june": "06", "july": "07", "august": "08",
+    "september": "09", "october": "10", "november": "11", "december": "12",
+}
+
 
 def load_config(path):
     """Load and return the couple config JSON from the given path."""
@@ -31,6 +38,18 @@ def load_config(path):
     except json.JSONDecodeError as e:
         print(f"Error: Invalid JSON in config file: {e}", file=sys.stderr)
         sys.exit(1)
+
+
+def generate_date_short(date_long):
+    """Parse 'August 31, 2025' into '08.31.2025'. Returns None on failure."""
+    match = re.match(r"(\w+)\s+(\d{1,2}),?\s+(\d{4})", date_long.strip())
+    if not match:
+        return None
+    month_name, day, year = match.groups()
+    month_num = MONTH_MAP.get(month_name.lower())
+    if not month_num:
+        return None
+    return f"{month_num}.{int(day):02d}.{year}"
 
 
 def validate_config(config):
@@ -59,11 +78,21 @@ def validate_config(config):
     elif not isinstance(config["date"], str) or not config["date"]:
         errors.append("'date' must be a non-empty string (e.g., 'August 31, 2025')")
 
-    # date_short
-    if "date_short" not in config:
-        errors.append("Missing required field: 'date_short'")
-    elif not isinstance(config["date_short"], str) or not config["date_short"]:
-        errors.append("'date_short' must be a non-empty string (e.g., '08.31.2025')")
+    # date_short — optional, auto-generated from date if missing
+    if "date_short" in config:
+        if not isinstance(config["date_short"], str) or not config["date_short"]:
+            errors.append("'date_short' must be a non-empty string if provided (e.g., '08.31.2025')")
+    else:
+        # Auto-generate from date field
+        if "date" in config and isinstance(config["date"], str) and config["date"]:
+            generated = generate_date_short(config["date"])
+            if generated:
+                config["date_short"] = generated
+                print(f"  Auto-generated date_short: {generated}")
+            else:
+                errors.append("Could not auto-generate 'date_short' from 'date'. Provide it explicitly.")
+        else:
+            errors.append("Missing 'date_short' and cannot auto-generate (no valid 'date' field)")
 
     # videos
     if "videos" not in config:
@@ -81,6 +110,16 @@ def validate_config(config):
                     errors.append(f"videos[{i}] missing required field: '{field}'")
 
     return errors
+
+
+def get_featured_video_id(config):
+    """Return the ID of the featured video, or the first video's ID as fallback."""
+    for video in config.get("videos", []):
+        if video.get("featured"):
+            return video["id"]
+    if config.get("videos"):
+        return config["videos"][0]["id"]
+    return "highlight"
 
 
 def extract_year(config):
@@ -105,11 +144,12 @@ def build_tokens(config, worker_base):
         "{{NAME_1}}": config["names"][0],
         "{{NAME_2}}": config["names"][1],
         "{{DATE_LONG}}": config["date"],
-        "{{DATE_SHORT}}": config["date_short"],
+        "{{DATE_SHORT}}": config.get("date_short", ""),
         "{{SLUG}}": config["slug"],
         "{{WORKER_BASE}}": worker_base,
         "{{VIDEOS_JSON}}": json.dumps(config["videos"]),
         "{{YEAR}}": extract_year(config),
+        "{{FEATURED_VIDEO_ID}}": get_featured_video_id(config),
     }
 
 

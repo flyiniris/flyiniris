@@ -12,7 +12,7 @@
   <meta property="og:description" content="Watch Amanda & Boris's wedding films — August 31, 2025">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/films/amanda-boris/">
-  <meta property="og:image" content="https://video.flyiniris.com/couples/amanda-boris/thumbs/highlight.jpg">
+  <meta property="og:image" content="https://video.flyiniris.com/couples/amanda-boris/thumbs/teaser.jpg">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- PWA -->
@@ -24,8 +24,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Google Cast SDK (Chromecast) -->
-  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1" async></script>
+  <!-- Google Cast SDK (for Chromecast support) -->
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
   <!-- Vidstack Player -->
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
@@ -280,7 +280,11 @@
       transition: opacity 0.25s ease;
       background: rgba(10, 10, 10, 0.3);
     }
-    .film-card:hover .film-card-play { opacity: 1; }
+    .film-card:hover .film-card-play,
+    .film-card:focus-visible .film-card-play { opacity: 1; }
+    @media (hover: none) {
+      .film-card-play { opacity: 0.7; }
+    }
     .film-card-play svg {
       width: 48px;
       height: 48px;
@@ -570,6 +574,28 @@
       color: rgba(200, 195, 185, 0.5);
     }
 
+    /* ========== TV / Remote-Friendly ========== */
+    .film-card:focus-visible,
+    .hero-cta:focus-visible,
+    .download-btn:focus-visible,
+    .download-all-btn:focus-visible,
+    .download-item-btn:focus-visible,
+    .modal-close:focus-visible {
+      outline: 2px solid #FFBD1D;
+      outline-offset: 2px;
+    }
+    .film-card:focus-visible {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .film-card { min-height: 48px; }
+    .hero-cta,
+    .download-btn,
+    .download-all-btn,
+    .download-item-btn,
+    .modal-close { min-height: 48px; min-width: 48px; }
+    .film-card { -webkit-tap-highlight-color: transparent; }
+
     /* ========== Scroll Reveal ========== */
     .reveal {
       opacity: 0;
@@ -616,7 +642,7 @@
   <section class="hero" id="hero">
     <h1 class="hero-names">Amanda & Boris</h1>
     <p class="hero-date">August 31, 2025</p>
-    <button class="hero-cta" id="hero-cta">Watch the Highlight Film</button>
+    <button class="hero-cta" id="hero-cta">Watch the Teaser</button>
     <div class="hero-scroll-hint" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -744,8 +770,8 @@
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    const VIDEOS = [{"id":"rb-teaser","title":"Rachel \u0026 Brandon\u0027s Wedding Teaser","category":"teaser","duration":"2:00","order":-1,"featured":true},{"id":"highlight","title":"Amanda \u0026 Boris\u0027s Wedding","category":"highlight","duration":"11:01","order":0},{"id":"teaser","title":"Teaser","category":"teaser","duration":"5:46","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"8:09","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"3:28","order":3},{"id":"first-look-vows","title":"First Look \u0026 Vows","category":"archival","duration":"7:41","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"7:08","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"16:15","order":6},{"id":"grand-march-first-dance","title":"Grand March \u0026 First Dance","category":"archival","duration":"9:04","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"26:03","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"8:19","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"10:08","order":10}];
-    const WORKER_BASE = 'https://fi-video-serve.flyin-iris-mp.workers.dev';
+    const VIDEOS = [{"id": "teaser", "title": "Teaser", "category": "teaser", "duration": "", "order": 0, "featured": true}, {"id": "highlight", "title": "Amanda & Boris's Wedding", "category": "highlight", "duration": "", "order": 1}, {"id": "first-look-bridesmaids", "title": "First Look: Bridesmaids", "category": "archival", "duration": "", "order": 2}, {"id": "first-look-dad", "title": "First Look: Dad", "category": "archival", "duration": "", "order": 3}, {"id": "first-look-vows", "title": "First Look & Vows", "category": "archival", "duration": "", "order": 4}, {"id": "ketubah-signing", "title": "Ketubah Signing", "category": "archival", "duration": "", "order": 5}, {"id": "ceremony", "title": "Ceremony", "category": "archival", "duration": "", "order": 6}, {"id": "grand-march-first-dance", "title": "Grand March & First Dance", "category": "archival", "duration": "", "order": 7}, {"id": "speeches", "title": "Speeches", "category": "archival", "duration": "", "order": 8}, {"id": "parent-dances", "title": "Parent Dances", "category": "archival", "duration": "", "order": 9}, {"id": "gopro", "title": "GoPro", "category": "bonus", "duration": "", "order": 10}, {"id": "grand-raw", "title": "Full Ceremony (Raw)", "category": "archival", "duration": "", "order": 11}];
+    const WORKER_BASE = 'https://video.flyiniris.com';
     const SLUG = 'amanda-boris';
 
     const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
@@ -754,21 +780,28 @@
     function hlsUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
     }
-    function videoSrc(v) {
-      return v.src || hlsUrl(v.id);
-    }
-
-    // --- Google Cast ---
-    window['__onGCastApiAvailable'] = function(isAvailable) {
-      if (isAvailable) {
-        cast.framework.CastContext.getInstance().setOptions({
-          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-        });
-      }
-    };
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+    }
+
+    // --- HLS Buffering Config ---
+    var HLS_CONFIG = {
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
+      maxBufferSize: 60000000,
+      maxBufferHole: 0.5,
+      startLevel: -1,
+      capLevelToPlayerSize: true,
+      enableWorker: true
+    };
+
+    function configureHls(playerEl) {
+      playerEl.addEventListener('provider-change', function(e) {
+        var provider = e.detail;
+        if (provider && provider.type === 'hls') {
+          provider.config = HLS_CONFIG;
+        }
+      });
     }
 
     // --- Featured Player ---
@@ -777,17 +810,19 @@
       const info = document.getElementById('featured-info');
 
       wrap.innerHTML =
-        '<media-player title="' + escapeAttr(featured.title) + '" src="' + videoSrc(featured) + '" crossorigin playsinline>' +
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline storage="fi-featured">' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
-        '    <media-google-cast-provider></media-google-cast-provider>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
 
+      var player = wrap.querySelector('media-player');
+      if (player) configureHls(player);
+
       info.innerHTML =
         '<span class="featured-title">' + escapeHtml(featured.title) + '</span>' +
-        '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>';
+        (featured.duration ? '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>' : '');
     })();
 
     // --- Collection Grid ---
@@ -819,16 +854,17 @@
     var modalTitle = document.getElementById('modal-title');
 
     function openModal(videoId, title) {
-      var vid = VIDEOS.find(function(v) { return v.id === videoId; });
-      var src = (vid && vid.src) ? vid.src : hlsUrl(videoId);
       modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(title) + '" src="' + src + '" crossorigin playsinline autoplay>' +
+        '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay storage="fi-modal">' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
-        '    <media-google-cast-provider></media-google-cast-provider>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
+
+      var player = modalPlayerWrap.querySelector('media-player');
+      if (player) configureHls(player);
+
       modalTitle.textContent = title;
       modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';

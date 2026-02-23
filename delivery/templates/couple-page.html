@@ -12,7 +12,7 @@
   <meta property="og:description" content="Watch {{COUPLE_NAMES}}'s wedding films — {{DATE_LONG}}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/films/{{SLUG}}/">
-  <meta property="og:image" content="{{WORKER_BASE}}/couples/{{SLUG}}/thumbs/highlight.jpg">
+  <meta property="og:image" content="{{WORKER_BASE}}/couples/{{SLUG}}/thumbs/{{FEATURED_VIDEO_ID}}.jpg">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- PWA -->
@@ -23,6 +23,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Cast SDK (for Chromecast support) -->
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
   <!-- Vidstack Player -->
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
@@ -277,7 +280,11 @@
       transition: opacity 0.25s ease;
       background: rgba(10, 10, 10, 0.3);
     }
-    .film-card:hover .film-card-play { opacity: 1; }
+    .film-card:hover .film-card-play,
+    .film-card:focus-visible .film-card-play { opacity: 1; }
+    @media (hover: none) {
+      .film-card-play { opacity: 0.7; }
+    }
     .film-card-play svg {
       width: 48px;
       height: 48px;
@@ -567,6 +574,28 @@
       color: rgba(200, 195, 185, 0.5);
     }
 
+    /* ========== TV / Remote-Friendly ========== */
+    .film-card:focus-visible,
+    .hero-cta:focus-visible,
+    .download-btn:focus-visible,
+    .download-all-btn:focus-visible,
+    .download-item-btn:focus-visible,
+    .modal-close:focus-visible {
+      outline: 2px solid #FFBD1D;
+      outline-offset: 2px;
+    }
+    .film-card:focus-visible {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .film-card { min-height: 48px; }
+    .hero-cta,
+    .download-btn,
+    .download-all-btn,
+    .download-item-btn,
+    .modal-close { min-height: 48px; min-width: 48px; }
+    .film-card { -webkit-tap-highlight-color: transparent; }
+
     /* ========== Scroll Reveal ========== */
     .reveal {
       opacity: 0;
@@ -613,7 +642,7 @@
   <section class="hero" id="hero">
     <h1 class="hero-names">{{COUPLE_NAMES}}</h1>
     <p class="hero-date">{{DATE_LONG}}</p>
-    <button class="hero-cta" id="hero-cta">Watch the Highlight Film</button>
+    <button class="hero-cta" id="hero-cta">Watch the Teaser</button>
     <div class="hero-scroll-hint" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -755,22 +784,45 @@
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
     }
 
+    // --- HLS Buffering Config ---
+    var HLS_CONFIG = {
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
+      maxBufferSize: 60000000,
+      maxBufferHole: 0.5,
+      startLevel: -1,
+      capLevelToPlayerSize: true,
+      enableWorker: true
+    };
+
+    function configureHls(playerEl) {
+      playerEl.addEventListener('provider-change', function(e) {
+        var provider = e.detail;
+        if (provider && provider.type === 'hls') {
+          provider.config = HLS_CONFIG;
+        }
+      });
+    }
+
     // --- Featured Player ---
     (function initFeatured() {
       const wrap = document.getElementById('featured-player-wrap');
       const info = document.getElementById('featured-info');
 
       wrap.innerHTML =
-        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline>' +
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline storage="fi-featured">' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
 
+      var player = wrap.querySelector('media-player');
+      if (player) configureHls(player);
+
       info.innerHTML =
         '<span class="featured-title">' + escapeHtml(featured.title) + '</span>' +
-        '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>';
+        (featured.duration ? '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>' : '');
     })();
 
     // --- Collection Grid ---
@@ -803,12 +855,16 @@
 
     function openModal(videoId, title) {
       modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay>' +
+        '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay storage="fi-modal">' +
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
         '  </media-provider>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>';
+
+      var player = modalPlayerWrap.querySelector('media-player');
+      if (player) configureHls(player);
+
       modalTitle.textContent = title;
       modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';

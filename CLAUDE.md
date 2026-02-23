@@ -9,7 +9,7 @@ streamed via HLS through a Cloudflare Worker. No third-party services — we own
 
 ## Project Structure
 ```
-C:\Users\sierh\flyiniris\                    # Project root (existing site repo)
+C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing site repo)
 ├── index.html                                # Existing main website (DON'T TOUCH)
 ├── privacy.html                              # Existing (DON'T TOUCH)
 ├── terms.html                                # Existing (DON'T TOUCH)
@@ -65,86 +65,92 @@ C:\Users\sierh\flyiniris\                    # Project root (existing site repo)
   "slug": "amanda-boris",
   "names": ["Amanda", "Boris"],
   "date": "August 31, 2025",
-  "date_short": "08.31.2025",
   "password": "ab083125",
   "videos": [
-    {
-      "id": "highlight",
-      "title": "Amanda & Boris's Wedding",
-      "category": "highlight",
-      "duration": "11:01",
-      "order": 0,
-      "featured": true
-    },
     {
       "id": "teaser",
       "title": "Teaser",
       "category": "teaser",
-      "duration": "5:46",
+      "duration": "",
+      "order": 0,
+      "featured": true
+    },
+    {
+      "id": "highlight",
+      "title": "Amanda & Boris's Wedding",
+      "category": "highlight",
+      "duration": "",
       "order": 1
     },
     {
       "id": "first-look-bridesmaids",
       "title": "First Look: Bridesmaids",
       "category": "archival",
-      "duration": "8:09",
+      "duration": "",
       "order": 2
     },
     {
       "id": "first-look-dad",
       "title": "First Look: Dad",
       "category": "archival",
-      "duration": "3:28",
+      "duration": "",
       "order": 3
     },
     {
       "id": "first-look-vows",
       "title": "First Look & Vows",
       "category": "archival",
-      "duration": "7:41",
+      "duration": "",
       "order": 4
     },
     {
       "id": "ketubah-signing",
       "title": "Ketubah Signing",
       "category": "archival",
-      "duration": "7:08",
+      "duration": "",
       "order": 5
     },
     {
       "id": "ceremony",
       "title": "Ceremony",
       "category": "archival",
-      "duration": "16:15",
+      "duration": "",
       "order": 6
     },
     {
       "id": "grand-march-first-dance",
       "title": "Grand March & First Dance",
       "category": "archival",
-      "duration": "9:04",
+      "duration": "",
       "order": 7
     },
     {
       "id": "speeches",
       "title": "Speeches",
       "category": "archival",
-      "duration": "26:03",
+      "duration": "",
       "order": 8
     },
     {
       "id": "parent-dances",
       "title": "Parent Dances",
       "category": "archival",
-      "duration": "8:19",
+      "duration": "",
       "order": 9
     },
     {
       "id": "gopro",
       "title": "GoPro",
       "category": "bonus",
-      "duration": "10:08",
+      "duration": "",
       "order": 10
+    },
+    {
+      "id": "grand-raw",
+      "title": "Full Ceremony (Raw)",
+      "category": "archival",
+      "duration": "",
+      "order": 11
     }
   ],
   "photos": {
@@ -153,6 +159,8 @@ C:\Users\sierh\flyiniris\                    # Project root (existing site repo)
   }
 }
 ```
+
+**Note:** `date_short` is optional — the generator auto-generates it from `date` (e.g., "August 31, 2025" → "08.31.2025"). Durations are empty until filled by the transcode script.
 
 ## R2 Bucket Structure
 ```
