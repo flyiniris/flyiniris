@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(head:*)",
+      "Bash(where python:)",
+      "Bash(node:*)",
+      "Bash(cd:*)",
+      "Bash(git config:*)",
+      "Bash(ls -la \"/c/Users/flyin/OneDrive/Desktop/Amanda & Boris RAW File_for Sean/\" 2>/dev/null || ls -la \"C:/Users/flyin/OneDrive/Desktop/Amanda & Boris RAW File_for Sean/\" 2>/dev/null)",
+      "Bash(ls:*)",
+      "Bash(rclone copy:*)",
+      "Bash(rclone config:*)",
+      "Bash(rclone moveto:*)"
+    ]
+  }
+}
