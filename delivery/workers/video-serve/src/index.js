@@ -17,21 +17,21 @@ export default {
         return handleAuth(request, env, authMatch[1]);
       }
 
-      // Route: GET /couples/{slug}/download/{videoId}
+      // Route: POST /couples/{slug}/download/{videoId}
       const downloadMatch = path.match(/^\/couples\/([^/]+)\/download\/([^/]+)$/);
-      if (downloadMatch && request.method === 'GET') {
+      if (downloadMatch && request.method === 'POST') {
         return handleDownload(request, env, downloadMatch[1], downloadMatch[2]);
       }
 
       // Route: GET /couples/{slug}/hls/{videoId}/*
       const hlsMatch = path.match(/^\/couples\/([^/]+)\/hls\/(.+)$/);
-      if (hlsMatch && request.method === 'GET') {
+      if (hlsMatch && (request.method === 'GET' || request.method === 'HEAD')) {
         return handleHLS(request, env, hlsMatch[0]);
       }
 
-      // Route: GET /couples/{slug}/thumbs/{videoId}.jpg
-      const thumbMatch = path.match(/^\/couples\/([^/]+)\/thumbs\/([^/]+\.jpg)$/);
-      if (thumbMatch && request.method === 'GET') {
+      // Route: GET /couples/{slug}/thumbs/{filename}
+      const thumbMatch = path.match(/^\/couples\/([^/]+)\/thumbs\/(.+)$/);
+      if (thumbMatch && (request.method === 'GET' || request.method === 'HEAD')) {
         return handleThumb(request, env, thumbMatch[0]);
       }
 
@@ -239,16 +239,9 @@ async function verifyJWT(token, secret) {
 // CORS helpers
 // ---------------------------------------------------------------------------
 
-function isAllowedOrigin(origin) {
-  if (!origin) return false;
-  return origin === 'https://flyiniris.com' ||
-         (origin.endsWith('.flyiniris.com') && origin.startsWith('https://'));
-}
-
 function cors(request) {
-  const origin = request.headers.get('Origin');
   return {
-    'Access-Control-Allow-Origin': isAllowedOrigin(origin) ? origin : '*',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
