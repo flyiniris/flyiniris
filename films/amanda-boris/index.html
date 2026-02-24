@@ -225,30 +225,67 @@
     .featured-block + .featured-block {
       margin-top: 80px;
     }
-    .featured-player-wrap {
+    .featured-card {
+      position: relative;
       border-radius: 8px;
       overflow: hidden;
+      background: #161615;
       border: 1px solid #2A2A28;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .featured-card:hover {
+      transform: translateY(-4px);
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .featured-player-wrap {
+      position: relative;
+      aspect-ratio: 16/9;
     }
     .featured-player-wrap media-player {
       --media-brand: #FFBD1D;
       width: 100%;
-      aspect-ratio: 16/9;
+      height: 100%;
     }
-    .featured-info {
-      text-align: center;
-      padding: 20px 0 0;
+    .featured-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A19;
+      cursor: pointer;
+      transition: opacity 0.4s ease;
     }
-    .featured-title {
+    .featured-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+    }
+    .featured-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .featured-card:hover .featured-overlay .film-card-play,
+    .featured-card:focus-visible .featured-overlay .film-card-play {
+      opacity: 1;
+    }
+    .featured-overlay .film-card-play svg {
+      width: 64px;
+      height: 64px;
+    }
+    .featured-overlay .film-card-badge {
+      top: auto;
+      bottom: 12px;
+    }
+    .featured-card-body {
+      padding: 16px;
+    }
+    .featured-card-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: 1.4rem;
-    }
-    .featured-duration {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.85rem;
-      color: #C8C3B9;
+      font-size: 1.15rem;
     }
 
     /* ========== Archival Collection ========== */
@@ -753,6 +790,7 @@
 
     /* ========== TV / Remote-Friendly ========== */
     .film-card:focus-visible,
+    .featured-card:focus-visible,
     .playlist-card:focus-visible,
     .hero-cta:focus-visible,
     .download-btn:focus-visible,
@@ -844,22 +882,16 @@
       <!-- Teaser -->
       <div class="featured-block reveal" id="featured-teaser">
         <p class="section-label">The Teaser</p>
-        <div class="featured-player-wrap" id="teaser-player-wrap">
-          <!-- Vidstack player injected by JS -->
-        </div>
-        <div class="featured-info" id="teaser-info">
-          <!-- Title + duration injected by JS -->
+        <div class="featured-card" id="teaser-card">
+          <!-- Card content injected by JS -->
         </div>
       </div>
 
       <!-- Highlight -->
       <div class="featured-block reveal" id="featured-highlight">
         <p class="section-label">Highlight Film</p>
-        <div class="featured-player-wrap" id="highlight-player-wrap">
-          <!-- Vidstack player injected by JS -->
-        </div>
-        <div class="featured-info" id="highlight-info">
-          <!-- Title + duration injected by JS -->
+        <div class="featured-card" id="highlight-card">
+          <!-- Card content injected by JS -->
         </div>
       </div>
     </div>
@@ -870,7 +902,7 @@
     <div class="container">
       <div class="reveal">
         <p class="section-label">The Collection</p>
-        <h2 class="section-title" id="collection-count">10 Films</h2>
+        <h2 class="section-title" id="collection-count">9 Films</h2>
       </div>
       <div class="collection-grid" id="collection-grid">
         <!-- Cards injected by JS -->
@@ -1056,37 +1088,40 @@
 
     // --- Featured Players ---
     (function initFeatured() {
-      // Teaser
-      var teaserWrap = document.getElementById('teaser-player-wrap');
-      var teaserInfo = document.getElementById('teaser-info');
-      teaserWrap.innerHTML =
-        '<media-player title="' + escapeAttr(teaserData.title) + '" src="' + hlsUrl(teaserData.id) + '" crossorigin playsinline storage="fi-teaser">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(teaserData.id) + '" alt="' + escapeAttr(teaserData.title) + '"></media-poster>' +
-        '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
-        '</media-player>';
-      var teaserPlayer = teaserWrap.querySelector('media-player');
-      if (teaserPlayer) configureHls(teaserPlayer);
-      teaserInfo.innerHTML =
-        '<span class="featured-title">' + escapeHtml(teaserData.title) + '</span>' +
-        (teaserData.duration ? '<span class="featured-duration">' + escapeHtml(teaserData.duration) + '</span>' : '');
+      function buildFeaturedCard(data, cardId, storageKey) {
+        var card = document.getElementById(cardId);
+        card.innerHTML =
+          '<div class="featured-player-wrap">' +
+          '  <media-player title="' + escapeAttr(data.title) + '" src="' + hlsUrl(data.id) + '" crossorigin playsinline storage="fi-' + storageKey + '">' +
+          '    <media-provider>' +
+          '      <media-poster src="' + thumbUrl(data.id) + '" alt="' + escapeAttr(data.title) + '"></media-poster>' +
+          '    </media-provider>' +
+          '    <media-video-layout></media-video-layout>' +
+          '  </media-player>' +
+          '  <div class="featured-overlay" style="background-image: url(\'' + thumbUrl(data.id) + '\')">' +
+          '    <span class="film-card-tag">' + escapeHtml(data.category) + '</span>' +
+          '    <span class="film-card-badge">' + escapeHtml(data.duration) + '</span>' +
+          '    <div class="film-card-play">' +
+          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '    </div>' +
+          '  </div>' +
+          '</div>' +
+          '<div class="featured-card-body">' +
+          '  <p class="featured-card-title">' + escapeHtml(data.title) + '</p>' +
+          '</div>';
 
-      // Highlight
-      var highlightWrap = document.getElementById('highlight-player-wrap');
-      var highlightInfo = document.getElementById('highlight-info');
-      highlightWrap.innerHTML =
-        '<media-player title="' + escapeAttr(highlightData.title) + '" src="' + hlsUrl(highlightData.id) + '" crossorigin playsinline storage="fi-highlight">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(highlightData.id) + '" alt="' + escapeAttr(highlightData.title) + '"></media-poster>' +
-        '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
-        '</media-player>';
-      var highlightPlayer = highlightWrap.querySelector('media-player');
-      if (highlightPlayer) configureHls(highlightPlayer);
-      highlightInfo.innerHTML =
-        '<span class="featured-title">' + escapeHtml(highlightData.title) + '</span>' +
-        (highlightData.duration ? '<span class="featured-duration">' + escapeHtml(highlightData.duration) + '</span>' : '');
+        var player = card.querySelector('media-player');
+        if (player) configureHls(player);
+
+        var overlay = card.querySelector('.featured-overlay');
+        overlay.addEventListener('click', function() {
+          overlay.classList.add('hidden');
+          player.play();
+        });
+      }
+
+      buildFeaturedCard(teaserData, 'teaser-card', 'teaser');
+      buildFeaturedCard(highlightData, 'highlight-card', 'highlight');
     })();
 
     // --- Collection Grid ---
