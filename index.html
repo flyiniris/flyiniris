@@ -632,6 +632,15 @@
       box-shadow: 0 0 12px rgba(255, 189, 29, 0.15);
     }
 
+    media-player:not([data-started]) media-poster {
+      display: block !important;
+      opacity: 1 !important;
+    }
+
+    media-player[data-started] media-poster {
+      display: none;
+    }
+
     .film-title {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
@@ -1756,14 +1765,21 @@
         <h2 class="section-heading reveal-child">Don't take our word for it. Press play.</h2>
 
         <div class="film-featured reveal-child">
-          <div style="padding:56.25% 0 0 0;position:relative;background:url('https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Austin_thumb.jpg') center/cover no-repeat;">
+          <div style="padding:56.25% 0 0 0;position:relative;">
             <media-player
               src="https://media.flyiniris.com/videos/teasers/taylor-austin/master.m3u8"
+              poster="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Austin_thumb.jpg"
               title="A Wisconsin Love Story"
               crossorigin
+              playsinline
               style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
             >
               <media-provider></media-provider>
+              <media-poster
+                src="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Austin_thumb.jpg"
+                alt="A Wisconsin Love Story"
+                style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
+              ></media-poster>
               <media-video-layout></media-video-layout>
             </media-player>
           </div>
@@ -1772,28 +1788,42 @@
 
         <div class="films-grid">
           <div class="reveal-child">
-            <div style="padding:56.25% 0 0 0;position:relative;background:url('https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Kane_thumb.jpg') center/cover no-repeat;">
+            <div style="padding:56.25% 0 0 0;position:relative;">
               <media-player
                 src="https://media.flyiniris.com/videos/teasers/taylor-kane/master.m3u8"
+                poster="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Kane_thumb.jpg"
                 title="Main Characters at The Green Bay Country Club"
                 crossorigin
+                playsinline
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
+                <media-poster
+                  src="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Kane_thumb.jpg"
+                  alt="Main Characters at The Green Bay Country Club"
+                  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
+                ></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
             </div>
             <p class="film-title">Main Characters at The Green Bay Country Club</p>
           </div>
           <div class="reveal-child">
-            <div style="padding:56.25% 0 0 0;position:relative;background:url('https://media.flyiniris.com/videos/teasers/thumbs/Olivia-Austin_thumb.jpg') center/cover no-repeat;">
+            <div style="padding:56.25% 0 0 0;position:relative;">
               <media-player
                 src="https://media.flyiniris.com/videos/teasers/olivia-austin/master.m3u8"
+                poster="https://media.flyiniris.com/videos/teasers/thumbs/Olivia-Austin_thumb.jpg"
                 title="A Marine Marries His Duchess"
                 crossorigin
+                playsinline
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
+                <media-poster
+                  src="https://media.flyiniris.com/videos/teasers/thumbs/Olivia-Austin_thumb.jpg"
+                  alt="A Marine Marries His Duchess"
+                  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
+                ></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
             </div>
