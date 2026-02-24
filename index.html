@@ -644,6 +644,36 @@
       transition: opacity 0.3s ease;
     }
 
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      pointer-events: none;
+    }
+
+    .video-play-btn svg {
+      width: 28px;
+      height: 28px;
+      margin-left: 3px;
+    }
+
+    .video-play-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
     .film-title {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
@@ -1780,6 +1810,11 @@
               <media-video-layout></media-video-layout>
             </media-player>
             <img src="/thumbs/Taylor-Austin_thumb.jpg" alt="A Wisconsin Love Story" class="video-poster" />
+            <div class="video-play-btn">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+              </svg>
+            </div>
           </div>
           <p class="film-title">A Wisconsin Love Story</p>
         </div>
@@ -1798,6 +1833,11 @@
                 <media-video-layout></media-video-layout>
               </media-player>
               <img src="/thumbs/Taylor-Kane_thumb.jpg" alt="Main Characters at The Green Bay Country Club" class="video-poster" />
+              <div class="video-play-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+                </svg>
+              </div>
             </div>
             <p class="film-title">Main Characters at The Green Bay Country Club</p>
           </div>
@@ -1814,6 +1854,11 @@
                 <media-video-layout></media-video-layout>
               </media-player>
               <img src="/thumbs/Olivia-Austin_thumb.jpg" alt="A Marine Marries His Duchess" class="video-poster" />
+              <div class="video-play-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+                </svg>
+              </div>
             </div>
             <p class="film-title">A Marine Marries His Duchess</p>
           </div>
@@ -1986,7 +2031,9 @@
       document.querySelectorAll('media-player').forEach(function(player) {
         player.addEventListener('playing', function() {
           var poster = this.parentElement.querySelector('.video-poster');
+          var playBtn = this.parentElement.querySelector('.video-play-btn');
           if (poster) poster.style.opacity = '0';
+          if (playBtn) playBtn.style.opacity = '0';
         });
       });
 
