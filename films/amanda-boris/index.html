@@ -275,12 +275,9 @@
       width: 64px;
       height: 64px;
     }
-    .featured-overlay .film-card-badge {
-      top: auto;
-      bottom: 12px;
-    }
     .featured-card-body {
       padding: 16px;
+      text-align: center;
     }
     .featured-card-title {
       font-family: 'Cormorant Garamond', serif;
@@ -374,6 +371,7 @@
     }
     .film-card-body {
       padding: 16px;
+      text-align: center;
     }
     .film-card-title {
       font-family: 'Cormorant Garamond', serif;
@@ -418,6 +416,7 @@
     .playlist-card-info {
       flex: 1;
       min-width: 0;
+      text-align: center;
     }
     .playlist-card-title {
       font-family: 'Cormorant Garamond', serif;
@@ -1100,7 +1099,6 @@
           '  </media-player>' +
           '  <div class="featured-overlay" style="background-image: url(\'' + thumbUrl(data.id) + '\')">' +
           '    <span class="film-card-tag">' + escapeHtml(data.category) + '</span>' +
-          '    <span class="film-card-badge">' + escapeHtml(data.duration) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
           '    </div>' +
@@ -1135,7 +1133,6 @@
         html +=
           '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
           '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
-          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
           '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
@@ -1149,13 +1146,13 @@
 
       // "Watch the Full Day" playlist card
       html +=
-        '<div class="playlist-card reveal" id="playlist-card" tabindex="0" role="button" aria-label="Watch the Full Day — plays 8 films in chronological order">' +
+        '<div class="playlist-card reveal" id="playlist-card" tabindex="0" role="button" aria-label="Watch the Full Day — plays ' + PLAYLIST.length + ' films in chronological order">' +
         '  <div class="playlist-card-icon">' +
         '    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
         '  </div>' +
         '  <div class="playlist-card-info">' +
         '    <p class="playlist-card-title">Watch the Full Day</p>' +
-        '    <p class="playlist-card-subtitle">8 films in chronological order &bull; ~1 hr 26 min</p>' +
+        '    <p class="playlist-card-subtitle">' + PLAYLIST.length + ' films in chronological order &bull; ~1 hr 26 min</p>' +
         '  </div>' +
         '  <div class="playlist-card-arrow">' +
         '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
@@ -1165,6 +1162,7 @@
         '</div>';
 
       grid.innerHTML = html;
+      document.getElementById('collection-count').textContent = collection.length + ' Films';
     })();
 
     // --- Modal ---
