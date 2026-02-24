@@ -632,6 +632,17 @@
       box-shadow: 0 0 12px rgba(255, 189, 29, 0.15);
     }
 
+    media-player [data-media-poster] {
+      display: block !important;
+      opacity: 1 !important;
+    }
+
+    media-player:not([data-started]) .vds-poster {
+      display: block !important;
+      opacity: 1 !important;
+      z-index: 1;
+    }
+
     .film-title {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
@@ -1765,6 +1776,7 @@
               style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
             >
               <media-provider></media-provider>
+              <media-poster src="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Austin_thumb.jpg"></media-poster>
               <media-video-layout></media-video-layout>
             </media-player>
           </div>
@@ -1782,6 +1794,7 @@
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
+                <media-poster src="https://media.flyiniris.com/videos/teasers/thumbs/Taylor-Kane_thumb.jpg"></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
             </div>
@@ -1797,6 +1810,7 @@
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
+                <media-poster src="https://media.flyiniris.com/videos/teasers/thumbs/Olivia-Austin_thumb.jpg"></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
             </div>
