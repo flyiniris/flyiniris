@@ -632,13 +632,16 @@
       box-shadow: 0 0 12px rgba(255, 189, 29, 0.15);
     }
 
-    media-player:not([data-started]) media-poster {
-      display: block !important;
-      opacity: 1 !important;
-    }
-
-    media-player[data-started] media-poster {
-      display: none;
+    .video-poster {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 10;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
     .film-title {
@@ -1768,20 +1771,15 @@
           <div style="padding:56.25% 0 0 0;position:relative;">
             <media-player
               src="https://media.flyiniris.com/videos/teasers/taylor-austin/master.m3u8"
-              poster="/thumbs/Taylor-Austin_thumb.jpg"
               title="A Wisconsin Love Story"
               crossorigin
               playsinline
               style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
             >
               <media-provider></media-provider>
-              <media-poster
-                src="/thumbs/Taylor-Austin_thumb.jpg"
-                alt="A Wisconsin Love Story"
-                style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
-              ></media-poster>
               <media-video-layout></media-video-layout>
             </media-player>
+            <img src="/thumbs/Taylor-Austin_thumb.jpg" alt="A Wisconsin Love Story" class="video-poster" />
           </div>
           <p class="film-title">A Wisconsin Love Story</p>
         </div>
@@ -1791,20 +1789,15 @@
             <div style="padding:56.25% 0 0 0;position:relative;">
               <media-player
                 src="https://media.flyiniris.com/videos/teasers/taylor-kane/master.m3u8"
-                poster="/thumbs/Taylor-Kane_thumb.jpg"
                 title="Main Characters at The Green Bay Country Club"
                 crossorigin
                 playsinline
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
-                <media-poster
-                  src="/thumbs/Taylor-Kane_thumb.jpg"
-                  alt="Main Characters at The Green Bay Country Club"
-                  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
-                ></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
+              <img src="/thumbs/Taylor-Kane_thumb.jpg" alt="Main Characters at The Green Bay Country Club" class="video-poster" />
             </div>
             <p class="film-title">Main Characters at The Green Bay Country Club</p>
           </div>
@@ -1812,20 +1805,15 @@
             <div style="padding:56.25% 0 0 0;position:relative;">
               <media-player
                 src="https://media.flyiniris.com/videos/teasers/olivia-austin/master.m3u8"
-                poster="/thumbs/Olivia-Austin_thumb.jpg"
                 title="A Marine Marries His Duchess"
                 crossorigin
                 playsinline
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
-                <media-poster
-                  src="/thumbs/Olivia-Austin_thumb.jpg"
-                  alt="A Marine Marries His Duchess"
-                  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"
-                ></media-poster>
                 <media-video-layout></media-video-layout>
               </media-player>
+              <img src="/thumbs/Olivia-Austin_thumb.jpg" alt="A Marine Marries His Duchess" class="video-poster" />
             </div>
             <p class="film-title">A Marine Marries His Duchess</p>
           </div>
@@ -1993,6 +1981,14 @@
   <script>
     (function() {
       'use strict';
+
+      // ========== VIDEO POSTER FADE ON PLAY ==========
+      document.querySelectorAll('media-player').forEach(function(player) {
+        player.addEventListener('playing', function() {
+          var poster = this.parentElement.querySelector('.video-poster');
+          if (poster) poster.style.opacity = '0';
+        });
+      });
 
       // ========== HERO VIDEO - LOAD ONLY ONE ==========
       (function() {
