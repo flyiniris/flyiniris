@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Intake Form Spec | Flyin' Iris</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200,195,185,0.5);
+      --accent-gold: #FFBD1D;
+      --border: #2A2A28;
+      --border-focus: #FFBD1D;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    /* ========== LAYOUT ========== */
+
+    .page-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    /* ========== HEADER ========== */
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      color: var(--accent-gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .header-divider {
+      width: 80px;
+      height: 1px;
+      background: var(--accent-gold);
+      margin: 24px auto 0;
+      opacity: 0.6;
+    }
+
+    /* ========== SECTIONS ========== */
+
+    .form-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .section-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: var(--accent-gold);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-note {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-style: italic;
+    }
+
+    /* ========== FORM FIELDS ========== */
+
+    .field-group {
+      margin-bottom: 24px;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field-label {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .field-helper {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      display: block;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      padding: 12px 16px;
+      transition: border-color 0.25s ease;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: var(--border-focus);
+    }
+
+    .textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    .select {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23C8C3B9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    /* ========== CHECKBOXES ========== */
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: default;
+      transition: border-color 0.25s ease;
+    }
+
+    .checkbox-box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .checkbox-text {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    /* ========== VIBE CHIPS ========== */
+
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      cursor: default;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+    }
+
+    /* ========== RADIO BUTTONS ========== */
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: default;
+      transition: border-color 0.25s ease;
+    }
+
+    .radio-circle {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .radio-text {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    /* ========== FOOTER ========== */
+
+    .page-footer {
+      text-align: center;
+      padding-top: 24px;
+    }
+
+    .footer-note {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-style: italic;
+      padding: 16px 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .footer-brand {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ========== RESPONSIVE ========== */
+
+    @media (max-width: 600px) {
+      .page-wrapper {
+        padding: 40px 16px 60px;
+      }
+
+      .form-section {
+        padding: 28px 20px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- ========== HEADER ========== -->
+    <header class="page-header">
+      <h1 class="wordmark">Flyin' Iris</h1>
+      <p class="page-subtitle">Film Intake Form</p>
+      <div class="header-divider"></div>
+    </header>
+
+    <!-- ========== SECTION A: DAY-OF DETAILS ========== -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-label">A &middot; Day-Of Details</span>
+        <span class="section-line"></span>
+      </div>
+      <p class="section-note">Filled out by the filming team after the wedding</p>
+
+      <div class="field-group">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Partner 1 First Name</label>
+            <div class="input">e.g., Amanda</div>
+          </div>
+          <div>
+            <label class="field-label">Partner 2 First Name</label>
+            <div class="input">e.g., Boris</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Wedding Date</label>
+        <div class="input">MM / DD / YYYY</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Venue Name</label>
+        <div class="input">e.g., The Green Bay Country Club</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Venue Address</label>
+        <div class="input">Full address including city, state, ZIP</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Venue Type</label>
+        <select class="select" disabled>
+          <option>Select venue type...</option>
+          <option>Barn</option>
+          <option>Ballroom</option>
+          <option>Outdoor</option>
+          <option>Lakefront</option>
+          <option>Garden</option>
+          <option>Rooftop</option>
+          <option>Church</option>
+          <option>Estate</option>
+          <option>Country Club</option>
+          <option>Winery</option>
+          <option>Industrial</option>
+          <option>Restaurant</option>
+          <option>Hotel</option>
+          <option>Park</option>
+          <option>Brewery</option>
+        </select>
+        <p class="field-helper">Options: barn, ballroom, outdoor, lakefront, garden, rooftop, church, estate, country-club, winery, industrial, restaurant, hotel, park, brewery</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Approximate Guest Count</label>
+        <select class="select" disabled>
+          <option>Select guest count range...</option>
+          <option>Under 50</option>
+          <option>50 - 150</option>
+          <option>150+</option>
+        </select>
+        <p class="field-helper">Maps to: intimate, medium, large</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Couple Personality</label>
+        <select class="select" disabled>
+          <option>Select personality type...</option>
+          <option>Outgoing &amp; energetic</option>
+          <option>Reserved &amp; intimate</option>
+          <option>Mix of both</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Key Moments That Stood Out</label>
+        <div class="checkbox-grid">
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">First look</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Vow exchange</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Parent dances</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Toasts / speeches</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Surprise element</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Grand exit</span>
+          </div>
+          <div class="checkbox-item">
+            <span class="checkbox-box"></span>
+            <span class="checkbox-text">Other</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Key Moment Notes</label>
+        <div class="textarea">Describe what made those moments special...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Challenges or Notes for Editing</label>
+        <div class="textarea">Lighting issues, audio problems, vendor conflicts, timeline changes...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Standout Shots or Footage Highlights</label>
+        <div class="textarea">Any specific shots, angles, or moments captured on camera that were exceptional...</div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION B: EDITORIAL NOTES ========== -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-label">B &middot; Editorial Notes</span>
+        <span class="section-line"></span>
+      </div>
+      <p class="section-note">Filled out by Sierra during / after review</p>
+
+      <div class="field-group">
+        <label class="field-label">Vibe Tags</label>
+        <p class="field-helper" style="margin-bottom: 10px; margin-top: 0;">Select all that apply</p>
+        <div class="chip-grid">
+          <span class="chip">romantic</span>
+          <span class="chip">modern</span>
+          <span class="chip">timeless</span>
+          <span class="chip">boho</span>
+          <span class="chip">elegant</span>
+          <span class="chip">rustic</span>
+          <span class="chip">intimate</span>
+          <span class="chip">grand</span>
+          <span class="chip">cultural</span>
+          <span class="chip">adventurous</span>
+          <span class="chip">classic</span>
+          <span class="chip">whimsical</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Emotional Tone</label>
+        <select class="select" disabled>
+          <option>Select emotional tone...</option>
+          <option>Tearjerker</option>
+          <option>Joyful</option>
+          <option>Party energy</option>
+          <option>Quiet &amp; intimate</option>
+          <option>Cinematic epic</option>
+        </select>
+        <p class="field-helper">Maps to: tearjerker, joyful, party, quiet-intimate, cinematic-epic</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Music Direction / Tone</label>
+        <div class="textarea">e.g., Acoustic indie, emotional build</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Pacing Notes</label>
+        <div class="textarea">Slow and cinematic? Fast cuts? Build to a crescendo?</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Emotional Beats to Prioritize</label>
+        <div class="textarea">Which moments should hit the hardest in the edit?</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Color Palette / Visual Notes</label>
+        <div class="textarea">Warm tones, desaturated, moody, bright and airy...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Similar Past Film for Reference</label>
+        <div class="input">Which past film has this vibe?</div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION C: POST-DELIVERY ========== -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-label">C &middot; Post-Delivery</span>
+        <span class="section-line"></span>
+      </div>
+      <p class="section-note">Filled out after film is edited and delivered</p>
+
+      <div class="field-group">
+        <label class="field-label">Highlight Film URL</label>
+        <div class="input">https://...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Teaser URL</label>
+        <div class="input">https://...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Full Film / Delivery Page URL</label>
+        <div class="input">https://www.flyiniris.com/films/couple-slug</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Thumbnail URL</label>
+        <div class="input">https://www.flyiniris.com/thumbs/...</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">9:16 Social Cut Made?</label>
+        <div class="radio-group">
+          <div class="radio-item">
+            <span class="radio-circle"></span>
+            <span class="radio-text">Yes</span>
+          </div>
+          <div class="radio-item">
+            <span class="radio-circle"></span>
+            <span class="radio-text">No</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Published to Website?</label>
+        <div class="radio-group">
+          <div class="radio-item">
+            <span class="radio-circle"></span>
+            <span class="radio-text">Yes</span>
+          </div>
+          <div class="radio-item">
+            <span class="radio-circle"></span>
+            <span class="radio-text">No</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="page-footer">
+      <p class="footer-note">This form is a visual specification for building the actual Google Form.</p>
+      <p class="footer-brand">Flyin' Iris &middot; Milwaukee, Wisconsin</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

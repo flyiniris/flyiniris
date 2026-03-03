@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Custom Package | Flyin' Iris</title>
+  <meta name="description" content="Your personalized wedding film package from Flyin' Iris — everything we talked about, your tier, your pricing, your day.">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Your Custom Film Package">
+  <meta property="og:description" content="Here's everything we talked about — your tier, your pricing, your day.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.flyiniris.com/package">
+  <meta property="og:image" content="https://www.flyiniris.com/og-package.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Your Custom Film Package">
+  <meta name="twitter:description" content="Here's everything we talked about — your tier, your pricing, your day.">
+  <meta name="twitter:image" content="https://www.flyiniris.com/og-package.png">
+
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Film Grain Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ========== LAYOUT ========== */
+
+    .page-wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== HERO ========== */
+
+    .hero {
+      padding-top: 48px;
+      padding-bottom: 40px;
+      text-align: center;
+      border-top: 2px solid var(--accent);
+    }
+
+    .hero-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 40px;
+      transition: color 0.25s ease;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.2s forwards;
+    }
+
+    .hero-brand:hover {
+      color: var(--accent-light);
+    }
+
+    .hero-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-style: italic;
+      font-size: 2rem;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    .hero-tier {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    /* ========== PACKAGE CARD ========== */
+
+    .package-card-section {
+      padding: 40px 0;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .package-card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      border-top: 3px solid var(--accent);
+      padding: 36px 28px;
+    }
+
+    .package-tier-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .package-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 3rem;
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .package-savings {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .package-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    .package-includes-heading {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 18px;
+    }
+
+    .package-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .package-list li {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: 7px 0;
+      line-height: 1.5;
+    }
+
+    .package-list li span.dash {
+      color: var(--accent);
+      margin-right: 12px;
+      font-weight: 400;
+    }
+
+    /* ========== FEATURED FILM ========== */
+
+    .featured-film {
+      padding: 48px 0;
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.0s forwards;
+    }
+
+    .section-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .film-thumb-link {
+      display: block;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 2px solid transparent;
+      transition: border-color 0.25s ease;
+    }
+
+    .film-thumb-link:hover {
+      border-color: var(--accent);
+    }
+
+    .film-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      border-radius: 6px;
+    }
+
+    .film-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .film-caption {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ========== CTA ========== */
+
+    .cta-section {
+      padding: 56px 0;
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
+    }
+
+    .cta-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg-primary);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 8px;
+      transition: background-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .cta-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+
+    /* ========== SIGN-OFF ========== */
+
+    .sign-off {
+      padding: 40px 0 24px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.4s forwards;
+    }
+
+    .sign-off-names {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .sign-off-location {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ========== FOOTER ========== */
+
+    .site-footer {
+      padding: 40px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .footer-location {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .footer-copy {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .footer-legal {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+    }
+
+    .footer-legal a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+
+    .footer-legal a:hover {
+      color: var(--accent);
+    }
+
+    /* ========== RESPONSIVE ========== */
+
+    @media (min-width: 768px) {
+      .page-wrapper {
+        max-width: 680px;
+      }
+
+      .hero {
+        padding-top: 64px;
+        padding-bottom: 48px;
+      }
+
+      .hero-heading {
+        font-size: 2.75rem;
+      }
+
+      .package-card {
+        padding: 44px 40px;
+      }
+
+      .package-price {
+        font-size: 3.5rem;
+      }
+
+      .cta-heading {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- Hero -->
+    <section class="hero">
+      <a href="https://www.flyiniris.com" class="hero-brand">FLYIN' IRIS</a>
+      <h1 class="hero-heading" id="heroHeading">Here's your custom package.</h1>
+      <p class="hero-tier" id="heroTier"></p>
+    </section>
+
+    <!-- Package Card -->
+    <section class="package-card-section">
+      <div class="package-card">
+        <h2 class="package-tier-name" id="packageTierName">Your Package</h2>
+        <p class="package-price" id="packagePrice"></p>
+        <p class="package-savings" id="packageSavings" style="display:none;"></p>
+        <hr class="package-divider">
+        <h3 class="package-includes-heading">What's Included</h3>
+        <ul class="package-list">
+          <li><span class="dash">&mdash;</span>Cinematic highlight film</li>
+          <li><span class="dash">&mdash;</span>Full ceremony coverage</li>
+          <li><span class="dash">&mdash;</span>Professional audio capture</li>
+          <li><span class="dash">&mdash;</span>Licensed music</li>
+          <li><span class="dash">&mdash;</span>Pre-wedding planning session</li>
+          <li><span class="dash">&mdash;</span>Teaser delivered within one week</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Featured Film -->
+    <section class="featured-film">
+      <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
+      <a href="https://www.flyiniris.com/#films" class="film-thumb-link">
+        <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.jpg" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+      </a>
+      <h3 class="film-title">Taylor &amp; Kane at The Green Bay Country Club</h3>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2 class="cta-heading">Love what you see?</h2>
+      <a href="https://book.flyiniris.com/widget/booking/V3H7cSaX3iSNqMlRA8O8" class="cta-button">BOOK A DISCOVERY CALL</a>
+      <p class="cta-sub">15 minutes to talk through everything — your day, your vision, your package.</p>
+    </section>
+
+    <!-- Sign-off -->
+    <section class="sign-off">
+      <p class="sign-off-names">Sean &amp; Sierra</p>
+      <p class="sign-off-location">Flyin' Iris &middot; Milwaukee, Wisconsin</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p class="footer-brand">FLYIN' IRIS</p>
+      <p class="footer-location">Milwaukee, Wisconsin</p>
+      <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+      <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
+    </footer>
+
+  </div>
+
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var fn = params.get('fn');
+      var tier = params.get('tier');
+      var price = params.get('price');
+      var savings = params.get('savings');
+
+      // Format number with commas
+      function formatNumber(str) {
+        if (!str) return '';
+        var num = parseInt(str, 10);
+        if (isNaN(num)) return str;
+        return num.toLocaleString('en-US');
+      }
+
+      // Hero heading
+      var heading = document.getElementById('heroHeading');
+      if (fn) {
+        heading.textContent = fn + ', here\u2019s your custom package.';
+      } else {
+        heading.textContent = 'Here\u2019s your custom package.';
+      }
+
+      // Hero tier
+      var heroTier = document.getElementById('heroTier');
+      if (tier) {
+        heroTier.textContent = tier;
+      }
+
+      // Package card: tier name
+      var tierName = document.getElementById('packageTierName');
+      if (tier) {
+        tierName.textContent = tier;
+      }
+
+      // Package card: price
+      var priceEl = document.getElementById('packagePrice');
+      if (price) {
+        priceEl.textContent = '$' + formatNumber(price);
+      }
+
+      // Package card: savings
+      var savingsEl = document.getElementById('packageSavings');
+      if (savings) {
+        var savingsNum = parseInt(savings, 10);
+        if (!isNaN(savingsNum) && savingsNum > 0) {
+          savingsEl.textContent = 'You\u2019re saving $' + formatNumber(savings) + ' with your bundle';
+          savingsEl.style.display = 'block';
+        }
+      }
+    })();
+  </script>
+
+</body>
+</html>
