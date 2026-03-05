@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contractor Onboarding | Flyin' Iris</title>
+  <meta name="description" content="Join the Flyin' Iris contractor team — complete your onboarding below.">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Film Grain Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .header {
+      padding: 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo span { color: var(--accent); }
+
+    /* Main container */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .page-title span { color: var(--accent); font-style: italic; }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 48px;
+      max-width: 540px;
+    }
+
+    /* Progress bar */
+    .progress-wrapper {
+      margin-bottom: 40px;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .progress-labels .active { color: var(--accent); }
+
+    .progress-bar-track {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Steps */
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .step-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    /* Form elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    label .req { color: var(--accent); margin-left: 2px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    textarea {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      padding: 14px 16px;
+      border-radius: 6px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      width: 100%;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      background: var(--bg-elevated);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Checkboxes */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .checkbox-item:hover { border-color: rgba(255,189,29,0.4); }
+    .checkbox-item.checked { border-color: var(--accent); }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checkbox-label {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .checkbox-label strong {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .checkbox-label span {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* Info box */
+    .info-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .info-box a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Navigation buttons */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0A0A0A;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .step-counter {
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    /* Success state */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 64px 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .success-screen.show { display: block; }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255,189,29,0.12);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 2rem;
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .success-title span { color: var(--accent); font-style: italic; }
+
+    .success-body {
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .success-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Error */
+    .error-msg {
+      color: #FF6B6B;
+      font-size: 0.82rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field.has-error input,
+    .field.has-error textarea {
+      border-color: #FF6B6B;
+    }
+
+    .field.has-error .error-msg { display: block; }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(10,10,10,0.3);
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="/" class="logo">Flyin' <span>Iris</span></a>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Contractor <span>Onboarding</span></h1>
+    <p class="page-subtitle">Welcome to the team. Complete the form below — it only takes a few minutes and gets you set up in our system.</p>
+
+    <!-- Progress -->
+    <div class="progress-wrapper" id="progressWrapper">
+      <div class="progress-labels" id="progressLabels">
+        <span class="active">Info</span>
+        <span>Certs</span>
+        <span>Confirm</span>
+        <span>Payment</span>
+        <span>Tax</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill" style="width: 20%"></div>
+      </div>
+    </div>
+
+    <form id="onboardingForm" novalidate>
+
+      <!-- STEP 1: Personal & Business Info -->
+      <div class="step active" id="step1">
+        <h2 class="step-heading">Personal & Business Info</h2>
+        <p class="step-desc">Let's start with the basics — who you are and how to reach you.</p>
+
+        <div class="form-grid">
+          <div class="field full" id="field-legalName">
+            <label for="legalName">Full Legal Name <span class="req">*</span></label>
+            <input type="text" id="legalName" name="legalName" placeholder="As it appears on your ID" autocomplete="name">
+            <span class="error-msg">Please enter your full legal name.</span>
+          </div>
+
+          <div class="field" id="field-businessName">
+            <label for="businessName">Business Name</label>
+            <input type="text" id="businessName" name="businessName" placeholder="LLC, DBA, or personal name">
+          </div>
+
+          <div class="field" id="field-ein">
+            <label for="ein">EIN / SSN <span class="req">*</span></label>
+            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX or XXX-XX-XXXX">
+            <span class="error-msg">Please enter your EIN or SSN.</span>
+          </div>
+
+          <div class="field full" id="field-address">
+            <label for="address">Mailing Address <span class="req">*</span></label>
+            <input type="text" id="address" name="address" placeholder="Street, City, State, ZIP" autocomplete="street-address">
+            <span class="error-msg">Please enter your mailing address.</span>
+          </div>
+
+          <div class="field" id="field-phone">
+            <label for="phone">Phone Number <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="(414) 555-0100" autocomplete="tel">
+            <span class="error-msg">Please enter your phone number.</span>
+          </div>
+
+          <div class="field" id="field-email">
+            <label for="email">Email Address <span class="req">*</span></label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+            <span class="error-msg">Please enter a valid email address.</span>
+          </div>
+
+          <div class="field full" id="field-emergencyContact">
+            <label for="emergencyContact">Emergency Contact <span class="req">*</span></label>
+            <input type="text" id="emergencyContact" name="emergencyContact" placeholder="Name — Relationship — Phone number">
+            <span class="error-msg">Please enter an emergency contact.</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <span class="step-counter">Step 1 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Certifications & Equipment -->
+      <div class="step" id="step2">
+        <h2 class="step-heading">Certifications & Equipment</h2>
+        <p class="step-desc">Tell us about your credentials and the gear you shoot with.</p>
+
+        <div class="form-grid">
+          <div class="field full" id="field-faa">
+            <label for="faa">FAA Part 107 Certificate Number <span class="req">*</span></label>
+            <input type="text" id="faa" name="faa" placeholder="e.g. 4711234 — or enter N/A if not applicable">
+            <span class="error-msg">Please enter your FAA Part 107 number or N/A.</span>
+          </div>
+
+          <div class="field full" id="field-gear">
+            <label for="gear">Camera Bodies & Lenses <span class="req">*</span></label>
+            <textarea id="gear" name="gear" placeholder="e.g. Sony FX3, Sony A7 IV — 24-70mm f/2.8, 85mm f/1.4, 16mm f/2.8"></textarea>
+            <span class="error-msg">Please list your camera gear.</span>
+          </div>
+
+          <div class="field full" id="field-portfolio">
+            <label for="portfolio">Portfolio URL <span class="req">*</span></label>
+            <input type="url" id="portfolio" name="portfolio" placeholder="https://yourwebsite.com or Vimeo/YouTube link">
+            <span class="error-msg">Please enter your portfolio URL.</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(2)">← Back</button>
+          <span class="step-counter">Step 2 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Confirmations -->
+      <div class="step" id="step3">
+        <h2 class="step-heading">Confirmations</h2>
+        <p class="step-desc">Please read and confirm each item below before moving forward.</p>
+
+        <div class="checkbox-group" id="field-confirmations">
+          <label class="checkbox-item" id="check-delivery">
+            <input type="checkbox" name="confirm_delivery" id="confirm_delivery" onchange="toggleChecked('check-delivery', this)">
+            <div class="checkbox-label">
+              <strong>48-Hour Raw Delivery</strong>
+              <span>I understand that all raw footage must be delivered to Flyin' Iris within 48 hours of the wedding day.</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item" id="check-deletions">
+            <input type="checkbox" name="confirm_nodeletions" id="confirm_nodeletions" onchange="toggleChecked('check-deletions', this)">
+            <div class="checkbox-label">
+              <strong>No Deletions Policy</strong>
+              <span>I agree not to delete any footage from a shoot — all clips, including B-roll and unusable takes, must be transferred in full.</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item" id="check-backup">
+            <input type="checkbox" name="confirm_backup" id="confirm_backup" onchange="toggleChecked('check-backup', this)">
+            <div class="checkbox-label">
+              <strong>20-Week Backup Retention</strong>
+              <span>I will maintain a personal backup copy of all footage for a minimum of 20 weeks after delivery.</span>
+            </div>
+          </label>
+
+          <label class="checkbox-item" id="check-ic">
+            <input type="checkbox" name="confirm_ic" id="confirm_ic" onchange="toggleChecked('check-ic', this)">
+            <div class="checkbox-label">
+              <strong>Independent Contractor Acknowledgment</strong>
+              <span>I understand I am an independent contractor, not an employee of Flyin' Iris. I am responsible for my own taxes, insurance, and equipment.</span>
+            </div>
+          </label>
+        </div>
+        <span class="error-msg" id="confirm-error" style="display:none; margin-top: 12px;">Please confirm all items above before continuing.</span>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(3)">← Back</button>
+          <span class="step-counter">Step 3 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Payment -->
+      <div class="step" id="step4">
+        <h2 class="step-heading">Payment Info</h2>
+        <p class="step-desc">We pay contractors via PayPal. Enter the email associated with your PayPal account.</p>
+
+        <div class="form-grid">
+          <div class="field full" id="field-paypal">
+            <label for="paypal">PayPal Email Address <span class="req">*</span></label>
+            <input type="email" id="paypal" name="paypal" placeholder="paypal@example.com">
+            <span class="error-msg">Please enter your PayPal email address.</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(4)">← Back</button>
+          <span class="step-counter">Step 4 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Tax / W-9 -->
+      <div class="step" id="step5">
+        <h2 class="step-heading">Tax Information</h2>
+        <p class="step-desc">We're required to collect a W-9 from all contractors before your first payment.</p>
+
+        <div class="info-box">
+          📄 <strong style="color: var(--text-primary);">Email your completed W-9 to:</strong><br><br>
+          <a href="mailto:sean@flyiniris.com" style="font-size: 1.05rem; font-weight: 500;">sean@flyiniris.com</a><br><br>
+          Please use the subject line: <em>"W-9 — [Your Full Name]"</em><br><br>
+          You can download a blank W-9 from the IRS at <a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener">irs.gov/pub/irs-pdf/fw9.pdf</a>.<br><br>
+          Your onboarding will not be considered complete until we receive your W-9. We'll follow up if we don't see it within 5 business days.
+        </div>
+
+        <div class="form-grid">
+          <div class="field full" id="field-w9sent">
+            <label for="w9sent">W-9 Status <span class="req">*</span></label>
+            <input type="text" id="w9sent" name="w9_status" placeholder="e.g. Already sent, will send today, need the form, etc.">
+            <span class="error-msg">Please let us know your W-9 status.</span>
+          </div>
+
+          <div class="field full" id="field-notes">
+            <label for="notes">Anything else you'd like us to know?</label>
+            <textarea id="notes" name="notes" placeholder="Optional — equipment you're still acquiring, availability constraints, questions, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(5)">← Back</button>
+          <span class="step-counter">Step 5 of 5</span>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Submit Onboarding →</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Success Screen -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✦</div>
+      <h2 class="success-title">You're <span>In</span>.</h2>
+      <p class="success-body">
+        Your onboarding form has been submitted. Sean will review your info and follow up within 2–3 business days.<br><br>
+        Don't forget to email your W-9 to <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a> if you haven't already — it's the last step before you can be paid.<br><br>
+        We're excited to have you on the team. 🌈
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function updateProgress(step) {
+      const fill = document.getElementById('progressFill');
+      const labels = document.getElementById('progressLabels').querySelectorAll('span');
+      fill.style.width = (step / totalSteps * 100) + '%';
+      labels.forEach((l, i) => {
+        l.classList.toggle('active', i === step - 1);
+      });
+    }
+
+    function toggleChecked(id, checkbox) {
+      document.getElementById(id).classList.toggle('checked', checkbox.checked);
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        const fields = [
+          { id: 'legalName', fieldId: 'field-legalName', test: v => v.trim().length > 1 },
+          { id: 'ein', fieldId: 'field-ein', test: v => v.trim().length > 0 },
+          { id: 'address', fieldId: 'field-address', test: v => v.trim().length > 3 },
+          { id: 'phone', fieldId: 'field-phone', test: v => v.trim().length > 5 },
+          { id: 'email', fieldId: 'field-email', test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+          { id: 'emergencyContact', fieldId: 'field-emergencyContact', test: v => v.trim().length > 3 },
+        ];
+        return checkFields(fields);
+      }
+      if (step === 2) {
+        const fields = [
+          { id: 'faa', fieldId: 'field-faa', test: v => v.trim().length > 0 },
+          { id: 'gear', fieldId: 'field-gear', test: v => v.trim().length > 3 },
+          { id: 'portfolio', fieldId: 'field-portfolio', test: v => v.trim().length > 4 },
+        ];
+        return checkFields(fields);
+      }
+      if (step === 3) {
+        const allChecked = ['confirm_delivery','confirm_nodeletions','confirm_backup','confirm_ic']
+          .every(id => document.getElementById(id).checked);
+        document.getElementById('confirm-error').style.display = allChecked ? 'none' : 'block';
+        return allChecked;
+      }
+      if (step === 4) {
+        const fields = [
+          { id: 'paypal', fieldId: 'field-paypal', test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        ];
+        return checkFields(fields);
+      }
+      if (step === 5) {
+        const fields = [
+          { id: 'w9sent', fieldId: 'field-w9sent', test: v => v.trim().length > 0 },
+        ];
+        return checkFields(fields);
+      }
+      return true;
+    }
+
+    function checkFields(fields) {
+      let valid = true;
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const fieldEl = document.getElementById(f.fieldId);
+        const ok = f.test(el.value);
+        fieldEl.classList.toggle('has-error', !ok);
+        if (!ok) valid = false;
+      });
+      return valid;
+    }
+
+    function nextStep(step) {
+      if (!validateStep(step)) return;
+      document.getElementById('step' + step).classList.remove('active');
+      currentStep = step + 1;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress(currentStep);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prevStep(step) {
+      document.getElementById('step' + step).classList.remove('active');
+      currentStep = step - 1;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress(currentStep);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('onboardingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateStep(5)) return;
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+      const data = {
+        legalName: document.getElementById('legalName').value.trim(),
+        businessName: document.getElementById('businessName').value.trim(),
+        ein: document.getElementById('ein').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        emergencyContact: document.getElementById('emergencyContact').value.trim(),
+        faa: document.getElementById('faa').value.trim(),
+        gear: document.getElementById('gear').value.trim(),
+        portfolio: document.getElementById('portfolio').value.trim(),
+        confirm_delivery: document.getElementById('confirm_delivery').checked,
+        confirm_nodeletions: document.getElementById('confirm_nodeletions').checked,
+        confirm_backup: document.getElementById('confirm_backup').checked,
+        confirm_ic: document.getElementById('confirm_ic').checked,
+        paypal: document.getElementById('paypal').value.trim(),
+        w9_status: document.getElementById('w9sent').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+        submitted_at: new Date().toISOString(),
+      };
+
+      try {
+        const res = await fetch('https://iris-automation.flyin-iris-mp.workers.dev/webhook/contractor-onboarding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) throw new Error('Server error: ' + res.status);
+
+        // Show success
+        document.getElementById('onboardingForm').style.display = 'none';
+        document.getElementById('progressWrapper').style.display = 'none';
+        document.querySelector('.page-title').style.display = 'none';
+        document.querySelector('.page-subtitle').style.display = 'none';
+        document.getElementById('successScreen').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Submit Onboarding →';
+        alert('Something went wrong submitting your form. Please try again or email sean@flyiniris.com directly.');
+        console.error(err);
+      }
+    });
+  </script>
+
+</body>
+</html>
