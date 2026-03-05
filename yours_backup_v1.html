@@ -185,23 +185,6 @@
       margin-bottom: 24px;
     }
 
-    .film-player-wrap {
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255,189,29,0.2);
-      aspect-ratio: 16 / 9;
-      background: #000;
-    }
-
-    .film-player-wrap video {
-      width: 100%;
-      height: 100%;
-      display: block;
-      border-radius: 6px;
-    }
-
     .film-thumb-link {
       display: block;
       position: relative;
@@ -458,18 +441,13 @@
       <p class="hero-sub" id="heroSub"></p>
     </section>
 
-    <!-- Featured Film (dynamic — reads ?film=slug from URL) -->
-    <section class="featured-film" id="filmSection">
+    <!-- Featured Film -->
+    <section class="featured-film">
       <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
-      <div class="film-player-wrap" id="filmPlayer" style="display:none;">
-        <video id="filmVideo" controls playsinline preload="metadata" poster=""></video>
-      </div>
-      <div id="filmFallback">
-        <a href="https://www.flyiniris.com/#films" class="film-thumb-link" id="filmThumbLink">
-          <img src="" alt="Wedding film" class="film-thumb" id="filmThumbImg" loading="lazy">
-        </a>
-      </div>
-      <h3 class="film-title" id="filmTitle"></h3>
+      <a href="https://www.flyiniris.com/#films" class="film-thumb-link">
+        <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.jpg" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+      </a>
+      <h3 class="film-title">Taylor &amp; Kane at The Green Bay Country Club</h3>
       <p class="film-caption">Every couple, every venue, every love story is completely different. Here's one that reminded us of yours.</p>
     </section>
 
@@ -517,21 +495,12 @@
 
   </div>
 
-  <!-- HLS.js for adaptive streaming -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
   <script>
     (function() {
       var params = new URLSearchParams(window.location.search);
       var fn = params.get('fn');
       var vn = params.get('vn');
       var wd = params.get('wd');
-      var film = params.get('film');
-      var fc = params.get('fc'); // film couple name (e.g., "Izzy & Hunter")
-      var fv = params.get('fv'); // film venue name (e.g., "The Gage")
-
-      // Film data for R2 URLs
-      var R2_THUMB = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/';
-      var R2_HLS = 'https://video.flyiniris.com/couples/';
 
       // Format date: YYYY-MM-DD -> "Month Day, Year"
       function formatDate(dateStr) {
@@ -567,60 +536,6 @@
       }
       if (subParts.length > 0) {
         sub.textContent = subParts.join(' \u00B7 ');
-      }
-
-      // Film section — dynamic based on ?film= param
-      var filmTitle = document.getElementById('filmTitle');
-      var filmPlayer = document.getElementById('filmPlayer');
-      var filmFallback = document.getElementById('filmFallback');
-      var filmVideo = document.getElementById('filmVideo');
-      var filmThumbImg = document.getElementById('filmThumbImg');
-      var filmThumbLink = document.getElementById('filmThumbLink');
-
-      if (film) {
-        var thumbUrl = R2_THUMB + film + '/thumbs/thumb.jpg';
-        var hlsUrl = R2_HLS + film + '/hls/teaser/master.m3u8';
-        var coupleDisplay = fc ? decodeURIComponent(fc) : film.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        var venueDisplay = fv ? decodeURIComponent(fv) : '';
-
-        // Set title
-        filmTitle.textContent = coupleDisplay + (venueDisplay ? ' at ' + venueDisplay : '');
-
-        // Try HLS video playback
-        if (Hls.isSupported()) {
-          filmFallback.style.display = 'none';
-          filmPlayer.style.display = 'block';
-          filmVideo.poster = thumbUrl;
-          var hls = new Hls({ startLevel: -1 });
-          hls.loadSource(hlsUrl);
-          hls.attachMedia(filmVideo);
-          hls.on(Hls.Events.ERROR, function(event, data) {
-            if (data.fatal) {
-              // HLS failed — fall back to thumbnail
-              filmPlayer.style.display = 'none';
-              filmFallback.style.display = 'block';
-              filmThumbImg.src = thumbUrl;
-              filmThumbImg.alt = coupleDisplay + ' wedding film';
-              filmThumbLink.href = 'https://www.flyiniris.com/#films';
-            }
-          });
-        } else if (filmVideo.canPlayType('application/vnd.apple.mpegurl')) {
-          // Safari native HLS
-          filmFallback.style.display = 'none';
-          filmPlayer.style.display = 'block';
-          filmVideo.poster = thumbUrl;
-          filmVideo.src = hlsUrl;
-        } else {
-          // No HLS support — show thumbnail
-          filmFallback.style.display = 'block';
-          filmPlayer.style.display = 'none';
-          filmThumbImg.src = thumbUrl;
-          filmThumbImg.alt = coupleDisplay + ' wedding film';
-          filmThumbLink.href = 'https://www.flyiniris.com/#films';
-        }
-      } else {
-        // No film param — hide the whole section or show generic
-        document.getElementById('filmSection').style.display = 'none';
       }
     })();
   </script>
