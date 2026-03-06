@@ -1,11 +1,34 @@
-# Flyin' Iris — Client Film Delivery Platform
+# Flyin' Iris — Website, Film Delivery & Video Infrastructure
 
-## What We're Building
-A Netflix-style branded video delivery platform for wedding videography clients.
-Each couple gets their own page at `flyiniris.com/films/{couple-slug}` where they can
-stream all their wedding films (highlight, teaser, archival footage), download full-res
-MP4s, and install it as a phone app via PWA. Videos are stored on Cloudflare R2 and
-streamed via HLS through a Cloudflare Worker. No third-party services — we own everything.
+## What This Project Is
+The flyiniris.com website + video delivery platform for Flyin' Iris wedding videography.
+- **Main site:** `flyiniris.com` (interactive landing page with HLS film teasers, quiz/calculator, inquiry form)
+- **Film delivery:** `flyiniris.com/films/{couple-slug}` — Netflix-style branded pages per couple
+- **Video streaming:** `video.flyiniris.com` via `fi-video-serve` Worker → R2 HLS
+- **Static assets:** `pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev` (thumbnails, images)
+- Deploys to Cloudflare Pages via git push to main branch
+
+## Current State (March 2026)
+- **Landing page LIVE** with hero videos, film portfolio (HLS teasers), quiz, inquiry form
+- **15 wedding films** transcoded to HLS (4K + 1080p), thumbnails upscaled with Real-ESRGAN
+- **Inquiry form** → Apps Script → `iris-automation` Worker (see iris-automation project)
+- **Individual film pages** (`/films/{slug}`) — NOT YET BUILT, currently redirect to main site
+- **Film delivery pages** — template exists but no couples deployed yet
+- **Video matching engine** — logic embedded in `iris-automation` Worker (not in this project anymore)
+
+## How It Connects to the Automation System
+```
+flyiniris.com inquiry form
+  → Apps Script (POST to iris-automation Worker)
+    → Worker creates GHL contact + starts nurture sequence
+      → Emails contain personalized film thumbnails from R2 (matched by venue/vibe/season)
+        → Thumbnail links back to flyiniris.com/#films (until individual pages built)
+```
+
+## IMPORTANT: What Lives Where
+- **Automation logic** (email sequences, film matching, GHL API) → `iris-automation` project
+- **Website + film pages + video infrastructure** → THIS project
+- **GHL scripts** (Gmail scanning, calendar checks) → `ghl-automation` project
 
 ## Project Structure
 ```

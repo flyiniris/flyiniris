@@ -2156,8 +2156,8 @@
 
       // ========== QUIZ / CALCULATOR APP ==========
       (function() {
-        // --- GOOGLE SHEETS WEBHOOK ---
-        var SHEET_URL = 'https://script.google.com/macros/s/AKfycbxIN5Txz77eIVPqzg4Sc7kHxPWqWCkyTmFicsHb_nm-Js7t6a0wOGjYlHCeT-cuYnedqQ/exec';
+        // --- WORKER WEBHOOK (replaces Apps Script middleman) ---
+        var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
         // TODO: Update Apps Script availability checker:
         // - If a date is NOT found in the "Booked Dates" tab of "Flyin' Iris Leads" sheet, assume AVAILABLE
         // - Return dual status: { ss_status: "available|limited|booked", team_status: "available|limited|booked" }
@@ -3021,15 +3021,17 @@
           else if (state.mode === "calculator") {
             if (state.calcStep < getCalcSteps().length - 1) { state.calcStep++; }
             else {
-              // Send calculator results to Google Sheets
+              // Send calculator results to Worker
               if (!state.calcSubmitted) {
                 var est = calcPrice(state.calcAnswers);
+                var calcNameParts = (state.contactInfo ? state.contactInfo.name : '').trim().split(' ');
                 var calcData = {
-                  timestamp: new Date().toISOString(),
-                  email: state.contactInfo ? state.contactInfo.email : 'unknown',
-                  name: state.contactInfo ? state.contactInfo.name : 'unknown',
+                  submissionType: 'calculator',
+                  firstName: calcNameParts[0] || '',
+                  lastName: calcNameParts.slice(1).join(' ') || '',
+                  email: state.contactInfo ? state.contactInfo.email : '',
+                  phone: state.contactInfo ? state.contactInfo.phone : '',
                   weddingDate: state.contactInfo ? (state.contactInfo.weddingDate || '') : '',
-                  type: 'calculator',
                   hook: state.calcAnswers.hook || '',
                   quality: state.calcAnswers.quality || '',
                   hours: state.calcAnswers.hours || '',
@@ -3040,14 +3042,11 @@
                   estimatedPrice: est.price,
                   bundleSavings: est.savings
                 };
-                if (SHEET_URL !== 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_URL') {
-                  fetch(SHEET_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(calcData)
-                  }).catch(function(err) { console.log('Calc sheet submission error:', err); });
-                }
+                fetch(WORKER_URL + '/webhook/calculator', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(calcData)
+                }).catch(function(err) { console.log('Calc submission error:', err); });
                 state.calcSubmitted = true;
               }
               // Track calculator completion
@@ -3194,18 +3193,22 @@
             // Analytics
             if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
             if (typeof fbq === "function") { fbq("track", "Lead"); }
-            // Send to Google Sheets
-            var sheetData = {
-              timestamp: new Date().toISOString(),
-              name: state.contactInfo.name,
-              partner: state.contactInfo.partner || '',
+            // Send to Worker (iris-automation)
+            var nameParts = (state.contactInfo.name || '').trim().split(' ');
+            var partnerParts = (state.contactInfo.partner || '').trim().split(' ');
+            var inquiryData = {
+              submissionType: 'inquiry',
+              firstName: nameParts[0] || '',
+              lastName: nameParts.slice(1).join(' ') || '',
               email: state.contactInfo.email,
               phone: state.contactInfo.phone,
               smsNonMarketing: state.contactInfo.smsNonMarketing ? 'Yes' : 'No',
               smsMarketing: state.contactInfo.smsMarketing ? 'Yes' : 'No',
               venue: state.contactInfo.venue || '',
+              partnerFirstName: partnerParts[0] || '',
+              partnerLastName: partnerParts.slice(1).join(' ') || '',
               note: state.contactInfo.note || '',
-              weddingDate: formatDateForSheet(state.contactInfo.weddingDate) || '',
+              weddingDate: state.contactInfo.weddingDate || '',
               excited: state.quizAnswers.excited || '',
               vibe: state.quizAnswers.vibe || '',
               priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
@@ -3213,14 +3216,11 @@
               found: state.contactForm.found || '',
               referralName: state.referralName || ''
             };
-            if (SHEET_URL !== 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_URL') {
-              fetch(SHEET_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sheetData)
-              }).catch(function(err) { console.log('Sheet submission error:', err); });
-            }
+            fetch(WORKER_URL + '/webhook/inquiry', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(inquiryData)
+            }).catch(function(err) { console.log('Inquiry submission error:', err); });
             state.mode = "confirmation"; render(); scrollToQuiz(); return;
           }
           if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }

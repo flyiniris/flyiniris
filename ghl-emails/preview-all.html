@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flyin' Iris — GHL Email Preview (All 4)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0A; font-family: 'Outfit', Arial, Helvetica, sans-serif; color: #F5F0EB; }
+  .preview-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid #2A2A28;
+  }
+  .preview-header h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #F5F0EB;
+    margin-bottom: 8px;
+  }
+  .preview-header p {
+    color: #C8C3B9;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #111110;
+    border-bottom: 1px solid #2A2A28;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .nav-bar a {
+    color: #C8C3B9;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    border: 1px solid #2A2A28;
+    transition: all 0.25s ease;
+  }
+  .nav-bar a:hover {
+    color: #FFBD1D;
+    border-color: #FFBD1D;
+  }
+  .email-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    border-bottom: 1px solid #2A2A28;
+  }
+  .email-label {
+    display: inline-block;
+    background: #161615;
+    border: 1px solid #FFBD1D;
+    color: #FFBD1D;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .email-subject {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #F5F0EB;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .email-meta {
+    font-size: 13px;
+    font-weight: 300;
+    color: #C8C3B9;
+    margin-bottom: 30px;
+  }
+  .email-frame {
+    border: 1px solid #2A2A28;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0A0A0A;
+  }
+  iframe {
+    width: 100%;
+    border: none;
+    display: block;
+  }
+  #frame-1 { height: 1600px; }
+  #frame-2 { height: 1650px; }
+  #frame-3 { height: 1200px; }
+  #frame-4 { height: 1350px; }
+</style>
+</head>
+<body>
+
+<div class="preview-header">
+  <h1>GHL Email Preview</h1>
+  <p>All 4 workflow emails &mdash; Flyin' Iris V2 brand spec &mdash; GHL-hardened (inline styles only)</p>
+</div>
+
+<div class="nav-bar">
+  <a href="#email-1">1. Welcome</a>
+  <a href="#email-2">2. Calculator Recap</a>
+  <a href="#email-3">3. 24hr Nudge</a>
+  <a href="#email-4">4. 48hr Social Proof</a>
+</div>
+
+<div class="email-section" id="email-1">
+  <span class="email-label">Email 1 &mdash; Workflow 1</span>
+  <div class="email-subject">Subject: We can't wait to hear about your day, {{contact.first_name}} &#x1F49B;</div>
+  <div class="email-meta">Trigger: New Inquiry &bull; From: Sean &amp; Sierra | Flyin' Iris &bull; flyin.iris.mp@gmail.com</div>
+  <div class="email-frame">
+    <iframe id="frame-1" src="email-1-welcome.html"></iframe>
+  </div>
+</div>
+
+<div class="email-section" id="email-2">
+  <span class="email-label">Email 2 &mdash; Workflow 2</span>
+  <div class="email-subject">Subject: Your custom wedding film package, {{contact.first_name}} &#x2728;</div>
+  <div class="email-meta">Trigger: Calculator Completed &bull; From: Sean &amp; Sierra | Flyin' Iris &bull; flyin.iris.mp@gmail.com</div>
+  <div class="email-frame">
+    <iframe id="frame-2" src="email-2-calculator-recap.html"></iframe>
+  </div>
+</div>
+
+<div class="email-section" id="email-3">
+  <span class="email-label">Email 3 &mdash; Workflow 3</span>
+  <div class="email-subject">Subject: Your {{contact.wedding_date}} wedding &#x1F49B;</div>
+  <div class="email-meta">Trigger: 24hr after inquiry (no call booked, no calculator completed) &bull; From: Sean &amp; Sierra | Flyin' Iris &bull; flyin.iris.mp@gmail.com</div>
+  <div class="email-frame">
+    <iframe id="frame-3" src="email-3-24hr-nudge.html"></iframe>
+  </div>
+</div>
+
+<div class="email-section" id="email-4">
+  <span class="email-label">Email 4 &mdash; Workflow 4</span>
+  <div class="email-subject">Subject: This might be your favorite wedding film ever</div>
+  <div class="email-meta">Trigger: 48hr after inquiry &bull; From: Sean &amp; Sierra | Flyin' Iris &bull; flyin.iris.mp@gmail.com</div>
+  <div class="email-frame">
+    <iframe id="frame-4" src="email-4-48hr-social-proof.html"></iframe>
+  </div>
+</div>
+
+</body>
+</html>

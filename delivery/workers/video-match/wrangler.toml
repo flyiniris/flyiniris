@@ -1,0 +1,11 @@
+name = "fi-video-match"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "FI_MATCH"
+id = "5f3a6d707ec449c7936cdb766c88d6e6"
+
+[vars]
+MEDIA_BASE = "https://media.flyiniris.com"
+SITE_BASE = "https://flyiniris.com"

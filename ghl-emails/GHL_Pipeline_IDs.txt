@@ -1,0 +1,28 @@
+FIMP Sales Pipeline — GHL Pipeline & Stage IDs
+=================================================
+Generated: 2026-02-24
+
+LOCATION ID:  gY9JdczvM3s0wQCTnD9s
+PIPELINE ID:  GfdZcOR7mN7lPmNvLUeJ
+PIPELINE NAME: FIMP Sales Pipeline
+
+STAGES (13):
+──────────────────────────────────────────────────────────────
+ #   Stage Name                  Stage ID
+──────────────────────────────────────────────────────────────
+ 0   New Inquiry                 73e19f2b-60a5-4c0b-8c56-bbdac8d81c50
+ 1   Calculator Completed        187490c2-4ff2-43a8-974a-30abf356c4a4
+ 2   Discovery Call Booked       46934624-ce5f-4abf-8ab6-c6ef8437686f
+ 3   Discovery Call Completed    456939bc-8564-4fde-b353-24b9a3cd2409
+ 4   Proposal Sent               5bd4f6cc-e1d3-493d-b994-bb43b38ed143
+ 5   Contract Signed             48417b21-4398-4dca-97d5-5deebb068349
+ 6   Payment Received            fd3136f3-c846-4112-bfc8-e85d94affff0
+ 7   Planning                    577fcfef-e9df-467d-a5b9-a7d7d81bc6cd
+ 8   Pre-Wedding                 62cffdae-b96a-4913-9541-383df31c5738
+ 9   Post-Wedding                a05b6262-e19c-44bf-bf00-c874f8ed4264
+10   Editing & Delivery          8812d4b9-75ee-4e87-bd46-543aa22f68b8
+11   Review & Referral           b304cf8d-40ad-4faf-ad2f-e7c42d3dc60d
+12   Fulfilled                   48d38044-15c5-4e90-a77c-67ecbc4304b7
+──────────────────────────────────────────────────────────────
+
+Date Created: 2026-02-24T07:58:42.491Z

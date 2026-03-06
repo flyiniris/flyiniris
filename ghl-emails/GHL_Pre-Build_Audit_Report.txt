@@ -1,0 +1,183 @@
+FIMP GoHighLevel Pre-Build Audit Report
+========================================
+Generated: 2026-03-01
+Location ID: gY9JdczvM3s0wQCTnD9s
+API Method: GET requests via GHL v2 API (Private Integration Token)
+
+================================================================================
+1. TAGS                                                              ✅ PASS
+================================================================================
+Expected: 30 | Found: 30 | Missing: 0
+
+All 30 tags verified — names and IDs match exactly.
+
+  LIFECYCLE (11):
+    ✅ new-inquiry                      iRtDWA72lVa5EnEA4NyT
+    ✅ calculator-completed             B7ZZnGG9Ap05IdYOSJ7z
+    ✅ inquiry-received                 giEsTTcDWIc4nZpVIx7Q
+    ✅ calculator-received              cNak8mds1zyjBB2ja7ZL
+    ✅ discovery-call-booked            u7TjNuE5igbQSXuft3ty
+    ✅ discovery-call-completed         3YdufFUOhxnjS4eHawRc
+    ✅ post-discovery-thinking          SaFRW8ATLusMBFgDrTiO
+    ✅ post-discovery-not-interested    bKExhNPczoRwqAsmHWZc
+    ✅ proposal-sent                    5bjMIPlNALsRegltrmsD
+    ✅ contract-signed                  gOI1kJ7rz0fRZtMl2Oqm
+    ✅ payment-received                 LSfopI1mhy70rHLtZAtv
+
+  STATUS (8):
+    ✅ inquiry-nurture-active           AbuoGp895AiZ5hOuEdXY
+    ✅ calculator-nurture-active        0BGFX7regsPTd9qMZA9Z
+    ✅ hot-lead                         2EKvxW34qUL5HvDoc0iF
+    ✅ warm-lead                        LERuklKVZNck4fgjKkJz
+    ✅ unresponsive-5day                xLZdM1qsKHLM9LDSlB4b
+    ✅ unresponsive-30day               NF3mSkjsgQtFOsECj8bV
+    ✅ missed-call                      bKwVOdVhCa7yvcViqOwH
+    ✅ proposal-expired                 MSu84kLoM2R76cwZS3Hj
+
+  SOURCE (6):
+    ✅ source-inquiry-form              RTTkPlLWvuA3Jt6qPFkp
+    ✅ source-calculator                x7xDg7ESr1V9nI3fDXZC
+    ✅ source-calculator-after-inquiry  i5lILdbeWRDyhn9agQ2N
+    ✅ source-instagram-dm              OGdOLXiVMeaAbVsSBcnQ
+    ✅ source-referral                  i1fKTZvNwKtxjXgZO0MR
+    ✅ source-organic                   23kaXYSZ7nPFqNvsCQcP
+
+  OUTCOME (5):
+    ✅ not-interested-budget            j7RV6GtwqrWrgk7XnF7K
+    ✅ not-interested-booked-other      GfbcmgZwIDbUvehoCbkD
+    ✅ not-interested-date-change       CwqQwxxPUMvVIrVruulm
+    ✅ not-interested-no-response       jtM18aWSJuIlTBfV0kHj
+    ✅ not-interested-other             S9jZHpdnhJz28BzvUsVh
+
+================================================================================
+2. CUSTOM FIELDS                                                     ✅ PASS
+================================================================================
+Expected: 8 | Found: 8 | Missing: 0 | Wrong Type: 0
+(34 total custom fields on the location; 8 are FIMP automation fields)
+
+All 8 fields verified — IDs, names, and data types match exactly.
+
+    ✅ Lead Score              Ji4QluqY19nxL8iYifzC  NUMERICAL       contact.lead_score
+    ✅ Discovery Call Notes    L144JGOlFwhVOKybyU5S  LARGE_TEXT      contact.discovery_call_notes
+    ✅ Proposal Link           iIGbQZ2pD2X7sIT5QRS4  TEXT            contact.proposal_link
+    ✅ Not Interested Reason   nn4Tqdj18LpaQ4gOcOsv  SINGLE_OPTIONS  contact.not_interested_reason
+       Options: Budget | Booked Other Vendor | Date Change/Cancelled | No Response | No Video Needed | Other
+    ✅ Package Type Booked     LRUbaI1zpVkrv46jFyqb  SINGLE_OPTIONS  contact.package_type_booked
+       Options: Team Package | S&S Experience | S&S Signature | Custom
+    ✅ Deposit Amount          i3mtoTdYIOYSIMnSBuha  MONETORY        contact.deposit_amount
+    ✅ Balance Due             3l42z2cyYclbm8j5wGVW  MONETORY        contact.balance_due
+    ✅ Balance Due Date        yqjEDUUEcJ3HVIggZVAQ  DATE            contact.balance_due_date
+
+================================================================================
+3. EMAIL TEMPLATES                                                   ✅ PASS
+================================================================================
+Expected: 10 | Found: 10 | Missing: 0
+
+All 10 templates verified — IDs and names match.
+
+    ✅ INQ-01   69a3c3596c66b2cdd08903e5  "FIMP - INQ-01 Welcome & Film"
+    ✅ INQ-02   69a3c35ad6567bda82d529de  "FIMP - INQ-02 Venue Check-In"
+    ✅ INQ-03   69a3c35ab093ec02a636acd9  "FIMP - INQ-03 Social Proof"
+    ✅ CALC-01  69a3c3594b552f652a0b2f07  "FIMP - CALC-01 Package Recap"
+    ✅ DISC-01  69a3d8396c66b2d0a089663d  "FIMP - DISC-01 Post-Discovery Check-In"
+    ✅ PROP-01  69a3d83d1f123d4a08d43357  "FIMP - PROP-01 Proposal Follow-Up"
+    ✅ PROP-02  69a3d83f6c66b257fd896655  "FIMP - PROP-02 Date Urgency"
+    ✅ BOOK-01  69a3d8406c66b2f4bb896668  "FIMP - BOOK-01 Contract Signed Welcome"
+    ✅ RE-01    69a3d84222b5404d1ad97333  "FIMP - RE-01 Re-Engagement Check-In"
+    ✅ RE-02    69a3d84380a1d948535dd378  "FIMP - RE-02 Final Goodbye"
+
+All templates are type "html" with previewUrls active.
+
+================================================================================
+4. PIPELINE                                                          ✅ PASS
+================================================================================
+Pipeline: FIMP Sales Pipeline
+Pipeline ID: GfdZcOR7mN7lPmNvLUeJ
+Expected Stages: 13 | Found: 13 | Missing: 0
+
+All 13 stages verified — names, IDs, and positions match GHL_Pipeline_IDs.txt.
+
+    ✅  0  New Inquiry              73e19f2b-60a5-4c0b-8c56-bbdac8d81c50
+    ✅  1  Calculator Completed     187490c2-4ff2-43a8-974a-30abf356c4a4
+    ✅  2  Discovery Call Booked    46934624-ce5f-4abf-8ab6-c6ef8437686f
+    ✅  3  Discovery Call Completed 456939bc-8564-4fde-b353-24b9a3cd2409
+    ✅  4  Proposal Sent            5bd4f6cc-e1d3-493d-b994-bb43b38ed143
+    ✅  5  Contract Signed          48417b21-4398-4dca-97d5-5deebb068349
+    ✅  6  Payment Received         fd3136f3-c846-4112-bfc8-e85d94affff0
+    ✅  7  Planning                 577fcfef-e9df-467d-a5b9-a7d7d81bc6cd
+    ✅  8  Pre-Wedding              62cffdae-b96a-4913-9541-383df31c5738
+    ✅  9  Post-Wedding             a05b6262-e19c-44bf-bf00-c874f8ed4264
+    ✅ 10  Editing & Delivery       8812d4b9-75ee-4e87-bd46-543aa22f68b8
+    ✅ 11  Review & Referral        b304cf8d-40ad-4faf-ad2f-e7c42d3dc60d
+    ✅ 12  Fulfilled                48d38044-15c5-4e90-a77c-67ecbc4304b7
+
+================================================================================
+5. CALENDARS                                                    ⚠️  PASS w/ NOTES
+================================================================================
+Expected: 3 | Found: 3 | Missing: 0
+
+All 3 calendars exist and are active, but 2 IDs have minor character
+discrepancies vs. what was provided. This is likely a copy/paste issue
+(l vs I, 5 vs S are visually ambiguous). The ACTUAL IDs from the API
+are listed below — use these in workflows.
+
+    ✅ Post-Inquiry Calendar
+       Name: "Discovery Call - Post Inquiry"
+       Expected ID: Kd7zWqsXzAswGHR1HuDR
+       Actual ID:   Kd7zWqsXzAswGHR1HuDR   ← EXACT MATCH
+
+    ⚠️  Post-Calculator Calendar
+       Name: "Discovery Call - Post Calculator"
+       Expected ID: V3H7c5aX3iSNqMlRA8O8
+       Actual ID:   V3H7cSaX3iSNqMlRA8O8
+       Diff:             ^ '5' vs 'S' (position 6)
+
+    ⚠️  Sean's Personal Calendar
+       Name: "Sean Adamec's Personal Calendar"
+       Expected ID: 3vMFaHw51H4edyAB8lhz
+       Actual ID:   3vMFaHw51H4edyAB8Ihz
+       Diff:                          ^ 'l' vs 'I' (position 19)
+
+  ACTION NEEDED: Update any references to use the ACTUAL IDs above.
+
+================================================================================
+6. PHONE NUMBER                                                 ⚠️  UNVERIFIABLE
+================================================================================
+Target Number: (262) 384-5079  (+12623845079)
+
+The GHL API (v2 Private Integration Token) does not expose a phone number
+inventory endpoint. The location profile phone on file is:
+
+    Location Profile Phone: +12623886028  →  (262) 388-6028
+
+This is the business profile number, NOT necessarily the purchased/forwarding
+LC Phone number. Purchased Twilio/LC Phone numbers are not queryable via this
+API token type.
+
+  ACTION NEEDED: Manually verify (262) 384-5079 in GHL UI:
+    Settings → Phone Numbers → verify the number is listed and active.
+
+================================================================================
+                            OVERALL SUMMARY
+================================================================================
+
+  Section              Status    Expected  Found  Issues
+  ─────────────────────────────────────────────────────────────
+  1. Tags              ✅ PASS      30       30    0
+  2. Custom Fields     ✅ PASS       8        8    0
+  3. Email Templates   ✅ PASS      10       10    0
+  4. Pipeline Stages   ✅ PASS      13       13    0
+  5. Calendars         ⚠️ NOTES     3        3    2 minor ID typos
+  6. Phone Number      ⚠️ N/A       1        —    API can't verify
+  ─────────────────────────────────────────────────────────────
+
+  RESULT: 4/6 sections fully verified. 2 sections need manual follow-up.
+
+  ACTIONS:
+  1. Fix calendar IDs in any workflow/automation references:
+     - Post-Calculator: use V3H7cSaX3iSNqMlRA8O8 (not V3H7c5aX3iSNqMlRA8O8)
+     - Sean's Personal: use 3vMFaHw51H4edyAB8Ihz (not 3vMFaHw51H4edyAB8lhz)
+  2. Manually verify (262) 384-5079 in GHL UI under Settings → Phone Numbers.
+
+================================================================================
+End of Report

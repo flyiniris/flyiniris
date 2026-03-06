@@ -1,0 +1,23 @@
+GHL Custom Fields — ID Mapping
+================================
+Location: gY9JdczvM3s0wQCTnD9s
+Generated: 2026-03-01
+
+NEW FIELDS CREATED (7):
+  Lead Score            → Ji4QluqY19nxL8iYifzC  (NUMERICAL)    fieldKey: contact.lead_score
+  Discovery Call Notes  → L144JGOlFwhVOKybyU5S  (LARGE_TEXT)   fieldKey: contact.discovery_call_notes
+  Proposal Link         → iIGbQZ2pD2X7sIT5QRS4  (TEXT)         fieldKey: contact.proposal_link
+  Not Interested Reason → nn4Tqdj18LpaQ4gOcOsv  (SINGLE_OPTIONS) fieldKey: contact.not_interested_reason
+                          Options: Budget | Booked Other Vendor | Date Change/Cancelled | No Response | No Video Needed | Other
+  Package Type Booked   → LRUbaI1zpVkrv46jFyqb  (SINGLE_OPTIONS) fieldKey: contact.package_type_booked
+                          Options: Team Package | S&S Experience | S&S Signature | Custom
+  Deposit Amount        → i3mtoTdYIOYSIMnSBuha  (MONETORY)     fieldKey: contact.deposit_amount
+  Balance Due           → 3l42z2cyYclbm8j5wGVW  (MONETORY)     fieldKey: contact.balance_due
+
+SKIPPED (already existed) (1):
+  Balance Due Date      → yqjEDUUEcJ3HVIggZVAQ  (DATE)         fieldKey: contact.balance_due_date
+
+FAILED (0):
+  (none)
+
+SUMMARY: 7 created | 1 skipped | 0 failed
