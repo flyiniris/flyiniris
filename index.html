@@ -2158,11 +2158,8 @@
       (function() {
         // --- WORKER WEBHOOK (replaces Apps Script middleman) ---
         var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
-        // TODO: Update Apps Script availability checker:
-        // - If a date is NOT found in the "Booked Dates" tab of "Flyin' Iris Leads" sheet, assume AVAILABLE
-        // - Return dual status: { ss_status: "available|limited|booked", team_status: "available|limited|booked" }
-        // - Current script URL below
-        var AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbxgDTIO1ayGAnwLlN8DlLsIrV6t3Ks8eyGlXkuM7m4205vJczc9nm-Ugb82RAq7xXtX4Q/exec';
+        // Availability now served from Worker D1 database (no more Apps Script)
+        var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
         function checkAvailability(dateStr) {
           var msgEl = document.getElementById('availability-msg');
