@@ -195,11 +195,46 @@
       background: #000;
     }
 
+    .film-player-wrap:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 189, 29, 0.15);
+    }
+
     .film-player-wrap video {
       width: 100%;
       height: 100%;
       display: block;
       border-radius: 6px;
+    }
+
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      pointer-events: none;
+    }
+
+    .video-play-btn svg {
+      width: 28px;
+      height: 28px;
+      margin-left: 3px;
+    }
+
+    .video-play-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
     }
 
     .film-thumb-link {
@@ -214,6 +249,7 @@
 
     .film-thumb-link:hover {
       border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 189, 29, 0.15);
     }
 
     .film-thumb {
@@ -463,10 +499,20 @@
       <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
       <div class="film-player-wrap" id="filmPlayer" style="display:none;">
         <video id="filmVideo" controls playsinline preload="metadata" poster=""></video>
+        <div class="video-play-btn" id="videoPlayBtn">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+          </svg>
+        </div>
       </div>
       <div id="filmFallback">
         <a href="https://www.flyiniris.com/#films" class="film-thumb-link" id="filmThumbLink">
           <img src="" alt="Wedding film" class="film-thumb" id="filmThumbImg" loading="lazy">
+          <div class="video-play-btn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+            </svg>
+          </div>
         </a>
       </div>
       <h3 class="film-title" id="filmTitle"></h3>
@@ -587,6 +633,16 @@
         filmTitle.textContent = coupleDisplay + (venueDisplay ? ' at ' + venueDisplay : '');
 
         // Try HLS video playback
+        // Hide play button when video starts playing
+        filmVideo.addEventListener('play', function() {
+          var playBtn = document.getElementById('videoPlayBtn');
+          if (playBtn) playBtn.style.opacity = '0';
+        });
+        filmVideo.addEventListener('pause', function() {
+          var playBtn = document.getElementById('videoPlayBtn');
+          if (playBtn) playBtn.style.opacity = '1';
+        });
+
         if (Hls.isSupported()) {
           filmFallback.style.display = 'none';
           filmPlayer.style.display = 'block';

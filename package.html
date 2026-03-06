@@ -272,6 +272,37 @@
 
     .film-thumb-link:hover {
       border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 189, 29, 0.15);
+    }
+
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      pointer-events: none;
+    }
+
+    .video-play-btn svg {
+      width: 28px;
+      height: 28px;
+      margin-left: 3px;
+    }
+
+    .film-thumb-link:hover .video-play-btn {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
     }
 
     .film-thumb {
@@ -485,6 +516,11 @@
       <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
       <a href="https://www.flyiniris.com/#films" class="film-thumb-link">
         <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.jpg" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+        <div class="video-play-btn">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+          </svg>
+        </div>
       </a>
       <h3 class="film-title">Taylor &amp; Kane at The Green Bay Country Club</h3>
     </section>
