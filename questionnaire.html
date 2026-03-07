@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Vision Questionnaire | Flyin' Iris</title>
+  <meta name="description" content="Help us capture your love story perfectly. Fill out this questionnaire so we can craft the wedding film of your dreams.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200,195,185,0.5);
+      --accent-gold: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+      --border-focus: #FFBD1D;
+      --radius: 8px;
+      --error: #E85D5D;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      accent-color: #ffbd1d;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== LAYOUT ========== */
+
+    .page-wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    /* ========== HEADER ========== */
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      color: var(--accent-gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .wordmark a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .header-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent-gold);
+      margin: 20px auto 0;
+      opacity: 0.5;
+    }
+
+    /* ========== PROGRESS BAR ========== */
+
+    .progress-wrapper {
+      margin-bottom: 40px;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg-secondary);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .progress-step.active {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      background: var(--bg-primary);
+    }
+
+    .progress-step.completed {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-gold);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .progress-label {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ========== FORM STEPS ========== */
+
+    .form-step {
+      display: none;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    /* ========== SECTION ========== */
+
+    .section-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.5rem, 4vw, 1.85rem);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .section-intro {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    /* ========== FORM FIELDS ========== */
+
+    .field-group {
+      margin-bottom: 24px;
+    }
+
+    .field-group:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .field-label .required {
+      color: var(--accent-gold);
+      margin-left: 2px;
+    }
+
+    .field-helper {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="time"],
+    input[type="date"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea {
+      display: block;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      padding: 12px 16px;
+      transition: border-color 0.25s ease;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--border-focus);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23C8C3B9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ========== VIBE CHIPS ========== */
+
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+      user-select: none;
+    }
+
+    .chip:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+    }
+
+    .chip.selected {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      background: rgba(255, 189, 29, 0.08);
+    }
+
+    /* ========== RADIO GROUP ========== */
+
+    .radio-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .radio-item {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .radio-item input[type="radio"] {
+      display: none;
+    }
+
+    .radio-label {
+      display: block;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+    }
+
+    .radio-item input[type="radio"]:checked + .radio-label {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      background: rgba(255, 189, 29, 0.08);
+    }
+
+    .radio-label:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+    }
+
+    /* ========== CHECKBOX ITEMS ========== */
+
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.25s ease;
+      user-select: none;
+    }
+
+    .checkbox-item:hover {
+      border-color: var(--accent-gold);
+    }
+
+    .checkbox-item.checked {
+      border-color: var(--accent-gold);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkbox-box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-item.checked .checkbox-box {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold);
+    }
+
+    .checkbox-box svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .checkbox-item.checked .checkbox-box svg {
+      opacity: 1;
+    }
+
+    .checkbox-text {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    /* ========== NAV BUTTONS ========== */
+
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      gap: 16px;
+    }
+
+    .btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .btn-back:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-next,
+    .btn-submit {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+      margin-left: auto;
+    }
+
+    .btn-next:hover,
+    .btn-submit:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-submit.sending {
+      pointer-events: none;
+    }
+
+    /* ========== PRE-FILLED BADGE ========== */
+
+    .prefilled-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      background: rgba(255, 189, 29, 0.08);
+      border: 1px solid rgba(255, 189, 29, 0.2);
+      border-radius: 100px;
+      padding: 2px 10px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ========== SUCCESS / ERROR ========== */
+
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .success-screen.active {
+      display: block;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255, 189, 29, 0.1);
+      border: 2px solid var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-icon svg {
+      width: 28px;
+      height: 28px;
+      color: var(--accent-gold);
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .success-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .error-banner {
+      display: none;
+      background: rgba(232, 93, 93, 0.1);
+      border: 1px solid rgba(232, 93, 93, 0.3);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 0.8125rem;
+      color: var(--error);
+      text-align: center;
+    }
+
+    .error-banner.active {
+      display: block;
+    }
+
+    /* ========== RESPONSIVE ========== */
+
+    @media (max-width: 600px) {
+      .page-wrapper {
+        padding: 32px 16px 60px;
+      }
+
+      .section-card {
+        padding: 28px 20px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-row {
+        flex-direction: column;
+      }
+
+      .radio-item {
+        flex: none;
+      }
+
+      .progress-step {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+      }
+
+      .step-nav {
+        flex-direction: column-reverse;
+        gap: 12px;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .btn-next, .btn-submit {
+        margin-left: 0;
+      }
+    }
+
+    /* ========== FOOTER ========== */
+
+    .page-footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .footer-brand a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+
+    .footer-brand a:hover {
+      color: var(--accent-gold);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- ========== HEADER ========== -->
+    <header class="page-header">
+      <h1 class="wordmark"><a href="https://www.flyiniris.com">Flyin' Iris</a></h1>
+      <p class="page-subtitle">Wedding Vision Questionnaire</p>
+      <div class="header-divider"></div>
+    </header>
+
+    <!-- ========== PROGRESS ========== -->
+    <div class="progress-wrapper">
+      <div class="progress-steps">
+        <span class="progress-step active" data-step="1">1</span>
+        <span class="progress-step" data-step="2">2</span>
+        <span class="progress-step" data-step="3">3</span>
+        <span class="progress-step" data-step="4">4</span>
+        <span class="progress-step" data-step="5">5</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-label" id="progressLabel">Your Love Story</p>
+    </div>
+
+    <form id="questionnaireForm" novalidate>
+
+      <!-- ========== STEP 1: YOUR LOVE STORY ========== -->
+      <div class="form-step active" data-step="1">
+        <div class="section-card">
+          <h2 class="section-title">Your Love Story</h2>
+          <p class="section-intro">Every great film starts with a great story. Tell us yours &mdash; the real, unscripted version. These details help us weave your history into your wedding film in a way that feels authentically you.</p>
+
+          <div class="field-group">
+            <label class="field-label" for="how_they_met">How did you two meet? <span class="required">*</span></label>
+            <textarea id="how_they_met" name="how_they_met" placeholder="Was it a chance encounter? A dating app? Through friends? Tell us the story..." required></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="knew_the_one">When did you know they were "the one"?</label>
+            <textarea id="knew_the_one" name="knew_the_one" placeholder="Was there a specific moment, or did it slowly hit you one day?"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="proposal_story">Tell us about the proposal <span class="required">*</span></label>
+            <textarea id="proposal_story" name="proposal_story" placeholder="Both sides if possible! Who planned it? Were you surprised? We want all the details..." required></textarea>
+            <p class="field-helper">We love hearing both perspectives &mdash; feel free to share his, hers, or both!</p>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ========== STEP 2: YOUR WEDDING DAY ========== -->
+      <div class="form-step" data-step="2">
+        <div class="section-card">
+          <h2 class="section-title">Your Wedding Day</h2>
+          <p class="section-intro">The logistics matter just as much as the love. Knowing the rhythm of your day helps us plan our coverage so we never miss a beat &mdash; from the quiet getting-ready moments to the last dance.</p>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="wedding_date">Wedding Date <span class="prefilled-badge" id="wdBadge" style="display:none">Pre-filled</span></label>
+                <input type="date" id="wedding_date" name="wedding_date">
+              </div>
+              <div>
+                <label class="field-label" for="ceremony_time">Ceremony Start Time</label>
+                <input type="time" id="ceremony_time" name="ceremony_time">
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="venue_name">Venue Name <span class="prefilled-badge" id="vnBadge" style="display:none">Pre-filled</span></label>
+            <input type="text" id="venue_name" name="venue_name" placeholder="e.g., The Paine Art Center & Gardens">
+          </div>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="getting_ready_bride">Getting Ready Location (Bride)</label>
+                <input type="text" id="getting_ready_bride" name="getting_ready_bride" placeholder="Hotel name or venue suite">
+              </div>
+              <div>
+                <label class="field-label" for="getting_ready_groom">Getting Ready Location (Groom)</label>
+                <input type="text" id="getting_ready_groom" name="getting_ready_groom" placeholder="Hotel name or venue suite">
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="end_of_night">End of Night Plans</label>
+            <input type="text" id="end_of_night" name="end_of_night" placeholder="Last dance? Sparkler exit? After party?">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="guest_count">Estimated Guest Count</label>
+            <select id="guest_count" name="guest_count">
+              <option value="">Select...</option>
+              <option value="Under 50">Under 50 (Intimate)</option>
+              <option value="50-100">50 &ndash; 100</option>
+              <option value="100-150">100 &ndash; 150</option>
+              <option value="150-200">150 &ndash; 200</option>
+              <option value="200+">200+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
+          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ========== STEP 3: MUST-CAPTURE MOMENTS ========== -->
+      <div class="form-step" data-step="3">
+        <div class="section-card">
+          <h2 class="section-title">Must-Capture Moments</h2>
+          <p class="section-intro">Some moments happen once and can never be recreated. Help us know what matters most to you so our cameras are exactly where they need to be when it counts.</p>
+
+          <div class="field-group">
+            <label class="field-label" for="must_capture_moments">Are there specific people whose reactions you NEED captured?</label>
+            <textarea id="must_capture_moments" name="must_capture_moments" placeholder="Grandparents, parents, a best friend who flew in from overseas? Tell us who and why they matter..."></textarea>
+            <p class="field-helper">Think about who you'll want to see in the film 20 years from now.</p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="surprises_planned">Any surprises planned that we should know about?</label>
+            <textarea id="surprises_planned" name="surprises_planned" placeholder="Secret dance? Unexpected guest? A special song? We'll keep it between us..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="special_traditions">Special dances, traditions, or cultural elements?</label>
+            <textarea id="special_traditions" name="special_traditions" placeholder="Hora? Jumping the broom? Handfasting? A family tradition that's uniquely yours?"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Is there a first look planned?</label>
+            <div class="radio-row">
+              <div class="radio-item">
+                <input type="radio" id="first_look_yes" name="first_look" value="Yes">
+                <label class="radio-label" for="first_look_yes">Yes</label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="first_look_no" name="first_look" value="No">
+                <label class="radio-label" for="first_look_no">No</label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="first_look_maybe" name="first_look" value="Not sure yet">
+                <label class="radio-label" for="first_look_maybe">Not sure yet</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
+          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ========== STEP 4: YOUR FILM VISION ========== -->
+      <div class="form-step" data-step="4">
+        <div class="section-card">
+          <h2 class="section-title">Your Film Vision</h2>
+          <p class="section-intro">This is where your film starts to take shape. There's no wrong answer here &mdash; we want to understand how you see your day, so we can create something that feels like it was made for you. Because it will be.</p>
+
+          <div class="field-group">
+            <label class="field-label">What's the vibe of your wedding? <span class="required">*</span></label>
+            <p class="field-helper" style="margin-bottom: 10px; margin-top: 0;">Select all that feel right</p>
+            <div class="chip-grid" id="vibeChips">
+              <span class="chip" data-value="Elegant & timeless">Elegant & Timeless</span>
+              <span class="chip" data-value="Fun & energetic">Fun & Energetic</span>
+              <span class="chip" data-value="Intimate & emotional">Intimate & Emotional</span>
+              <span class="chip" data-value="Cinematic & dramatic">Cinematic & Dramatic</span>
+              <span class="chip" data-value="Raw & authentic">Raw & Authentic</span>
+              <span class="chip" data-value="Romantic">Romantic</span>
+              <span class="chip" data-value="Boho">Boho</span>
+              <span class="chip" data-value="Modern">Modern</span>
+              <span class="chip" data-value="Classic">Classic</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="film_feeling">What feeling do you want when you watch your film?</label>
+            <textarea id="film_feeling" name="film_feeling" placeholder="Do you want to cry? Laugh? Get goosebumps? Feel transported back to that exact moment?"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="music_preferences">Music preferences &mdash; any songs meaningful to you both?</label>
+            <textarea id="music_preferences" name="music_preferences" placeholder="Your song, your first dance song, a genre you love, or just a general vibe (acoustic, cinematic, indie...)"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="reference_films">Any wedding films you've seen that you loved?</label>
+            <textarea id="reference_films" name="reference_films" placeholder="YouTube or Vimeo links welcome! Or just describe what you liked about them."></textarea>
+            <p class="field-helper">No pressure &mdash; if you haven't watched any, that's totally fine!</p>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
+          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ========== STEP 5: THE DETAILS ========== -->
+      <div class="form-step" data-step="5">
+        <div class="section-card">
+          <h2 class="section-title">The Details</h2>
+          <p class="section-intro">Almost done! Knowing your vendor team helps us coordinate seamlessly on the day of. And if there's anything else on your heart, this is the place to share it.</p>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="photographer_name">Photographer</label>
+                <input type="text" id="photographer_name" name="photographer_name" placeholder="Name & company">
+              </div>
+              <div>
+                <label class="field-label" for="planner_name">Planner / Coordinator</label>
+                <input type="text" id="planner_name" name="planner_name" placeholder="Name & company">
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="dj_band_name">DJ / Band</label>
+                <input type="text" id="dj_band_name" name="dj_band_name" placeholder="Name & company">
+              </div>
+              <div>
+                <label class="field-label" for="other_vendors">Other Key Vendors</label>
+                <input type="text" id="other_vendors" name="other_vendors" placeholder="Florist, caterer, etc.">
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="additional_notes">Anything else we should know?</label>
+            <textarea id="additional_notes" name="additional_notes" placeholder="Nervous about being on camera? Special family dynamics? Something that makes your wedding uniquely yours? We're all ears."></textarea>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
+          <button type="submit" class="btn btn-submit" id="submitBtn">Submit Questionnaire</button>
+        </div>
+
+        <div class="error-banner" id="errorBanner"></div>
+      </div>
+
+    </form>
+
+    <!-- ========== SUCCESS SCREEN ========== -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h2 class="success-title">You're All Set!</h2>
+      <p class="success-text">Thank you for sharing your story with us. We'll use every detail to craft a film that's as unique as your love. We can't wait for your wedding day.</p>
+      <p class="success-text" style="margin-top: 20px; color: var(--text-muted); font-size: 0.8rem;">
+        &mdash; Sean & Sierra, Flyin' Iris
+      </p>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="page-footer">
+      <p class="footer-brand"><a href="https://www.flyiniris.com">Flyin' Iris</a> &middot; Milwaukee, Wisconsin</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ========== CONFIG ==========
+
+    const SUBMIT_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/webhook/questionnaire';
+    const STORAGE_KEY = 'fi_questionnaire_progress';
+    const SECTION_NAMES = [
+      'Your Love Story',
+      'Your Wedding Day',
+      'Must-Capture Moments',
+      'Your Film Vision',
+      'The Details'
+    ];
+
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    // ========== URL PARAMS ==========
+
+    const params = new URLSearchParams(window.location.search);
+    const prefill = {
+      fn: params.get('fn') || '',
+      vn: params.get('vn') || '',
+      wd: params.get('wd') || '',
+      email: params.get('email') || '',
+      cid: params.get('cid') || ''
+    };
+
+    // Pre-fill fields
+    if (prefill.vn) {
+      document.getElementById('venue_name').value = prefill.vn;
+      document.getElementById('vnBadge').style.display = 'inline-block';
+    }
+    if (prefill.wd) {
+      document.getElementById('wedding_date').value = prefill.wd;
+      document.getElementById('wdBadge').style.display = 'inline-block';
+    }
+
+    // ========== CHIP TOGGLE ==========
+
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+        saveProgress();
+      });
+    });
+
+    // ========== CHECKBOX TOGGLE ==========
+
+    document.querySelectorAll('.checkbox-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const cb = item.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        item.classList.toggle('checked', cb.checked);
+        saveProgress();
+      });
+    });
+
+    // ========== STEP NAVIGATION ==========
+
+    function updateProgress() {
+      const fill = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      document.getElementById('progressFill').style.width = fill + '%';
+      document.getElementById('progressLabel').textContent = SECTION_NAMES[currentStep - 1];
+
+      document.querySelectorAll('.progress-step').forEach(step => {
+        const s = parseInt(step.dataset.step);
+        step.classList.remove('active', 'completed');
+        if (s === currentStep) step.classList.add('active');
+        else if (s < currentStep) step.classList.add('completed');
+      });
+
+      document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+      });
+      const target = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+      if (target) target.classList.add('active');
+    }
+
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        updateProgress();
+        saveProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // ========== LOCAL STORAGE ==========
+
+    function getFormData() {
+      const data = {};
+
+      // Text / textarea / date / time / select
+      document.querySelectorAll('#questionnaireForm input[type="text"], #questionnaireForm input[type="email"], #questionnaireForm input[type="date"], #questionnaireForm input[type="time"], #questionnaireForm input[type="url"], #questionnaireForm input[type="number"], #questionnaireForm textarea, #questionnaireForm select').forEach(el => {
+        if (el.name) data[el.name] = el.value;
+      });
+
+      // Radio buttons
+      document.querySelectorAll('#questionnaireForm input[type="radio"]:checked').forEach(el => {
+        data[el.name] = el.value;
+      });
+
+      // Vibe chips
+      const vibes = [];
+      document.querySelectorAll('#vibeChips .chip.selected').forEach(chip => {
+        vibes.push(chip.dataset.value);
+      });
+      data.film_vibe = vibes.join(', ');
+
+      return data;
+    }
+
+    function saveProgress() {
+      try {
+        const data = getFormData();
+        data._step = currentStep;
+        data._timestamp = new Date().toISOString();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        // localStorage unavailable — silently continue
+      }
+    }
+
+    function restoreProgress() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+
+        const data = JSON.parse(saved);
+
+        // Restore text fields
+        Object.keys(data).forEach(key => {
+          if (key.startsWith('_')) return;
+          if (key === 'film_vibe') return;
+          if (key === 'first_look') {
+            const radio = document.querySelector(`input[name="first_look"][value="${data[key]}"]`);
+            if (radio) radio.checked = true;
+            return;
+          }
+          const el = document.querySelector(`[name="${key}"]`);
+          if (el) el.value = data[key];
+        });
+
+        // Restore vibe chips
+        if (data.film_vibe) {
+          const vibes = data.film_vibe.split(', ');
+          document.querySelectorAll('#vibeChips .chip').forEach(chip => {
+            if (vibes.includes(chip.dataset.value)) {
+              chip.classList.add('selected');
+            }
+          });
+        }
+
+        // Restore step (but don't override URL pre-fills)
+        if (data._step && data._step > 1) {
+          currentStep = data._step;
+          updateProgress();
+        }
+      } catch (e) {
+        // Corrupted data — start fresh
+      }
+    }
+
+    // Auto-save on input
+    document.querySelectorAll('#questionnaireForm input, #questionnaireForm textarea, #questionnaireForm select').forEach(el => {
+      el.addEventListener('input', saveProgress);
+      el.addEventListener('change', saveProgress);
+    });
+
+    // ========== FORM SUBMISSION ==========
+
+    document.getElementById('questionnaireForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const errorBanner = document.getElementById('errorBanner');
+      errorBanner.classList.remove('active');
+
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
+      submitBtn.classList.add('sending');
+
+      const data = getFormData();
+
+      // Add URL params
+      data.contactId = prefill.cid;
+      data.email = prefill.email;
+      data.firstName = prefill.fn;
+
+      // Apply pre-fills if fields are still empty
+      if (!data.venue_name && prefill.vn) data.venue_name = prefill.vn;
+      if (!data.wedding_date && prefill.wd) data.wedding_date = prefill.wd;
+
+      try {
+        const res = await fetch(SUBMIT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
+        // Success
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('questionnaireForm').style.display = 'none';
+        document.querySelector('.progress-wrapper').style.display = 'none';
+        document.getElementById('successScreen').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        // Save to localStorage as backup
+        saveProgress();
+
+        errorBanner.textContent = 'Something went wrong. Your answers have been saved locally — please try again in a moment.';
+        errorBanner.classList.add('active');
+        submitBtn.textContent = 'Submit Questionnaire';
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('sending');
+      }
+    });
+
+    // ========== INIT ==========
+
+    restoreProgress();
+    updateProgress();
+
+  </script>
+
+</body>
+</html>
