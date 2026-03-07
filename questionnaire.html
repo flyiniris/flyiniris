@@ -393,72 +393,6 @@
       color: var(--text-primary);
     }
 
-    /* ========== CHECKBOX ITEMS ========== */
-
-    .checkbox-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: border-color 0.25s ease;
-      user-select: none;
-    }
-
-    .checkbox-item:hover {
-      border-color: var(--accent-gold);
-    }
-
-    .checkbox-item.checked {
-      border-color: var(--accent-gold);
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      display: none;
-    }
-
-    .checkbox-box {
-      width: 18px;
-      height: 18px;
-      border: 1.5px solid var(--border);
-      border-radius: 4px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .checkbox-item.checked .checkbox-box {
-      border-color: var(--accent-gold);
-      background: var(--accent-gold);
-    }
-
-    .checkbox-box svg {
-      width: 12px;
-      height: 12px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .checkbox-item.checked .checkbox-box svg {
-      opacity: 1;
-    }
-
-    .checkbox-text {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
     /* ========== NAV BUTTONS ========== */
 
     .step-nav {
@@ -515,6 +449,18 @@
       pointer-events: none;
     }
 
+    .btn-skip {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .btn-skip:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-secondary);
+    }
+
     /* ========== PRE-FILLED BADGE ========== */
 
     .prefilled-badge {
@@ -531,6 +477,102 @@
       margin-left: 8px;
       vertical-align: middle;
     }
+
+    .timeline-badge {
+      display: none;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7dd3a8;
+      background: rgba(125, 211, 168, 0.08);
+      border: 1px solid rgba(125, 211, 168, 0.2);
+      border-radius: 100px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .timeline-badge.visible {
+      display: inline-block;
+    }
+
+    /* ========== UPLOAD ZONE ========== */
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s ease, background 0.25s ease;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--accent-gold);
+      background: rgba(255, 189, 29, 0.03);
+    }
+
+    .upload-zone.has-file {
+      border-color: rgba(125, 211, 168, 0.4);
+      background: rgba(125, 211, 168, 0.03);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      color: var(--text-muted);
+    }
+
+    .upload-zone.has-file .upload-icon { color: #7dd3a8; }
+
+    .upload-title {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .upload-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .upload-filename {
+      display: none;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #7dd3a8;
+      font-weight: 400;
+    }
+
+    .upload-zone.has-file .upload-filename { display: block; }
+
+    .upload-status {
+      display: none;
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+    }
+
+    .upload-status.active { display: block; }
+
+    .upload-status.parsing { color: var(--accent-gold); border-color: rgba(255,189,29,0.2); }
+    .upload-status.success { color: #7dd3a8; border-color: rgba(125,211,168,0.2); }
+    .upload-status.error { color: var(--error); border-color: rgba(232,93,93,0.2); }
 
     /* ========== SUCCESS / ERROR ========== */
 
@@ -619,9 +661,9 @@
       }
 
       .progress-step {
-        width: 28px;
-        height: 28px;
-        font-size: 0.7rem;
+        width: 26px;
+        height: 26px;
+        font-size: 0.65rem;
       }
 
       .step-nav {
@@ -682,7 +724,8 @@
     <!-- ========== PROGRESS ========== -->
     <div class="progress-wrapper">
       <div class="progress-steps">
-        <span class="progress-step active" data-step="1">1</span>
+        <span class="progress-step active" data-step="0">0</span>
+        <span class="progress-step" data-step="1">1</span>
         <span class="progress-step" data-step="2">2</span>
         <span class="progress-step" data-step="3">3</span>
         <span class="progress-step" data-step="4">4</span>
@@ -691,13 +734,40 @@
       <div class="progress-bar-track">
         <div class="progress-bar-fill" id="progressFill"></div>
       </div>
-      <p class="progress-label" id="progressLabel">Your Love Story</p>
+      <p class="progress-label" id="progressLabel">Upload Your Timeline</p>
     </div>
 
     <form id="questionnaireForm" novalidate>
 
+      <!-- ========== STEP 0: UPLOAD TIMELINE ========== -->
+      <div class="form-step active" data-step="0">
+        <div class="section-card">
+          <h2 class="section-title">Upload Your Timeline</h2>
+          <p class="section-intro">Got a timeline from your planner? Drop it here and we'll fill in what we can &mdash; you just review and add the fun stuff. This step is totally optional.</p>
+
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="timelineFile" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p class="upload-title">Drop your timeline here, or tap to browse</p>
+            <p class="upload-hint">PDF, Word doc, or photo of a printed timeline</p>
+            <p class="upload-filename" id="uploadFilename"></p>
+          </div>
+
+          <div class="upload-status" id="uploadStatus"></div>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-skip" onclick="nextStep()">Skip &mdash; I don't have one</button>
+          <button type="button" class="btn btn-next" id="uploadNextBtn" onclick="nextStep()" style="display:none">Continue</button>
+        </div>
+      </div>
+
       <!-- ========== STEP 1: YOUR LOVE STORY ========== -->
-      <div class="form-step active" data-step="1">
+      <div class="form-step" data-step="1">
         <div class="section-card">
           <h2 class="section-title">Your Love Story</h2>
           <p class="section-intro">Every great film starts with a great story. Tell us yours &mdash; the real, unscripted version. These details help us weave your history into your wedding film in a way that feels authentically you.</p>
@@ -720,6 +790,7 @@
         </div>
 
         <div class="step-nav">
+          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
           <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
         </div>
       </div>
@@ -733,41 +804,57 @@
           <div class="field-group">
             <div class="field-row">
               <div>
-                <label class="field-label" for="wedding_date">Wedding Date <span class="prefilled-badge" id="wdBadge" style="display:none">Pre-filled</span></label>
+                <label class="field-label" for="wedding_date">Wedding Date
+                  <span class="prefilled-badge" id="wdBadge" style="display:none">Pre-filled</span>
+                  <span class="timeline-badge" id="wdTlBadge">From timeline</span>
+                </label>
                 <input type="date" id="wedding_date" name="wedding_date">
               </div>
               <div>
-                <label class="field-label" for="ceremony_time">Ceremony Start Time</label>
+                <label class="field-label" for="ceremony_time">Ceremony Start Time
+                  <span class="timeline-badge" id="ceremony_timeTlBadge">From timeline</span>
+                </label>
                 <input type="time" id="ceremony_time" name="ceremony_time">
               </div>
             </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="venue_name">Venue Name <span class="prefilled-badge" id="vnBadge" style="display:none">Pre-filled</span></label>
+            <label class="field-label" for="venue_name">Venue Name
+              <span class="prefilled-badge" id="vnBadge" style="display:none">Pre-filled</span>
+              <span class="timeline-badge" id="venue_nameTlBadge">From timeline</span>
+            </label>
             <input type="text" id="venue_name" name="venue_name" placeholder="e.g., The Paine Art Center & Gardens">
           </div>
 
           <div class="field-group">
             <div class="field-row">
               <div>
-                <label class="field-label" for="getting_ready_bride">Getting Ready Location (Bride)</label>
+                <label class="field-label" for="getting_ready_bride">Getting Ready Location (Bride)
+                  <span class="timeline-badge" id="getting_ready_brideTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="getting_ready_bride" name="getting_ready_bride" placeholder="Hotel name or venue suite">
               </div>
               <div>
-                <label class="field-label" for="getting_ready_groom">Getting Ready Location (Groom)</label>
+                <label class="field-label" for="getting_ready_groom">Getting Ready Location (Groom)
+                  <span class="timeline-badge" id="getting_ready_groomTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="getting_ready_groom" name="getting_ready_groom" placeholder="Hotel name or venue suite">
               </div>
             </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="end_of_night">End of Night Plans</label>
+            <label class="field-label" for="end_of_night">End of Night Plans
+              <span class="timeline-badge" id="end_of_nightTlBadge">From timeline</span>
+            </label>
             <input type="text" id="end_of_night" name="end_of_night" placeholder="Last dance? Sparkler exit? After party?">
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="guest_count">Estimated Guest Count</label>
+            <label class="field-label" for="guest_count">Estimated Guest Count
+              <span class="timeline-badge" id="guest_countTlBadge">From timeline</span>
+            </label>
             <select id="guest_count" name="guest_count">
               <option value="">Select...</option>
               <option value="Under 50">Under 50 (Intimate)</option>
@@ -792,7 +879,9 @@
           <p class="section-intro">Some moments happen once and can never be recreated. Help us know what matters most to you so our cameras are exactly where they need to be when it counts.</p>
 
           <div class="field-group">
-            <label class="field-label" for="must_capture_moments">Are there specific people whose reactions you NEED captured?</label>
+            <label class="field-label" for="must_capture_moments">Are there specific people whose reactions you NEED captured?
+              <span class="timeline-badge" id="must_capture_momentsTlBadge">From timeline</span>
+            </label>
             <textarea id="must_capture_moments" name="must_capture_moments" placeholder="Grandparents, parents, a best friend who flew in from overseas? Tell us who and why they matter..."></textarea>
             <p class="field-helper">Think about who you'll want to see in the film 20 years from now.</p>
           </div>
@@ -803,12 +892,16 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="special_traditions">Special dances, traditions, or cultural elements?</label>
+            <label class="field-label" for="special_traditions">Special dances, traditions, or cultural elements?
+              <span class="timeline-badge" id="special_traditionsTlBadge">From timeline</span>
+            </label>
             <textarea id="special_traditions" name="special_traditions" placeholder="Hora? Jumping the broom? Handfasting? A family tradition that's uniquely yours?"></textarea>
           </div>
 
           <div class="field-group">
-            <label class="field-label">Is there a first look planned?</label>
+            <label class="field-label">Is there a first look planned?
+              <span class="timeline-badge" id="first_lookTlBadge">From timeline</span>
+            </label>
             <div class="radio-row">
               <div class="radio-item">
                 <input type="radio" id="first_look_yes" name="first_look" value="Yes">
@@ -886,11 +979,15 @@
           <div class="field-group">
             <div class="field-row">
               <div>
-                <label class="field-label" for="photographer_name">Photographer</label>
+                <label class="field-label" for="photographer_name">Photographer
+                  <span class="timeline-badge" id="photographer_nameTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="photographer_name" name="photographer_name" placeholder="Name & company">
               </div>
               <div>
-                <label class="field-label" for="planner_name">Planner / Coordinator</label>
+                <label class="field-label" for="planner_name">Planner / Coordinator
+                  <span class="timeline-badge" id="planner_nameTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="planner_name" name="planner_name" placeholder="Name & company">
               </div>
             </div>
@@ -899,18 +996,24 @@
           <div class="field-group">
             <div class="field-row">
               <div>
-                <label class="field-label" for="dj_band_name">DJ / Band</label>
+                <label class="field-label" for="dj_band_name">DJ / Band
+                  <span class="timeline-badge" id="dj_band_nameTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="dj_band_name" name="dj_band_name" placeholder="Name & company">
               </div>
               <div>
-                <label class="field-label" for="other_vendors">Other Key Vendors</label>
+                <label class="field-label" for="other_vendors">Other Key Vendors
+                  <span class="timeline-badge" id="other_vendorsTlBadge">From timeline</span>
+                </label>
                 <input type="text" id="other_vendors" name="other_vendors" placeholder="Florist, caterer, etc.">
               </div>
             </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="additional_notes">Anything else we should know?</label>
+            <label class="field-label" for="additional_notes">Anything else we should know?
+              <span class="timeline-badge" id="additional_notesTlBadge">From timeline</span>
+            </label>
             <textarea id="additional_notes" name="additional_notes" placeholder="Nervous about being on camera? Special family dynamics? Something that makes your wedding uniquely yours? We're all ears."></textarea>
           </div>
         </div>
@@ -950,8 +1053,10 @@
     // ========== CONFIG ==========
 
     const SUBMIT_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/webhook/questionnaire';
+    const TIMELINE_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/webhook/parse-timeline';
     const STORAGE_KEY = 'fi_questionnaire_progress';
     const SECTION_NAMES = [
+      'Upload Your Timeline',
       'Your Love Story',
       'Your Wedding Day',
       'Must-Capture Moments',
@@ -959,8 +1064,8 @@
       'The Details'
     ];
 
-    let currentStep = 1;
-    const totalSteps = 5;
+    let currentStep = 0;
+    const totalSteps = 6; // 0-5
 
     // ========== URL PARAMS ==========
 
@@ -983,6 +1088,194 @@
       document.getElementById('wdBadge').style.display = 'inline-block';
     }
 
+    // ========== TIMELINE UPLOAD ==========
+
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('timelineFile');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadFilename = document.getElementById('uploadFilename');
+    const uploadNextBtn = document.getElementById('uploadNextBtn');
+
+    // Drag events
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('dragover');
+    });
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelect(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        handleFileSelect(fileInput.files[0]);
+      }
+    });
+
+    async function handleFileSelect(file) {
+      // Validate file type
+      const allowed = /\.(pdf|docx?|txt|jpe?g|png|webp)$/i;
+      if (!allowed.test(file.name)) {
+        showUploadStatus('error', 'Unsupported file type. Please use PDF, Word, or an image.');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showUploadStatus('error', 'File is too large. Maximum 10MB.');
+        return;
+      }
+
+      // Show file name
+      uploadZone.classList.add('has-file');
+      uploadFilename.textContent = file.name;
+
+      // Parse the timeline
+      showUploadStatus('parsing', 'Reading your timeline... this takes a few seconds.');
+
+      if (!prefill.cid) {
+        showUploadStatus('error', 'Missing contact ID. Timeline parsing requires a valid questionnaire link.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('timeline', file);
+      formData.append('contactId', prefill.cid);
+
+      try {
+        const res = await fetch(TIMELINE_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || !result.parsed) {
+          showUploadStatus('error', result.error || 'Could not parse the timeline. You can fill in the fields manually.');
+          uploadNextBtn.style.display = '';
+          return;
+        }
+
+        // Auto-fill fields from parsed data
+        const parsed = result.parsed;
+        let filledCount = 0;
+
+        const fieldMap = {
+          ceremony_time: 'ceremony_time',
+          getting_ready_bride: 'getting_ready_bride',
+          getting_ready_groom: 'getting_ready_groom',
+          end_of_night: 'end_of_night',
+          guest_count: 'guest_count',
+          photographer_name: 'photographer_name',
+          planner_name: 'planner_name',
+          dj_band_name: 'dj_band_name',
+          other_vendors: 'other_vendors',
+          venue_name: 'venue_name',
+          special_traditions: 'special_traditions',
+          must_capture_moments: 'must_capture_moments',
+          additional_notes: 'additional_notes',
+          first_look: 'first_look',
+        };
+
+        for (const [parseKey, fieldId] of Object.entries(fieldMap)) {
+          const val = parsed[parseKey];
+          if (!val || val === '' || val === 'null') continue;
+
+          if (parseKey === 'first_look') {
+            const radioVal = val.toLowerCase().includes('yes') ? 'Yes' : val.toLowerCase().includes('no') ? 'No' : null;
+            if (radioVal) {
+              const radio = document.querySelector(`input[name="first_look"][value="${radioVal}"]`);
+              if (radio) {
+                radio.checked = true;
+                showTimelineBadge('first_look');
+                filledCount++;
+              }
+            }
+            continue;
+          }
+
+          if (parseKey === 'ceremony_time') {
+            // Try to convert time string like "4:00 PM" to 24h "16:00"
+            const el = document.getElementById(fieldId);
+            if (el && !el.value) {
+              const converted = convertTo24h(val);
+              if (converted) {
+                el.value = converted;
+                showTimelineBadge(fieldId);
+                filledCount++;
+              }
+            }
+            continue;
+          }
+
+          if (parseKey === 'guest_count') {
+            const el = document.getElementById(fieldId);
+            if (el && !el.value) {
+              // Try to match to select options
+              const num = parseInt(val.replace(/\D/g, ''));
+              if (num) {
+                if (num < 50) el.value = 'Under 50';
+                else if (num <= 100) el.value = '50-100';
+                else if (num <= 150) el.value = '100-150';
+                else if (num <= 200) el.value = '150-200';
+                else el.value = '200+';
+                showTimelineBadge(fieldId);
+                filledCount++;
+              }
+            }
+            continue;
+          }
+
+          const el = document.getElementById(fieldId);
+          if (el && !el.value) {
+            el.value = val;
+            showTimelineBadge(fieldId);
+            filledCount++;
+          }
+        }
+
+        if (filledCount > 0) {
+          showUploadStatus('success', `Got it! We pre-filled ${filledCount} field${filledCount > 1 ? 's' : ''} from your timeline. You'll see green "From timeline" badges as you go &mdash; review and adjust anything that needs tweaking.`);
+        } else {
+          showUploadStatus('success', 'Timeline uploaded, but we couldn\'t extract specific fields. No worries &mdash; you can fill everything in manually.');
+        }
+
+        uploadNextBtn.style.display = '';
+        saveProgress();
+
+      } catch (err) {
+        showUploadStatus('error', 'Something went wrong parsing your timeline. You can still fill in the fields manually.');
+        uploadNextBtn.style.display = '';
+      }
+    }
+
+    function showUploadStatus(type, message) {
+      uploadStatus.className = 'upload-status active ' + type;
+      uploadStatus.innerHTML = message;
+    }
+
+    function showTimelineBadge(fieldId) {
+      const badge = document.getElementById(fieldId + 'TlBadge');
+      if (badge) badge.classList.add('visible');
+    }
+
+    function convertTo24h(timeStr) {
+      if (!timeStr) return null;
+      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/);
+      if (!match) return null;
+      let h = parseInt(match[1]);
+      const m = match[2];
+      const period = (match[3] || '').toUpperCase();
+      if (period === 'PM' && h < 12) h += 12;
+      if (period === 'AM' && h === 12) h = 0;
+      return String(h).padStart(2, '0') + ':' + m;
+    }
+
     // ========== CHIP TOGGLE ==========
 
     document.querySelectorAll('.chip').forEach(chip => {
@@ -992,23 +1285,12 @@
       });
     });
 
-    // ========== CHECKBOX TOGGLE ==========
-
-    document.querySelectorAll('.checkbox-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const cb = item.querySelector('input[type="checkbox"]');
-        cb.checked = !cb.checked;
-        item.classList.toggle('checked', cb.checked);
-        saveProgress();
-      });
-    });
-
     // ========== STEP NAVIGATION ==========
 
     function updateProgress() {
-      const fill = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      const fill = (currentStep / (totalSteps - 1)) * 100;
       document.getElementById('progressFill').style.width = fill + '%';
-      document.getElementById('progressLabel').textContent = SECTION_NAMES[currentStep - 1];
+      document.getElementById('progressLabel').textContent = SECTION_NAMES[currentStep];
 
       document.querySelectorAll('.progress-step').forEach(step => {
         const s = parseInt(step.dataset.step);
@@ -1025,7 +1307,7 @@
     }
 
     function nextStep() {
-      if (currentStep < totalSteps) {
+      if (currentStep < totalSteps - 1) {
         currentStep++;
         updateProgress();
         saveProgress();
@@ -1034,7 +1316,7 @@
     }
 
     function prevStep() {
-      if (currentStep > 1) {
+      if (currentStep > 0) {
         currentStep--;
         updateProgress();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1071,9 +1353,15 @@
         const data = getFormData();
         data._step = currentStep;
         data._timestamp = new Date().toISOString();
+        // Save which fields were filled from timeline
+        const tlBadges = [];
+        document.querySelectorAll('.timeline-badge.visible').forEach(b => {
+          tlBadges.push(b.id.replace('TlBadge', ''));
+        });
+        data._timelineFilled = tlBadges;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (e) {
-        // localStorage unavailable — silently continue
+        // localStorage unavailable
       }
     }
 
@@ -1107,13 +1395,18 @@
           });
         }
 
-        // Restore step (but don't override URL pre-fills)
-        if (data._step && data._step > 1) {
+        // Restore timeline badges
+        if (data._timelineFilled) {
+          data._timelineFilled.forEach(fieldId => showTimelineBadge(fieldId));
+        }
+
+        // Restore step
+        if (data._step != null && data._step > 0) {
           currentStep = data._step;
           updateProgress();
         }
       } catch (e) {
-        // Corrupted data — start fresh
+        // Corrupted — start fresh
       }
     }
 
@@ -1164,9 +1457,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
       } catch (err) {
-        // Save to localStorage as backup
         saveProgress();
-
         errorBanner.textContent = 'Something went wrong. Your answers have been saved locally — please try again in a moment.';
         errorBanner.classList.add('active');
         submitBtn.textContent = 'Submit Questionnaire';
