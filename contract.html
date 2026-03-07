@@ -18,7 +18,8 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Great+Vibes&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Signature Pad -->
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
@@ -283,6 +284,74 @@
       color: var(--text-primary);
       margin-bottom: 8px;
     }
+    .sig-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .sig-tab {
+      flex: 1;
+      padding: 14px 16px;
+      min-height: 48px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      text-align: center;
+    }
+    .sig-tab:hover { color: var(--text-primary); }
+    .sig-tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent);
+      font-weight: 500;
+    }
+    .sig-panel {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .sig-panel.active {
+      display: block;
+      opacity: 1;
+    }
+    .sig-type-container {
+      background: #FAFAFA;
+      padding: 20px;
+      border-bottom: 2px solid var(--accent);
+      border-radius: 0 0 4px 4px;
+    }
+    .sig-type-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Great Vibes', cursive;
+      font-size: 36px;
+      color: #1a1a1a;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .sig-type-input::placeholder {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .sig-type-legal {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .sig-draw-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
     .sig-pad-container {
       position: relative;
       background: var(--bg-elevated);
@@ -292,8 +361,10 @@
     }
     .sig-pad-container canvas {
       width: 100%;
+      min-width: 300px;
       height: 150px;
       display: block;
+      touch-action: none;
     }
     .sig-clear {
       position: absolute;
@@ -310,22 +381,6 @@
       transition: all 0.2s ease;
     }
     .sig-clear:hover { color: var(--accent); border-color: var(--accent); }
-    .sig-name-input {
-      width: 100%;
-      margin-top: 8px;
-      padding: 10px 14px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
-      font-weight: 300;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-    .sig-name-input:focus { border-color: var(--accent); }
-    .sig-name-input::placeholder { color: var(--text-muted); }
 
     /* Consent */
     .consent-row {
@@ -714,22 +769,46 @@
 
       <!-- Client 1 -->
       <div class="sig-pad-wrapper">
-        <div class="sig-pad-label">Client 1 Signature <span style="color: #e74c3c;">*</span></div>
-        <div class="sig-pad-container">
-          <canvas id="sig-pad-1"></canvas>
-          <button class="sig-clear" onclick="sigPad1.clear()">Clear</button>
+        <div class="sig-pad-label" id="sig1-label">Client 1 Signature <span style="color: #e74c3c;">*</span></div>
+        <div class="sig-tabs">
+          <button class="sig-tab active" onclick="switchTab(1, 'type')">Type</button>
+          <button class="sig-tab" onclick="switchTab(1, 'draw')">Draw</button>
         </div>
-        <input type="text" class="sig-name-input" id="sig-name-1" placeholder="Type your full name" autocomplete="name">
+        <div class="sig-panel active" id="sig1-type-panel">
+          <div class="sig-type-container">
+            <input type="text" class="sig-type-input" id="sig-type-1" placeholder="Type your full name" autocomplete="name">
+          </div>
+          <p class="sig-type-legal">By typing your name, you agree this constitutes your legal signature.</p>
+        </div>
+        <div class="sig-panel" id="sig1-draw-panel">
+          <div class="sig-pad-container">
+            <canvas id="sig-pad-1"></canvas>
+            <button class="sig-clear" onclick="sigPad1 && sigPad1.clear()">Clear</button>
+          </div>
+          <p class="sig-draw-caption">Use your finger or mouse to sign.</p>
+        </div>
       </div>
 
       <!-- Client 2 (optional) -->
       <div class="sig-pad-wrapper">
-        <div class="sig-pad-label">Client 2 Signature <span class="optional-badge">optional</span></div>
-        <div class="sig-pad-container">
-          <canvas id="sig-pad-2"></canvas>
-          <button class="sig-clear" onclick="sigPad2.clear()">Clear</button>
+        <div class="sig-pad-label" id="sig2-label">Partner Signature <span class="optional-badge">optional</span></div>
+        <div class="sig-tabs">
+          <button class="sig-tab active" onclick="switchTab(2, 'type')">Type</button>
+          <button class="sig-tab" onclick="switchTab(2, 'draw')">Draw</button>
         </div>
-        <input type="text" class="sig-name-input" id="sig-name-2" placeholder="Type partner's full name (optional)" autocomplete="off">
+        <div class="sig-panel active" id="sig2-type-panel">
+          <div class="sig-type-container">
+            <input type="text" class="sig-type-input" id="sig-type-2" placeholder="Type partner's full name (optional)">
+          </div>
+          <p class="sig-type-legal">By typing your name, you agree this constitutes your legal signature.</p>
+        </div>
+        <div class="sig-panel" id="sig2-draw-panel">
+          <div class="sig-pad-container">
+            <canvas id="sig-pad-2"></canvas>
+            <button class="sig-clear" onclick="sigPad2 && sigPad2.clear()">Clear</button>
+          </div>
+          <p class="sig-draw-caption">Use your finger or mouse to sign.</p>
+        </div>
       </div>
 
       <!-- Consent -->
@@ -761,6 +840,8 @@
   let contractData = null;
   let sigPad1 = null;
   let sigPad2 = null;
+  let sig1Mode = 'type';
+  let sig2Mode = 'type';
 
   // ===== INIT =====
   document.addEventListener('DOMContentLoaded', async () => {
@@ -771,9 +852,6 @@
       showError('Missing Token', 'No contract token was provided. Please use the link from your email.');
       return;
     }
-
-    // Init signature pads
-    initSignaturePads();
 
     // Fetch contract data
     try {
@@ -800,61 +878,94 @@
     }
   });
 
-  // ===== SIGNATURE PADS =====
-  function initSignaturePads() {
-    const canvas1 = document.getElementById('sig-pad-1');
-    const canvas2 = document.getElementById('sig-pad-2');
+  // ===== SIGNATURE TAB SWITCHING =====
+  function switchTab(signer, mode) {
+    if (signer === 1) sig1Mode = mode;
+    else sig2Mode = mode;
 
-    function resizeCanvas(canvas) {
-      const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * ratio;
-      canvas.height = rect.height * ratio;
-      canvas.getContext('2d').scale(ratio, ratio);
+    const typePanel = document.getElementById(`sig${signer}-type-panel`);
+    const drawPanel = document.getElementById(`sig${signer}-draw-panel`);
+    const wrapper = typePanel.closest('.sig-pad-wrapper');
+    const tabs = wrapper.querySelectorAll('.sig-tab');
+
+    tabs.forEach(t => t.classList.remove('active'));
+    typePanel.classList.remove('active');
+    drawPanel.classList.remove('active');
+
+    if (mode === 'type') {
+      tabs[0].classList.add('active');
+      typePanel.classList.add('active');
+    } else {
+      tabs[1].classList.add('active');
+      drawPanel.classList.add('active');
+      // Init pad if not already done (canvas must be visible to get dimensions)
+      const pad = signer === 1 ? sigPad1 : sigPad2;
+      if (!pad) {
+        setTimeout(() => initSigPad(signer), 50);
+      } else {
+        // Resize in case layout changed
+        resizeSigPad(signer);
+      }
     }
 
-    // Wait for layout
-    setTimeout(() => {
-      resizeCanvas(canvas1);
-      resizeCanvas(canvas2);
-
-      sigPad1 = new SignaturePad(canvas1, {
-        penColor: '#F5F0EB',
-        backgroundColor: 'rgba(0,0,0,0)',
-        minWidth: 1,
-        maxWidth: 2.5,
-      });
-
-      sigPad2 = new SignaturePad(canvas2, {
-        penColor: '#F5F0EB',
-        backgroundColor: 'rgba(0,0,0,0)',
-        minWidth: 1,
-        maxWidth: 2.5,
-      });
-
-      // Update button state when drawing
-      sigPad1.addEventListener('endStroke', updateSignButton);
-      sigPad2.addEventListener('endStroke', updateSignButton);
-    }, 100);
-
-    // Resize on window resize
-    window.addEventListener('resize', () => {
-      if (sigPad1) { const d1 = sigPad1.toData(); resizeCanvas(canvas1); sigPad1.fromData(d1); }
-      if (sigPad2) { const d2 = sigPad2.toData(); resizeCanvas(canvas2); sigPad2.fromData(d2); }
-    });
+    updateSignButton();
   }
+
+  // ===== SIGNATURE PAD INIT =====
+  function resizeCanvas(canvas) {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    canvas.getContext('2d').scale(ratio, ratio);
+  }
+
+  function initSigPad(num) {
+    const canvas = document.getElementById(`sig-pad-${num}`);
+    resizeCanvas(canvas);
+
+    const pad = new SignaturePad(canvas, {
+      penColor: '#F5F0EB',
+      backgroundColor: 'rgba(0,0,0,0)',
+      minWidth: 1,
+      maxWidth: 2.5,
+    });
+    pad.addEventListener('endStroke', updateSignButton);
+
+    if (num === 1) sigPad1 = pad;
+    else sigPad2 = pad;
+  }
+
+  function resizeSigPad(num) {
+    const pad = num === 1 ? sigPad1 : sigPad2;
+    if (!pad) return;
+    const canvas = document.getElementById(`sig-pad-${num}`);
+    const data = pad.toData();
+    resizeCanvas(canvas);
+    pad.fromData(data);
+  }
+
+  // Resize on window resize
+  window.addEventListener('resize', () => {
+    if (sig1Mode === 'draw') resizeSigPad(1);
+    if (sig2Mode === 'draw') resizeSigPad(2);
+  });
 
   // ===== BUTTON STATE =====
   function updateSignButton() {
     const consent = document.getElementById('consent-checkbox').checked;
-    const hasSig1 = sigPad1 && !sigPad1.isEmpty();
-    const hasName1 = document.getElementById('sig-name-1').value.trim().length > 0;
-    document.getElementById('sign-btn').disabled = !(consent && hasSig1 && hasName1);
+    let hasSig1 = false;
+    if (sig1Mode === 'type') {
+      hasSig1 = document.getElementById('sig-type-1').value.trim().length > 0;
+    } else {
+      hasSig1 = sigPad1 && !sigPad1.isEmpty();
+    }
+    document.getElementById('sign-btn').disabled = !(consent && hasSig1);
   }
 
   document.getElementById('consent-checkbox').addEventListener('change', updateSignButton);
-  document.getElementById('sig-name-1').addEventListener('input', updateSignButton);
-  document.getElementById('sig-name-2').addEventListener('input', updateSignButton);
+  document.getElementById('sig-type-1').addEventListener('input', updateSignButton);
+  document.getElementById('sig-type-2').addEventListener('input', updateSignButton);
 
   // ===== RENDER =====
   function renderContract(data) {
@@ -892,12 +1003,16 @@
     document.getElementById('payment-retainer').textContent = `$${formatNum(half)}`;
     document.getElementById('payment-balance').textContent = `$${formatNum(data.total - half)}`;
 
-    // Pre-fill signature names if available
+    // Pre-fill signature names and update labels
     if (data.partyInfo.client1Name) {
-      document.getElementById('sig-name-1').value = data.partyInfo.client1Name;
+      document.getElementById('sig-type-1').value = data.partyInfo.client1Name;
+      document.getElementById('sig1-label').innerHTML = escapeHtml(data.partyInfo.client1Name) + ' <span style="color: #e74c3c;">*</span>';
     }
     if (data.partyInfo.client2Name) {
-      document.getElementById('sig-name-2').value = data.partyInfo.client2Name;
+      document.getElementById('sig-type-2').value = data.partyInfo.client2Name;
+      document.getElementById('sig2-label').innerHTML = escapeHtml(data.partyInfo.client2Name) + ' <span class="optional-badge">optional</span>';
+    } else {
+      document.getElementById('sig2-label').innerHTML = 'Partner <span class="optional-badge">optional</span>';
     }
 
     // Show content
@@ -915,18 +1030,29 @@
     document.getElementById('submitting-overlay').classList.add('visible');
 
     try {
+      const name1 = document.getElementById('sig-type-1').value.trim();
+      const sig1Type = sig1Mode === 'type' ? 'typed' : 'drawn';
       const payload = {
-        signature1: sigPad1.toDataURL('image/png'),
-        name1: document.getElementById('sig-name-1').value.trim(),
+        sig1_type: sig1Type,
+        name1,
         consent: true,
         userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
       };
 
+      if (sig1Type === 'drawn') {
+        payload.signature1 = sigPad1.toDataURL('image/png');
+      }
+
       // Client 2 (optional)
-      if (sigPad2 && !sigPad2.isEmpty()) {
+      const name2 = document.getElementById('sig-type-2').value.trim();
+      if (sig2Mode === 'draw' && sigPad2 && !sigPad2.isEmpty()) {
+        payload.sig2_type = 'drawn';
         payload.signature2 = sigPad2.toDataURL('image/png');
-        payload.name2 = document.getElementById('sig-name-2').value.trim();
+        payload.name2 = name2;
+      } else if (name2) {
+        payload.sig2_type = 'typed';
+        payload.name2 = name2;
       }
 
       const resp = await fetch(`${API_BASE}/api/contract/${contractToken}/sign`, {
