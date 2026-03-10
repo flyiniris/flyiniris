@@ -2170,6 +2170,16 @@
             var val = params.get(key);
             if (val) sessionStorage.setItem('fi_' + key, val);
           });
+          // Fire server-side PageView for CAPI when fbclid is present
+          var fbclid = params.get('fbclid') || sessionStorage.getItem('fi_fbclid');
+          if (fbclid) {
+            var pvEventId = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+            fetch(WORKER_URL + '/api/pageview', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fbclid: fbclid, event_id: pvEventId })
+            }).catch(function() {});
+          }
         })();
         function getTrackingData() {
           var data = {};
@@ -2179,6 +2189,9 @@
             if (val) data[key] = val;
           });
           return data;
+        }
+        function generateEventId() {
+          return crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
         }
 
         function checkAvailability(dateStr) {
@@ -3208,13 +3221,15 @@
             var dateVal = document.getElementById('quiz-date');
             if (dateVal) state.contactForm.weddingDate = dateVal.value;
             state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
-            // Analytics
+            // Analytics — shared event_id for pixel + CAPI deduplication
+            var leadEventId = generateEventId();
             if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
-            if (typeof fbq === "function") { fbq("track", "Lead"); }
+            if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: leadEventId }); }
             // Send to Worker (iris-automation)
             var nameParts = (state.contactInfo.name || '').trim().split(' ');
             var partnerParts = (state.contactInfo.partner || '').trim().split(' ');
             var tracking = getTrackingData();
+            tracking.event_id = leadEventId;
             var inquiryData = Object.assign({
               submissionType: 'inquiry',
               firstName: nameParts[0] || '',
