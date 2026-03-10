@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Wedding Portal | Flyin' Iris</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <meta property="og:title" content="Your Wedding Portal — Flyin' Iris">
+  <meta property="og:description" content="Track your wedding film project status, payments, and milestones.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.flyiniris.com/portal">
+
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+      --green: #4ADE80;
+      --green-dim: rgba(74, 222, 128, 0.15);
+      --amber: #FCD34D;
+      --amber-dim: rgba(252, 211, 77, 0.15);
+      --red: #F87171;
+      --red-dim: rgba(248, 113, 113, 0.15);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Film Grain Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      text-align: center;
+      padding: 48px 0 16px;
+      animation: fadeUp 0.8s ease;
+    }
+    .header .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .header .brand a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .header .brand-sub {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .header .gold-bar {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin: 20px auto;
+    }
+    .header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    /* ========== COUNTDOWN HERO ========== */
+    .countdown-hero {
+      text-align: center;
+      padding: 32px 0 40px;
+      animation: fadeUp 0.8s ease 0.1s both;
+    }
+    .countdown-number {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(56px, 12vw, 96px);
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .countdown-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .countdown-date {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+    .countdown-venue {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+    .countdown-congrats {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    /* ========== STATUS CARDS GRID ========== */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+    @media (max-width: 560px) {
+      .status-grid { grid-template-columns: 1fr; }
+    }
+
+    .status-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 20px;
+      transition: border-color 0.25s ease;
+    }
+    .status-card:hover {
+      border-color: #3A3A38;
+    }
+    .status-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .status-card-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .status-card-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+    .status-card-title {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .status-badge.green {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+    .status-badge.amber {
+      background: var(--amber-dim);
+      color: var(--amber);
+    }
+    .status-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .status-card-link {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .status-card-link:hover {
+      color: var(--accent-light);
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #2A2A28;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 10px 0 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ========== PAYMENTS SECTION ========== */
+    .payments-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px 28px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    /* Invoice table */
+    .invoice-list {
+      width: 100%;
+    }
+    .invoice-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(42, 42, 40, 0.6);
+    }
+    .invoice-row:last-child { border-bottom: none; }
+    .invoice-row-header {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .invoice-desc {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    .invoice-amount {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .invoice-due {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .invoice-status {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      justify-self: end;
+    }
+    .invoice-status.paid {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+    .invoice-status.pending {
+      background: rgba(42, 42, 40, 0.5);
+      color: var(--text-secondary);
+    }
+    .invoice-status.overdue {
+      background: var(--red-dim);
+      color: var(--red);
+    }
+    .pay-now-btn {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 6px 14px;
+      background: var(--accent);
+      color: #0A0A09;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.25s ease;
+    }
+    .pay-now-btn:hover {
+      background: var(--accent-light);
+    }
+
+    /* Mobile invoice layout */
+    @media (max-width: 560px) {
+      .invoice-row-header { display: none; }
+      .invoice-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 12px;
+      }
+      .invoice-desc { grid-column: 1 / -1; }
+      .invoice-due { text-align: left; }
+      .invoice-status { justify-self: start; }
+    }
+
+    /* ========== MILESTONES TIMELINE ========== */
+    .milestones-section {
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+    .milestones-header {
+      margin-bottom: 24px;
+    }
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 28px;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -32px;
+      top: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+    .timeline-dot.completed {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .timeline-dot.completed svg {
+      width: 10px;
+      height: 10px;
+      color: #0A0A09;
+    }
+    .timeline-label {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+    .timeline-item.pending .timeline-label {
+      color: var(--text-muted);
+    }
+    .timeline-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .timeline-item.completed .timeline-date {
+      color: var(--text-secondary);
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      text-align: center;
+      padding: 32px 0 48px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      animation: fadeUp 0.8s ease 0.5s both;
+    }
+    .footer-reach-out {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .footer-contact {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .footer-contact a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-brand {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .footer-brand a { color: var(--accent); text-decoration: none; }
+    .footer-brand a:hover { text-decoration: underline; }
+
+    /* ========== LOADING STATE ========== */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+    }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    /* Skeleton placeholders */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease infinite;
+      border-radius: 6px;
+    }
+    .skeleton-line {
+      height: 16px;
+      margin-bottom: 8px;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
+    .skeleton-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+    }
+    .skeleton-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 20px;
+    }
+
+    /* ========== ERROR STATE ========== */
+    .error-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+    }
+    .error-screen .error-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .error-screen h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .error-screen p {
+      color: var(--text-secondary);
+      max-width: 400px;
+      line-height: 1.7;
+    }
+    .error-screen a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .error-screen a:hover { text-decoration: underline; }
+
+    /* ========== PORTAL CONTENT ========== */
+    .portal-content { display: none; }
+    .portal-content.visible { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Loading State with Skeleton -->
+<div id="loading-screen" class="container">
+  <div class="header" style="padding-bottom: 16px;">
+    <div class="brand"><a href="https://flyiniris.com">Flyin' Iris</a></div>
+    <div class="brand-sub">Wedding Films</div>
+    <div class="gold-bar"></div>
+  </div>
+
+  <div style="text-align: center; padding: 24px 0 40px;">
+    <div class="skeleton skeleton-circle" style="width: 72px; height: 72px;"></div>
+    <div class="skeleton skeleton-line short" style="margin: 0 auto 6px;"></div>
+    <div class="skeleton skeleton-line" style="width: 50%; margin: 0 auto 6px;"></div>
+    <div class="skeleton skeleton-line" style="width: 35%; margin: 0 auto;"></div>
+  </div>
+
+  <div class="status-grid">
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-line medium"></div>
+      <div class="skeleton skeleton-line short"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-line medium"></div>
+      <div class="skeleton skeleton-line" style="height: 6px; margin-top: 8px;"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-line medium"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-line medium"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Error State -->
+<div id="error-screen" class="error-screen container" style="display: none;">
+  <div class="header" style="padding-bottom: 0;">
+    <div class="brand"><a href="https://flyiniris.com" style="color: inherit; text-decoration: none;">Flyin' Iris</a></div>
+    <div class="brand-sub">Wedding Films</div>
+    <div class="gold-bar"></div>
+  </div>
+  <div class="error-icon"></div>
+  <h2 id="error-title">Something went wrong</h2>
+  <p id="error-message">This link doesn't seem to be working. Contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.</p>
+</div>
+
+<!-- Portal Content -->
+<div id="portal-content" class="portal-content">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="brand"><a href="https://flyiniris.com">Flyin' Iris</a></div>
+      <div class="brand-sub">Wedding Films</div>
+      <div class="gold-bar"></div>
+      <h1 id="welcome-heading">Welcome!</h1>
+    </div>
+
+    <!-- Wedding Countdown -->
+    <div class="countdown-hero" id="countdown-section"></div>
+
+    <!-- Status Cards -->
+    <div class="status-grid" id="status-grid">
+
+      <!-- Contract Card -->
+      <div class="status-card" id="card-contract">
+        <div class="status-card-header">
+          <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+              <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+              <path d="m9 15 2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="status-card-title">Contract</div>
+        </div>
+        <div id="contract-badge"></div>
+        <div class="status-card-detail" id="contract-detail"></div>
+        <a id="contract-link" class="status-card-link" href="#" style="display: none;">View Contract</a>
+      </div>
+
+      <!-- Payments Card -->
+      <div class="status-card" id="card-payments">
+        <div class="status-card-header">
+          <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="status-card-title">Payments</div>
+        </div>
+        <div class="status-card-detail" id="payments-summary"></div>
+        <div class="progress-track" id="payments-track" style="display: none;">
+          <div class="progress-fill" id="payments-fill" style="width: 0%;"></div>
+        </div>
+        <div class="progress-label" id="payments-pct"></div>
+        <a class="status-card-link" href="#payments-detail" style="display: none;" id="payments-view-link">View Payments</a>
+      </div>
+
+      <!-- Questionnaire Card -->
+      <div class="status-card" id="card-questionnaire">
+        <div class="status-card-header">
+          <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M8 7h8"/>
+              <path d="M8 11h8"/>
+              <path d="M8 15h5"/>
+            </svg>
+          </div>
+          <div class="status-card-title">Questionnaire</div>
+        </div>
+        <div id="questionnaire-badge"></div>
+        <div class="status-card-detail" id="questionnaire-detail"></div>
+        <a id="questionnaire-link" class="status-card-link" href="#" style="display: none;"></a>
+      </div>
+
+      <!-- Timeline Card -->
+      <div class="status-card" id="card-timeline">
+        <div class="status-card-header">
+          <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="status-card-title">Day-of Timeline</div>
+        </div>
+        <div id="timeline-badge"></div>
+        <div class="status-card-detail" id="timeline-detail"></div>
+      </div>
+
+    </div>
+
+    <!-- Payment Details Section -->
+    <div class="payments-section" id="payments-detail" style="display: none;">
+      <div class="section-title">Your Payments</div>
+      <h3 class="section-heading" id="payments-heading">Payment Schedule</h3>
+      <div class="invoice-list" id="invoice-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Milestones Timeline -->
+    <div class="milestones-section" id="milestones-section" style="display: none;">
+      <div class="milestones-header">
+        <div class="section-title">Your Journey</div>
+        <h3 class="section-heading">Milestones</h3>
+      </div>
+      <div class="timeline" id="milestones-timeline">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-reach-out">Questions? Reach out anytime!</div>
+      <div class="footer-contact">
+        Reply to any of our emails, or reach us at<br>
+        <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>
+      </div>
+      <div class="footer-brand">
+        &copy; 2026 Flyin' Iris Media Productions LLC<br>
+        <a href="https://flyiniris.com">flyiniris.com</a> &middot;
+        <a href="https://www.instagram.com/flyinirismedia/">@flyinirismedia</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (!token) {
+      showError('Missing Link', 'No access token was provided. Please use the link from your email.');
+      return;
+    }
+
+    try {
+      const resp = await fetch(`${API_BASE}/api/portal/${token}`, {
+        headers: { 'Accept': 'application/json' },
+      });
+
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          showError('Link Not Found', 'This link doesn\'t seem to be working. Contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.');
+        } else {
+          showError('Something Went Wrong', 'We couldn\'t load your portal. Please try again or contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.');
+        }
+        return;
+      }
+
+      const data = await resp.json();
+      renderPortal(data, token);
+
+    } catch (err) {
+      showError('Connection Error', 'We couldn\'t reach our servers. Please check your connection and try again.');
+    }
+  });
+
+  // ===== RENDER =====
+  function renderPortal(data, token) {
+    const { contact, contract, invoices, questionnaire_completed, timeline_uploaded, milestones } = data;
+
+    // Welcome heading
+    const names = [contact.first_name, contact.partner_name].filter(Boolean);
+    const welcomeName = names.length === 2 ? `${names[0]} & ${names[1]}` : (names[0] || 'there');
+    document.getElementById('welcome-heading').textContent = `Welcome, ${welcomeName}!`;
+
+    // Countdown
+    renderCountdown(contact.wedding_date, contact.venue_name);
+
+    // Contract card
+    renderContractCard(contract, token);
+
+    // Payments card
+    renderPaymentsCard(invoices, contract.total);
+
+    // Questionnaire card
+    renderQuestionnaireCard(questionnaire_completed, contact);
+
+    // Timeline card
+    renderTimelineCard(timeline_uploaded);
+
+    // Payment details section
+    renderInvoices(invoices, token);
+
+    // Milestones
+    renderMilestones(milestones);
+
+    // Show content
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('portal-content').classList.add('visible');
+  }
+
+  // ===== COUNTDOWN =====
+  function renderCountdown(weddingDateStr, venue) {
+    const section = document.getElementById('countdown-section');
+    if (!weddingDateStr) {
+      section.style.display = 'none';
+      return;
+    }
+
+    const weddingDate = new Date(weddingDateStr + 'T00:00:00');
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const diffMs = weddingDate - now;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    const formattedDate = weddingDate.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    if (diffDays > 0) {
+      section.innerHTML = `
+        <div class="countdown-number">${diffDays}</div>
+        <div class="countdown-label">day${diffDays !== 1 ? 's' : ''} until your wedding!</div>
+        <div class="countdown-date">${formattedDate}</div>
+        ${venue ? `<div class="countdown-venue">${escapeHtml(venue)}</div>` : ''}
+      `;
+    } else if (diffDays === 0) {
+      section.innerHTML = `
+        <div class="countdown-congrats">Today is the day!</div>
+        <div class="countdown-date">${formattedDate}</div>
+        ${venue ? `<div class="countdown-venue">${escapeHtml(venue)}</div>` : ''}
+      `;
+    } else {
+      section.innerHTML = `
+        <div class="countdown-congrats">Congratulations on your wedding!</div>
+        <div class="countdown-date">${formattedDate}</div>
+        ${venue ? `<div class="countdown-venue">${escapeHtml(venue)}</div>` : ''}
+      `;
+    }
+  }
+
+  // ===== CONTRACT CARD =====
+  function renderContractCard(contract, token) {
+    const badge = document.getElementById('contract-badge');
+    const detail = document.getElementById('contract-detail');
+    const link = document.getElementById('contract-link');
+
+    if (contract.status === 'signed' || contract.signed_at) {
+      badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Signed</span>';
+      if (contract.signed_at) {
+        const signedDate = new Date(contract.signed_at);
+        detail.textContent = 'Signed on ' + signedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      }
+    } else {
+      badge.innerHTML = '<span class="status-badge amber">Pending</span>';
+      detail.textContent = 'Your agreement is ready for review.';
+      link.textContent = 'Review & Sign';
+      link.href = `https://flyiniris.com/contract?token=${token}`;
+      link.style.display = 'inline-block';
+    }
+
+    // Always show "View Contract" if signed
+    if (contract.status === 'signed' || contract.signed_at) {
+      link.textContent = 'View Contract';
+      link.href = `https://flyiniris.com/contract?token=${token}`;
+      link.style.display = 'inline-block';
+    }
+  }
+
+  // ===== PAYMENTS CARD =====
+  function renderPaymentsCard(invoices, total) {
+    const summary = document.getElementById('payments-summary');
+    const track = document.getElementById('payments-track');
+    const fill = document.getElementById('payments-fill');
+    const pct = document.getElementById('payments-pct');
+    const viewLink = document.getElementById('payments-view-link');
+
+    if (!invoices || invoices.length === 0) {
+      summary.textContent = 'No payments scheduled yet.';
+      return;
+    }
+
+    const totalDue = invoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+    const totalPaid = invoices.reduce((sum, inv) => sum + (inv.amount_paid || 0), 0);
+    const percentage = totalDue > 0 ? Math.round((totalPaid / totalDue) * 100) : 0;
+
+    summary.innerHTML = `<strong style="color: var(--text-primary);">${formatCurrency(totalPaid)}</strong> paid of ${formatCurrency(totalDue)}`;
+
+    track.style.display = 'block';
+    // Animate the fill after a brief delay
+    setTimeout(() => { fill.style.width = percentage + '%'; }, 100);
+    pct.textContent = percentage + '% complete';
+
+    viewLink.style.display = 'inline-block';
+  }
+
+  // ===== QUESTIONNAIRE CARD =====
+  function renderQuestionnaireCard(completed, contact) {
+    const badge = document.getElementById('questionnaire-badge');
+    const detail = document.getElementById('questionnaire-detail');
+    const link = document.getElementById('questionnaire-link');
+
+    if (completed) {
+      badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>';
+      detail.textContent = 'Thank you for filling this out!';
+    } else {
+      badge.innerHTML = '<span class="status-badge amber">Not Started</span>';
+      detail.textContent = 'Help us plan the perfect film for your day.';
+
+      const qParams = new URLSearchParams();
+      if (contact.first_name) qParams.set('fn', contact.first_name);
+      if (contact.email) qParams.set('email', contact.email);
+      const qUrl = 'https://flyiniris.com/questionnaire' + (qParams.toString() ? '?' + qParams.toString() : '');
+
+      link.textContent = 'Fill Out Questionnaire';
+      link.href = qUrl;
+      link.style.display = 'inline-block';
+    }
+  }
+
+  // ===== TIMELINE CARD =====
+  function renderTimelineCard(uploaded) {
+    const badge = document.getElementById('timeline-badge');
+    const detail = document.getElementById('timeline-detail');
+
+    if (uploaded) {
+      badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Uploaded</span>';
+      detail.textContent = 'We have your day-of timeline on file.';
+    } else {
+      badge.innerHTML = '<span class="status-badge amber">Not Yet Uploaded</span>';
+      detail.textContent = 'Once your planner or venue sends you the day-of timeline, forward it to us so we can plan our coverage.';
+    }
+  }
+
+  // ===== INVOICE LIST =====
+  function renderInvoices(invoices, token) {
+    if (!invoices || invoices.length === 0) return;
+
+    const section = document.getElementById('payments-detail');
+    const list = document.getElementById('invoice-list');
+    section.style.display = 'block';
+
+    // Header row
+    let html = `
+      <div class="invoice-row invoice-row-header">
+        <div>Description</div>
+        <div style="text-align: right;">Amount</div>
+        <div style="text-align: right;">Due Date</div>
+        <div style="text-align: right;">Status</div>
+      </div>
+    `;
+
+    for (const inv of invoices) {
+      const statusClass = getInvoiceStatusClass(inv);
+      const statusLabel = getInvoiceStatusLabel(inv);
+      const dueFormatted = inv.due_date
+        ? new Date(inv.due_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '--';
+
+      html += `
+        <div class="invoice-row">
+          <div class="invoice-desc">${escapeHtml(inv.description || 'Payment')}</div>
+          <div class="invoice-amount">${formatCurrency(inv.amount)}</div>
+          <div class="invoice-due">${dueFormatted}</div>
+          <div>
+            <span class="invoice-status ${statusClass}">${statusLabel}</span>
+            ${statusClass !== 'paid' ? `<br><a class="pay-now-btn" href="https://flyiniris.com/payment?token=${token}">Pay Now</a>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    list.innerHTML = html;
+  }
+
+  function getInvoiceStatusClass(inv) {
+    if (inv.status === 'paid') return 'paid';
+    if (inv.due_date) {
+      const due = new Date(inv.due_date + 'T00:00:00');
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      if (due < now) return 'overdue';
+    }
+    return 'pending';
+  }
+
+  function getInvoiceStatusLabel(inv) {
+    const cls = getInvoiceStatusClass(inv);
+    if (cls === 'paid') return 'Paid';
+    if (cls === 'overdue') return 'Overdue';
+    return 'Pending';
+  }
+
+  // ===== MILESTONES =====
+  function renderMilestones(milestones) {
+    if (!milestones || milestones.length === 0) return;
+
+    const section = document.getElementById('milestones-section');
+    const timeline = document.getElementById('milestones-timeline');
+    section.style.display = 'block';
+
+    let html = '';
+    for (const m of milestones) {
+      const completed = m.completed;
+      const dateFormatted = m.date
+        ? new Date(m.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        : '';
+
+      const checkSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+      html += `
+        <div class="timeline-item ${completed ? 'completed' : 'pending'}">
+          <div class="timeline-dot ${completed ? 'completed' : ''}">${completed ? checkSvg : ''}</div>
+          <div class="timeline-label">${escapeHtml(m.label)}</div>
+          ${dateFormatted ? `<div class="timeline-date">${dateFormatted}</div>` : ''}
+        </div>
+      `;
+    }
+
+    timeline.innerHTML = html;
+  }
+
+  // ===== HELPERS =====
+  function showError(title, message) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-message').innerHTML = message;
+    document.getElementById('error-screen').style.display = 'flex';
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function formatCurrency(amount) {
+    if (amount == null || isNaN(amount)) return '$0.00';
+    return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+</script>
+</body>
+</html>
