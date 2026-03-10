@@ -593,6 +593,43 @@
       margin-left: 8px;
     }
 
+    /* Signed banner */
+    .signed-banner {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: fadeUp 0.8s ease;
+    }
+    .signed-banner .signed-check {
+      width: 40px;
+      height: 40px;
+      background: rgba(34, 197, 94, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .signed-banner .signed-check svg {
+      width: 22px;
+      height: 22px;
+      color: #22c55e;
+    }
+    .signed-banner .signed-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .signed-banner .signed-text strong {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
     /* Footer */
     .footer {
       text-align: center;
@@ -653,6 +690,14 @@
       <div class="brand-sub">Milwaukee &amp; Wisconsin Wedding Videographer</div>
       <div class="gold-bar"></div>
       <h1>Your Wedding Film Agreement</h1>
+    </div>
+
+    <!-- Signed Banner (hidden by default, shown for signed contracts) -->
+    <div id="signed-banner" class="signed-banner" style="display: none;">
+      <div class="signed-check">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+      </div>
+      <div class="signed-text" id="signed-banner-text"></div>
     </div>
 
     <!-- Parties -->
@@ -864,7 +909,7 @@
         if (resp.status === 404) {
           showError('Contract Not Found', 'This contract link is invalid or has expired. Please contact us at sean@flyiniris.com.');
         } else if (resp.status === 410) {
-          showError('Already Signed', 'This contract has already been signed. Check your email for the signed copy.');
+          showError('No Longer Available', err.error || 'This contract is no longer available. Please contact us at sean@flyiniris.com.');
         } else {
           showError('Something Went Wrong', err.error || 'We couldn\'t load your contract. Please try again.');
         }
@@ -1015,10 +1060,36 @@
       document.getElementById('sig2-label').innerHTML = 'Partner <span class="optional-badge">optional</span>';
     }
 
+    // Handle signed contracts — show read-only with banner, hide signature section
+    if (data.status === 'signed') {
+      // Show signed banner
+      const banner = document.getElementById('signed-banner');
+      const bannerText = document.getElementById('signed-banner-text');
+      const signers = [data.signer1_name, data.signer2_name].filter(Boolean);
+      const signedDate = data.signed_at ? new Date(data.signed_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+      let bannerHtml = '<strong>Contract Signed</strong><br>';
+      if (signedDate && signers.length > 0) {
+        bannerHtml += 'This contract was signed on ' + escapeHtml(signedDate) + ' by ' + escapeHtml(signers.join(' & ')) + '.';
+      } else if (signedDate) {
+        bannerHtml += 'This contract was signed on ' + escapeHtml(signedDate) + '.';
+      } else if (signers.length > 0) {
+        bannerHtml += 'This contract was signed by ' + escapeHtml(signers.join(' & ')) + '.';
+      } else {
+        bannerHtml += 'This contract has been signed.';
+      }
+      bannerText.innerHTML = bannerHtml;
+      banner.style.display = 'flex';
+
+      // Hide the signature section
+      document.querySelector('.signature-section').style.display = 'none';
+    }
+
     // Show content
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('contract-content').classList.add('visible');
-    updateSignButton();
+    if (data.status !== 'signed') {
+      updateSignButton();
+    }
   }
 
   // ===== SUBMIT =====
