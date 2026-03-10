@@ -2161,6 +2161,26 @@
         // Availability now served from Worker D1 database (no more Apps Script)
         var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
+        // --- UTM / FBCLID CAPTURE ---
+        // Capture tracking params from URL on page load and store in sessionStorage
+        (function() {
+          var params = new URLSearchParams(window.location.search);
+          var trackingKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
+          trackingKeys.forEach(function(key) {
+            var val = params.get(key);
+            if (val) sessionStorage.setItem('fi_' + key, val);
+          });
+        })();
+        function getTrackingData() {
+          var data = {};
+          var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
+          keys.forEach(function(key) {
+            var val = sessionStorage.getItem('fi_' + key);
+            if (val) data[key] = val;
+          });
+          return data;
+        }
+
         function checkAvailability(dateStr) {
           var msgEl = document.getElementById('availability-msg');
           if (!msgEl || !dateStr) return;
@@ -3022,7 +3042,8 @@
               if (!state.calcSubmitted) {
                 var est = calcPrice(state.calcAnswers);
                 var calcNameParts = (state.contactInfo ? state.contactInfo.name : '').trim().split(' ');
-                var calcData = {
+                var calcTracking = getTrackingData();
+                var calcData = Object.assign({
                   submissionType: 'calculator',
                   firstName: calcNameParts[0] || '',
                   lastName: calcNameParts.slice(1).join(' ') || '',
@@ -3038,7 +3059,7 @@
                   extra: state.calcAnswers.extra || '',
                   estimatedPrice: est.price,
                   bundleSavings: est.savings
-                };
+                }, calcTracking);
                 fetch(WORKER_URL + '/webhook/calculator', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -3193,7 +3214,8 @@
             // Send to Worker (iris-automation)
             var nameParts = (state.contactInfo.name || '').trim().split(' ');
             var partnerParts = (state.contactInfo.partner || '').trim().split(' ');
-            var inquiryData = {
+            var tracking = getTrackingData();
+            var inquiryData = Object.assign({
               submissionType: 'inquiry',
               firstName: nameParts[0] || '',
               lastName: nameParts.slice(1).join(' ') || '',
@@ -3212,7 +3234,7 @@
               budget: state.quizAnswers.budget || '',
               found: state.contactForm.found || '',
               referralName: state.referralName || ''
-            };
+            }, tracking);
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
