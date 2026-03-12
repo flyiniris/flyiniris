@@ -14,47 +14,50 @@
   <meta property="og:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/">
-  <meta property="og:image" content="https://www.flyiniris.com/Cody-Sarah.jpg">
+  <meta property="og:image" content="https://www.flyiniris.com/Cody-Sarah-og.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Milwaukee Wedding Videographer | Flyin' Iris">
   <meta name="twitter:description" content="Cinematic wedding films by a husband-and-wife team in Milwaukee. 5.0 stars, 100+ love stories. Now booking 2026 & 2027.">
-  <meta name="twitter:image" content="https://www.flyiniris.com/Cody-Sarah.jpg">
+  <meta name="twitter:image" content="https://www.flyiniris.com/Cody-Sarah-og.jpg">
   <meta name="theme-color" content="#0A0A0A">
 
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-M74R95NX');</script>
-
-  <!-- Meta Pixel -->
+  <!-- Google Tag Manager + Meta Pixel (deferred 3s for page speed) -->
   <script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbq.js');
-  fbq('init', '518972926490365');
-  fbq('track', 'PageView');
+  window.dataLayer = window.dataLayer || [];
+  setTimeout(function() {
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-M74R95NX');
+
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbq.js');
+    fbq('init', '518972926490365');
+    fbq('track', 'PageView');
+  }, 3000);
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts (non-render-blocking) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.vidstack.io">
+  <link rel="dns-prefetch" href="https://media.flyiniris.com">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"></noscript>
 
-  <!-- Vidstack Player -->
-  <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css" />
-  <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css" />
-  <script type="module" src="https://cdn.vidstack.io/player"></script>
+  <!-- Vidstack Player (deferred - loads when films section is near viewport) -->
 
   <!-- JSON-LD Schema -->
   <script type="application/ld+json">
@@ -763,6 +766,7 @@
       left: 0;
       background-size: cover;
       background-position: center;
+      background-image: var(--why-bg, none);
       opacity: 0.12;
       z-index: 0;
       transition: opacity 0.7s ease;
@@ -776,12 +780,6 @@
       position: relative;
       z-index: 1;
     }
-
-    #why-01::before { background-image: url('Taylor-Kane.jpg'); }
-    #why-02::before { background-image: url('Bobby-emily.jpg'); }
-    #why-03::before { background-image: url('Cody-Sarah.jpg'); }
-    #why-04::before { background-image: url('Izzy-Hunter.jpg'); }
-    #why-05::before { background-image: url('Kayla-Jason.jpg'); }
 
     .why-block:last-child {
       margin-bottom: 0;
@@ -1809,7 +1807,7 @@
               <media-provider></media-provider>
               <media-video-layout></media-video-layout>
             </media-player>
-            <img src="/thumbs/Taylor-Austin_thumb.jpg" alt="A Wisconsin Love Story" class="video-poster" />
+            <img src="/thumbs/Taylor-Austin_thumb.webp" alt="A Wisconsin Love Story" class="video-poster" width="900" height="506" loading="lazy" />
             <div class="video-play-btn">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -1832,7 +1830,7 @@
                 <media-provider></media-provider>
                 <media-video-layout></media-video-layout>
               </media-player>
-              <img src="/thumbs/Taylor-Kane_thumb.jpg" alt="Main Characters at The Green Bay Country Club" class="video-poster" />
+              <img src="/thumbs/Taylor-Kane_thumb.webp" alt="Main Characters at The Green Bay Country Club" class="video-poster" width="900" height="506" loading="lazy" />
               <div class="video-play-btn">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -1853,7 +1851,7 @@
                 <media-provider></media-provider>
                 <media-video-layout></media-video-layout>
               </media-player>
-              <img src="/thumbs/Olivia-Austin_thumb.jpg" alt="A Marine Marries His Duchess" class="video-poster" />
+              <img src="/thumbs/Olivia-Austin_thumb.webp" alt="A Marine Marries His Duchess" class="video-poster" width="900" height="506" loading="lazy" />
               <div class="video-play-btn">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -1936,7 +1934,7 @@
           <h2 class="section-heading reveal-child">We're Sean &amp; Sierra.</h2>
         </div>
         <div class="about-grid reveal">
-          <img src="sean-sierra.jpg" alt="Sean and Sierra Herkenrath - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy">
+          <img src="sean-sierra.webp" alt="Sean and Sierra Herkenrath - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy" width="1000" height="1500">
           <div class="about-content reveal-child">
             <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean is the reason your entire experience is dialed in, from the first time you reach out to the moment your film lands in your inbox. He&rsquo;s obsessing over every detail so nothing falls through the cracks.</p>
             <p>Our couples don&rsquo;t call us their videographers &mdash; they call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
@@ -1949,7 +1947,7 @@
 
     <!-- ========== TESTIMONIALS ========== -->
     <section class="section testimonials" aria-label="Testimonials">
-      <div class="testimonials-bg" style="background-image: url('grace-sage.jpg');" aria-hidden="true"></div>
+      <div class="testimonials-bg" data-bg="grace-sage.webp" aria-hidden="true"></div>
       <div class="testimonials-bg-overlay" aria-hidden="true"></div>
       <div class="section-inner reveal">
         <p class="section-label reveal-child">Straight From Our Couples</p>
@@ -2027,21 +2025,61 @@
     (function() {
       'use strict';
 
-      // ========== VIDEO POSTER FADE ON PLAY ==========
-      document.querySelectorAll('media-player').forEach(function(player) {
-        player.addEventListener('playing', function() {
-          var poster = this.parentElement.querySelector('.video-poster');
-          var playBtn = this.parentElement.querySelector('.video-play-btn');
-          if (poster) poster.style.opacity = '0';
-          if (playBtn) playBtn.style.opacity = '0';
-        });
-      });
+      // ========== LAZY-LOAD VIDSTACK WHEN FILMS SECTION IS NEAR ==========
+      (function() {
+        var filmsSection = document.getElementById('films');
+        if (!filmsSection) return;
+        var loaded = false;
+        var observer = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting && !loaded) {
+            loaded = true;
+            observer.disconnect();
+            var css1 = document.createElement('link');
+            css1.rel = 'stylesheet';
+            css1.href = 'https://cdn.vidstack.io/player/theme.css';
+            document.head.appendChild(css1);
+            var css2 = document.createElement('link');
+            css2.rel = 'stylesheet';
+            css2.href = 'https://cdn.vidstack.io/player/video.css';
+            document.head.appendChild(css2);
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = 'https://cdn.vidstack.io/player';
+            document.head.appendChild(script);
+            // Bind poster fade once Vidstack loads
+            script.addEventListener('load', function() {
+              document.querySelectorAll('media-player').forEach(function(player) {
+                player.addEventListener('playing', function() {
+                  var poster = this.parentElement.querySelector('.video-poster');
+                  var playBtn = this.parentElement.querySelector('.video-play-btn');
+                  if (poster) poster.style.opacity = '0';
+                  if (playBtn) playBtn.style.opacity = '0';
+                });
+              });
+            });
+          }
+        }, { rootMargin: '500px 0px' });
+        observer.observe(filmsSection);
+      })();
+
+      // ========== LAZY-LOAD TESTIMONIALS BACKGROUND ==========
+      (function() {
+        var bgEl = document.querySelector('[data-bg]');
+        if (!bgEl) return;
+        var observer = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            bgEl.style.backgroundImage = "url('" + bgEl.getAttribute('data-bg') + "')";
+            observer.disconnect();
+          }
+        }, { rootMargin: '300px 0px' });
+        observer.observe(bgEl);
+      })();
 
       // ========== HERO VIDEO - LOAD ONLY ONE ==========
       (function() {
         var isMobile = window.innerWidth <= 768;
         var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
-        var videoSrc = isMobile ? cdnBase + '/hero-9x16-v2.mp4' : cdnBase + '/hero-16x9-v2.mp4';
+        var videoSrc = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
         var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
         if (wrapper) {
           var video = document.createElement('video');
@@ -2124,18 +2162,29 @@
         revealObserver.observe(el);
       });
 
-      // ========== WHY SECTION - INDIVIDUAL BLOCK REVEALS ==========
+      // ========== WHY SECTION - INDIVIDUAL BLOCK REVEALS + LAZY BG ==========
+      var whyImages = {
+        'why-01': 'Taylor-Kane.webp',
+        'why-02': 'Bobby-emily.webp',
+        'why-03': 'Cody-Sarah.webp',
+        'why-04': 'Izzy-Hunter.webp',
+        'why-05': 'Kayla-Jason.webp'
+      };
       var whyBlocks = document.querySelectorAll('[data-why-reveal]');
       var whyObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
+            var imgFile = whyImages[entry.target.id];
+            if (imgFile) {
+              entry.target.style.setProperty('--why-bg', "url('" + imgFile + "')");
+            }
             whyObserver.unobserve(entry.target);
           }
         });
       }, {
         threshold: 0.05,
-        rootMargin: '0px 0px -10% 0px'
+        rootMargin: '200px 0px -10% 0px'
       });
 
       whyBlocks.forEach(function(el) {
