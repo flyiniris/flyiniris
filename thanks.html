@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Film Match | Flyin' Iris</title>
+  <meta name="description" content="We matched you with a film that feels like your day. See your personalized film match from Flyin' Iris.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Film Grain */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Layout */
+    .page-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Film Reveal Section */
+    .film-reveal {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px 60px;
+    }
+
+    .film-reveal h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    .film-reveal .subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    /* Video Player */
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto 24px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-card);
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    }
+
+    .video-aspect {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+    }
+
+    .video-aspect video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .sound-toggle {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(10, 10, 10, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 189, 29, 0.3);
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 100px;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(255, 189, 29, 0.15);
+      border-color: var(--accent);
+    }
+
+    .sound-toggle svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .film-meta {
+      text-align: center;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
+    .film-meta .couple-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .film-meta .venue-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Confirmation Section */
+    .confirmation {
+      text-align: center;
+      padding: 60px 20px 100px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .confirm-check {
+      font-size: 3rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 700;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    .confirmation h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    .confirmation p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+    }
+
+    .gold-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 32px auto;
+      border-radius: 2px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.6s forwards;
+    }
+
+    .skip-ahead {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      padding: 14px 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-legal {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .footer-legal a {
+      color: var(--text-muted);
+      text-decoration: underline;
+    }
+
+    /* Fallback thumbnail */
+    .film-thumb-fallback {
+      display: none;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto 24px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .film-thumb-fallback img {
+      width: 100%;
+      display: block;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 640px) {
+      .film-reveal {
+        padding: 60px 16px 40px;
+      }
+      .confirmation {
+        padding: 40px 16px 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Film Reveal Section -->
+  <section class="film-reveal">
+    <h1 id="reveal-heading">We found your film.</h1>
+    <p class="subtitle">Based on what you told us, we matched you with a film that feels like your day...</p>
+
+    <div class="video-wrap" id="video-wrap">
+      <div class="video-aspect">
+        <video id="film-video" playsinline muted loop preload="metadata"></video>
+      </div>
+      <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
+        <svg viewBox="0 0 24 24" id="sound-icon-off">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" id="sound-icon-on" style="display:none">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <span id="sound-label">Tap for Sound</span>
+      </button>
+    </div>
+
+    <div class="film-thumb-fallback" id="film-fallback">
+      <img id="film-thumb-img" src="" alt="Wedding film thumbnail">
+    </div>
+
+    <div class="film-meta" id="film-meta">
+      <div class="couple-name" id="film-couple"></div>
+      <div class="venue-name" id="film-venue"></div>
+    </div>
+  </section>
+
+  <!-- Confirmation Section -->
+  <section class="confirmation">
+    <div class="confirm-check">&#10003;</div>
+    <h2>We got your inquiry!</h2>
+    <p>We're so excited about your day.</p>
+    <p>Check your inbox &mdash; we're sending you some beautiful films and everything you need to know about working with us.</p>
+
+    <div class="gold-divider"></div>
+
+    <p class="skip-ahead">Want to skip ahead? Book a call and let's chat!</p>
+    <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn">
+      Book a Discovery Call &#10038;
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <a href="/" class="footer-brand">Flyin' Iris</a>
+    <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+    <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
+  </footer>
+
+  <script>
+    (function() {
+      var FILMS_DATA = {
+        'marie-matt': { couple: 'Marie & Matt', venue: 'Westmoor Country Club', vibes: ['romantic','timeless','elegant'] },
+        'kayla-jason': { couple: 'Kayla & Jason', venue: 'The Covenant at Murray Mansion', vibes: ['romantic','intimate','adventurous'] },
+        'allie-matt': { couple: 'Matt & Allie', venue: '10 South', vibes: ['modern','grand','adventurous'] },
+        'sally-aj': { couple: 'Sally & AJ', venue: '10 South', vibes: ['romantic','elegant','grand'] },
+        'taylor-kane': { couple: 'Taylor & Kane', venue: 'Green Bay Country Club', vibes: ['romantic','modern','elegant'] },
+        'kate-thomas': { couple: 'Kate & Thomas', venue: 'Peck & Bushel', vibes: ['romantic','elegant','rustic'] },
+        'sandra-chas': { couple: 'Sandra & Chas', venue: 'Terrace 167', vibes: ['modern','elegant','cultural'] },
+        'amanda-boris': { couple: 'Amanda & Boris', venue: 'Mercantile Hall', vibes: ['romantic','intimate','cultural'] },
+        'izzy-hunter': { couple: 'Izzy & Hunter', venue: 'The Gage', vibes: ['modern','elegant','grand'] },
+        'emily-bobby': { couple: 'Emily & Bobby', venue: 'Monona Terrace', vibes: ['romantic','timeless','elegant'] },
+        'rachel-michael-woolf': { couple: 'Rachel & Michael', venue: 'Thyme Restaurant', vibes: ['romantic','timeless','elegant'] },
+        'rachel-michael-street': { couple: 'Rachel & Michael S.', venue: '10 South', vibes: ['romantic','timeless','elegant'] },
+        'taylor-austin': { couple: 'Taylor & Austin', venue: 'The Fields Reserve', vibes: ['romantic','timeless','rustic'] },
+        'olivia-austin': { couple: 'Olivia & Austin', venue: 'Oakbrook Church', vibes: ['romantic','modern','timeless'] },
+        'sarah-cody': { couple: 'Sarah & Cody', venue: 'The Bowery', vibes: ['grand','adventurous','glamorous'] },
+      };
+
+      var params = new URLSearchParams(window.location.search);
+      var fn = params.get('fn') || '';
+      var filmSlug = params.get('film') || '';
+
+      // Set heading
+      var heading = document.getElementById('reveal-heading');
+      if (fn) {
+        heading.textContent = 'Hey ' + decodeURIComponent(fn) + '!';
+      }
+
+      // Film data
+      var filmData = FILMS_DATA[filmSlug];
+      var coupleEl = document.getElementById('film-couple');
+      var venueEl = document.getElementById('film-venue');
+      if (filmData) {
+        coupleEl.textContent = filmData.couple;
+        venueEl.textContent = filmData.venue;
+      }
+
+      // Video setup
+      if (!filmSlug) {
+        document.getElementById('video-wrap').style.display = 'none';
+        document.getElementById('film-meta').style.display = 'none';
+        return;
+      }
+
+      var hlsUrl = 'https://video.flyiniris.com/couples/' + filmSlug + '/hls/teaser/master.m3u8';
+      var thumbUrl = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/' + filmSlug + '/thumbs/thumb.jpg';
+      var video = document.getElementById('film-video');
+      var videoWrap = document.getElementById('video-wrap');
+      var fallback = document.getElementById('film-fallback');
+      var thumbImg = document.getElementById('film-thumb-img');
+
+      video.poster = thumbUrl;
+
+      function startPlayback() {
+        video.play().catch(function() {});
+      }
+
+      if (Hls.isSupported()) {
+        var hls = new Hls({ startLevel: -1 });
+        hls.loadSource(hlsUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          startPlayback();
+        });
+        hls.on(Hls.Events.ERROR, function(event, data) {
+          if (data.fatal) {
+            videoWrap.style.display = 'none';
+            fallback.style.display = 'block';
+            thumbImg.src = thumbUrl;
+            thumbImg.alt = (filmData ? filmData.couple : 'Wedding') + ' film';
+          }
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = hlsUrl;
+        startPlayback();
+      } else {
+        videoWrap.style.display = 'none';
+        fallback.style.display = 'block';
+        thumbImg.src = thumbUrl;
+        thumbImg.alt = (filmData ? filmData.couple : 'Wedding') + ' film';
+      }
+
+      // Sound toggle
+      var soundToggle = document.getElementById('sound-toggle');
+      var soundLabel = document.getElementById('sound-label');
+      var iconOff = document.getElementById('sound-icon-off');
+      var iconOn = document.getElementById('sound-icon-on');
+
+      soundToggle.addEventListener('click', function() {
+        video.muted = !video.muted;
+        if (video.muted) {
+          soundLabel.textContent = 'Tap for Sound';
+          iconOff.style.display = '';
+          iconOn.style.display = 'none';
+        } else {
+          soundLabel.textContent = 'Sound On';
+          iconOff.style.display = 'none';
+          iconOn.style.display = '';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

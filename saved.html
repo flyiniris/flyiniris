@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Saved Package | Flyin' Iris</title>
+  <meta name="description" content="View your saved wedding film package from Flyin' Iris.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Film Grain */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    /* Loading state */
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    .loading-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+    }
+
+    /* Package display */
+    .saved-content {
+      display: none;
+      max-width: 560px;
+      width: 100%;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .saved-content.visible { display: block; }
+
+    .saved-content h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .saved-content .saved-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .saved-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+
+    .saved-card .sc-tier {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .sc-line {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      padding: 6px 0;
+    }
+
+    .sc-line-val {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .sc-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+
+    .sc-discount {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      color: #4CAF50;
+      font-weight: 500;
+      padding: 6px 0;
+    }
+
+    .sc-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0 0;
+    }
+
+    .sc-total-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .sc-total-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 2.25rem;
+      color: var(--accent);
+    }
+
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      padding: 14px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      min-height: 44px;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .home-link {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-top: 20px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .home-link:hover { color: var(--text-primary); }
+
+    /* Expiry message */
+    .expired-content {
+      display: none;
+      max-width: 480px;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .expired-content.visible { display: block; }
+
+    .expired-content h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .expired-content p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-legal { font-size: 0.6875rem; color: var(--text-muted); margin-top: 4px; }
+    .footer-legal a { color: var(--text-muted); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="page" id="page-main">
+    <!-- Loading -->
+    <div id="loading-state">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading your package...</p>
+    </div>
+
+    <!-- Saved package (hidden until loaded) -->
+    <div class="saved-content" id="saved-content">
+      <h1 id="saved-heading">Your Saved Package</h1>
+      <p class="saved-sub">Here's what you put together. Ready when you are.</p>
+      <div class="saved-card" id="saved-card"></div>
+      <a id="book-cta" href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn">
+        Book a Discovery Call &#10038;
+      </a>
+      <br>
+      <a href="/" class="home-link">Back to flyiniris.com</a>
+    </div>
+
+    <!-- Expired / not found -->
+    <div class="expired-content" id="expired-content">
+      <h1>This link has expired</h1>
+      <p>No worries! Your inquiry is still safe with us. If you're ready to chat about your wedding film, we'd love to hear from you.</p>
+      <a href="/" class="cta-btn">Start Fresh &#10038;</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="/" class="footer-brand">Flyin' Iris</a>
+    <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+    <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
+  </footer>
+
+  <script>
+  (function() {
+    var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var BOOKING_URL = 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
+
+    var PRICING = {
+      version: '2026-03-12',
+      team: {
+        base: 3000,
+        hours: { '6': 0, '8': 200, '10': 400, '12': 600 },
+        highlight: { '3-5 min': 0, '6-8 min': 250, '9-12 min': 450, '13-15 min': 650, '15-20 min': 900 },
+        addons: { teaser: 450, fomo: 500, storySession: 800 },
+        bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
+      },
+      ss: {
+        base: 5000,
+        hours: { '6': 0, '8': 300, '10': 500, '12': 700 },
+        highlight: { '3-5 min': 0, '6-8 min': 400, '9-12 min': 800, '13-20 min': 1200 },
+        addons: { teaser: 500, fomo: 1000, storySession: 1000 },
+        bundleDiscounts: [0, 0, 0.08, 0.12, 0.15],
+      },
+    };
+
+    function formatPrice(n) {
+      return '$' + n.toLocaleString();
+    }
+
+    var params = new URLSearchParams(window.location.search);
+    var token = params.get('token');
+
+    if (!token) {
+      showExpired();
+      return;
+    }
+
+    fetch(WORKER_URL + '/api/saved/' + encodeURIComponent(token))
+      .then(function(resp) {
+        if (!resp.ok) throw new Error('Not found');
+        return resp.json();
+      })
+      .then(function(data) {
+        if (!data || !data.config) {
+          showExpired();
+          return;
+        }
+        showSavedPackage(data);
+      })
+      .catch(function() {
+        showExpired();
+      });
+
+    function showExpired() {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('expired-content').classList.add('visible');
+    }
+
+    function showSavedPackage(data) {
+      var config = data.config;
+      var tierKey = config.tier || 'team';
+      var tier = PRICING[tierKey];
+      if (!tier) { showExpired(); return; }
+
+      var tierLabel = tierKey === 'ss' ? 'Sean & Sierra Experience' : 'Team Package';
+      var hours = config.hours || '6';
+      var highlight = config.highlight || '3-5 min';
+      var addons = {
+        teaser: config.teaser || false,
+        fomo: config.fomo || false,
+        storySession: config.storySession || false
+      };
+
+      // Calculate total
+      var total = tier.base;
+      total += tier.hours[hours] || 0;
+      total += tier.highlight[highlight] || 0;
+      var addonTotal = 0;
+      var addonCount = 0;
+      if (addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
+      if (addons.fomo) { addonTotal += tier.addons.fomo; addonCount++; }
+      if (addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
+      total += addonTotal;
+      var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
+      var discount = Math.round(total * discountPct);
+
+      if (tierKey === 'team' && discount > 0) {
+        var floor = tier.base + (tier.hours[hours] || 0) + (tier.highlight[highlight] || 0);
+        if (total - discount < floor) discount = total - floor;
+      }
+
+      var finalTotal = total - discount;
+
+      // Set heading
+      if (data.contact_name) {
+        document.getElementById('saved-heading').textContent = 'Hey ' + data.contact_name + '!';
+      }
+
+      // Build card
+      var card = document.getElementById('saved-card');
+      var h = '';
+      h += '<div class="sc-tier">' + tierLabel + '</div>';
+      h += '<div class="sc-line"><span>Base Package</span><span class="sc-line-val">' + formatPrice(tier.base) + '</span></div>';
+
+      var hoursPrice = tier.hours[hours] || 0;
+      h += '<div class="sc-line"><span>' + hours + ' Hours Coverage</span><span class="sc-line-val">' + (hoursPrice > 0 ? '+' + formatPrice(hoursPrice) : 'Included') + '</span></div>';
+
+      var hlPrice = tier.highlight[highlight] || 0;
+      h += '<div class="sc-line"><span>' + highlight + ' Highlight Film</span><span class="sc-line-val">' + (hlPrice > 0 ? '+' + formatPrice(hlPrice) : 'Included') + '</span></div>';
+
+      if (addons.teaser) h += '<div class="sc-line"><span>60-Second Teaser</span><span class="sc-line-val">+' + formatPrice(tier.addons.teaser) + '</span></div>';
+      if (addons.fomo) h += '<div class="sc-line"><span>FOMO Documentary</span><span class="sc-line-val">+' + formatPrice(tier.addons.fomo) + '</span></div>';
+      if (addons.storySession) h += '<div class="sc-line"><span>Story Session</span><span class="sc-line-val">+' + formatPrice(tier.addons.storySession) + '</span></div>';
+
+      h += '<div class="sc-divider"></div>';
+
+      if (discount > 0) {
+        h += '<div class="sc-discount"><span>Bundle Discount (' + Math.round(discountPct * 100) + '%)</span><span>-' + formatPrice(discount) + '</span></div>';
+      }
+
+      h += '<div class="sc-total"><span class="sc-total-label">Your Total</span><span class="sc-total-value">' + formatPrice(finalTotal) + '</span></div>';
+
+      card.innerHTML = h;
+
+      // Show content
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('saved-content').classList.add('visible');
+    }
+  })();
+  </script>
+</body>
+</html>

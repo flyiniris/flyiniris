@@ -2207,6 +2207,24 @@
         // Availability now served from Worker D1 database (no more Apps Script)
         var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
+        // --- SPLIT TEST ASSIGNMENT (cookie-based for organic, URL param for ads) ---
+        (function() {
+          var urlParams = new URLSearchParams(window.location.search);
+          var forcedVariant = urlParams.get('v');
+          if (forcedVariant === 'a' || forcedVariant === 'b') {
+            window.__fi_variant = forcedVariant;
+            window.__fi_variant_source = 'meta_ad';
+            return;
+          }
+          var match = document.cookie.match(/fi_variant=([ab])/);
+          var variant = match ? match[1] : (Math.random() < 0.5 ? 'a' : 'b');
+          if (!match) {
+            document.cookie = 'fi_variant=' + variant + ';max-age=' + (60*60*24*90) + ';path=/;SameSite=Lax';
+          }
+          window.__fi_variant = variant;
+          window.__fi_variant_source = 'organic_random';
+        })();
+
         // --- UTM / FBCLID CAPTURE ---
         // Capture tracking params from URL on page load and store in sessionStorage
         (function() {
@@ -3303,14 +3321,36 @@
               priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
               budget: state.quizAnswers.budget || '',
               found: state.contactForm.found || '',
-              referralName: state.referralName || ''
+              referralName: state.referralName || '',
+              variant: window.__fi_variant || 'a',
+              variant_source: window.__fi_variant_source || 'organic_random'
             }, tracking);
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(inquiryData)
-            }).catch(function(err) { console.log('Inquiry submission error:', err); });
-            state.mode = "confirmation"; render(); scrollToQuiz(); return;
+            }).then(function(resp) {
+              return resp.json();
+            }).then(function(result) {
+              if (result.session_token && result.matched_film_slug) {
+                var fn = encodeURIComponent(result.contact_name || nameParts[0] || '');
+                var film = encodeURIComponent(result.matched_film_slug || '');
+                var token = encodeURIComponent(result.session_token || '');
+                if (result.variant === 'b') {
+                  window.location.href = '/experience?fn=' + fn + '&film=' + film + '&token=' + token;
+                } else {
+                  window.location.href = '/thanks?fn=' + fn + '&film=' + film + '&token=' + token;
+                }
+                return;
+              }
+              // Fallback: no session token from Worker, show inline confirmation
+              state.mode = "confirmation"; render(); scrollToQuiz();
+            }).catch(function(err) {
+              console.log('Inquiry submission error:', err);
+              // Fallback on error: show inline confirmation
+              state.mode = "confirmation"; render(); scrollToQuiz();
+            });
+            return;
           }
           if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }
           if (action === "start-over") {
