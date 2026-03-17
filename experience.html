@@ -41,7 +41,7 @@
       --text-muted: rgba(200, 195, 185, 0.5);
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
-      --accent-light: #FFF0C9;
+      --accent-light: #FFCC4D;
       --border: #2A2A28;
     }
 
@@ -204,7 +204,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 80px 24px 60px;
+      padding: 80px 24px 48px;
     }
 
     .recognition-greeting {
@@ -214,8 +214,7 @@
       color: var(--accent);
       line-height: 1.3;
       margin-bottom: 8px;
-      opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      display: none;
     }
 
     .recognition-availability {
@@ -236,7 +235,7 @@
       font-weight: 400;
       font-size: 0.875rem;
       color: var(--text-secondary);
-      margin-bottom: 0;
+      margin-bottom: 4px;
       opacity: 0;
       animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
     }
@@ -245,7 +244,7 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: clamp(0.875rem, 2vw, 1rem);
-      color: #C8C3B8;
+      color: var(--text-secondary);
       max-width: 520px;
       line-height: 1.8;
       margin-top: 24px;
@@ -255,14 +254,14 @@
 
     /* ========== ACT 2: THE FILM ========== */
     .act-film {
-      padding: 0 24px 40px;
+      padding: 0 24px 0;
       max-width: 900px;
       margin: 0 auto;
     }
 
     @media (max-width: 640px) {
       .act-film {
-        padding: 0 0 40px;
+        padding: 0;
       }
       .act-film .video-container {
         border-radius: 0;
@@ -374,7 +373,7 @@
 
     /* ========== ACT 3: SEAN'S NOTE ========== */
     .act-note {
-      padding: 20px 24px 40px;
+      padding: 48px 24px 0;
       max-width: 640px;
       margin: 0 auto;
     }
@@ -389,7 +388,6 @@
     .sean-note p {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-style: italic;
       font-size: 0.9375rem;
       color: var(--text-secondary);
       line-height: 1.8;
@@ -406,7 +404,7 @@
 
     /* ========== ACT 4: TESTIMONIAL ========== */
     .act-testimonial {
-      padding: 20px 24px 40px;
+      padding: 48px 24px 0;
       max-width: 600px;
       margin: 0 auto;
       text-align: center;
@@ -447,7 +445,7 @@
 
     /* ========== WHAT'S INCLUDED ========== */
     .act-included {
-      padding: 40px 24px 40px;
+      padding: 48px 24px 0;
       max-width: 700px;
       margin: 0 auto;
       text-align: center;
@@ -500,7 +498,7 @@
 
     /* ========== CLOSING CTA ========== */
     .act-closing-cta {
-      padding: 40px 24px 40px;
+      padding: 48px 24px 0;
       max-width: 600px;
       margin: 0 auto;
       text-align: center;
@@ -509,8 +507,8 @@
     .closing-cta-heading {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: clamp(1.125rem, 3vw, 1.5rem);
-      color: var(--text-secondary);
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      color: var(--text-primary);
       margin-bottom: 8px;
     }
 
@@ -535,25 +533,7 @@
       color: var(--accent-light);
     }
 
-    /* ========== SCROLL CUE ========== */
-    .scroll-cue {
-      text-align: center;
-      padding: 20px 0 40px;
-    }
-
-    .scroll-cue-arrow {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      color: var(--accent);
-      opacity: 0.6;
-      animation: scrollBounce 2s ease-in-out infinite;
-    }
-
-    @keyframes scrollBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
-    }
+    /* ========== SCROLL CUE (removed - distracting) ========== */
 
     .btn-primary {
       display: inline-block;
@@ -607,7 +587,7 @@
 
     /* ========== ACT 6: BUILDER ========== */
     .act-builder {
-      padding: 60px 24px 80px;
+      padding: 48px 24px 80px;
       max-width: 900px;
       margin: 0 auto;
     }
@@ -685,7 +665,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: var(--accent);
+      color: var(--text-secondary);
       margin-bottom: 16px;
     }
 
@@ -989,7 +969,7 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.8125rem;
-      color: #71717a;
+      color: var(--text-muted);
       margin-top: 12px;
       cursor: pointer;
       background: none;
@@ -1258,7 +1238,7 @@
 
     /* ========== ACT 7: SHARE ========== */
     .act-share {
-      padding: 40px 24px 60px;
+      padding: 48px 24px 48px;
       max-width: 600px;
       margin: 0 auto;
       text-align: center;
@@ -1371,7 +1351,7 @@
       }
 
       .act-recognition {
-        min-height: 70vh;
+        min-height: 55vh;
         padding: 60px 20px 40px;
       }
 
@@ -1389,10 +1369,6 @@
     }
 
     @media (max-width: 480px) {
-      .b-hours-options {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
       .b-tier-cards {
         grid-template-columns: 1fr;
       }
@@ -1404,16 +1380,16 @@
   <!-- Loading State -->
   <div class="loading-screen" id="loading-screen">
     <div class="loading-text">
-      Finding your match
+      Preparing your experience
       <div class="loading-dot"></div>
     </div>
   </div>
 
   <!-- Fallback State -->
   <div class="fallback-screen" id="fallback-screen">
-    <h1>This preview has expired.</h1>
-    <p>No worries. Want to start fresh? We'd still love to hear about your wedding.</p>
-    <a href="https://www.flyiniris.com/" class="btn-primary">Start Fresh</a>
+    <h1>This link has expired.</h1>
+    <p>Your experience page is available for 7 days after your inquiry. Tell us about your wedding and we'll create a new one.</p>
+    <a href="https://www.flyiniris.com/" class="btn-primary">Start Over</a>
   </div>
 
   <!-- Main Content -->
@@ -1448,19 +1424,11 @@
       </div>
     </section>
 
-    <!-- Scroll Cue -->
-    <div class="scroll-cue">
-      <svg class="scroll-cue-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </div>
-
     <!-- Act 3: Sean's Note -->
     <section class="act-note reveal-section" id="act-note">
-      <p style="font-family:'Outfit',sans-serif;font-weight:400;font-size:0.625rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;">From Sean</p>
       <div class="sean-note">
         <p id="sean-note-text"></p>
-        <span class="attribution">Sean</span>
+        <span class="attribution">Sean, Flyin' Iris</span>
       </div>
     </section>
 
@@ -1470,36 +1438,35 @@
         <p id="testimonial-text"></p>
       </div>
       <p class="testimonial-name" id="testimonial-name"></p>
-      <p style="font-size:0.875rem;color:#FFBD1D;margin-top:6px;">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
     </section>
 
     <!-- What's Included in Every Package -->
     <section class="act-included reveal-section" id="act-included">
-      <h2 class="included-title">Everything you need to relive your day forever</h2>
+      <h2 class="included-title">Included with every package</h2>
       <div class="included-grid">
         <div class="included-item">
           <span class="included-check">&check;</span>
-          <span class="included-label">Crystal-clear vows and speeches</span>
-        </div>
-        <div class="included-item">
-          <span class="included-check">&check;</span>
-          <span class="included-label">Color grading matched to YOUR wedding's look</span>
-        </div>
-        <div class="included-item">
-          <span class="included-check">&check;</span>
-          <span class="included-label">Music hand-picked to match your vibe</span>
-        </div>
-        <div class="included-item">
-          <span class="included-check">&check;</span>
-          <span class="included-label">Easy sharing with family and friends</span>
-        </div>
-        <div class="included-item">
-          <span class="included-check">&check;</span>
-          <span class="included-label">Your highlight film, ready to rewatch forever</span>
-        </div>
-        <div class="included-item">
-          <span class="included-check">&check;</span>
           <span class="included-label">Personally edited by Sierra</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Cinematic highlight film</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Professional audio capture of vows and speeches</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Color grading matched to your wedding's look</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Licensed music selected for your story</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Private streaming link to share with family</span>
         </div>
       </div>
     </section>
@@ -1509,10 +1476,10 @@
       <!-- Step 1: Dream Calculator -->
       <div class="builder-toggle">
         <button class="builder-toggle-btn" id="dream-calc-toggle-btn">
-          Build Your Dream Package
+          See What Your Package Could Look Like
           <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
         </button>
-        <p style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-muted);margin-top:10px;">Your matched film and custom link are saved for 7 days.</p>
+        <p style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-muted);margin-top:10px;">Answer a few quick questions, then see real pricing.</p>
       </div>
       <div class="builder-body" id="dream-calc-body">
         <div class="dream-calc-container" id="dream-calc-container"></div>
@@ -1529,8 +1496,8 @@
 
     <!-- Closing CTA -->
     <section class="act-closing-cta reveal-section" id="act-closing-cta">
-      <h2 class="closing-cta-heading">Want to skip ahead?</h2>
-      <p class="closing-cta-subtext">Rather just talk? <a id="cta-closing" href="#" target="_blank" rel="noopener">Book a 15-minute call.</a> No pitch, just a real conversation about your day.</p>
+      <h2 class="closing-cta-heading">Ready to talk?</h2>
+      <p class="closing-cta-subtext"><a id="cta-closing" href="#" target="_blank" rel="noopener">Book a 15-minute call</a> and tell us about your day. We'll answer every question you have.</p>
     </section>
 
     <!-- Act 7: Share -->
@@ -1538,13 +1505,13 @@
       <button class="btn-secondary" id="share-btn">
         Share with <span id="share-partner-name">your partner</span>
       </button>
-      <p class="share-subtitle" id="share-subtitle" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-muted);margin-top:10px;line-height:1.5;">Send your partner your matched film and package so you can decide together.</p>
+      <p class="share-subtitle" id="share-subtitle" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-muted);margin-top:10px;line-height:1.5;">Send them this page so you can watch together and decide.</p>
     </section>
 
     <!-- Footer -->
     <footer class="experience-footer">
       <div class="footer-line"></div>
-      <p style="font-family:'Outfit',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--accent);margin-bottom:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 from 47 couples</p>
+      <p style="font-family:'Outfit',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--accent);margin-bottom:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</p>
       <p class="footer-brand">Sean & Sierra, Flyin' Iris</p>
       <ul class="footer-links">
         <li><a href="https://www.flyiniris.com/#films">Films</a></li>
@@ -1552,7 +1519,7 @@
         <li><a href="https://www.flyiniris.com/#investment">Investment</a></li>
         <li><a href="https://www.flyiniris.com/privacy">Privacy</a></li>
       </ul>
-      <p style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-muted);margin-top:16px;"><a href="https://instagram.com/flyiniris" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;transition:color 0.25s ease;">Follow our latest films &#8594; @flyiniris</a></p>
+      <p style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-muted);margin-top:16px;"><a href="https://instagram.com/flyiniris" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;transition:color 0.25s ease;">Watch our films &#8594; @flyiniris</a></p>
     </footer>
 
   </div>
@@ -1687,12 +1654,12 @@
           {emoji:"\ud83c\udfac",label:"Yes, I never want to miss a thing",desc:"Your full day preserved as one beautiful, continuous film"},
           {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds interesting. I'd want to talk about it first"},
           {emoji:"\u270b",label:"Not right now",desc:"All focus goes into making my highlight film incredible"}
-        ], valueMessage:{"Yes, I never want to miss a thing":"Smart. This is the one thing couples tell us they're most grateful they added.","Tell me more on the call":"We'd love to walk you through it. It's our most popular add-on.","Not right now":"Everything goes into making your highlight film incredible."}},
-        { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"An intimate pre-wedding session. We meet up with you both, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film.", options:[
+        ], valueMessage:{"Yes, I never want to miss a thing":"Smart. This is the one thing couples tell us they're most grateful they added.","Tell me more on the call":"Let's walk through it on the call. It's our most popular add-on.","Not right now":"Everything goes into making your highlight film incredible."}},
+        { id:"storySession", question:"Want to turn your wedding film into a full-blown Love Story?", subtext:"An intimate pre-wedding session. We meet up with you both, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film.", options:[
           {emoji:"\ud83c\udfac",label:"Yes, make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
           {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds amazing but I'd want to talk about it first"},
           {emoji:"\ud83d\udc92",label:"No, just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
-        ], valueMessage:{"Yes, make it a Love Story":"This is the difference between a wedding video and a Love Story.","No, just the wedding day":"The wedding day gives us plenty to work with.","Tell me more on the call":"We'd love to walk you through it. The Love Story Session is one of our favorite things."}}
+        ], valueMessage:{"Yes, make it a Love Story":"This is the difference between a wedding video and a Love Story.","No, just the wedding day":"The wedding day gives us plenty to work with.","Tell me more on the call":"Let's walk through it on the call. The Love Story Session is one of our favorite things."}}
       ];
     }
 
@@ -1788,11 +1755,16 @@
         availEl.textContent = displayName + ', let\'s talk about your day.';
       }
 
-      if (d.spotsLeft && d.season) {
-        spotsEl.textContent = d.spotsLeft + ' spots left for ' + d.season;
+      if (d.spotsLeft != null && d.season) {
+        if (d.spotsLeft <= 5) {
+          spotsEl.textContent = 'Only ' + d.spotsLeft + ' spots left for ' + d.season;
+        } else if (d.spotsLeft <= 15) {
+          spotsEl.textContent = 'Limited availability for ' + d.season;
+        }
+        // 16+ spots: don't show anything, no urgency needed
       }
 
-      msgEl.textContent = 'We found a film that feels like your day. Hit play.';
+      msgEl.textContent = 'We matched you with a film that captures the energy you described. Turn up the sound.';
 
       // Act 2: Film
       if (d.matchedFilm && d.matchedFilm.slug) {
@@ -1824,7 +1796,7 @@
       // Act 7: Share
       if (d.partnerName) {
         document.getElementById('share-partner-name').textContent = d.partnerName;
-        document.getElementById('share-subtitle').textContent = 'Send ' + d.partnerName + ' your matched film and package so you can decide together.';
+        document.getElementById('share-subtitle').textContent = 'Send ' + d.partnerName + ' this page so you can watch together and decide.';
       }
 
       // Show the content
@@ -1963,7 +1935,7 @@
       // Navigation
       var canProceed = !!cur;
       var isLast = stepIdx === steps.length - 1;
-      var nextLabel = isLast ? 'See my dream package \u2192' : 'Next \u2192';
+      var nextLabel = isLast ? 'See my package \u2192' : 'Next \u2192';
 
       h += '<div class="dream-calc-nav">';
       h += '<button class="dream-calc-nav-back' + (stepIdx === 0 ? ' hidden' : '') + '" data-dcaction="prev">\u2190 Back</button>';
@@ -1978,8 +1950,8 @@
     function renderDreamCalcComplete() {
       var container = document.getElementById('dream-calc-container');
       var h = '<div class="dream-calc-complete">';
-      h += '<h3>Your dream package is ready.</h3>';
-      h += '<p>We built a custom package based on everything you told us. Now let\'s show you what it looks like with real pricing.</p>';
+      h += '<h3>Your package is ready.</h3>';
+      h += '<p>Based on your answers, here is what your custom package looks like with real pricing.</p>';
       h += '<button class="dream-calc-reveal-btn" id="dream-calc-reveal-btn">Show Me the Numbers \u2192</button>';
       h += '</div>';
       container.innerHTML = h;
@@ -1989,7 +1961,7 @@
         // Hide the calc body, show the builder
         document.getElementById('dream-calc-body').classList.remove('visible');
         document.getElementById('dream-calc-toggle-btn').classList.remove('open');
-        document.getElementById('dream-calc-toggle-btn').textContent = 'Dream Package Complete \u2713';
+        document.getElementById('dream-calc-toggle-btn').textContent = 'Package Built \u2713';
         document.getElementById('dream-calc-toggle-btn').style.background = 'transparent';
         document.getElementById('dream-calc-toggle-btn').style.border = '1px solid var(--accent)';
         document.getElementById('dream-calc-toggle-btn').style.color = 'var(--accent)';
