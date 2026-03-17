@@ -2415,7 +2415,7 @@
           "9-12 min":{price:450,cost:350}, "13-15 min":{price:650,cost:500}, "15-20 min":{price:900,cost:600}
         };
         var TEAM_ADDONS = { teaser:{price:450,cost:250}, storySession:{price:800,cost:400}, fomo:{price:500,cost:200} };
-        // S&S pricing (We want Sierra & Sean creating with us)
+        // S&S pricing (We want Sean & Sierra creating with us)
         var SS_BASE_PRICE = 5000;
         var SS_HOURS = { 6:0, 8:300, 10:500, 12:700 };
         var SS_HIGHLIGHT = { "3-5 min":0, "6-8 min":400, "9-12 min":800, "13-20 min":1200 };
@@ -2431,7 +2431,7 @@
 
         function calcPrice(a) {
           var isTeam = a.quality === "We want an incredible wedding film";
-          var isSS = a.quality === "We want Sierra & Sean creating with us";
+          var isSS = a.quality === "We want Sean & Sierra creating with us";
           if (!isTeam && !isSS) return { price:0, savings:0, rawPrice:0, breakdown:[] };
           var hours = getHoursNum(a.hours);
           var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
@@ -2615,9 +2615,9 @@
               {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
             ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows \u2014 every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious \u2014 even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
             { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment \u2014 and there\u2019s no wrong answer.", type:"single", options:[
-              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision \u2014 then Sierra edits your footage into a cinematic story with her signature style."},
-              {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sierra is in the room feeling your energy, hearing the vows, watching your family cry. When she edits, she\u2019s not guessing \u2014 she was there. That\u2019s the difference."}
-            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts \u2014 hundreds of weddings filmed. Sierra personally edits every frame, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra\u2019s there in person, she feels every moment \u2014 the music, the energy, the tears. Your film won\u2019t just look like your wedding. It\u2019ll feel like it."}},
+              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits your footage into a cinematic story, and Sean reviews every cut before it reaches you."},
+              {emoji:"\u2728",label:"We want Sean & Sierra creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
+            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sean & Sierra creating with us":"When Sean and Sierra are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
             isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", type:"single", showPriceImpact:true, options:[
               {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances \u2014 our most popular starting point"},
               {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
@@ -3024,7 +3024,7 @@
           var a = state.calcAnswers;
           var ci = state.contactInfo;
           var est = calcPrice(a);
-          var isTop = a.quality === "We want Sierra & Sean creating with us";
+          var isTop = a.quality === "We want Sean & Sierra creating with us";
           var isTeam = a.quality === "We want an incredible wedding film";
           var hours = getHoursNum(a.hours);
 
@@ -3043,7 +3043,7 @@
           // Tier badge
           h += '<div class="quiz-gold-box" style="margin-bottom:20px">';
           h += '<span class="calc-tier-badge">' + esc(isTeam ? "Team Package" : "S&S Experience") + '</span>';
-          h += '<p class="calc-tier-desc">' + (isTeam ? "Our expert team captures your day with the same Flyin\u2019 Iris cinematic style \u2014 edited in-house with Sierra\u2019s final touch." : "Sierra & Sean personally film and edit your story \u2014 founder-level storytelling from start to finish.") + '</p>';
+          h += '<p class="calc-tier-desc">' + (isTeam ? "Our expert team captures your day with the same Flyin' Iris cinematic style. Edited in-house, reviewed by Sean, polished by Sierra." : "Sean & Sierra personally film and edit your story. Founder-level storytelling from start to finish.") + '</p>';
           h += '</div>';
 
           // Price breakdown
