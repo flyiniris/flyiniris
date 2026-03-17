@@ -196,32 +196,7 @@
       margin-bottom: 32px;
     }
 
-    /* ========== ACT 0: AVAILABILITY HERO ========== */
-    .act-availability-hero {
-      padding: 80px 24px 20px;
-      text-align: center;
-      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-    }
-
-    .avail-hero-message {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700;
-      font-size: clamp(1.75rem, 5vw, 3rem);
-      color: var(--accent);
-      line-height: 1.3;
-      max-width: 600px;
-      margin: 0 auto 12px;
-    }
-
-    .avail-hero-spots {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-      color: var(--text-secondary);
-      letter-spacing: 0.03em;
-    }
-
-    /* ========== ACT 1: RECOGNITION ========== */
+    /* ========== ACT 1: INTRO (MERGED GREETING + AVAILABILITY) ========== */
     .act-recognition {
       min-height: 60vh;
       display: flex;
@@ -229,17 +204,40 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 40px 24px 60px;
+      padding: 80px 24px 60px;
     }
 
-    .recognition-name {
+    .recognition-greeting {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: var(--accent);
+      line-height: 1.3;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    .recognition-availability {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: clamp(2.5rem, 7vw, 4.5rem);
-      color: var(--text-primary);
-      margin-bottom: 32px;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      color: var(--accent);
+      line-height: 1.3;
+      max-width: 600px;
+      margin-bottom: 12px;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+    }
+
+    .recognition-spots {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0;
+      opacity: 0;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
     }
 
     .recognition-message {
@@ -249,8 +247,9 @@
       color: var(--text-secondary);
       max-width: 520px;
       line-height: 1.8;
+      margin-top: 32px;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
     }
 
     /* ========== ACT 2: THE FILM ========== */
@@ -433,38 +432,103 @@
       margin-top: 20px;
     }
 
-    /* ========== ACT 5: YOUR DAY ========== */
-    .act-yourday {
+    /* ========== WHAT'S INCLUDED ========== */
+    .act-included {
+      padding: 60px 24px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .included-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      color: var(--text-primary);
+      margin-bottom: 32px;
+    }
+
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .included-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    .included-check {
+      color: var(--accent);
+      font-size: 1rem;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    .included-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 480px) {
+      .included-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ========== CLOSING CTA ========== */
+    .act-closing-cta {
       padding: 60px 24px 80px;
       max-width: 600px;
       margin: 0 auto;
       text-align: center;
     }
 
-    .availability-message {
+    .closing-cta-heading {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: clamp(1.5rem, 4vw, 2.25rem);
-      color: var(--accent);
-      margin-bottom: 8px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
     }
 
-    .spots-left {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 40px;
-    }
-
-    .yourday-message {
+    .closing-cta-subtext {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 1rem;
       color: var(--text-secondary);
-      line-height: 1.8;
+      line-height: 1.7;
       max-width: 480px;
       margin: 0 auto 32px;
+    }
+
+    /* ========== SCROLL CUE ========== */
+    .scroll-cue {
+      text-align: center;
+      padding: 20px 0 40px;
+    }
+
+    .scroll-cue-arrow {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      color: var(--accent);
+      opacity: 0.6;
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
     }
 
     .btn-primary {
@@ -534,21 +598,21 @@
       align-items: center;
       gap: 10px;
       font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      border: none;
       border-radius: 8px;
-      padding: 16px 32px;
+      padding: 18px 40px;
       cursor: pointer;
       transition: all 0.25s ease;
       min-height: 44px;
     }
 
     .builder-toggle-btn:hover {
-      border-color: var(--accent);
-      color: var(--text-primary);
+      background: var(--accent-light);
+      transform: translateY(-1px);
     }
 
     .builder-toggle-btn svg {
@@ -1287,8 +1351,8 @@
         padding: 60px 20px 40px;
       }
 
-      .recognition-name {
-        font-size: clamp(2rem, 10vw, 3.5rem);
+      .recognition-greeting {
+        font-size: clamp(1.75rem, 8vw, 2.75rem);
       }
 
       .sound-overlay-inner {
@@ -1331,16 +1395,11 @@
   <!-- Main Content -->
   <div class="experience-content" id="experience-content">
 
-    <!-- Act 0: Availability Hero -->
-    <section class="act-availability-hero" id="act-availability-hero" style="display:none;">
-      <h1 class="avail-hero-message" id="avail-hero-message"></h1>
-      <p class="avail-hero-spots" id="avail-hero-spots"></p>
-      <p class="avail-hero-preview" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);margin-top:24px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6">We matched you with a film based on your style and put together a personal preview of your day. Scroll down to see it.</p>
-    </section>
-
-    <!-- Act 1: Recognition -->
+    <!-- Act 1: Intro (Greeting + Availability) -->
     <section class="act-recognition" id="act-recognition">
-      <h1 class="recognition-name" id="recognition-name"></h1>
+      <h1 class="recognition-greeting" id="recognition-greeting"></h1>
+      <h2 class="recognition-availability" id="recognition-availability"></h2>
+      <p class="recognition-spots" id="recognition-spots"></p>
       <p class="recognition-message" id="recognition-message"></p>
     </section>
 
@@ -1365,6 +1424,13 @@
       </div>
     </section>
 
+    <!-- Scroll Cue -->
+    <div class="scroll-cue">
+      <svg class="scroll-cue-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+
     <!-- Act 3: Sean's Note -->
     <section class="act-note reveal-section" id="act-note">
       <div class="sean-note">
@@ -1381,16 +1447,38 @@
       <p class="testimonial-name" id="testimonial-name"></p>
     </section>
 
-    <!-- Act 5: Your Day -->
-    <section class="act-yourday reveal-section" id="act-yourday">
-      <h2 class="availability-message" id="availability-message"></h2>
-      <p class="spots-left" id="spots-left"></p>
-      <p class="yourday-message">We'd love to hear the story of you two. How you met, what your day means to you, what moments you never want to forget. That's how every film starts.</p>
-      <a class="btn-primary" id="cta-discovery" href="#" target="_blank" rel="noopener">Tell Us About Your Day</a>
-      <p class="subtext">15 minutes. No pitch. Just a real conversation.</p>
+    <!-- What's Included in Every Package -->
+    <section class="act-included reveal-section" id="act-included">
+      <h2 class="included-title">What's included in every package</h2>
+      <div class="included-grid">
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Professional audio capture</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Cinematic color grading</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Licensed music, hand-selected for your film</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Online delivery with shareable links</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Full highlight film (3-5 minutes included)</span>
+        </div>
+        <div class="included-item">
+          <span class="included-check">&check;</span>
+          <span class="included-label">Dedicated editing by Sierra</span>
+        </div>
+      </div>
     </section>
 
-    <!-- Act 6: Dream Calculator + Package Builder -->
+    <!-- Dream Calculator + Package Builder -->
     <section class="act-builder reveal-section" id="act-builder">
       <!-- Step 1: Dream Calculator -->
       <div class="builder-toggle">
@@ -1410,6 +1498,13 @@
           <div class="price-summary collapsed" id="price-summary"></div>
         </div>
       </div>
+    </section>
+
+    <!-- Closing CTA -->
+    <section class="act-closing-cta reveal-section" id="act-closing-cta">
+      <h2 class="closing-cta-heading">Ready to make it official?</h2>
+      <p class="closing-cta-subtext">Book a 15-minute conversation. No pitch, just a real talk about your day.</p>
+      <a class="btn-primary" id="cta-closing" href="#" target="_blank" rel="noopener">Book a Discovery Call</a>
     </section>
 
     <!-- Act 7: Share -->
@@ -1636,28 +1731,30 @@
     function renderExperience() {
       var d = sessionData;
 
-      // Act 0: Availability Hero
-      var availHero = document.getElementById('act-availability-hero');
-      if (d.availabilityMessage) {
-        document.getElementById('avail-hero-message').textContent = d.availabilityMessage;
-        var spotsText = '';
-        if (d.spotsLeft && d.season) {
-          spotsText = d.spotsLeft + ' spots left for ' + d.season;
-        }
-        document.getElementById('avail-hero-spots').textContent = spotsText;
-        availHero.style.display = '';
+      // Act 1: Merged Intro
+      var greetEl = document.getElementById('recognition-greeting');
+      var availEl = document.getElementById('recognition-availability');
+      var spotsEl = document.getElementById('recognition-spots');
+      var msgEl = document.getElementById('recognition-message');
+
+      var displayName = d.name || 'there';
+
+      if (d.available && d.availabilityMessage) {
+        greetEl.textContent = 'Hey ' + displayName + ', great news!';
+        availEl.textContent = d.availabilityMessage;
       } else if (d.available) {
-        document.getElementById('avail-hero-message').textContent = "We'd love to film your wedding.";
-        availHero.style.display = '';
+        greetEl.textContent = 'Hey ' + displayName + ', great news!';
+        availEl.textContent = "Sean & Sierra are available for your wedding!";
+      } else {
+        greetEl.textContent = 'Hey ' + displayName + '.';
+        availEl.textContent = "Let's talk about your day.";
       }
 
-      // Act 1: Recognition
-      var nameEl = document.getElementById('recognition-name');
-      nameEl.textContent = 'Hey ' + (d.name || 'there') + '.';
+      if (d.spotsLeft && d.season) {
+        spotsEl.textContent = d.spotsLeft + ' spots left for ' + d.season;
+      }
 
-      var msgEl = document.getElementById('recognition-message');
-      var excitedMsg = EXCITED_MESSAGES[d.excitedAbout] || DEFAULT_MESSAGE;
-      msgEl.textContent = excitedMsg;
+      msgEl.textContent = 'Based on what you told us, we matched you with a film that fits your style. Watch below.';
 
       // Act 2: Film
       if (d.matchedFilm && d.matchedFilm.slug) {
@@ -1683,20 +1780,8 @@
         document.getElementById('act-testimonial').style.display = 'none';
       }
 
-      // Act 5: Your Day
-      if (d.availabilityMessage) {
-        document.getElementById('availability-message').textContent = d.availabilityMessage;
-      } else if (d.available) {
-        document.getElementById('availability-message').textContent = 'We\'d love to film your wedding.';
-      } else {
-        document.getElementById('availability-message').textContent = 'Let\'s talk about your day.';
-      }
-
-      if (d.spotsLeft && d.season) {
-        document.getElementById('spots-left').textContent = d.spotsLeft + ' spots left for ' + d.season;
-      }
-
-      document.getElementById('cta-discovery').href = BOOKING_BASE;
+      // Closing CTA
+      document.getElementById('cta-closing').href = BOOKING_BASE;
 
       // Act 7: Share
       if (d.partnerName) {
@@ -1866,8 +1951,10 @@
         document.getElementById('dream-calc-body').classList.remove('visible');
         document.getElementById('dream-calc-toggle-btn').classList.remove('open');
         document.getElementById('dream-calc-toggle-btn').textContent = 'Dream Package Complete \u2713';
-        document.getElementById('dream-calc-toggle-btn').style.borderColor = 'var(--accent)';
+        document.getElementById('dream-calc-toggle-btn').style.background = 'transparent';
+        document.getElementById('dream-calc-toggle-btn').style.border = '1px solid var(--accent)';
         document.getElementById('dream-calc-toggle-btn').style.color = 'var(--accent)';
+        document.getElementById('dream-calc-toggle-btn').style.cursor = 'default';
         document.getElementById('dream-calc-toggle-btn').disabled = true;
 
         var builderBody = document.getElementById('builder-body');
