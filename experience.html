@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Experience | Flyin' Iris</title>
-  <meta name="description" content="Build your dream wedding film package with Flyin' Iris.">
+  <meta name="description" content="Your personalized wedding film experience from Flyin' Iris.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0A0A0A">
   <link rel="icon" type="image/png" href="favicon.png">
@@ -12,10 +12,23 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+  <!-- Meta Pixel -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbq.js');
+  fbq('init', '518972926490365');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
 
   <style>
     :root {
@@ -84,69 +97,158 @@
       to { opacity: 1; }
     }
 
-    /* Progress Bar */
-    .progress-bar {
-      position: fixed;
-      top: 0; left: 0;
-      height: 3px;
-      background: var(--accent);
-      z-index: 10000;
-      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      border-radius: 0 2px 2px 0;
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
 
-    /* Steps container */
-    .step {
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ========== LOADING STATE ========== */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      z-index: 10000;
+      transition: opacity 0.6s ease;
+    }
+
+    .loading-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .experience-content {
+      display: none;
+    }
+
+    .experience-content.visible {
+      display: block;
+    }
+
+    /* ========== REVEAL ANIMATIONS ========== */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-section.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== FALLBACK STATE ========== */
+    .fallback-screen {
       display: none;
       min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
     }
 
-    .step.active {
-      display: block;
-      animation: fadeIn 0.5s ease;
+    .fallback-screen.visible {
+      display: flex;
     }
 
-    /* ========= STEP 1: Film Reveal ========= */
-    .film-reveal {
+    .fallback-screen h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .fallback-screen p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin-bottom: 32px;
+    }
+
+    /* ========== ACT 1: RECOGNITION ========== */
+    .act-recognition {
+      min-height: 80vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 80px 20px 60px;
+      padding: 80px 24px 60px;
     }
 
-    .film-reveal h1 {
+    .recognition-name {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 32px;
       opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
     }
 
-    .film-reveal .subtitle {
+    .recognition-message {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
       color: var(--text-secondary);
-      max-width: 480px;
-      margin: 0 auto 40px;
+      max-width: 520px;
+      line-height: 1.8;
       opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
     }
 
-    .video-wrap {
+    /* ========== ACT 2: THE FILM ========== */
+    .act-film {
+      padding: 0 24px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .video-container {
       position: relative;
       width: 100%;
-      max-width: 640px;
-      margin: 0 auto 24px;
       border-radius: 8px;
       overflow: hidden;
       background: var(--bg-card);
-      opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    }
+
+    .video-container.reveal-section {
+      transform: scale(0.98);
+    }
+
+    .video-container.revealed {
+      transform: scale(1);
     }
 
     .video-aspect {
@@ -163,49 +265,69 @@
       background: #000;
     }
 
-    .sound-toggle {
+    .sound-overlay {
       position: absolute;
-      bottom: 16px; right: 16px;
-      background: rgba(10, 10, 10, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 189, 29, 0.3);
-      color: var(--accent);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 100px;
-      cursor: pointer;
-      z-index: 10;
-      transition: all 0.25s ease;
+      inset: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      background: rgba(10, 10, 10, 0.4);
+      cursor: pointer;
+      z-index: 10;
+      transition: opacity 0.4s ease;
     }
 
-    .sound-toggle:hover {
-      background: rgba(255, 189, 29, 0.15);
+    .sound-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sound-overlay-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 10, 10, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 189, 29, 0.3);
+      border-radius: 100px;
+      padding: 14px 28px;
+      transition: all 0.25s ease;
+    }
+
+    .sound-overlay-inner:hover {
+      background: rgba(255, 189, 29, 0.12);
       border-color: var(--accent);
     }
 
-    .sound-toggle svg { width: 16px; height: 16px; fill: currentColor; }
-
-    .film-meta {
-      text-align: center;
-      margin-bottom: 16px;
-      opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    .sound-overlay-inner svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--accent);
+      flex-shrink: 0;
     }
 
-    .film-meta .couple-name {
+    .sound-overlay-inner span {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .film-credit {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .film-credit .couple-name {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       color: var(--text-primary);
     }
 
-    .film-meta .venue-name {
+    .film-credit .venue-name {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.875rem;
@@ -213,399 +335,215 @@
       margin-top: 4px;
     }
 
-    .film-thumb-fallback {
-      display: none;
-      width: 100%;
+    /* ========== ACT 3: SEAN'S NOTE ========== */
+    .act-note {
+      padding: 40px 24px 80px;
       max-width: 640px;
-      margin: 0 auto 24px;
-      border-radius: 8px;
-      overflow: hidden;
+      margin: 0 auto;
     }
 
-    .film-thumb-fallback img { width: 100%; display: block; }
+    .sean-note {
+      border-left: 2px solid var(--accent);
+      padding: 24px 28px;
+      background: rgba(255, 189, 29, 0.02);
+      border-radius: 0 8px 8px 0;
+    }
 
-    .continue-btn {
+    .sean-note p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .sean-note .attribution {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      display: block;
+    }
+
+    /* ========== ACT 4: TESTIMONIAL ========== */
+    .act-testimonial {
+      padding: 40px 24px 80px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .testimonial-quote {
+      position: relative;
+      padding: 0 20px;
+    }
+
+    .testimonial-quote::before {
+      content: '\201C';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      color: var(--accent);
+      position: absolute;
+      top: -20px;
+      left: 0;
+      line-height: 1;
+    }
+
+    .testimonial-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    .testimonial-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 20px;
+    }
+
+    /* ========== ACT 5: YOUR DAY ========== */
+    .act-yourday {
+      padding: 60px 24px 80px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .availability-message {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .spots-left {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+    }
+
+    .yourday-message {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+
+    .btn-primary {
       display: inline-block;
       font-family: 'Outfit', sans-serif;
       font-weight: 600;
       font-size: 0.9375rem;
       color: var(--bg-primary);
       background: var(--accent);
-      padding: 14px 40px;
+      padding: 16px 40px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
+      text-decoration: none;
       transition: all 0.25s ease;
-      margin-top: 32px;
-      opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+      min-height: 44px;
     }
 
-    .continue-btn:hover {
+    .btn-primary:hover {
       background: var(--accent-light);
       transform: translateY(-1px);
     }
 
-    /* ========= STEP 2: Dream Package Quiz ========= */
-    .dream-quiz {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 80px 20px 100px;
-      text-align: center;
-    }
-
-    .dream-quiz h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(1.5rem, 4vw, 2.25rem);
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .dream-quiz .q-sub {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-    }
-
-    .q-label {
+    .btn-secondary {
+      display: inline-block;
       font-family: 'Outfit', sans-serif;
       font-weight: 500;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--accent);
-      margin-bottom: 20px;
-    }
-
-    /* Question card area */
-    .q-area {
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .q-content {
-      animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      width: 100%;
-    }
-
-    /* Tier cards */
-    .tier-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .tier-card {
-      background: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 28px 20px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-align: center;
-    }
-
-    .tier-card:hover {
-      border-color: rgba(255, 189, 29, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .tier-card.selected {
-      border-color: var(--accent);
-      background: rgba(255, 189, 29, 0.05);
-    }
-
-    .tier-card .tier-icon {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
-
-    .tier-card .tier-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.25rem;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    .tier-card .tier-desc {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* Multi-select / single-select option cards */
-    .option-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .option-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 10px 22px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
       font-size: 0.875rem;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      user-select: none;
-      min-height: 44px;
-      display: flex;
-      align-items: center;
-    }
-
-    .option-pill:hover {
-      border-color: rgba(255, 189, 29, 0.4);
-    }
-
-    .option-pill.selected {
-      border-color: var(--accent);
-      background: rgba(255, 189, 29, 0.08);
       color: var(--accent);
-    }
-
-    /* Hours visual cards */
-    .hours-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .hours-card {
-      background: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 20px 12px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-align: center;
-      min-height: 44px;
-    }
-
-    .hours-card:hover {
-      border-color: rgba(255, 189, 29, 0.4);
-    }
-
-    .hours-card.selected {
-      border-color: var(--accent);
-      background: rgba(255, 189, 29, 0.05);
-    }
-
-    .hours-card .hours-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.75rem;
-      color: var(--text-primary);
-    }
-
-    .hours-card .hours-label {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.6875rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 4px;
-    }
-
-    .hours-card .hours-time {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
-
-    /* Highlight length options */
-    .highlight-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    /* Addon toggle cards */
-    .addon-cards {
-      display: grid;
-      gap: 12px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .addon-card {
-      background: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      text-align: left;
-      min-height: 44px;
-    }
-
-    .addon-card:hover {
-      border-color: rgba(255, 189, 29, 0.4);
-    }
-
-    .addon-card.selected {
-      border-color: var(--accent);
-      background: rgba(255, 189, 29, 0.05);
-    }
-
-    .addon-thumb {
-      width: 64px;
-      height: 64px;
-      border-radius: 6px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-
-    .addon-info .addon-name {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      font-size: 0.9375rem;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .addon-info .addon-desc {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .addon-check {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      flex-shrink: 0;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.25s ease;
-    }
-
-    .addon-card.selected .addon-check {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-    .addon-card.selected .addon-check::after {
-      content: '';
-      width: 10px;
-      height: 10px;
-      background: var(--bg-primary);
-      border-radius: 50%;
-    }
-
-    /* Quiz navigation */
-    .q-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 480px;
-      margin: 32px auto 0;
-      gap: 16px;
-    }
-
-    .q-back {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
       background: none;
-      border: none;
-      cursor: pointer;
-      padding: 10px 16px;
-      transition: color 0.25s ease;
-      min-height: 44px;
-    }
-
-    .q-back:hover { color: var(--text-primary); }
-
-    .q-step-indicator {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .q-next {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--bg-primary);
-      background: var(--accent);
-      border: none;
+      border: 1px solid var(--accent);
+      padding: 12px 32px;
       border-radius: 8px;
-      padding: 10px 28px;
       cursor: pointer;
+      text-decoration: none;
       transition: all 0.25s ease;
       min-height: 44px;
     }
 
-    .q-next:hover {
-      background: var(--accent-light);
+    .btn-secondary:hover {
+      background: rgba(255, 189, 29, 0.08);
       transform: translateY(-1px);
     }
 
-    .q-next:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
+    .subtext {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 12px;
     }
 
-    /* ========= STEP 3: Interactive Builder ========= */
-    .builder {
+    /* ========== ACT 6: BUILDER ========== */
+    .act-builder {
+      padding: 60px 24px 80px;
       max-width: 900px;
       margin: 0 auto;
-      padding: 60px 20px 120px;
     }
 
-    .builder h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(1.5rem, 4vw, 2.25rem);
-      color: var(--text-primary);
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .builder .builder-sub {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
+    .builder-toggle {
       text-align: center;
       margin-bottom: 40px;
+    }
+
+    .builder-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 32px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      min-height: 44px;
+    }
+
+    .builder-toggle-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .builder-toggle-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      transition: transform 0.3s ease;
+    }
+
+    .builder-toggle-btn.open svg {
+      transform: rotate(180deg);
+    }
+
+    .builder-body {
+      display: none;
+      animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .builder-body.visible {
+      display: block;
     }
 
     .builder-grid {
@@ -615,7 +553,6 @@
       align-items: start;
     }
 
-    /* Builder left column */
     .builder-controls {
       display: flex;
       flex-direction: column;
@@ -639,7 +576,6 @@
       margin-bottom: 16px;
     }
 
-    /* Builder tier selector */
     .b-tier-cards {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -678,7 +614,6 @@
       margin-top: 2px;
     }
 
-    /* Builder hours slider */
     .b-hours-options {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -715,7 +650,6 @@
       margin-top: 2px;
     }
 
-    /* Builder highlight options */
     .b-highlight-options {
       display: flex;
       flex-wrap: wrap;
@@ -753,7 +687,6 @@
       color: var(--text-muted);
     }
 
-    /* Builder addon toggles */
     .b-addon-toggles {
       display: flex;
       flex-direction: column;
@@ -832,7 +765,6 @@
       border-radius: 50%;
     }
 
-    /* Builder price summary (right column / sticky bottom on mobile) */
     .price-summary {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -925,6 +857,8 @@
       transition: all 0.25s ease;
       margin-top: 20px;
       min-height: 44px;
+      text-decoration: none;
+      text-align: center;
     }
 
     .price-cta:hover {
@@ -932,242 +866,69 @@
       transform: translateY(-1px);
     }
 
-    .exit-link {
+    .save-package-btn {
       display: block;
+      width: 100%;
       text-align: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.8125rem;
       color: #71717a;
-      margin-top: 16px;
+      margin-top: 12px;
       cursor: pointer;
       background: none;
       border: none;
       text-decoration: underline;
       text-underline-offset: 2px;
+      min-height: 44px;
     }
 
-    .exit-link:hover { color: var(--text-secondary); }
+    .save-package-btn:hover { color: var(--text-secondary); }
 
-    /* ========= STEP 4: Summary ========= */
-    .summary {
+    /* ========== ACT 7: SHARE ========== */
+    .act-share {
+      padding: 40px 24px 60px;
       max-width: 600px;
       margin: 0 auto;
-      padding: 80px 20px 100px;
       text-align: center;
     }
 
-    .summary h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(1.5rem, 4vw, 2.25rem);
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .summary .summary-sub {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-    }
-
-    .summary-card {
+    /* ========== TOAST ========== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--accent);
       border-radius: 8px;
-      padding: 28px 24px;
-      text-align: left;
-      margin-bottom: 32px;
-    }
-
-    .summary-card .sc-tier {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.5rem;
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .sc-line {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      padding: 6px 0;
-    }
-
-    .sc-line-val {
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .sc-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 12px 0;
-    }
-
-    .sc-discount {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.875rem;
-      color: #4CAF50;
-      font-weight: 500;
-      padding: 6px 0;
-    }
-
-    .sc-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 12px 0 0;
-    }
-
-    .sc-total-label {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      font-size: 1rem;
-      color: var(--text-primary);
-    }
-
-    .sc-total-value {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 2.25rem;
-      color: var(--accent);
-    }
-
-    .cta-btn {
-      display: inline-block;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 0.9375rem;
-      color: var(--bg-primary);
-      background: var(--accent);
-      padding: 14px 40px;
-      border-radius: 8px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      min-height: 44px;
-    }
-
-    .cta-btn:hover {
-      background: var(--accent-light);
-      transform: translateY(-1px);
-    }
-
-    .secondary-cta {
-      display: inline-block;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      background: none;
-      border: 1px solid var(--border);
-      padding: 12px 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      margin-top: 12px;
-      min-height: 44px;
-    }
-
-    .secondary-cta:hover {
-      border-color: var(--accent);
-      color: var(--text-primary);
-    }
-
-    .cta-separator {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-      margin: 16px 0;
-    }
-
-    /* Save / SMS consent panel */
-    .save-panel {
-      display: none;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 24px;
-      margin-top: 24px;
-      text-align: left;
-      animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .save-panel.visible { display: block; }
-
-    .save-panel label {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-      cursor: pointer;
-      line-height: 1.5;
-    }
-
-    .save-panel input[type="checkbox"] {
-      margin-top: 3px;
-      accent-color: var(--accent);
-      flex-shrink: 0;
-      width: 18px;
-      height: 18px;
-    }
-
-    .save-btn {
-      display: block;
-      width: 100%;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--bg-primary);
-      background: var(--accent);
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      margin-top: 8px;
-      min-height: 44px;
-    }
-
-    .save-btn:hover { background: var(--accent-light); }
-
-    .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .save-success {
-      display: none;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .save-success.visible { display: block; }
-
-    .save-success p {
+      padding: 12px 24px;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
-      font-size: 0.9375rem;
-      color: var(--text-primary);
+      font-size: 0.875rem;
+      color: var(--accent);
+      z-index: 10001;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
     }
 
-    /* Footer */
-    .footer {
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ========== FOOTER ========== */
+    .experience-footer {
       text-align: center;
-      padding: 40px 20px;
-      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .footer-line {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin: 0 auto 24px;
     }
 
     .footer-brand {
@@ -1175,28 +936,31 @@
       font-weight: 600;
       font-size: 1.125rem;
       color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
       text-decoration: none;
-      display: block;
-      margin-bottom: 8px;
+      transition: color 0.25s ease;
     }
 
-    .footer-copy {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+    .footer-links a:hover {
+      color: var(--text-primary);
     }
 
-    .footer-legal {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .footer-legal a {
-      color: var(--text-muted);
-      text-decoration: underline;
-    }
-
-    /* Mobile responsive */
+    /* ========== MOBILE RESPONSIVE ========== */
     @media (max-width: 768px) {
       .builder-grid {
         grid-template-columns: 1fr;
@@ -1226,16 +990,30 @@
         padding-top: 0;
       }
 
-      .builder {
-        padding-bottom: 220px;
+      .builder-body.visible + .act-share,
+      .act-builder {
+        padding-bottom: 200px;
       }
 
-      .hours-grid {
+      .b-hours-options {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .tier-cards {
-        grid-template-columns: 1fr;
+      .act-recognition {
+        min-height: 70vh;
+        padding: 60px 20px 40px;
+      }
+
+      .recognition-name {
+        font-size: clamp(2rem, 10vw, 3.5rem);
+      }
+
+      .sound-overlay-inner {
+        padding: 12px 24px;
+      }
+
+      .sound-overlay-inner span {
+        font-size: 0.875rem;
       }
     }
 
@@ -1243,106 +1021,138 @@
       .b-hours-options {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .b-tier-cards {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Progress Bar -->
-  <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  <!-- Loading State -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-text">
+      Finding your match
+      <div class="loading-dot"></div>
+    </div>
+  </div>
 
-  <!-- STEP 1: Film Reveal -->
-  <div class="step active" id="step-1">
-    <section class="film-reveal">
-      <h1 id="reveal-heading">We found your film.</h1>
-      <p class="subtitle">Based on what you told us, we matched you with a film that feels like your day...</p>
+  <!-- Fallback State -->
+  <div class="fallback-screen" id="fallback-screen">
+    <h1>This preview has expired.</h1>
+    <p>No worries. Want to start fresh? We'd still love to hear about your wedding.</p>
+    <a href="https://www.flyiniris.com/" class="btn-primary">Start Fresh</a>
+  </div>
 
-      <div class="video-wrap" id="video-wrap">
+  <!-- Main Content -->
+  <div class="experience-content" id="experience-content">
+
+    <!-- Act 1: Recognition -->
+    <section class="act-recognition" id="act-recognition">
+      <h1 class="recognition-name" id="recognition-name"></h1>
+      <p class="recognition-message" id="recognition-message"></p>
+    </section>
+
+    <!-- Act 2: The Film -->
+    <section class="act-film reveal-section" id="act-film">
+      <div class="video-container reveal-section" id="video-container">
         <div class="video-aspect">
           <video id="film-video" playsinline muted loop preload="metadata"></video>
         </div>
-        <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
-          <svg viewBox="0 0 24 24" id="sound-icon-off">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-          </svg>
-          <svg viewBox="0 0 24 24" id="sound-icon-on" style="display:none">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-          </svg>
-          <span id="sound-label">Tap for Sound</span>
-        </button>
+        <div class="sound-overlay" id="sound-overlay">
+          <div class="sound-overlay-inner">
+            <svg viewBox="0 0 24 24">
+              <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+            <span>Tap for Sound</span>
+          </div>
+        </div>
       </div>
-
-      <div class="film-thumb-fallback" id="film-fallback">
-        <img id="film-thumb-img" src="" alt="Wedding film thumbnail">
-      </div>
-
-      <div class="film-meta" id="film-meta">
+      <div class="film-credit" id="film-credit">
         <div class="couple-name" id="film-couple"></div>
         <div class="venue-name" id="film-venue"></div>
       </div>
-
-      <button class="continue-btn" id="continue-to-quiz">
-        Now let's build your dream package &#10038;
-      </button>
     </section>
-  </div>
 
-  <!-- STEP 2: Dream Package Quiz -->
-  <div class="step" id="step-2">
-    <section class="dream-quiz">
-      <h2>Dream Package</h2>
-      <p class="q-sub">No prices. No pressure. Just tell us what you'd love in a perfect world.</p>
-      <div class="q-area" id="q-area"></div>
-    </section>
-  </div>
-
-  <!-- STEP 3: Interactive Builder -->
-  <div class="step" id="step-3">
-    <section class="builder">
-      <h2>Your Package</h2>
-      <p class="builder-sub">Now let's make it real. Adjust anything &mdash; see your price update live.</p>
-      <div class="builder-grid">
-        <div class="builder-controls" id="builder-controls"></div>
-        <div class="price-summary collapsed" id="price-summary"></div>
+    <!-- Act 3: Sean's Note -->
+    <section class="act-note reveal-section" id="act-note">
+      <div class="sean-note">
+        <p id="sean-note-text"></p>
+        <span class="attribution">Sean</span>
       </div>
     </section>
+
+    <!-- Act 4: Testimonial -->
+    <section class="act-testimonial reveal-section" id="act-testimonial">
+      <div class="testimonial-quote">
+        <p id="testimonial-text"></p>
+      </div>
+      <p class="testimonial-name" id="testimonial-name"></p>
+    </section>
+
+    <!-- Act 5: Your Day -->
+    <section class="act-yourday reveal-section" id="act-yourday">
+      <h2 class="availability-message" id="availability-message"></h2>
+      <p class="spots-left" id="spots-left"></p>
+      <p class="yourday-message">We'd love to hear the story of you two. How you met, what your day means to you, what moments you never want to forget. That's how every film starts.</p>
+      <a class="btn-primary" id="cta-discovery" href="#" target="_blank" rel="noopener">Tell Us About Your Day</a>
+      <p class="subtext">15 minutes. No pitch. Just a real conversation.</p>
+    </section>
+
+    <!-- Act 6: Package Builder -->
+    <section class="act-builder reveal-section" id="act-builder">
+      <div class="builder-toggle">
+        <button class="builder-toggle-btn" id="builder-toggle-btn">
+          See what your package could look like
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+        </button>
+      </div>
+      <div class="builder-body" id="builder-body">
+        <div class="builder-grid">
+          <div class="builder-controls" id="builder-controls"></div>
+          <div class="price-summary collapsed" id="price-summary"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 7: Share -->
+    <section class="act-share reveal-section" id="act-share">
+      <button class="btn-secondary" id="share-btn">
+        Share with <span id="share-partner-name">your partner</span>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="experience-footer">
+      <div class="footer-line"></div>
+      <p class="footer-brand">Sean & Sierra, Flyin' Iris</p>
+      <ul class="footer-links">
+        <li><a href="https://www.flyiniris.com/#films">Films</a></li>
+        <li><a href="https://www.flyiniris.com/#why">About</a></li>
+        <li><a href="https://www.flyiniris.com/#investment">Investment</a></li>
+        <li><a href="https://www.flyiniris.com/privacy">Privacy</a></li>
+      </ul>
+    </footer>
+
   </div>
 
-  <!-- STEP 4: Summary -->
-  <div class="step" id="step-4">
-    <section class="summary" id="summary-section"></section>
-  </div>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <a href="/" class="footer-brand">Flyin' Iris</a>
-    <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
-    <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
-  </footer>
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
   <script>
   (function() {
-    // ========== DATA ==========
-    var FILMS_DATA = {
-      'marie-matt': { couple: 'Marie & Matt', venue: 'Westmoor Country Club', vibes: ['romantic','timeless','elegant'] },
-      'kayla-jason': { couple: 'Kayla & Jason', venue: 'The Covenant at Murray Mansion', vibes: ['romantic','intimate','adventurous'] },
-      'allie-matt': { couple: 'Matt & Allie', venue: '10 South', vibes: ['modern','grand','adventurous'] },
-      'sally-aj': { couple: 'Sally & AJ', venue: '10 South', vibes: ['romantic','elegant','grand'] },
-      'taylor-kane': { couple: 'Taylor & Kane', venue: 'Green Bay Country Club', vibes: ['romantic','modern','elegant'] },
-      'kate-thomas': { couple: 'Kate & Thomas', venue: 'Peck & Bushel', vibes: ['romantic','elegant','rustic'] },
-      'sandra-chas': { couple: 'Sandra & Chas', venue: 'Terrace 167', vibes: ['modern','elegant','cultural'] },
-      'amanda-boris': { couple: 'Amanda & Boris', venue: 'Mercantile Hall', vibes: ['romantic','intimate','cultural'] },
-      'izzy-hunter': { couple: 'Izzy & Hunter', venue: 'The Gage', vibes: ['modern','elegant','grand'] },
-      'emily-bobby': { couple: 'Emily & Bobby', venue: 'Monona Terrace', vibes: ['romantic','timeless','elegant'] },
-      'rachel-michael-woolf': { couple: 'Rachel & Michael', venue: 'Thyme Restaurant', vibes: ['romantic','timeless','elegant'] },
-      'rachel-michael-street': { couple: 'Rachel & Michael S.', venue: '10 South', vibes: ['romantic','timeless','elegant'] },
-      'taylor-austin': { couple: 'Taylor & Austin', venue: 'The Fields Reserve', vibes: ['romantic','timeless','rustic'] },
-      'olivia-austin': { couple: 'Olivia & Austin', venue: 'Oakbrook Church', vibes: ['romantic','modern','timeless'] },
-      'sarah-cody': { couple: 'Sarah & Cody', venue: 'The Bowery', vibes: ['grand','adventurous','glamorous'] },
+    // ========== CONSTANTS ==========
+    var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var BOOKING_BASE = 'https://link.lo-ai.co/widget/booking/Kd7zWqsXzAswGHR1HuDR';
+    var R2_THUMB = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/';
+    var ADDON_IMGS = {
+      teaser: R2_THUMB + 'emily-bobby/thumbs/thumb.jpg',
+      fomo: R2_THUMB + 'taylor-kane/thumbs/thumb.jpg',
+      storySession: R2_THUMB + 'kate-thomas/thumbs/thumb.jpg'
     };
 
     var PRICING = {
-      version: '2026-03-12',
       team: {
         base: 3000,
         hours: { '6': 0, '8': 200, '10': 400, '12': 600 },
@@ -1359,438 +1169,287 @@
       },
     };
 
-    var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
-    var BOOKING_URL = 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
-    var R2_THUMB = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/';
-
-    var ADDON_THUMBS = {
-      teaser: R2_THUMB + 'emily-bobby/thumbs/thumb.jpg',
-      fomo: R2_THUMB + 'taylor-kane/thumbs/thumb.jpg',
-      storySession: R2_THUMB + 'kate-thomas/thumbs/thumb.jpg'
+    // ========== EXCITED ABOUT MESSAGES ==========
+    var EXCITED_MESSAGES = {
+      "The first time we see each other": "You said the first look is the moment you can't wait for. We get that. There's nothing like that unscripted, can't-breathe reaction. Watch what happens at the beginning of this film.",
+      "The vows, every single word": "You said the vows matter most. Every single word. We don't just record them, we make you feel them all over again. Listen closely to this one.",
+      "The speeches that wreck us": "You said the speeches are everything. The ones that make the room go quiet, then lose it. We live for those moments. This film has one of our favorites.",
+      "The moment the dance floor erupts": "You said it's all about when the dance floor erupts. That energy is contagious, even through a screen. Turn up the volume for this one.",
+      "The quiet moments nobody else saw": "You told us the quiet moments matter most. The ones nobody else saw. That's exactly how we approach your day. Watch for the little things in this film.",
+      "Honestly? All of it.": "You said you want to relive all of it. Every second. That's exactly the kind of couple we love working with. This film captures that feeling."
     };
+
+    var DEFAULT_MESSAGE = "We picked this film because it matched your vibe. Turn up the sound and feel it.";
+
+    // ========== SEAN'S NOTES ==========
+    var SEAN_NOTES = {
+      'taylor-kane': "Taylor and Kane's day at the Green Bay Country Club was one of those weddings where everything just clicked. Taylor was so calm all morning, just smiling, taking it all in. Then Kane saw her for the first time and completely fell apart. The groomsmen were trying so hard to hold it together and one by one they all lost it. There's a moment during their first dance where Taylor whispers something to Kane and he just laughs. I still don't know what she said, but that's the kind of moment you can't plan. You just have to be ready for it.",
+      'taylor-austin': "Taylor and Austin at The Fields Reserve might be the most emotionally honest wedding we've ever filmed. The barn, the open fields, everything about that venue felt like them. Taylor wrote her own vows and halfway through, Austin had to look up at the sky just to keep it together. What I remember most is this quiet moment right after the ceremony when they walked off together, just the two of them for about thirty seconds, and Taylor leaned into him and neither of them said a word. The wind picked up and it was completely silent. Those are the moments that make this job feel like something bigger than a job.",
+      'olivia-austin': "Olivia and Austin's day started at Oakbrook Church with this incredible light pouring through the windows. Olivia had this way of making everyone around her feel calm, even though you could tell she was bursting inside. During the ceremony, Austin's voice cracked on his very first line and the whole room felt it. But my favorite part of their day was actually during the reception. Olivia's dad gave this toast that started funny, and then hit this line about watching his daughter become someone's whole world. The room went absolutely still. That's what we try to capture for every couple. The real stuff that stays with you."
+    };
+
+    // ========== TESTIMONIALS ==========
+    var TESTIMONIALS = {
+      'taylor-kane': {
+        text: "We've watched our film probably 50 times now. Every time we notice something new. Something we missed on the actual day. That's what blows us away, they caught things we didn't even know happened.",
+        name: "Taylor"
+      },
+      'taylor-austin': {
+        text: "When we got our film back, I watched it alone first and just sobbed. It felt like being right back in that moment, feeling everything all over again. Austin keeps saying it's the best investment we made for the entire wedding.",
+        name: "Taylor"
+      },
+      'olivia-austin': {
+        text: "I didn't realize how much of our day I had already started to forget until we watched the film. Sean and Sierra captured the way Austin looked at me during the ceremony, the way my dad's voice broke during his toast. Things I would have lost forever without them.",
+        name: "Olivia"
+      }
+    };
+
+    // ========== STATE ==========
+    var builderState = {
+      tier: 'team',
+      hours: '6',
+      highlight: '3-5 min',
+      addons: { teaser: false, fomo: false, storySession: false }
+    };
+
+    var sessionData = null;
 
     // ========== URL PARAMS ==========
     var params = new URLSearchParams(window.location.search);
-    var contactName = params.get('fn') || '';
-    var filmSlug = params.get('film') || '';
-    var sessionToken = params.get('token') || '';
+    var sessionToken = params.get('session') || params.get('token') || '';
 
-    // ========== STATE ==========
-    var currentStep = 1;
-    var quizStep = 0;
-
-    // Dream quiz answers
-    var activeTier = 'team';
-    var selectedVibes = [];
-    var selectedPriority = '';
-    var selectedHours = '6';
-    var selectedHighlight = '3-5 min';
-    var selectedAddons = { teaser: false, fomo: false, storySession: false };
-
-    // ========== PROGRESS BAR ==========
-    function updateProgress() {
-      var pct = 0;
-      if (currentStep === 1) pct = 5;
-      else if (currentStep === 2) pct = 10 + (quizStep / 6) * 35;
-      else if (currentStep === 3) pct = 55;
-      else if (currentStep === 4) pct = 100;
-      document.getElementById('progress-bar').style.width = pct + '%';
+    // ========== HELPERS ==========
+    function formatPrice(n) {
+      return '$' + n.toLocaleString();
     }
 
-    // ========== STEP NAVIGATION ==========
-    function goToStep(n) {
-      document.querySelectorAll('.step').forEach(function(el) {
-        el.classList.remove('active');
-      });
-      document.getElementById('step-' + n).classList.add('active');
-      currentStep = n;
-      updateProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function showToast(msg) {
+      var toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(function() { toast.classList.remove('visible'); }, 2500);
     }
 
-    // ========== STEP 1: Film Reveal ==========
-    (function initFilmReveal() {
-      var heading = document.getElementById('reveal-heading');
-      if (contactName) {
-        heading.textContent = 'Hey ' + decodeURIComponent(contactName) + '!';
+    function escHtml(str) {
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ========== LOAD SESSION DATA ==========
+    function loadSession() {
+      if (!sessionToken) {
+        showFallback();
+        return;
       }
 
-      var filmData = FILMS_DATA[filmSlug];
-      if (filmData) {
-        document.getElementById('film-couple').textContent = filmData.couple;
-        document.getElementById('film-venue').textContent = filmData.venue;
+      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+        .then(function(res) {
+          if (!res.ok) throw new Error('Session expired');
+          return res.json();
+        })
+        .then(function(data) {
+          if (!data.success) throw new Error('Invalid session');
+          sessionData = data;
+          renderExperience();
+        })
+        .catch(function() {
+          showFallback();
+        });
+    }
+
+    function showFallback() {
+      document.getElementById('loading-screen').classList.add('fade-out');
+      setTimeout(function() {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('fallback-screen').classList.add('visible');
+      }, 600);
+    }
+
+    // ========== RENDER THE EXPERIENCE ==========
+    function renderExperience() {
+      var d = sessionData;
+
+      // Act 1: Recognition
+      var nameEl = document.getElementById('recognition-name');
+      nameEl.textContent = 'Hey ' + (d.name || 'there') + '.';
+
+      var msgEl = document.getElementById('recognition-message');
+      var excitedMsg = EXCITED_MESSAGES[d.excitedAbout] || DEFAULT_MESSAGE;
+      msgEl.textContent = excitedMsg;
+
+      // Act 2: Film
+      if (d.matchedFilm && d.matchedFilm.slug) {
+        setupVideo(d.matchedFilm);
+        document.getElementById('film-couple').textContent = d.matchedFilm.couple_name || '';
+        document.getElementById('film-venue').textContent = d.matchedFilm.venue || '';
       }
 
-      if (!filmSlug) {
-        document.getElementById('video-wrap').style.display = 'none';
-        document.getElementById('film-meta').style.display = 'none';
+      // Act 3: Sean's Note
+      var noteText = SEAN_NOTES[d.matchedFilm && d.matchedFilm.slug] || '';
+      if (noteText) {
+        document.getElementById('sean-note-text').textContent = noteText;
       } else {
-        var hlsUrl = 'https://video.flyiniris.com/couples/' + filmSlug + '/hls/teaser/master.m3u8';
-        var thumbUrl = R2_THUMB + filmSlug + '/thumbs/thumb.jpg';
-        var video = document.getElementById('film-video');
-        var videoWrap = document.getElementById('video-wrap');
-        var fallback = document.getElementById('film-fallback');
-        var thumbImg = document.getElementById('film-thumb-img');
+        document.getElementById('act-note').style.display = 'none';
+      }
 
-        video.poster = thumbUrl;
+      // Act 4: Testimonial
+      var testimonial = TESTIMONIALS[d.matchedFilm && d.matchedFilm.slug] || null;
+      if (testimonial) {
+        document.getElementById('testimonial-text').textContent = testimonial.text;
+        document.getElementById('testimonial-name').textContent = '- ' + testimonial.name;
+      } else {
+        document.getElementById('act-testimonial').style.display = 'none';
+      }
 
-        if (Hls.isSupported()) {
+      // Act 5: Your Day
+      if (d.availabilityMessage) {
+        document.getElementById('availability-message').textContent = d.availabilityMessage;
+      } else if (d.available) {
+        document.getElementById('availability-message').textContent = 'We\'d love to film your wedding.';
+      } else {
+        document.getElementById('availability-message').textContent = 'Let\'s talk about your day.';
+      }
+
+      if (d.spotsLeft && d.season) {
+        document.getElementById('spots-left').textContent = d.spotsLeft + ' spots left for ' + d.season;
+      }
+
+      document.getElementById('cta-discovery').href = BOOKING_BASE;
+
+      // Act 7: Share
+      if (d.partnerName) {
+        document.getElementById('share-partner-name').textContent = d.partnerName;
+      }
+
+      // Show the content
+      document.getElementById('loading-screen').classList.add('fade-out');
+      setTimeout(function() {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('experience-content').classList.add('visible');
+        initRevealObserver();
+        initBuilder();
+        initShare();
+
+        // Fire tracking
+        if (typeof fbq === 'function') {
+          fbq('track', 'ViewContent');
+        }
+      }, 600);
+    }
+
+    // ========== HLS VIDEO SETUP ==========
+    function setupVideo(film) {
+      var video = document.getElementById('film-video');
+      var videoUrl = film.video_url || 'https://media.flyiniris.com/videos/teasers/' + film.slug + '/master.m3u8';
+      var thumbUrl = film.thumbnail_url || R2_THUMB + film.slug + '/thumbs/thumb.jpg';
+
+      video.poster = thumbUrl;
+
+      // Load HLS.js
+      var hlsScript = document.createElement('script');
+      hlsScript.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js';
+      hlsScript.onload = function() {
+        if (window.Hls && Hls.isSupported()) {
           var hls = new Hls({ startLevel: -1 });
-          hls.loadSource(hlsUrl);
+          hls.loadSource(videoUrl);
           hls.attachMedia(video);
           hls.on(Hls.Events.MANIFEST_PARSED, function() {
             video.play().catch(function() {});
           });
           hls.on(Hls.Events.ERROR, function(event, data) {
             if (data.fatal) {
-              videoWrap.style.display = 'none';
-              fallback.style.display = 'block';
-              thumbImg.src = thumbUrl;
+              document.getElementById('video-container').style.display = 'none';
             }
           });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = hlsUrl;
+          video.src = videoUrl;
           video.play().catch(function() {});
-        } else {
-          videoWrap.style.display = 'none';
-          fallback.style.display = 'block';
-          thumbImg.src = thumbUrl;
         }
+      };
+      document.head.appendChild(hlsScript);
 
-        // Sound toggle
-        var soundToggle = document.getElementById('sound-toggle');
-        var soundLabel = document.getElementById('sound-label');
-        var iconOff = document.getElementById('sound-icon-off');
-        var iconOn = document.getElementById('sound-icon-on');
+      // Sound overlay
+      var overlay = document.getElementById('sound-overlay');
+      overlay.addEventListener('click', function() {
+        video.muted = false;
+        overlay.classList.add('hidden');
 
-        soundToggle.addEventListener('click', function() {
-          video.muted = !video.muted;
-          if (video.muted) {
-            soundLabel.textContent = 'Tap for Sound';
-            iconOff.style.display = '';
-            iconOn.style.display = 'none';
-          } else {
-            soundLabel.textContent = 'Sound On';
-            iconOff.style.display = 'none';
-            iconOn.style.display = '';
+        // Fire tracking for film play with sound
+        if (typeof fbq === 'function') {
+          fbq('trackCustom', 'ExperienceViewed');
+        }
+      });
+    }
+
+    // ========== INTERSECTION OBSERVER FOR REVEALS ==========
+    function initRevealObserver() {
+      var sections = document.querySelectorAll('.reveal-section');
+      if (!('IntersectionObserver' in window)) {
+        sections.forEach(function(s) { s.classList.add('revealed'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
           }
         });
-      }
+      }, { threshold: 0.1 });
 
-      document.getElementById('continue-to-quiz').addEventListener('click', function() {
-        goToStep(2);
-        renderQuizQuestion();
+      sections.forEach(function(s) { observer.observe(s); });
+    }
+
+    // ========== BUILDER ==========
+    function initBuilder() {
+      var toggleBtn = document.getElementById('builder-toggle-btn');
+      var body = document.getElementById('builder-body');
+
+      toggleBtn.addEventListener('click', function() {
+        var isOpen = body.classList.contains('visible');
+        if (isOpen) {
+          body.classList.remove('visible');
+          toggleBtn.classList.remove('open');
+          // Hide mobile price summary if open
+          var ps = document.getElementById('price-summary');
+          if (ps) ps.style.display = '';
+        } else {
+          body.classList.add('visible');
+          toggleBtn.classList.add('open');
+          renderBuilder();
+        }
       });
-    })();
-
-    // ========== STEP 2: Dream Package Quiz ==========
-    var quizQuestions = [
-      {
-        label: 'Question 1 of 6',
-        title: 'What kind of experience are you looking for?',
-        type: 'tier'
-      },
-      {
-        label: 'Question 2 of 6',
-        title: 'What vibes fit your wedding?',
-        sub: 'Pick all that feel right.',
-        type: 'vibe',
-        options: ['Romantic', 'Modern', 'Timeless', 'Intimate', 'Grand']
-      },
-      {
-        label: 'Question 3 of 6',
-        title: "What's most important to you in your film?",
-        sub: 'Pick one.',
-        type: 'priority',
-        options: ['Emotional moments', 'Cinematic beauty', 'The party', 'Our vows & speeches', 'All of it']
-      },
-      {
-        label: 'Question 4 of 6',
-        title: 'How many hours of coverage feel right?',
-        type: 'hours'
-      },
-      {
-        label: 'Question 5 of 6',
-        title: 'How long should your highlight film be?',
-        sub: 'Your highlight is the cinematic edit of your day.',
-        type: 'highlight'
-      },
-      {
-        label: 'Question 6 of 6',
-        title: 'Any of these sound amazing?',
-        sub: 'Toggle whatever catches your eye. No commitment.',
-        type: 'addons'
-      }
-    ];
-
-    function renderQuizQuestion() {
-      var q = quizQuestions[quizStep];
-      var area = document.getElementById('q-area');
-      var h = '<div class="q-content">';
-      h += '<p class="q-label">' + q.label + '</p>';
-      h += '<h2 style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:clamp(1.25rem,3.5vw,1.75rem);color:var(--text-primary);margin-bottom:8px">' + q.title + '</h2>';
-      if (q.sub) {
-        h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);margin-bottom:24px">' + q.sub + '</p>';
-      } else {
-        h += '<div style="height:24px"></div>';
-      }
-
-      if (q.type === 'tier') {
-        h += '<div class="tier-cards">';
-        h += '<div class="tier-card' + (activeTier === 'team' ? ' selected' : '') + '" data-tier="team">';
-        h += '<div class="tier-icon">&#127909;</div>';
-        h += '<div class="tier-name">Team Package</div>';
-        h += '<div class="tier-desc">Our talented team of filmmakers captures your day with cinematic artistry.</div>';
-        h += '</div>';
-        h += '<div class="tier-card' + (activeTier === 'ss' ? ' selected' : '') + '" data-tier="ss">';
-        h += '<div class="tier-icon">&#10024;</div>';
-        h += '<div class="tier-name">Sean & Sierra</div>';
-        h += '<div class="tier-desc">The full founders\' experience. Sean & Sierra personally film your entire day.</div>';
-        h += '</div>';
-        h += '</div>';
-      }
-
-      if (q.type === 'vibe') {
-        h += '<div class="option-grid">';
-        q.options.forEach(function(opt) {
-          var sel = selectedVibes.indexOf(opt) !== -1 ? ' selected' : '';
-          h += '<div class="option-pill' + sel + '" data-vibe="' + opt + '">' + opt + '</div>';
-        });
-        h += '</div>';
-      }
-
-      if (q.type === 'priority') {
-        h += '<div class="option-grid">';
-        q.options.forEach(function(opt) {
-          var sel = selectedPriority === opt ? ' selected' : '';
-          h += '<div class="option-pill' + sel + '" data-priority="' + opt + '">' + opt + '</div>';
-        });
-        h += '</div>';
-      }
-
-      if (q.type === 'hours') {
-        var hourTimelines = { '6': '2pm \u2013 8pm', '8': '12pm \u2013 8pm', '10': '11am \u2013 9pm', '12': '10am \u2013 10pm' };
-        h += '<div class="hours-grid">';
-        ['6','8','10','12'].forEach(function(hr) {
-          var sel = selectedHours === hr ? ' selected' : '';
-          h += '<div class="hours-card' + sel + '" data-hours="' + hr + '">';
-          h += '<div class="hours-num">' + hr + '</div>';
-          h += '<div class="hours-label">hours</div>';
-          h += '<div class="hours-time">' + hourTimelines[hr] + '</div>';
-          h += '</div>';
-        });
-        h += '</div>';
-      }
-
-      if (q.type === 'highlight') {
-        var opts = activeTier === 'ss'
-          ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
-          : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
-        h += '<div class="highlight-grid">';
-        opts.forEach(function(opt) {
-          var sel = selectedHighlight === opt ? ' selected' : '';
-          h += '<div class="option-pill' + sel + '" data-highlight="' + opt + '">' + opt + '</div>';
-        });
-        h += '</div>';
-      }
-
-      if (q.type === 'addons') {
-        h += '<div class="addon-cards">';
-        h += renderAddonCard('teaser', '60-Second Teaser', 'A scroll-stopping Instagram reel to share your day.', selectedAddons.teaser);
-        h += renderAddonCard('fomo', 'FOMO Documentary', 'An extended cut with everything you missed while getting ready.', selectedAddons.fomo);
-        h += renderAddonCard('storySession', 'Story Session', 'An intimate, cinematic session before or after the wedding.', selectedAddons.storySession);
-        h += '</div>';
-      }
-
-      // Navigation
-      h += '<div class="q-nav">';
-      if (quizStep > 0) {
-        h += '<button class="q-back" id="q-prev">&larr; Back</button>';
-      } else {
-        h += '<span></span>';
-      }
-      h += '<span class="q-step-indicator">' + (quizStep + 1) + ' / 6</span>';
-      if (quizStep < 5) {
-        var disabled = '';
-        if (q.type === 'vibe' && selectedVibes.length === 0) disabled = ' disabled';
-        if (q.type === 'priority' && !selectedPriority) disabled = ' disabled';
-        h += '<button class="q-next" id="q-next"' + disabled + '>Next &rarr;</button>';
-      } else {
-        h += '<button class="q-next" id="q-finish">See Your Package &#10038;</button>';
-      }
-      h += '</div>';
-
-      h += '</div>';
-      area.innerHTML = h;
-      updateProgress();
-
-      // Bind events
-      bindQuizEvents(q.type);
     }
 
-    function renderAddonCard(key, name, desc, isSelected) {
-      var sel = isSelected ? ' selected' : '';
-      return '<div class="addon-card' + sel + '" data-addon="' + key + '">'
-        + '<img class="addon-thumb" src="' + ADDON_THUMBS[key] + '" alt="' + name + '">'
-        + '<div class="addon-info"><div class="addon-name">' + name + '</div><div class="addon-desc">' + desc + '</div></div>'
-        + '<div class="addon-check"></div>'
-        + '</div>';
-    }
-
-    function bindQuizEvents(type) {
-      var area = document.getElementById('q-area');
-
-      if (type === 'tier') {
-        area.querySelectorAll('.tier-card').forEach(function(card) {
-          card.addEventListener('click', function() {
-            activeTier = this.getAttribute('data-tier');
-            // Reset highlight if invalid for new tier
-            var validHighlights = activeTier === 'ss'
-              ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
-              : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
-            if (validHighlights.indexOf(selectedHighlight) === -1) {
-              selectedHighlight = '3-5 min';
-            }
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      if (type === 'vibe') {
-        area.querySelectorAll('[data-vibe]').forEach(function(pill) {
-          pill.addEventListener('click', function() {
-            var v = this.getAttribute('data-vibe');
-            var idx = selectedVibes.indexOf(v);
-            if (idx === -1) selectedVibes.push(v);
-            else selectedVibes.splice(idx, 1);
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      if (type === 'priority') {
-        area.querySelectorAll('[data-priority]').forEach(function(pill) {
-          pill.addEventListener('click', function() {
-            selectedPriority = this.getAttribute('data-priority');
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      if (type === 'hours') {
-        area.querySelectorAll('[data-hours]').forEach(function(card) {
-          card.addEventListener('click', function() {
-            selectedHours = this.getAttribute('data-hours');
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      if (type === 'highlight') {
-        area.querySelectorAll('[data-highlight]').forEach(function(pill) {
-          pill.addEventListener('click', function() {
-            selectedHighlight = this.getAttribute('data-highlight');
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      if (type === 'addons') {
-        area.querySelectorAll('[data-addon]').forEach(function(card) {
-          card.addEventListener('click', function() {
-            var key = this.getAttribute('data-addon');
-            selectedAddons[key] = !selectedAddons[key];
-            renderQuizQuestion();
-          });
-        });
-      }
-
-      // Nav buttons
-      var prevBtn = document.getElementById('q-prev');
-      var nextBtn = document.getElementById('q-next');
-      var finishBtn = document.getElementById('q-finish');
-
-      if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
-          quizStep--;
-          renderQuizQuestion();
-        });
-      }
-
-      if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-          quizStep++;
-          renderQuizQuestion();
-        });
-      }
-
-      if (finishBtn) {
-        finishBtn.addEventListener('click', function() {
-          submitDreamPackage();
-        });
-      }
-    }
-
-    function submitDreamPackage() {
-      // Fire API call (non-blocking, proceed to builder immediately)
-      if (sessionToken) {
-        fetch(WORKER_URL + '/api/package/dream', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            session_token: sessionToken,
-            config: {
-              tier: activeTier,
-              hours: selectedHours,
-              highlight: selectedHighlight,
-              teaser: selectedAddons.teaser,
-              fomo: selectedAddons.fomo,
-              storySession: selectedAddons.storySession,
-              vibe: selectedVibes,
-              priority: selectedPriority
-            },
-            pricing_version: PRICING.version,
-          })
-        }).catch(function(err) { console.log('Dream package submit error:', err); });
-      }
-      goToStep(3);
-      renderBuilder();
-    }
-
-    // ========== STEP 3: Interactive Builder ==========
     function calculateTotal() {
-      var tier = PRICING[activeTier];
+      var tier = PRICING[builderState.tier];
       var total = tier.base;
-      total += tier.hours[selectedHours] || 0;
-      total += tier.highlight[selectedHighlight] || 0;
+      total += tier.hours[builderState.hours] || 0;
+      total += tier.highlight[builderState.highlight] || 0;
 
       var addonTotal = 0;
       var addonCount = 0;
-      if (selectedAddons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
-      if (selectedAddons.fomo) { addonTotal += tier.addons.fomo; addonCount++; }
-      if (selectedAddons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
+      if (builderState.addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
+      if (builderState.addons.fomo) { addonTotal += tier.addons.fomo; addonCount++; }
+      if (builderState.addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
 
       total += addonTotal;
       var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
       var discount = Math.round(total * discountPct);
 
-      // Team profit floor
-      if (activeTier === 'team' && discount > 0) {
-        var floor = tier.base + (tier.hours[selectedHours] || 0) + (tier.highlight[selectedHighlight] || 0);
-        if (total - discount < floor) {
-          discount = total - floor;
-        }
+      if (builderState.tier === 'team' && discount > 0) {
+        var floor = tier.base + (tier.hours[builderState.hours] || 0) + (tier.highlight[builderState.highlight] || 0);
+        if (total - discount < floor) discount = total - floor;
       }
 
       return { total: total - discount, discount: discount, discountPct: discountPct, subtotal: total };
     }
 
-    function formatPrice(n) {
-      return '$' + n.toLocaleString();
-    }
-
     function renderBuilder() {
-      var tier = PRICING[activeTier];
+      var bs = builderState;
+      var tier = PRICING[bs.tier];
       var controls = document.getElementById('builder-controls');
       var h = '';
 
@@ -1798,10 +1457,9 @@
       h += '<div class="builder-section">';
       h += '<div class="builder-section-title">Experience</div>';
       h += '<div class="b-tier-cards">';
-      h += '<div class="b-tier-card' + (activeTier === 'team' ? ' selected' : '') + '" data-btier="team"><div class="b-tier-name">Team</div><div class="b-tier-sub">Starting at $3,000</div></div>';
-      h += '<div class="b-tier-card' + (activeTier === 'ss' ? ' selected' : '') + '" data-btier="ss"><div class="b-tier-name">Sean & Sierra</div><div class="b-tier-sub">Starting at $5,000</div></div>';
-      h += '</div>';
-      h += '</div>';
+      h += '<div class="b-tier-card' + (bs.tier === 'team' ? ' selected' : '') + '" data-btier="team"><div class="b-tier-name">Team</div><div class="b-tier-sub">Starting at $3,000</div></div>';
+      h += '<div class="b-tier-card' + (bs.tier === 'ss' ? ' selected' : '') + '" data-btier="ss"><div class="b-tier-name">Sean & Sierra</div><div class="b-tier-sub">Starting at $5,000</div></div>';
+      h += '</div></div>';
 
       // Hours
       h += '<div class="builder-section">';
@@ -1810,13 +1468,12 @@
       ['6','8','10','12'].forEach(function(hr) {
         var price = tier.hours[hr];
         var priceLabel = price === 0 ? 'Included' : '+' + formatPrice(price);
-        h += '<div class="b-hour-btn' + (selectedHours === hr ? ' selected' : '') + '" data-bhours="' + hr + '">' + hr + ' hrs<div class="b-hour-price">' + priceLabel + '</div></div>';
+        h += '<div class="b-hour-btn' + (bs.hours === hr ? ' selected' : '') + '" data-bhours="' + hr + '">' + hr + ' hrs<div class="b-hour-price">' + priceLabel + '</div></div>';
       });
-      h += '</div>';
-      h += '</div>';
+      h += '</div></div>';
 
       // Highlight
-      var hlOpts = activeTier === 'ss'
+      var hlOpts = bs.tier === 'ss'
         ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
         : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
       h += '<div class="builder-section">';
@@ -1825,10 +1482,9 @@
       hlOpts.forEach(function(opt) {
         var price = tier.highlight[opt];
         var priceLabel = price === 0 ? 'Included' : '+' + formatPrice(price);
-        h += '<div class="b-hl-btn' + (selectedHighlight === opt ? ' selected' : '') + '" data-bhl="' + opt + '">' + opt + ' <span class="b-hl-price">' + priceLabel + '</span></div>';
+        h += '<div class="b-hl-btn' + (bs.highlight === opt ? ' selected' : '') + '" data-bhl="' + opt + '">' + opt + ' <span class="b-hl-price">' + priceLabel + '</span></div>';
       });
-      h += '</div>';
-      h += '</div>';
+      h += '</div></div>';
 
       // Add-ons
       h += '<div class="builder-section">';
@@ -1840,15 +1496,14 @@
         { key: 'storySession', name: 'Story Session', price: tier.addons.storySession }
       ];
       addonList.forEach(function(a) {
-        var sel = selectedAddons[a.key] ? ' selected' : '';
+        var sel = bs.addons[a.key] ? ' selected' : '';
         h += '<div class="b-addon-row' + sel + '" data-baddon="' + a.key + '">';
-        h += '<div class="b-addon-left"><img class="b-addon-thumb" src="' + ADDON_THUMBS[a.key] + '" alt="' + a.name + '"><span class="b-addon-name">' + a.name + '</span></div>';
+        h += '<div class="b-addon-left"><img class="b-addon-thumb" src="' + ADDON_IMGS[a.key] + '" alt="' + a.name + '" loading="lazy"><span class="b-addon-name">' + a.name + '</span></div>';
         h += '<span class="b-addon-price">+' + formatPrice(a.price) + '</span>';
         h += '<div class="b-addon-check"></div>';
         h += '</div>';
       });
-      h += '</div>';
-      h += '</div>';
+      h += '</div></div>';
 
       controls.innerHTML = h;
 
@@ -1860,74 +1515,95 @@
     }
 
     function renderPriceSummary() {
-      var tier = PRICING[activeTier];
+      var bs = builderState;
+      var tier = PRICING[bs.tier];
       var calc = calculateTotal();
       var summary = document.getElementById('price-summary');
       var h = '';
 
       h += '<div class="price-summary-title">Your Package</div>';
 
-      // Base
-      h += '<div class="price-line"><span>' + (activeTier === 'ss' ? 'Sean & Sierra' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
+      h += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sean & Sierra' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
 
-      // Hours
-      var hoursPrice = tier.hours[selectedHours] || 0;
+      var hoursPrice = tier.hours[bs.hours] || 0;
       if (hoursPrice > 0) {
-        h += '<div class="price-line"><span>' + selectedHours + ' Hours Coverage</span><span class="price-line-value">+' + formatPrice(hoursPrice) + '</span></div>';
+        h += '<div class="price-line"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">+' + formatPrice(hoursPrice) + '</span></div>';
       } else {
-        h += '<div class="price-line included"><span>' + selectedHours + ' Hours Coverage</span><span class="price-line-value">Included</span></div>';
+        h += '<div class="price-line included"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">Included</span></div>';
       }
 
-      // Highlight
-      var hlPrice = tier.highlight[selectedHighlight] || 0;
+      var hlPrice = tier.highlight[bs.highlight] || 0;
       if (hlPrice > 0) {
-        h += '<div class="price-line"><span>' + selectedHighlight + ' Highlight</span><span class="price-line-value">+' + formatPrice(hlPrice) + '</span></div>';
+        h += '<div class="price-line"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">+' + formatPrice(hlPrice) + '</span></div>';
       } else {
-        h += '<div class="price-line included"><span>' + selectedHighlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
+        h += '<div class="price-line included"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
       }
 
-      // Add-ons
-      if (selectedAddons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
-      if (selectedAddons.fomo) h += '<div class="price-line"><span>FOMO Documentary</span><span class="price-line-value">+' + formatPrice(tier.addons.fomo) + '</span></div>';
-      if (selectedAddons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
+      if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
+      if (bs.addons.fomo) h += '<div class="price-line"><span>FOMO Documentary</span><span class="price-line-value">+' + formatPrice(tier.addons.fomo) + '</span></div>';
+      if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 
       h += '<div class="price-divider"></div>';
 
-      // Discount
       if (calc.discount > 0) {
         h += '<div class="price-discount"><span>Bundle Discount (' + Math.round(calc.discountPct * 100) + '%)</span><span>-' + formatPrice(calc.discount) + '</span></div>';
       }
 
-      // Total
-      h += '<div class="price-total"><span class="price-total-label">Total</span><span class="price-total-value">' + formatPrice(calc.total) + '</span></div>';
+      h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatPrice(calc.total) + '</span></div>';
 
-      h += '<button class="price-cta" id="see-package-btn">See Your Package &#10038;</button>';
-      h += '<button class="exit-link" id="exit-builder">Not ready yet? That\'s okay.</button>';
+      h += '<a href="' + BOOKING_BASE + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
+      h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
+
+      // Availability reminder
+      if (sessionData && sessionData.availabilityMessage) {
+        h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.75rem;color:var(--accent);text-align:center;margin-top:12px;font-style:italic">' + escHtml(sessionData.availabilityMessage) + '</p>';
+      }
 
       summary.innerHTML = h;
 
-      // Bind CTA
-      document.getElementById('see-package-btn').addEventListener('click', function() {
-        submitRealisticPackage();
-      });
+      // Save package handler
+      document.getElementById('save-package-btn').addEventListener('click', function() {
+        var btn = this;
+        btn.textContent = 'Saving...';
+        btn.disabled = true;
 
-      document.getElementById('exit-builder').addEventListener('click', function() {
         if (sessionToken) {
-          fetch(WORKER_URL + '/api/builder/exit', {
+          var c = calculateTotal();
+          fetch(WORKER_URL + '/api/package/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_token: sessionToken })
-          }).catch(function() {});
+            body: JSON.stringify({
+              session_token: sessionToken,
+              config: {
+                tier: bs.tier,
+                hours: bs.hours,
+                highlight: bs.highlight,
+                teaser: bs.addons.teaser,
+                fomo: bs.addons.fomo,
+                storySession: bs.addons.storySession
+              },
+              calculated_price: c.total
+            })
+          }).then(function() {
+            showToast('Package saved! Check your texts.');
+            btn.textContent = 'Saved';
+          }).catch(function() {
+            showToast('Package saved to this link.');
+            btn.textContent = 'Save My Package';
+            btn.disabled = false;
+          });
+        } else {
+          showToast('Package saved to this link.');
+          btn.textContent = 'Saved';
         }
-        window.location.href = '/thanks?fn=' + encodeURIComponent(contactName) + '&film=' + encodeURIComponent(filmSlug) + '&token=' + encodeURIComponent(sessionToken);
       });
 
-      // Mobile: toggle collapsed
-      var totalRow = summary.querySelector('.price-total');
+      // Mobile toggle
+      var totalRow = document.getElementById('price-total-row');
       if (totalRow && window.innerWidth <= 768) {
         totalRow.style.cursor = 'pointer';
         totalRow.addEventListener('click', function(e) {
-          if (e.target.closest('.price-cta') || e.target.closest('.exit-link')) return;
+          if (e.target.closest('.price-cta') || e.target.closest('.save-package-btn')) return;
           summary.classList.toggle('collapsed');
         });
       }
@@ -1936,167 +1612,79 @@
     function bindBuilderEvents() {
       var controls = document.getElementById('builder-controls');
 
-      // Tier
       controls.querySelectorAll('[data-btier]').forEach(function(card) {
         card.addEventListener('click', function() {
-          activeTier = this.getAttribute('data-btier');
-          // Reset highlight if invalid
-          var validHighlights = activeTier === 'ss'
+          builderState.tier = this.getAttribute('data-btier');
+          var validHl = builderState.tier === 'ss'
             ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
             : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
-          if (validHighlights.indexOf(selectedHighlight) === -1) {
-            selectedHighlight = '3-5 min';
-          }
+          if (validHl.indexOf(builderState.highlight) === -1) builderState.highlight = '3-5 min';
           renderBuilder();
         });
       });
 
-      // Hours
       controls.querySelectorAll('[data-bhours]').forEach(function(btn) {
         btn.addEventListener('click', function() {
-          selectedHours = this.getAttribute('data-bhours');
+          builderState.hours = this.getAttribute('data-bhours');
           renderBuilder();
         });
       });
 
-      // Highlight
       controls.querySelectorAll('[data-bhl]').forEach(function(btn) {
         btn.addEventListener('click', function() {
-          selectedHighlight = this.getAttribute('data-bhl');
+          builderState.highlight = this.getAttribute('data-bhl');
           renderBuilder();
         });
       });
 
-      // Add-ons
       controls.querySelectorAll('[data-baddon]').forEach(function(row) {
         row.addEventListener('click', function() {
           var key = this.getAttribute('data-baddon');
-          selectedAddons[key] = !selectedAddons[key];
+          builderState.addons[key] = !builderState.addons[key];
           renderBuilder();
         });
       });
     }
 
-    function submitRealisticPackage() {
-      var calc = calculateTotal();
-      if (sessionToken) {
-        fetch(WORKER_URL + '/api/package/realistic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            session_token: sessionToken,
-            config: {
-              tier: activeTier,
-              hours: selectedHours,
-              highlight: selectedHighlight,
-              teaser: selectedAddons.teaser,
-              fomo: selectedAddons.fomo,
-              storySession: selectedAddons.storySession
-            },
-            pricing_version: PRICING.version,
-            calculated_price: calc.total,
-          })
-        }).catch(function(err) { console.log('Realistic package submit error:', err); });
-      }
-      goToStep(4);
-      renderSummary();
-    }
+    // ========== SHARE ==========
+    function initShare() {
+      var shareBtn = document.getElementById('share-btn');
+      shareBtn.addEventListener('click', function() {
+        var shareData = {
+          title: 'Check out our wedding film match',
+          text: 'Look what I found for our wedding!',
+          url: window.location.href
+        };
 
-    // ========== STEP 4: Summary ==========
-    function renderSummary() {
-      var tier = PRICING[activeTier];
-      var calc = calculateTotal();
-      var section = document.getElementById('summary-section');
-      var tierLabel = activeTier === 'ss' ? 'Sean & Sierra Experience' : 'Team Package';
-      var h = '';
-
-      h += '<h2>Your Package</h2>';
-      h += '<p class="summary-sub">Here\'s what you built. We love it.</p>';
-
-      h += '<div class="summary-card">';
-      h += '<div class="sc-tier">' + tierLabel + '</div>';
-      h += '<div class="sc-line"><span>Base Package</span><span class="sc-line-val">' + formatPrice(tier.base) + '</span></div>';
-
-      var hoursPrice = tier.hours[selectedHours] || 0;
-      h += '<div class="sc-line"><span>' + selectedHours + ' Hours Coverage</span><span class="sc-line-val">' + (hoursPrice > 0 ? '+' + formatPrice(hoursPrice) : 'Included') + '</span></div>';
-
-      var hlPrice = tier.highlight[selectedHighlight] || 0;
-      h += '<div class="sc-line"><span>' + selectedHighlight + ' Highlight Film</span><span class="sc-line-val">' + (hlPrice > 0 ? '+' + formatPrice(hlPrice) : 'Included') + '</span></div>';
-
-      if (selectedAddons.teaser) h += '<div class="sc-line"><span>60-Second Teaser</span><span class="sc-line-val">+' + formatPrice(tier.addons.teaser) + '</span></div>';
-      if (selectedAddons.fomo) h += '<div class="sc-line"><span>FOMO Documentary</span><span class="sc-line-val">+' + formatPrice(tier.addons.fomo) + '</span></div>';
-      if (selectedAddons.storySession) h += '<div class="sc-line"><span>Story Session</span><span class="sc-line-val">+' + formatPrice(tier.addons.storySession) + '</span></div>';
-
-      h += '<div class="sc-divider"></div>';
-
-      if (calc.discount > 0) {
-        h += '<div class="sc-discount"><span>Bundle Discount (' + Math.round(calc.discountPct * 100) + '%)</span><span>-' + formatPrice(calc.discount) + '</span></div>';
-      }
-
-      h += '<div class="sc-total"><span class="sc-total-label">Your Total</span><span class="sc-total-value">' + formatPrice(calc.total) + '</span></div>';
-      h += '</div>';
-
-      // CTAs
-      h += '<a href="' + BOOKING_URL + '" target="_blank" rel="noopener" class="cta-btn" style="display:inline-block;margin-bottom:0">Book a Discovery Call &#10038;</a>';
-      h += '<p class="cta-separator">or</p>';
-      h += '<button class="secondary-cta" id="save-toggle">Save This & Think About It</button>';
-
-      // Save panel
-      h += '<div class="save-panel" id="save-panel">';
-      h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:400;font-size:0.9375rem;color:var(--text-primary);margin-bottom:16px">We\'ll save your package and send you a link so you can come back anytime.</p>';
-      h += '<label><input type="checkbox" id="sms-transactional" checked> Send me a text with my saved package link</label>';
-      h += '<label><input type="checkbox" id="sms-marketing"> I\'m open to hearing about availability updates & limited offers</label>';
-      h += '<button class="save-btn" id="save-btn">Save My Package</button>';
-      h += '</div>';
-
-      // Save success message
-      h += '<div class="save-success" id="save-success">';
-      h += '<p style="color:var(--accent);font-size:1.5rem;margin-bottom:8px">&#10003;</p>';
-      h += '<p>Saved! Check your texts for your personal link.</p>';
-      h += '</div>';
-
-      section.innerHTML = h;
-
-      // Bind save toggle
-      document.getElementById('save-toggle').addEventListener('click', function() {
-        var panel = document.getElementById('save-panel');
-        panel.classList.toggle('visible');
-        if (panel.classList.contains('visible')) {
-          panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      });
-
-      // Bind save button
-      document.getElementById('save-btn').addEventListener('click', function() {
-        var btn = this;
-        btn.disabled = true;
-        btn.textContent = 'Saving...';
-
-        if (sessionToken) {
-          fetch(WORKER_URL + '/api/package/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              session_token: sessionToken,
-              sms_transactional_consent: document.getElementById('sms-transactional').checked,
-              sms_marketing_consent: document.getElementById('sms-marketing').checked,
-            })
-          }).then(function() {
-            document.getElementById('save-panel').style.display = 'none';
-            document.getElementById('save-success').classList.add('visible');
-          }).catch(function() {
-            btn.disabled = false;
-            btn.textContent = 'Save My Package';
-          });
+        if (navigator.share) {
+          navigator.share(shareData).catch(function() {});
         } else {
-          document.getElementById('save-panel').style.display = 'none';
-          document.getElementById('save-success').classList.add('visible');
+          // Desktop fallback: copy to clipboard
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+              showToast('Link copied!');
+            }).catch(function() {
+              showToast('Link copied!');
+            });
+          } else {
+            // Fallback for older browsers
+            var ta = document.createElement('textarea');
+            ta.value = window.location.href;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Link copied!');
+          }
         }
       });
     }
 
     // ========== INIT ==========
-    updateProgress();
+    loadSession();
+
   })();
   </script>
 </body>
