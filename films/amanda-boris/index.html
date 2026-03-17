@@ -137,18 +137,7 @@
       text-align: center;
       padding: 120px 24px 80px;
       position: relative;
-      background-image: url('https://video.flyiniris.com/couples/amanda-boris/thumbs/Amanda-Boris_Thumbnail.jpg');
-      background-size: cover;
-      background-position: center;
     }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at center, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.85) 70%, #0A0A0A 100%);
-      z-index: 0;
-    }
-    .hero > * { position: relative; z-index: 1; }
     .hero-names {
       font-size: clamp(2.8rem, 7vw, 5.5rem);
       letter-spacing: 0.04em;
@@ -202,8 +191,6 @@
       padding: 100px 0;
     }
     .section-label {
-      display: block;
-      text-align: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.75rem;
@@ -214,75 +201,39 @@
     }
     .section-title {
       font-size: clamp(1.8rem, 4vw, 2.8rem);
-      text-align: center;
       margin-bottom: 48px;
     }
 
-    /* ========== Featured Films ========== */
+    /* ========== Featured Film ========== */
     .featured {
       background: #111110;
     }
-    .featured-block + .featured-block {
-      margin-top: 80px;
-    }
-    .featured-card {
-      position: relative;
+    .featured-player-wrap {
       border-radius: 8px;
       overflow: hidden;
-      background: #161615;
       border: 1px solid #2A2A28;
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .featured-card:hover {
-      transform: translateY(-4px);
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
-    }
-    .featured-player-wrap {
-      position: relative;
-      aspect-ratio: 16/9;
     }
     .featured-player-wrap media-player {
       --media-brand: #FFBD1D;
       width: 100%;
-      height: 100%;
+      aspect-ratio: 16/9;
     }
-    .featured-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      background-size: cover;
-      background-position: center;
-      background-color: #1A1A19;
-      cursor: pointer;
-      transition: opacity 0.4s ease;
+    .featured-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 0;
     }
-    .featured-overlay::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
-    }
-    .featured-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .featured-card:hover .featured-overlay .film-card-play,
-    .featured-card:focus-visible .featured-overlay .film-card-play {
-      opacity: 1;
-    }
-    .featured-overlay .film-card-play svg {
-      width: 64px;
-      height: 64px;
-    }
-    .featured-card-body {
-      padding: 16px;
-      text-align: center;
-    }
-    .featured-card-title {
+    .featured-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: 1.15rem;
+      font-size: 1.4rem;
+    }
+    .featured-duration {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
     }
 
     /* ========== Archival Collection ========== */
@@ -371,78 +322,11 @@
     }
     .film-card-body {
       padding: 16px;
-      text-align: center;
     }
     .film-card-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 1.15rem;
-    }
-
-    /* ========== Playlist Card ========== */
-    .playlist-card {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 28px 32px;
-      background: linear-gradient(135deg, #161615 0%, #1A1A19 100%);
-      border: 1px solid rgba(255, 189, 29, 0.25);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-    }
-    .playlist-card:hover {
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.12);
-      transform: translateY(-2px);
-    }
-    .playlist-card-icon {
-      flex-shrink: 0;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: rgba(255, 189, 29, 0.1);
-      border: 1px solid rgba(255, 189, 29, 0.2);
-    }
-    .playlist-card-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: #FFBD1D;
-    }
-    .playlist-card-info {
-      flex: 1;
-      min-width: 0;
-      text-align: center;
-    }
-    .playlist-card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.3rem;
-      margin-bottom: 4px;
-    }
-    .playlist-card-subtitle {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.85rem;
-      color: #C8C3B9;
-    }
-    .playlist-card-arrow {
-      flex-shrink: 0;
-      color: #FFBD1D;
-      opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-    .playlist-card:hover .playlist-card-arrow {
-      opacity: 1;
-      transform: translateX(4px);
-    }
-    .playlist-card-arrow svg {
-      width: 24px;
-      height: 24px;
     }
 
     /* ========== Video Modal ========== */
@@ -489,10 +373,6 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
     }
-    .modal-player-wrap.has-playlist {
-      border-radius: 8px 8px 0 0;
-      border-bottom: none;
-    }
     .modal-player-wrap media-player {
       --media-brand: #FFBD1D;
       width: 100%;
@@ -503,53 +383,6 @@
       font-weight: 600;
       font-size: 1.3rem;
       margin-top: 16px;
-    }
-
-    /* ========== Playlist Bar (in modal) ========== */
-    .playlist-bar {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: #161615;
-      border: 1px solid #2A2A28;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      gap: 12px;
-    }
-    .playlist-bar.visible {
-      display: flex;
-    }
-    .playlist-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-    .playlist-bar-progress {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: #FFBD1D;
-      white-space: nowrap;
-      letter-spacing: 0.04em;
-    }
-    .playlist-bar-current {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.85rem;
-      color: #F5F0EB;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .playlist-bar-next {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.8rem;
-      color: #C8C3B9;
-      white-space: nowrap;
-      flex-shrink: 0;
     }
 
     /* ========== Photo Gallery Placeholder ========== */
@@ -709,52 +542,6 @@
     }
     .download-item-btn:hover { border-color: #FFBD1D; color: #FFBD1D; }
 
-    /* ========== Footer CTA ========== */
-    .footer-cta {
-      padding: 80px 0 20px;
-      text-align: center;
-    }
-    .footer-cta-divider {
-      width: 60px;
-      height: 1px;
-      background: #FFBD1D;
-      margin: 0 auto 36px;
-    }
-    .footer-cta-tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 400;
-      font-size: 1.25rem;
-      color: #C8C3B9;
-      margin-bottom: 24px;
-    }
-    .footer-cta-btn {
-      display: inline-block;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 12px 36px;
-      border: 1px solid #FFBD1D;
-      border-radius: 50px;
-      color: #FFBD1D;
-      background: transparent;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-    .footer-cta-btn:hover {
-      background: rgba(255, 189, 29, 0.1);
-      color: #FFF0C9;
-    }
-    .footer-cta-credit {
-      margin-top: 20px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.75rem;
-      color: rgba(200, 195, 185, 0.35);
-      letter-spacing: 0.06em;
-    }
-
     /* ========== Footer ========== */
     .site-footer {
       border-top: 1px solid #2A2A28;
@@ -789,14 +576,11 @@
 
     /* ========== TV / Remote-Friendly ========== */
     .film-card:focus-visible,
-    .featured-card:focus-visible,
-    .playlist-card:focus-visible,
     .hero-cta:focus-visible,
     .download-btn:focus-visible,
     .download-all-btn:focus-visible,
     .download-item-btn:focus-visible,
-    .modal-close:focus-visible,
-    .footer-cta-btn:focus-visible {
+    .modal-close:focus-visible {
       outline: 2px solid #FFBD1D;
       outline-offset: 2px;
     }
@@ -805,15 +589,12 @@
       box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .film-card { min-height: 48px; }
-    .playlist-card { min-height: 48px; }
     .hero-cta,
     .download-btn,
     .download-all-btn,
     .download-item-btn,
-    .modal-close,
-    .footer-cta-btn { min-height: 48px; min-width: 48px; }
+    .modal-close { min-height: 48px; min-width: 48px; }
     .film-card { -webkit-tap-highlight-color: transparent; }
-    .playlist-card { -webkit-tap-highlight-color: transparent; }
 
     /* ========== Scroll Reveal ========== */
     .reveal {
@@ -842,15 +623,9 @@
       .hero { padding: 100px 20px 60px; }
       .hero-cta { padding: 14px 32px; font-size: 0.8rem; }
       .section { padding: 72px 0; }
-      .featured-block + .featured-block { margin-top: 56px; }
       .modal-content { max-width: 100%; }
       .modal-close { top: -40px; }
       .download-form { flex-direction: column; }
-      .playlist-card { padding: 20px 20px; gap: 16px; }
-      .playlist-card-icon { width: 44px; height: 44px; }
-      .playlist-card-icon svg { width: 20px; height: 20px; }
-      .playlist-bar { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 16px; }
-      .footer-cta { padding: 60px 0 16px; }
     }
   </style>
 </head>
@@ -875,33 +650,25 @@
     </div>
   </section>
 
-  <!-- ========== Featured Films (Teaser + Highlight) ========== -->
+  <!-- ========== Featured Film ========== -->
   <section class="section featured" id="featured">
-    <div class="container">
-      <!-- Teaser -->
-      <div class="featured-block reveal" id="featured-teaser">
-        <p class="section-label">The Teaser</p>
-        <div class="featured-card" id="teaser-card">
-          <!-- Card content injected by JS -->
-        </div>
+    <div class="container reveal">
+      <p class="section-label">Featured Film</p>
+      <div class="featured-player-wrap" id="featured-player-wrap">
+        <!-- Vidstack player injected by JS -->
       </div>
-
-      <!-- Highlight -->
-      <div class="featured-block reveal" id="featured-highlight">
-        <p class="section-label">Highlight Film</p>
-        <div class="featured-card" id="highlight-card">
-          <!-- Card content injected by JS -->
-        </div>
+      <div class="featured-info" id="featured-info">
+        <!-- Title + duration injected by JS -->
       </div>
     </div>
   </section>
 
-  <!-- ========== The Collection ========== -->
+  <!-- ========== Archival Collection ========== -->
   <section class="section" id="collection">
     <div class="container">
       <div class="reveal">
         <p class="section-label">The Collection</p>
-        <h2 class="section-title" id="collection-count">9 Films</h2>
+        <h2 class="section-title">All Your Films</h2>
       </div>
       <div class="collection-grid" id="collection-grid">
         <!-- Cards injected by JS -->
@@ -953,16 +720,6 @@
     </div>
   </section>
 
-  <!-- ========== Footer CTA ========== -->
-  <section class="footer-cta">
-    <div class="container">
-      <div class="footer-cta-divider"></div>
-      <p class="footer-cta-tagline">Love what you see?</p>
-      <a href="https://www.flyiniris.com" class="footer-cta-btn" target="_blank" rel="noopener">Start Your Story</a>
-      <p class="footer-cta-credit">Flyin' Iris Wedding Videography &bull; Milwaukee & Beyond</p>
-    </div>
-  </section>
-
   <!-- ========== Footer ========== -->
   <footer class="site-footer">
     <div class="container">
@@ -1006,13 +763,6 @@
       <div class="modal-player-wrap" id="modal-player-wrap">
         <!-- Vidstack player injected by JS -->
       </div>
-      <div class="playlist-bar" id="playlist-bar">
-        <div class="playlist-bar-left">
-          <span class="playlist-bar-progress" id="playlist-bar-progress"></span>
-          <span class="playlist-bar-current" id="playlist-bar-current"></span>
-        </div>
-        <span class="playlist-bar-next" id="playlist-bar-next"></span>
-      </div>
       <p class="modal-title" id="modal-title"></p>
     </div>
   </div>
@@ -1020,44 +770,12 @@
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    var VIDEOS = [
-      {"id": "teaser", "title": "Teaser", "category": "teaser", "duration": "5:46", "order": 0},
-      {"id": "highlight", "title": "Amanda & Boris's Wedding", "category": "highlight", "duration": "11:01", "order": 1},
-      {"id": "first-look-bridesmaids", "title": "First Look: Bridesmaids", "category": "archival", "duration": "8:09", "order": 2},
-      {"id": "first-look-dad", "title": "First Look: Dad", "category": "archival", "duration": "3:28", "order": 3},
-      {"id": "first-look-vows", "title": "First Look & Vows", "category": "archival", "duration": "7:41", "order": 4},
-      {"id": "ketubah-signing", "title": "Ketubah Signing", "category": "archival", "duration": "7:08", "order": 5},
-      {"id": "ceremony", "title": "Ceremony", "category": "archival", "duration": "16:15", "order": 6},
-      {"id": "grand-march-first-dance", "title": "Grand March & First Dance", "category": "archival", "duration": "9:04", "order": 7},
-      {"id": "speeches", "title": "Speeches", "category": "archival", "duration": "26:03", "order": 8},
-      {"id": "parent-dances", "title": "Parent Dances", "category": "archival", "duration": "8:19", "order": 9},
-      {"id": "gopro", "title": "GoPro", "category": "bonus", "duration": "10:08", "order": 10}
-    ];
+    const VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"","order":0,"featured":true},{"id":"highlight","title":"Amanda & Boris's Wedding","category":"highlight","duration":"","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"","order":3},{"id":"first-look-vows","title":"First Look & Vows","category":"archival","duration":"","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"","order":6},{"id":"grand-march-first-dance","title":"Grand March & First Dance","category":"archival","duration":"","order":7},{"id":"speeches","title":"Speeches","category":"archival","duration":"","order":8},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"","order":10},{"id":"grand-raw","title":"Full Ceremony (Raw)","category":"archival","duration":"","order":11}];
+    const WORKER_BASE = 'https://video.flyiniris.com';
+    const SLUG = 'amanda-boris';
 
-    var WORKER_BASE = 'https://video.flyiniris.com';
-    var SLUG = 'amanda-boris';
-
-    // Featured videos
-    var teaserData = VIDEOS.find(function(v) { return v.id === 'teaser'; });
-    var highlightData = VIDEOS.find(function(v) { return v.id === 'highlight'; });
-
-    // Grid videos = everything except teaser and highlight
-    var collection = VIDEOS.filter(function(v) {
-      return v.id !== 'teaser' && v.id !== 'highlight';
-    }).sort(function(a, b) { return a.order - b.order; });
-
-    // Playlist: archival videos in chronological order
-    var PLAYLIST = [
-      { id: 'first-look-bridesmaids', title: 'First Look: Bridesmaids' },
-      { id: 'first-look-dad', title: 'First Look: Dad' },
-      { id: 'first-look-vows', title: 'First Look & Vows' },
-      { id: 'ketubah-signing', title: 'Ketubah Signing' },
-      { id: 'ceremony', title: 'Ceremony' },
-      { id: 'grand-march-first-dance', title: 'Grand March & First Dance' },
-      { id: 'speeches', title: 'Speeches' },
-      { id: 'parent-dances', title: 'Parent Dances' },
-      { id: 'gopro', title: 'GoPro' }
-    ];
+    const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
+    const collection = VIDEOS.filter(v => v !== featured).sort((a, b) => a.order - b.order);
 
     function hlsUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
@@ -1086,54 +804,37 @@
       });
     }
 
-    // --- Featured Players ---
+    // --- Featured Player ---
     (function initFeatured() {
-      function buildFeaturedCard(data, cardId, storageKey) {
-        var card = document.getElementById(cardId);
-        card.innerHTML =
-          '<div class="featured-player-wrap">' +
-          '  <media-player title="' + escapeAttr(data.title) + '" src="' + hlsUrl(data.id) + '" crossorigin playsinline storage="fi-' + storageKey + '">' +
-          '    <media-provider>' +
-          '      <media-poster src="' + thumbUrl(data.id) + '" alt="' + escapeAttr(data.title) + '"></media-poster>' +
-          '    </media-provider>' +
-          '    <media-video-layout></media-video-layout>' +
-          '  </media-player>' +
-          '  <div class="featured-overlay" style="background-image: url(\'' + thumbUrl(data.id) + '\')">' +
-          '    <span class="film-card-tag">' + escapeHtml(data.category) + '</span>' +
-          '    <div class="film-card-play">' +
-          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
-          '    </div>' +
-          '  </div>' +
-          '</div>' +
-          '<div class="featured-card-body">' +
-          '  <p class="featured-card-title">' + escapeHtml(data.title) + '</p>' +
-          '</div>';
+      const wrap = document.getElementById('featured-player-wrap');
+      const info = document.getElementById('featured-info');
 
-        var player = card.querySelector('media-player');
-        if (player) configureHls(player);
+      wrap.innerHTML =
+        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline storage="fi-featured">' +
+        '  <media-provider>' +
+        '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
+        '  </media-provider>' +
+        '  <media-video-layout></media-video-layout>' +
+        '</media-player>';
 
-        var overlay = card.querySelector('.featured-overlay');
-        overlay.addEventListener('click', function() {
-          overlay.classList.add('hidden');
-          player.play();
-        });
-      }
+      var player = wrap.querySelector('media-player');
+      if (player) configureHls(player);
 
-      buildFeaturedCard(teaserData, 'teaser-card', 'teaser');
-      buildFeaturedCard(highlightData, 'highlight-card', 'highlight');
+      info.innerHTML =
+        '<span class="featured-title">' + escapeHtml(featured.title) + '</span>' +
+        (featured.duration ? '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>' : '');
     })();
 
     // --- Collection Grid ---
     (function initCollection() {
       var grid = document.getElementById('collection-grid');
       var html = '';
-
-      // Individual film cards
       for (var i = 0; i < collection.length; i++) {
         var v = collection[i];
         html +=
           '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
           '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
+          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
           '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
@@ -1144,45 +845,15 @@
           '  </div>' +
           '</div>';
       }
-
-      // "Watch the Full Day" playlist card
-      html +=
-        '<div class="playlist-card reveal" id="playlist-card" tabindex="0" role="button" aria-label="Watch the Full Day — plays ' + PLAYLIST.length + ' films in chronological order">' +
-        '  <div class="playlist-card-icon">' +
-        '    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
-        '  </div>' +
-        '  <div class="playlist-card-info">' +
-        '    <p class="playlist-card-title">Watch the Full Day</p>' +
-        '    <p class="playlist-card-subtitle">' + PLAYLIST.length + ' films in chronological order &bull; ~1 hr 36 min</p>' +
-        '  </div>' +
-        '  <div class="playlist-card-arrow">' +
-        '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '      <polyline points="9 18 15 12 9 6"></polyline>' +
-        '    </svg>' +
-        '  </div>' +
-        '</div>';
-
       grid.innerHTML = html;
-      document.getElementById('collection-count').textContent = collection.length + ' Films';
     })();
 
     // --- Modal ---
     var modalOverlay = document.getElementById('modal-overlay');
     var modalPlayerWrap = document.getElementById('modal-player-wrap');
     var modalTitle = document.getElementById('modal-title');
-    var playlistBar = document.getElementById('playlist-bar');
-    var playlistBarProgress = document.getElementById('playlist-bar-progress');
-    var playlistBarCurrent = document.getElementById('playlist-bar-current');
-    var playlistBarNext = document.getElementById('playlist-bar-next');
-
-    var playlistMode = false;
-    var playlistIndex = 0;
 
     function openModal(videoId, title) {
-      playlistMode = false;
-      playlistBar.classList.remove('visible');
-      modalPlayerWrap.classList.remove('has-playlist');
-
       modalPlayerWrap.innerHTML =
         '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay storage="fi-modal">' +
         '  <media-provider>' +
@@ -1199,60 +870,12 @@
       document.body.style.overflow = 'hidden';
     }
 
-    function openPlaylist() {
-      playlistMode = true;
-      playlistIndex = 0;
-      modalPlayerWrap.classList.add('has-playlist');
-      playlistBar.classList.add('visible');
-      loadPlaylistVideo(0);
-      updatePlaylistBar();
-      modalOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function loadPlaylistVideo(index) {
-      var item = PLAYLIST[index];
-      modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(item.title) + '" src="' + hlsUrl(item.id) + '" crossorigin playsinline autoplay storage="fi-playlist">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(item.id) + '" alt="' + escapeAttr(item.title) + '"></media-poster>' +
-        '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
-        '</media-player>';
-
-      var player = modalPlayerWrap.querySelector('media-player');
-      if (player) {
-        configureHls(player);
-        player.addEventListener('ended', function() {
-          if (playlistMode && playlistIndex < PLAYLIST.length - 1) {
-            playlistIndex++;
-            loadPlaylistVideo(playlistIndex);
-            updatePlaylistBar();
-          }
-        });
-      }
-
-      modalTitle.textContent = item.title;
-    }
-
-    function updatePlaylistBar() {
-      playlistBarProgress.textContent = (playlistIndex + 1) + ' of ' + PLAYLIST.length;
-      playlistBarCurrent.textContent = PLAYLIST[playlistIndex].title;
-      if (playlistIndex < PLAYLIST.length - 1) {
-        playlistBarNext.textContent = 'Up Next: ' + PLAYLIST[playlistIndex + 1].title;
-      } else {
-        playlistBarNext.textContent = 'Last in playlist';
-      }
-    }
-
     function closeModal() {
       modalOverlay.classList.remove('active');
       document.body.style.overflow = '';
-      playlistMode = false;
+      // Give transition time to finish before clearing
       setTimeout(function() {
         modalPlayerWrap.innerHTML = '';
-        modalPlayerWrap.classList.remove('has-playlist');
-        playlistBar.classList.remove('visible');
         modalTitle.textContent = '';
       }, 300);
     }
@@ -1267,23 +890,9 @@
 
     // Card click delegation
     document.getElementById('collection-grid').addEventListener('click', function(e) {
-      // Check for playlist card
-      var playlistCard = e.target.closest('#playlist-card');
-      if (playlistCard) {
-        openPlaylist();
-        return;
-      }
-      // Regular film card
       var card = e.target.closest('.film-card');
       if (!card) return;
       openModal(card.dataset.videoId, card.dataset.videoTitle);
-    });
-
-    // Playlist card keyboard support
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'playlist-card') {
-        openPlaylist();
-      }
     });
 
     // --- Navbar Scroll ---
@@ -1314,6 +923,7 @@
     (function initReveal() {
       var reveals = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window)) {
+        // Fallback: show everything
         for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('revealed');
         return;
       }
@@ -1338,6 +948,7 @@
       var downloadList = document.getElementById('download-list');
       var authToken = null;
 
+      // Render download list items
       function renderDownloadList() {
         var html = '';
         for (var i = 0; i < VIDEOS.length; i++) {
@@ -1354,6 +965,7 @@
         downloadList.innerHTML = html;
       }
 
+      // Auth submit
       function submitPassword() {
         var password = passwordInput.value.trim();
         if (!password) return;
@@ -1393,12 +1005,14 @@
         if (e.key === 'Enter') submitPassword();
       });
 
+      // Individual downloads
       downloadList.addEventListener('click', function(e) {
         var btn = e.target.closest('.download-item-btn');
         if (!btn) return;
         triggerDownload(btn.dataset.videoId, btn);
       });
 
+      // Download All (sequential to avoid overwhelming memory)
       document.getElementById('download-all-btn').addEventListener('click', async function() {
         var allBtn = this;
         allBtn.disabled = true;
@@ -1432,6 +1046,7 @@
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } catch (e) {
+          // If token expired, reset to password gate
           linksWrap.classList.remove('visible');
           gate.style.display = '';
           errorMsg.textContent = 'Session expired. Please re-enter your password.';

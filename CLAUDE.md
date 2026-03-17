@@ -246,3 +246,12 @@ Import via CDN:
 - **Python 3** — for page generator script
 - **Node.js 18+** — for Cloudflare Worker development (wrangler)
 - **Wrangler CLI** — `npm install -g wrangler` for Worker deployment
+
+## SESSION LOGGING (Important!)
+After completing each significant task (new feature, bug fix, refactor, deployment), append a brief summary to the shared session log:
+
+```
+echo "## $(Get-Date -Format 'yyyy-MM-dd HH:mm') | flyiniris`n- [what you did]`n- Files: [key files changed]`n- Deployed: [yes/no]`n" >> C:\Users\flyin\.openclaw\workspace\memory\claude-session-log.md
+```
+
+Keep entries 2-4 lines. This lets Iris (the AI assistant) stay aware of changes across projects without interrupting your flow.

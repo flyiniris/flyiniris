@@ -56,6 +56,17 @@
   <link rel="dns-prefetch" href="https://media.flyiniris.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- HLS.js for inline film reveal (deferred) -->
+  <script>
+  window.__loadHls = function(cb) {
+    if (window.Hls) { if (cb) cb(); return; }
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js';
+    s.onload = function() { if (cb) cb(); };
+    document.head.appendChild(s);
+  };
+  </script>
+
   <!-- Vidstack Player (deferred - loads when films section is near viewport) -->
 
   <!-- JSON-LD Schema -->
@@ -1724,6 +1735,304 @@
       color: var(--accent);
       margin-bottom: 36px;
     }
+
+    /* ========== INLINE EXPERIENCE (post-submission) ========== */
+
+    @keyframes pulseGold {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .inline-experience {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .ix-loading {
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .ix-loading-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulseGold 1.4s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    .ix-loading-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .ix-availability {
+      padding: 32px 0 24px;
+      opacity: 0;
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .ix-availability-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+      color: var(--accent);
+      line-height: 1.3;
+    }
+
+    .ix-film-section {
+      padding: 24px 0 32px;
+      opacity: 0;
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    .ix-film-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.3rem, 3.5vw, 1.75rem);
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      line-height: 1.25;
+    }
+
+    .ix-video-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #161615;
+      margin-bottom: 16px;
+    }
+
+    .ix-video-aspect {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+
+    .ix-video-aspect video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .ix-sound-toggle {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      background: rgba(10, 10, 10, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 189, 29, 0.3);
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 100px;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+    }
+
+    .ix-sound-toggle:hover {
+      background: rgba(255, 189, 29, 0.15);
+      border-color: var(--accent);
+    }
+
+    .ix-sound-toggle svg {
+      width: 16px; height: 16px; fill: currentColor;
+    }
+
+    .ix-film-meta {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .ix-film-meta .ix-couple-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .ix-film-meta .ix-venue-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .ix-cta-builder {
+      margin: 24px auto 0;
+      opacity: 0;
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    }
+
+    .ix-cta-builder .btn {
+      display: inline-block;
+    }
+
+    .ix-divider {
+      width: 60px;
+      height: 1px;
+      margin: 40px auto;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* Quiz micro-teaser between steps */
+    .quiz-micro-teaser {
+      text-align: center;
+      padding: 24px 0;
+      opacity: 0;
+      animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .quiz-micro-teaser p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* Value-promise intro */
+    .quiz-value-intro {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .quiz-value-intro h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .quiz-value-list {
+      list-style: none;
+      max-width: 320px;
+      margin: 0 auto 24px;
+      text-align: left;
+    }
+
+    .quiz-value-list li {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quiz-value-list li .qv-check {
+      color: var(--accent);
+      font-size: 1rem;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+
+    .quiz-value-intro .quiz-value-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Inline builder wrapper */
+    .ix-builder-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 0 80px;
+      opacity: 0;
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .ix-builder-section h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.4rem, 3.5vw, 1.75rem);
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .ix-builder-section .ix-builder-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    /* Inline builder: same grid as experience.html builder */
+    .ix-builder-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .ix-builder-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ix-builder-section .ix-price-summary {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 12px 12px 0 0;
+        padding: 16px 20px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+
+      .ix-builder-section .ix-price-summary.collapsed .price-line,
+      .ix-builder-section .ix-price-summary.collapsed .price-divider,
+      .ix-builder-section .ix-price-summary.collapsed .price-discount,
+      .ix-builder-section .ix-price-summary.collapsed .price-summary-title {
+        display: none;
+      }
+
+      .ix-builder-section .ix-price-summary.collapsed .price-total {
+        padding-top: 0;
+      }
+
+      .ix-builder-section {
+        padding-bottom: 220px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2207,23 +2516,9 @@
         // Availability now served from Worker D1 database (no more Apps Script)
         var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
-        // --- SPLIT TEST ASSIGNMENT (cookie-based for organic, URL param for ads) ---
-        (function() {
-          var urlParams = new URLSearchParams(window.location.search);
-          var forcedVariant = urlParams.get('v');
-          if (forcedVariant === 'a' || forcedVariant === 'b') {
-            window.__fi_variant = forcedVariant;
-            window.__fi_variant_source = 'meta_ad';
-            return;
-          }
-          var match = document.cookie.match(/fi_variant=([ab])/);
-          var variant = match ? match[1] : (Math.random() < 0.5 ? 'a' : 'b');
-          if (!match) {
-            document.cookie = 'fi_variant=' + variant + ';max-age=' + (60*60*24*90) + ';path=/;SameSite=Lax';
-          }
-          window.__fi_variant = variant;
-          window.__fi_variant_source = 'organic_random';
-        })();
+        // --- UNIFIED EXPERIENCE (split test removed) ---
+        window.__fi_variant = 'unified';
+        window.__fi_variant_source = 'unified';
 
         // --- UTM / FBCLID CAPTURE ---
         // Capture tracking params from URL on page load and store in sessionStorage
@@ -2619,6 +2914,16 @@
         function render() {
           var html = '<div class="quiz-container">';
           if (state.mode === "intro") html += renderIntro();
+          else if (state.mode === "experience-loading") html += renderExperienceLoading();
+          else if (state.mode === "experience") html += renderExperience();
+          else if (state.mode === "experience-builder") {
+            html += renderExperience();
+            html += '</div>'; // close quiz-container early for full-width builder
+            html += renderInlineBuilder();
+            quizApp.innerHTML = html;
+            restoreFormValues();
+            return;
+          }
           else if (state.mode === "confirmation") html += renderConfirmation();
           else if (state.mode === "calcResults") html += renderCalcResults();
           else html += renderStep();
@@ -2646,16 +2951,17 @@
         }
 
         function renderIntro() {
-          return '<div class="quiz-intro">' +
+          return '<div class="quiz-value-intro">' +
             '<p class="quiz-intro-label">Flyin\u2019 Iris \u2726 Milwaukee, WI</p>' +
-            '<h2 class="quiz-intro-title">Let\u2019s see if we\u2019re<br><span>your kind of videographers.</span></h2>' +
-            '<p class="quiz-intro-desc">Answer a few quick ones and we\u2019ll check if your date is still open. We\u2019ll match films to your vibe, check our availability, and reach out personally \u2014 no spam, no sales pitch.</p>' +
-            '<div class="quiz-intro-chips">' +
-              '<div class="quiz-intro-chip"><span>\u23f1</span> <span>60 seconds</span></div>' +
-              '<div class="quiz-intro-chip"><span>\ud83c\udfac</span> <span>See films for your vibe</span></div>' +
-              '<div class="quiz-intro-chip"><span>\ud83d\udc9b</span> <span>Zero pressure</span></div>' +
-            '</div>' +
-            '<button class="quiz-start-btn" data-action="start-quiz">Let\u2019s Go \u2726</button>' +
+            '<h2>See what your wedding film could look like</h2>' +
+            '<ul class="quiz-value-list">' +
+              '<li><span class="qv-check">\u2714</span> Your personalized film match</li>' +
+              '<li><span class="qv-check">\u2714</span> Real-time availability check</li>' +
+              '<li><span class="qv-check">\u2714</span> Custom package builder</li>' +
+              '<li><span class="qv-check">\u2714</span> Live pricing, no surprises</li>' +
+            '</ul>' +
+            '<p class="quiz-value-sub">No sales pitch. No obligation. Just a fun preview of your day.</p>' +
+            '<button class="quiz-start-btn" data-action="start-quiz">Show Me My Film Match \u2192</button>' +
             '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel within 200 mi</p>' +
           '</div>';
         }
@@ -2790,7 +3096,7 @@
           h += '<div><label class="quiz-form-label">Anything else?</label>';
           h += '<textarea class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
           // Submit
-          h += '<button class="quiz-submit-btn" data-action="submit-contact">Send It \u2726</button>';
+          h += '<button class="quiz-submit-btn" data-action="submit-contact">Reveal My Film Match \u2192</button>';
           if (t && !(nOk && paOk && eOk && pOk && dOk && fOk && vOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
           h += '<p class="quiz-form-hint">No spam ever. Just a real conversation about your day.</p>';
           h += '<p style="font-size:0.5625rem;color:rgba(200,195,185,0.4);text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Terms & Conditions</a></p>';
@@ -3084,6 +3390,324 @@
           return h;
         }
 
+        // --- INLINE EXPERIENCE RENDERERS ---
+        function renderExperienceLoading() {
+          return '<div class="inline-experience">' +
+            '<div class="ix-loading">' +
+            '<div class="ix-loading-dot"></div>' +
+            '<p class="ix-loading-text">Finding your perfect match...</p>' +
+            '</div>' +
+            '</div>';
+        }
+
+        function renderExperience() {
+          var ci = state.contactInfo;
+          var firstName = ci && ci.name ? ci.name.split(' ')[0] : '';
+          var film = state.matchedFilm;
+          var avMsg = state.availabilityMessage;
+
+          var h = '<div class="inline-experience">';
+
+          // Availability message (big and bold, gold)
+          if (avMsg) {
+            h += '<div class="ix-availability">';
+            h += '<p class="ix-availability-text">' + esc(avMsg) + '</p>';
+            h += '</div>';
+          }
+
+          // Film reveal
+          if (film && film.video_url) {
+            h += '<div class="ix-film-section">';
+            h += '<h2 class="ix-film-heading">' + (firstName ? esc(firstName) + ', this is what your film could feel like' : 'This is what your film could feel like') + '</h2>';
+
+            // Video player
+            h += '<div class="ix-video-wrap">';
+            h += '<div class="ix-video-aspect">';
+            h += '<video id="ix-film-video" playsinline muted loop preload="metadata"' + (film.thumbnail_url ? ' poster="' + esc(film.thumbnail_url) + '"' : '') + '></video>';
+            h += '</div>';
+            h += '<button class="ix-sound-toggle" id="ix-sound-toggle" aria-label="Toggle sound">';
+            h += '<svg viewBox="0 0 24 24" id="ix-sound-off"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+            h += '<svg viewBox="0 0 24 24" id="ix-sound-on" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+            h += '<span id="ix-sound-label">Tap for Sound</span>';
+            h += '</button>';
+            h += '</div>';
+
+            // Film metadata
+            if (film.couple_name || film.venue) {
+              h += '<div class="ix-film-meta">';
+              if (film.couple_name) h += '<div class="ix-couple-name">' + esc(film.couple_name) + '</div>';
+              if (film.venue) h += '<div class="ix-venue-name">' + esc(film.venue) + '</div>';
+              h += '</div>';
+            }
+
+            h += '</div>'; // close ix-film-section
+          } else if (film && film.thumbnail_url) {
+            // Fallback: thumbnail only, no video
+            h += '<div class="ix-film-section">';
+            h += '<h2 class="ix-film-heading">' + (firstName ? esc(firstName) + ', this is what your film could feel like' : 'This is what your film could feel like') + '</h2>';
+            h += '<div class="ix-video-wrap"><img src="' + esc(film.thumbnail_url) + '" alt="Your matched film" style="width:100%;display:block;border-radius:8px"></div>';
+            if (film.couple_name || film.venue) {
+              h += '<div class="ix-film-meta">';
+              if (film.couple_name) h += '<div class="ix-couple-name">' + esc(film.couple_name) + '</div>';
+              if (film.venue) h += '<div class="ix-venue-name">' + esc(film.venue) + '</div>';
+              h += '</div>';
+            }
+            h += '</div>';
+          }
+
+          // CTA to builder
+          h += '<div class="ix-cta-builder">';
+          h += '<button class="btn" data-action="show-builder">Love it? Let\u2019s build your dream package \u2192</button>';
+          h += '</div>';
+
+          // Divider
+          h += '<div class="ix-divider"></div>';
+
+          // Discovery Call CTA (compact)
+          h += '<div style="text-align:center;margin-bottom:20px">';
+          h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.375rem;color:var(--text-primary);margin-bottom:6px">Ready to talk? Book a discovery call.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);line-height:1.6;max-width:380px;margin:0 auto 16px">15\u201320 minutes. No pitch. Just a real conversation about your day.</p>';
+          h += '<a href="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" target="_blank" rel="noopener" class="btn" style="font-size:0.875rem;padding:12px 28px">Book a Discovery Call</a>';
+          h += '</div>';
+
+          h += '</div>'; // close inline-experience
+
+          // Init HLS video after DOM renders
+          setTimeout(function() { initExperienceVideo(); }, 100);
+
+          // Track
+          if (typeof fbq === "function") { fbq("trackCustom", "FilmRevealed", { film: state.matchedFilmSlug || 'none' }); }
+          if (window.dataLayer) { dataLayer.push({ event: "film_revealed", film_slug: state.matchedFilmSlug || 'none' }); }
+
+          return h;
+        }
+
+        function initExperienceVideo() {
+          var video = document.getElementById('ix-film-video');
+          if (!video) return;
+          var film = state.matchedFilm;
+          if (!film || !film.video_url) return;
+
+          var videoUrl = film.video_url;
+
+          window.__loadHls(function() {
+            if (window.Hls && Hls.isSupported()) {
+              var hls = new Hls({ startLevel: -1 });
+              hls.loadSource(videoUrl);
+              hls.attachMedia(video);
+              hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play().catch(function() {});
+              });
+              hls.on(Hls.Events.ERROR, function(event, data) {
+                if (data.fatal) {
+                  // Fallback: try direct playback
+                  video.src = videoUrl;
+                  video.play().catch(function() {});
+                }
+              });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              // Safari native HLS
+              video.src = videoUrl;
+              video.play().catch(function() {});
+            }
+          });
+
+          // Sound toggle
+          var soundToggle = document.getElementById('ix-sound-toggle');
+          var soundLabel = document.getElementById('ix-sound-label');
+          var iconOff = document.getElementById('ix-sound-off');
+          var iconOn = document.getElementById('ix-sound-on');
+
+          if (soundToggle) {
+            soundToggle.addEventListener('click', function() {
+              video.muted = !video.muted;
+              if (video.muted) {
+                soundLabel.textContent = 'Tap for Sound';
+                iconOff.style.display = '';
+                iconOn.style.display = 'none';
+              } else {
+                soundLabel.textContent = 'Sound On';
+                iconOff.style.display = 'none';
+                iconOn.style.display = '';
+              }
+            });
+          }
+        }
+
+        function renderInlineBuilder() {
+          // This reuses the existing calculator data structures (PRICING from experience.html)
+          var PRICING_DATA = {
+            version: '2026-03-12',
+            team: {
+              base: 3000,
+              hours: { '6': 0, '8': 200, '10': 400, '12': 600 },
+              highlight: { '3-5 min': 0, '6-8 min': 250, '9-12 min': 450, '13-15 min': 650, '15-20 min': 900 },
+              addons: { teaser: 450, fomo: 500, storySession: 800 },
+              bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
+            },
+            ss: {
+              base: 5000,
+              hours: { '6': 0, '8': 300, '10': 500, '12': 700 },
+              highlight: { '3-5 min': 0, '6-8 min': 400, '9-12 min': 800, '13-20 min': 1200 },
+              addons: { teaser: 500, fomo: 1000, storySession: 1000 },
+              bundleDiscounts: [0, 0, 0.08, 0.12, 0.15],
+            },
+          };
+          var ADDON_IMGS = {
+            teaser: 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/emily-bobby/thumbs/thumb.jpg',
+            fomo: 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/taylor-kane/thumbs/thumb.jpg',
+            storySession: 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/kate-thomas/thumbs/thumb.jpg'
+          };
+
+          // Builder state (defaults)
+          if (!state.builderState) {
+            state.builderState = {
+              tier: 'team',
+              hours: '6',
+              highlight: '3-5 min',
+              addons: { teaser: false, fomo: false, storySession: false }
+            };
+          }
+          var bs = state.builderState;
+          var tier = PRICING_DATA[bs.tier];
+
+          function bCalcTotal() {
+            var total = tier.base;
+            total += tier.hours[bs.hours] || 0;
+            total += tier.highlight[bs.highlight] || 0;
+            var addonTotal = 0, addonCount = 0;
+            if (bs.addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
+            if (bs.addons.fomo) { addonTotal += tier.addons.fomo; addonCount++; }
+            if (bs.addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
+            total += addonTotal;
+            var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
+            var discount = Math.round(total * discountPct);
+            if (bs.tier === 'team' && discount > 0) {
+              var floor = tier.base + (tier.hours[bs.hours] || 0) + (tier.highlight[bs.highlight] || 0);
+              if (total - discount < floor) discount = total - floor;
+            }
+            return { total: total - discount, discount: discount, discountPct: discountPct, subtotal: total };
+          }
+
+          var calc = bCalcTotal();
+          var h = '<div class="ix-builder-section">';
+          h += '<h3>Build Your Dream Package</h3>';
+          h += '<p class="ix-builder-sub">Adjust anything. See your price update live.</p>';
+          h += '<div class="ix-builder-grid">';
+
+          // Controls column
+          h += '<div class="builder-controls">';
+
+          // Tier selector
+          h += '<div class="builder-section">';
+          h += '<div class="builder-section-title">Experience</div>';
+          h += '<div class="b-tier-cards">';
+          h += '<div class="b-tier-card' + (bs.tier === 'team' ? ' selected' : '') + '" data-action="b-tier" data-value="team"><div class="b-tier-name">Team</div><div class="b-tier-sub">Starting at $3,000</div></div>';
+          h += '<div class="b-tier-card' + (bs.tier === 'ss' ? ' selected' : '') + '" data-action="b-tier" data-value="ss"><div class="b-tier-name">Sean & Sierra</div><div class="b-tier-sub">Starting at $5,000</div></div>';
+          h += '</div></div>';
+
+          // Hours
+          h += '<div class="builder-section">';
+          h += '<div class="builder-section-title">Coverage Hours</div>';
+          h += '<div class="b-hours-options">';
+          ['6','8','10','12'].forEach(function(hr) {
+            var price = tier.hours[hr];
+            var priceLabel = price === 0 ? 'Included' : '+$' + price.toLocaleString();
+            h += '<div class="b-hour-btn' + (bs.hours === hr ? ' selected' : '') + '" data-action="b-hours" data-value="' + hr + '">' + hr + ' hrs<div class="b-hour-price">' + priceLabel + '</div></div>';
+          });
+          h += '</div></div>';
+
+          // Highlight
+          var hlOpts = bs.tier === 'ss'
+            ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
+            : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
+          h += '<div class="builder-section">';
+          h += '<div class="builder-section-title">Highlight Length</div>';
+          h += '<div class="b-highlight-options">';
+          hlOpts.forEach(function(opt) {
+            var price = tier.highlight[opt];
+            var priceLabel = price === 0 ? 'Included' : '+$' + price.toLocaleString();
+            h += '<div class="b-hl-btn' + (bs.highlight === opt ? ' selected' : '') + '" data-action="b-hl" data-value="' + opt + '">' + opt + ' <span class="b-hl-price">' + priceLabel + '</span></div>';
+          });
+          h += '</div></div>';
+
+          // Add-ons
+          h += '<div class="builder-section">';
+          h += '<div class="builder-section-title">Add-ons</div>';
+          h += '<div class="b-addon-toggles">';
+          var addonList = [
+            { key: 'teaser', name: '60-Second Teaser', price: tier.addons.teaser },
+            { key: 'fomo', name: 'FOMO Documentary', price: tier.addons.fomo },
+            { key: 'storySession', name: 'Story Session', price: tier.addons.storySession }
+          ];
+          addonList.forEach(function(a) {
+            var sel = bs.addons[a.key] ? ' selected' : '';
+            h += '<div class="b-addon-row' + sel + '" data-action="b-addon" data-value="' + a.key + '">';
+            h += '<div class="b-addon-left"><img class="b-addon-thumb" src="' + ADDON_IMGS[a.key] + '" alt="' + a.name + '"><span class="b-addon-name">' + a.name + '</span></div>';
+            h += '<span class="b-addon-price">+$' + a.price.toLocaleString() + '</span>';
+            h += '<div class="b-addon-check"></div>';
+            h += '</div>';
+          });
+          h += '</div></div>';
+
+          h += '</div>'; // close builder-controls
+
+          // Price summary column
+          h += '<div class="price-summary ix-price-summary collapsed">';
+          h += '<div class="price-summary-title">Your Package</div>';
+          h += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sean & Sierra' : 'Team') + ' Package</span><span class="price-line-value">$' + tier.base.toLocaleString() + '</span></div>';
+          var hoursPrice = tier.hours[bs.hours] || 0;
+          if (hoursPrice > 0) {
+            h += '<div class="price-line"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">+$' + hoursPrice.toLocaleString() + '</span></div>';
+          } else {
+            h += '<div class="price-line included"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">Included</span></div>';
+          }
+          var hlPrice = tier.highlight[bs.highlight] || 0;
+          if (hlPrice > 0) {
+            h += '<div class="price-line"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">+$' + hlPrice.toLocaleString() + '</span></div>';
+          } else {
+            h += '<div class="price-line included"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
+          }
+          if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+$' + tier.addons.teaser.toLocaleString() + '</span></div>';
+          if (bs.addons.fomo) h += '<div class="price-line"><span>FOMO Documentary</span><span class="price-line-value">+$' + tier.addons.fomo.toLocaleString() + '</span></div>';
+          if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+$' + tier.addons.storySession.toLocaleString() + '</span></div>';
+          h += '<div class="price-divider"></div>';
+          if (calc.discount > 0) {
+            h += '<div class="price-discount"><span>Bundle Discount (' + Math.round(calc.discountPct * 100) + '%)</span><span>-$' + calc.discount.toLocaleString() + '</span></div>';
+          }
+          h += '<div class="price-total" data-action="toggle-price-summary"><span class="price-total-label">Total</span><span class="price-total-value">$' + calc.total.toLocaleString() + '</span></div>';
+
+          // Save + Book CTAs
+          h += '<a href="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" target="_blank" rel="noopener" class="price-cta" style="text-decoration:none;text-align:center;display:block">Book a Discovery Call</a>';
+
+          // Save package button
+          h += '<button class="exit-link" data-action="save-inline-package">Save My Package</button>';
+
+          // Availability reminder
+          if (state.availabilityMessage) {
+            h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.75rem;color:var(--accent);text-align:center;margin-top:12px;font-style:italic">' + esc(state.availabilityMessage) + '</p>';
+          }
+
+          h += '</div>'; // close price-summary
+          h += '</div>'; // close ix-builder-grid
+          h += '</div>'; // close ix-builder-section
+
+          // Bind mobile toggle after render
+          setTimeout(function() {
+            var summary = document.querySelector('.ix-price-summary');
+            var totalRow = summary ? summary.querySelector('.price-total') : null;
+            if (totalRow && window.innerWidth <= 768) {
+              totalRow.style.cursor = 'pointer';
+              totalRow.addEventListener('click', function(e) {
+                if (e.target.closest('.price-cta') || e.target.closest('.exit-link')) return;
+                summary.classList.toggle('collapsed');
+              });
+            }
+          }, 100);
+
+          return h;
+        }
+
         // --- EVENT HANDLING ---
         function handleSelect(label) {
           var isCalc = state.mode === "calculator";
@@ -3280,7 +3904,23 @@
             var cur = answers[step.id];
             var canProceed = step.type === "multi" ? (cur && cur.length > 0) : !!cur;
             if (!canProceed) return;
-            saveFormFields(); goNext(); render(); scrollToQuiz(); return;
+            saveFormFields();
+
+            // Show micro-teaser between specific quiz steps
+            var teaserMsg = null;
+            if (!isCalc && step.id === 'vibe') {
+              teaserMsg = 'We already have a film in mind for you...';
+            } else if (!isCalc && step.id === 'budget') {
+              teaserMsg = 'Checking availability...';
+            }
+
+            if (teaserMsg) {
+              quizApp.innerHTML = '<div class="quiz-container"><div class="quiz-micro-teaser"><p>' + teaserMsg + '</p></div></div>';
+              setTimeout(function() { goNext(); render(); scrollToQuiz(); }, 1500);
+            } else {
+              goNext(); render(); scrollToQuiz();
+            }
+            return;
           }
           if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); return; }
           if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
@@ -3322,9 +3962,14 @@
               budget: state.quizAnswers.budget || '',
               found: state.contactForm.found || '',
               referralName: state.referralName || '',
-              variant: window.__fi_variant || 'a',
-              variant_source: window.__fi_variant_source || 'organic_random'
+              variant: 'unified',
+              variant_source: 'unified'
             }, tracking);
+            // Show loading state immediately
+            state.mode = "experience-loading";
+            render();
+            scrollToQuiz();
+
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -3332,31 +3977,118 @@
             }).then(function(resp) {
               return resp.json();
             }).then(function(result) {
-              if (result.session_token && result.matched_film_slug) {
-                var fn = encodeURIComponent(result.contact_name || nameParts[0] || '');
-                var film = encodeURIComponent(result.matched_film_slug || '');
-                var token = encodeURIComponent(result.session_token || '');
-                if (result.variant === 'b') {
-                  window.location.href = '/experience?fn=' + fn + '&film=' + film + '&token=' + token;
-                } else {
-                  window.location.href = '/thanks?fn=' + fn + '&film=' + film + '&token=' + token;
-                }
-                return;
-              }
-              // Fallback: no session token from Worker, show inline confirmation
-              state.mode = "confirmation"; render(); scrollToQuiz();
+              // Store API response data for inline experience
+              state.apiResult = result || {};
+              state.sessionToken = result.session_token || '';
+              state.matchedFilm = result.matched_film || null;
+              state.availabilityMessage = result.availability_message || null;
+              state.contactName = result.contact_name || nameParts[0] || '';
+              state.matchedFilmSlug = result.matched_film_slug || '';
+
+              // Show inline experience (film reveal + builder)
+              state.mode = "experience";
+              render();
+              scrollToQuiz();
             }).catch(function(err) {
               console.log('Inquiry submission error:', err);
-              // Fallback on error: show inline confirmation
-              state.mode = "confirmation"; render(); scrollToQuiz();
+              // On error, still show experience with whatever we have
+              state.apiResult = {};
+              state.sessionToken = '';
+              state.matchedFilm = null;
+              state.availabilityMessage = null;
+              state.contactName = nameParts[0] || '';
+              state.matchedFilmSlug = '';
+              state.mode = "experience";
+              render();
+              scrollToQuiz();
             });
             return;
           }
           if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }
+          if (action === "show-builder") {
+            state.mode = "experience-builder";
+            render();
+            // Scroll to builder section
+            setTimeout(function() {
+              var builderEl = document.querySelector('.ix-builder-section');
+              if (builderEl) {
+                var top = builderEl.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - 80;
+                window.scrollTo({ top: top, behavior: 'smooth' });
+              }
+            }, 100);
+            if (window.dataLayer) { dataLayer.push({ event: 'builder_opened' }); }
+            return;
+          }
+          if (action === "b-tier") {
+            if (!state.builderState) state.builderState = { tier: 'team', hours: '6', highlight: '3-5 min', addons: { teaser: false, fomo: false, storySession: false } };
+            state.builderState.tier = btn.getAttribute('data-value');
+            // Reset highlight if invalid for new tier
+            var validHl = state.builderState.tier === 'ss'
+              ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
+              : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
+            if (validHl.indexOf(state.builderState.highlight) === -1) state.builderState.highlight = '3-5 min';
+            render();
+            return;
+          }
+          if (action === "b-hours") {
+            state.builderState.hours = btn.getAttribute('data-value');
+            render();
+            return;
+          }
+          if (action === "b-hl") {
+            state.builderState.highlight = btn.getAttribute('data-value');
+            render();
+            return;
+          }
+          if (action === "b-addon") {
+            var addonKey = btn.getAttribute('data-value');
+            state.builderState.addons[addonKey] = !state.builderState.addons[addonKey];
+            render();
+            return;
+          }
+          if (action === "toggle-price-summary") {
+            var ps = document.querySelector('.ix-price-summary');
+            if (ps && window.innerWidth <= 768) ps.classList.toggle('collapsed');
+            return;
+          }
+          if (action === "save-inline-package") {
+            if (state.sessionToken) {
+              var bs = state.builderState || {};
+              fetch(WORKER_URL + '/api/package/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  session_token: state.sessionToken,
+                  config: {
+                    tier: bs.tier || 'team',
+                    hours: bs.hours || '6',
+                    highlight: bs.highlight || '3-5 min',
+                    teaser: bs.addons ? bs.addons.teaser : false,
+                    fomo: bs.addons ? bs.addons.fomo : false,
+                    storySession: bs.addons ? bs.addons.storySession : false
+                  },
+                  sms_transactional_consent: state.contactInfo ? state.contactInfo.smsNonMarketing : false,
+                  sms_marketing_consent: state.contactInfo ? state.contactInfo.smsMarketing : false,
+                })
+              }).then(function() {
+                btn.textContent = 'Saved!';
+                btn.style.color = 'var(--accent)';
+                setTimeout(function() { btn.textContent = 'Save My Package'; btn.style.color = ''; }, 2000);
+              }).catch(function() {
+                btn.textContent = 'Save My Package';
+              });
+            }
+            btn.textContent = 'Saving...';
+            if (window.dataLayer) { dataLayer.push({ event: 'package_saved' }); }
+            return;
+          }
           if (action === "start-over") {
             state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
-            state.contactFormTried = false; state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
+            state.contactFormTried = false; state.builderState = null; state.apiResult = null;
+            state.sessionToken = ''; state.matchedFilm = null; state.availabilityMessage = null;
+            state.contactName = ''; state.matchedFilmSlug = '';
+            state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
             render(); scrollToQuiz(); return;
           }
         });

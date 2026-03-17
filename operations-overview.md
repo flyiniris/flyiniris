@@ -149,8 +149,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 - **MX records:** All 5 Google mail servers configured in Cloudflare
 - **SPF:** Configured ✅
 - **DMARC:** `v=DMARC1; p=quarantine; rua=mailto:sean@flyiniris.com` ✅
-- **DKIM:** ⚠️ NOT YET SET UP — emails land in junk until this is done
-  - Setup: admin.google.com → Apps → Gmail → Authenticate email → copy CNAME → add to Cloudflare DNS
+- **DKIM:** ✅ Authenticated
 - **Old Gmail:** `flyin.iris.mp@gmail.com` — still active, shared business email (DO NOT DELETE)
 - **Email migration:** Not yet done — need to move important threads from old Gmail to new inboxes
 
@@ -223,7 +222,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 ## THINGS NOT YET BUILT (Prioritized)
 
 ### High Priority
-1. **DKIM setup** — emails are landing in junk without it. 10-minute fix at admin.google.com
+1. ~~**DKIM setup**~~ — DONE: All 3 email auth pillars live (SPF + DKIM + DMARC)
 2. **Individual /films/{slug} pages** — currently only Amanda & Boris template exists. Each couple needs their own delivery page.
 3. **Connect /package to Worker** — the proposal-sent sequence should link to personalized /package URL
 4. **Sitemap update** — add /films, /yours, /package to sitemap.xml
