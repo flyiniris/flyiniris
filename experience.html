@@ -196,15 +196,40 @@
       margin-bottom: 32px;
     }
 
+    /* ========== ACT 0: AVAILABILITY HERO ========== */
+    .act-availability-hero {
+      padding: 80px 24px 20px;
+      text-align: center;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    .avail-hero-message {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      color: var(--accent);
+      line-height: 1.3;
+      max-width: 600px;
+      margin: 0 auto 12px;
+    }
+
+    .avail-hero-spots {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: var(--text-secondary);
+      letter-spacing: 0.03em;
+    }
+
     /* ========== ACT 1: RECOGNITION ========== */
     .act-recognition {
-      min-height: 80vh;
+      min-height: 60vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 80px 24px 60px;
+      padding: 40px 24px 60px;
     }
 
     .recognition-name {
@@ -695,8 +720,9 @@
 
     .b-addon-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
+      gap: 12px;
       background: var(--bg-elevated);
       border: 2px solid var(--border);
       border-radius: 8px;
@@ -715,8 +741,10 @@
 
     .b-addon-left {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
+      flex: 1;
+      min-width: 0;
     }
 
     .b-addon-thumb {
@@ -885,6 +913,261 @@
 
     .save-package-btn:hover { color: var(--text-secondary); }
 
+    /* ========== DREAM CALCULATOR ========== */
+    .dream-calc-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .dream-calc-progress {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .dream-calc-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .dream-calc-step {
+      animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dream-calc-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .dream-calc-subtext {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .dream-calc-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .dream-calc-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      min-height: 44px;
+      text-align: left;
+      width: 100%;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .dream-calc-option:hover {
+      border-color: rgba(255, 189, 29, 0.4);
+    }
+
+    .dream-calc-option.selected {
+      border-color: var(--accent);
+      background: rgba(255, 189, 29, 0.05);
+    }
+
+    .dream-calc-option-emoji {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .dream-calc-option-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dream-calc-option-label {
+      font-weight: 500;
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .dream-calc-option-desc {
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      display: block;
+      line-height: 1.5;
+    }
+
+    .dream-calc-option-check {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .dream-calc-value-msg {
+      background: rgba(255, 189, 29, 0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .dream-calc-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+    }
+
+    .dream-calc-nav-back {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      min-height: 44px;
+      transition: color 0.25s ease;
+    }
+
+    .dream-calc-nav-back:hover {
+      color: var(--text-primary);
+    }
+
+    .dream-calc-nav-back.hidden {
+      visibility: hidden;
+    }
+
+    .dream-calc-nav-step {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .dream-calc-nav-next {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.25s ease;
+    }
+
+    .dream-calc-nav-next:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .dream-calc-nav-next.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .dream-calc-complete {
+      text-align: center;
+      padding: 40px 0;
+      animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dream-calc-complete h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.75rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .dream-calc-complete p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .dream-calc-reveal-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 16px 40px;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.25s ease;
+    }
+
+    .dream-calc-reveal-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    /* ========== ADDON DESCRIPTIONS ========== */
+    .b-addon-desc {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .b-addon-info {
+      display: flex;
+      flex-direction: column;
+    }
+
     /* ========== ACT 7: SHARE ========== */
     .act-share {
       padding: 40px 24px 60px;
@@ -1048,6 +1331,13 @@
   <!-- Main Content -->
   <div class="experience-content" id="experience-content">
 
+    <!-- Act 0: Availability Hero -->
+    <section class="act-availability-hero" id="act-availability-hero" style="display:none;">
+      <h1 class="avail-hero-message" id="avail-hero-message"></h1>
+      <p class="avail-hero-spots" id="avail-hero-spots"></p>
+      <p class="avail-hero-preview" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);margin-top:24px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6">We matched you with a film based on your style and put together a personal preview of your day. Scroll down to see it.</p>
+    </section>
+
     <!-- Act 1: Recognition -->
     <section class="act-recognition" id="act-recognition">
       <h1 class="recognition-name" id="recognition-name"></h1>
@@ -1058,7 +1348,7 @@
     <section class="act-film reveal-section" id="act-film">
       <div class="video-container reveal-section" id="video-container">
         <div class="video-aspect">
-          <video id="film-video" playsinline muted loop preload="metadata"></video>
+          <video id="film-video" controls playsinline muted loop preload="metadata"></video>
         </div>
         <div class="sound-overlay" id="sound-overlay">
           <div class="sound-overlay-inner">
@@ -1100,15 +1390,21 @@
       <p class="subtext">15 minutes. No pitch. Just a real conversation.</p>
     </section>
 
-    <!-- Act 6: Package Builder -->
+    <!-- Act 6: Dream Calculator + Package Builder -->
     <section class="act-builder reveal-section" id="act-builder">
+      <!-- Step 1: Dream Calculator -->
       <div class="builder-toggle">
-        <button class="builder-toggle-btn" id="builder-toggle-btn">
-          See what your package could look like
+        <button class="builder-toggle-btn" id="dream-calc-toggle-btn">
+          Build Your Dream Package
           <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
         </button>
       </div>
-      <div class="builder-body" id="builder-body">
+      <div class="builder-body" id="dream-calc-body">
+        <div class="dream-calc-container" id="dream-calc-container"></div>
+      </div>
+
+      <!-- Step 2: Priced Builder (hidden until calculator done) -->
+      <div class="builder-body" id="builder-body" style="display:none;">
         <div class="builder-grid">
           <div class="builder-controls" id="builder-controls"></div>
           <div class="price-summary collapsed" id="price-summary"></div>
@@ -1185,7 +1481,7 @@
     var SEAN_NOTES = {
       'taylor-kane': "Taylor and Kane's day at the Green Bay Country Club was one of those weddings where everything just clicked. Taylor was so calm all morning, just smiling, taking it all in. Then Kane saw her for the first time and completely fell apart. The groomsmen were trying so hard to hold it together and one by one they all lost it. There's a moment during their first dance where Taylor whispers something to Kane and he just laughs. I still don't know what she said, but that's the kind of moment you can't plan. You just have to be ready for it.",
       'taylor-austin': "Taylor and Austin at The Fields Reserve might be the most emotionally honest wedding we've ever filmed. The barn, the open fields, everything about that venue felt like them. Taylor wrote her own vows and halfway through, Austin had to look up at the sky just to keep it together. What I remember most is this quiet moment right after the ceremony when they walked off together, just the two of them for about thirty seconds, and Taylor leaned into him and neither of them said a word. The wind picked up and it was completely silent. Those are the moments that make this job feel like something bigger than a job.",
-      'olivia-austin': "Olivia and Austin's day started at Oakbrook Church with this incredible light pouring through the windows. Olivia had this way of making everyone around her feel calm, even though you could tell she was bursting inside. During the ceremony, Austin's voice cracked on his very first line and the whole room felt it. But my favorite part of their day was actually during the reception. Olivia's dad gave this toast that started funny, and then hit this line about watching his daughter become someone's whole world. The room went absolutely still. That's what we try to capture for every couple. The real stuff that stays with you."
+      'olivia-austin': "Olivia and Austin's day started at the church with this incredible light pouring through the windows. Olivia had this way of making everyone around her feel calm, even though you could tell she was bursting inside. During the ceremony, Austin's voice cracked on his very first line and the whole room felt it. But my favorite part of their day was actually during the reception. Olivia's dad gave this toast that started funny, and then hit this line about watching his daughter become someone's whole world. The room went absolutely still. That's what we try to capture for every couple. The real stuff that stays with you."
     };
 
     // ========== TESTIMONIALS ==========
@@ -1210,6 +1506,76 @@
       hours: '6',
       highlight: '3-5 min',
       addons: { teaser: false, fomo: false, storySession: false }
+    };
+
+    var dreamCalcState = {
+      step: 0,
+      answers: {},
+      completed: false
+    };
+
+    function getDreamCalcSteps() {
+      var ca = dreamCalcState.answers;
+      var isTeam = ca.quality === "We want an incredible wedding film";
+      return [
+        { id:"hook", question:"If you could relive one moment from your wedding day forever, what would it be?", subtext:"Not a trick question. This is how we think about wedding films.", options:[
+          {emoji:"\ud83d\ude2d",label:"The first time we see each other",desc:"That look. That reaction. The one you can't fake."},
+          {emoji:"\ud83d\udc8d",label:"The vows, every single word",desc:"The promises nobody else will ever hear the same way"},
+          {emoji:"\ud83c\udfa4",label:"The speeches that wreck us",desc:"Dad's voice cracking. The best friend who nails it."},
+          {emoji:"\ud83d\udc83",label:"The moment the dance floor erupts",desc:"When the song hits and everyone just GOES"},
+          {emoji:"\ud83c\udf05",label:"The quiet moments nobody else saw",desc:"A stolen glance, a whisper, a hand squeeze"},
+          {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
+        ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows, every single word":"Vows are the one thing you'll want to hear again and again.","The speeches that wreck us":"In 10 years, you'll want to hear your dad's voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious, even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
+        { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single biggest factor in your investment, and there's no wrong answer.", options:[
+          {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision, then Sierra edits your footage into a cinematic story with her signature style."},
+          {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sierra is in the room feeling your energy, hearing the vows, watching your family cry. When she edits, she's not guessing. She was there. That's the difference."}
+        ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra personally edits every frame, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra's there in person, she feels every moment. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
+        isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", options:[
+          {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances, our most popular starting point"},
+          {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
+          {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage. Pre-ceremony through the party"},
+          {emoji:"\ud83c\udf1f",label:"Up to 12 hours",desc:"The whole thing. First moment to last song"}
+        ], valueMessage:{"6 hours":"Great starting point. Ceremony, toasts, first dances.","8 hours":"Getting ready through the reception highlights.","10 hours":"The full story. Pre-ceremony through the party.","Up to 12 hours":"Every chapter, first moment to last song."}}
+        : { id:"hours", question:"How long is your wedding day?", subtext:"Sean & Sierra will be there for every moment you choose.", options:[
+          {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day. Ceremony through first dances"},
+          {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day. Getting ready through reception"},
+          {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day. We'll be there for everything"},
+          {emoji:"\ud83c\udf1f",label:"12 hours",desc:"Epic day. First moment to last song"}
+        ], valueMessage:{"6 hours":"Intimate and intentional.","8 hours":"Classic day. Getting ready through reception.","10 hours":"Full day. We'll be there for everything.","12 hours":"Epic day. First moment to last song."}},
+        isTeam ? { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every package. The cinematic, music-driven film you'll share and rewatch forever.", options:[
+          {emoji:"\u26a1",label:"3-5 min",desc:"Punchy, powerful, perfect for sharing. Included in your package"},
+          {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
+          {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film. The full emotional arc"},
+          {emoji:"\ud83d\udcd6",label:"13-15 min",desc:"Extended story. Every chapter, nothing rushed"},
+          {emoji:"\ud83c\udfc6",label:"15-20 min",desc:"The ultimate. Every detail, nothing left out"}
+        ], valueMessage:{"3-5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story. Every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}}
+        : { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every S&S package. The cinematic, music-driven film you'll share and rewatch forever.", options:[
+          {emoji:"\u26a1",label:"3-5 min",desc:"Punchy, powerful, perfect for sharing. Included in your package"},
+          {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
+          {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film. The full emotional arc"},
+          {emoji:"\ud83d\udcd6",label:"13-20 min",desc:"The ultimate. Every chapter, nothing left out"}
+        ], valueMessage:{"3-5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}},
+        { id:"teaser", question:"Do you want a social media teaser?", subtext:"A cinematic sneak peek to share while your full film is being edited. Something to post while everyone's still talking about your wedding.", options:[
+          {emoji:"\ud83d\udd25",label:"Yes, give me something to post!",desc:"A cinematic preview to share while the full film is in the works"},
+          {emoji:"\ud83d\ude45",label:"No, I'll wait for the full film",desc:"All focus goes into the main film"}
+        ], valueMessage:{"Yes, give me something to post!":"Post a cinematic preview while everyone's still talking about the wedding. Instant hype.","No, I'll wait for the full film":"Everything goes into making your main film incredible."}},
+        { id:"extra", question:"Do you want to relive every major moment from your wedding day?", subtext:"The FOMO Documentary Edit is your entire wedding day in one cinematic, continuous film. Every major moment in full: ceremony, vows, first look, grand entrance, toasts, speeches, first dances, parent dances, and everything in between.", options:[
+          {emoji:"\ud83c\udfac",label:"Yes, I never want to miss a thing",desc:"Your full day preserved as one beautiful, continuous film"},
+          {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds interesting. I'd want to talk about it first"},
+          {emoji:"\u270b",label:"Not right now",desc:"All focus goes into making my highlight film incredible"}
+        ], valueMessage:{"Yes, I never want to miss a thing":"Smart. This is the one thing couples tell us they're most grateful they added.","Tell me more on the call":"We'd love to walk you through it. It's our most popular add-on.","Not right now":"Everything goes into making your highlight film incredible."}},
+        { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"An intimate pre-wedding session. We meet up with you both, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film.", options:[
+          {emoji:"\ud83c\udfac",label:"Yes, make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
+          {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds amazing but I'd want to talk about it first"},
+          {emoji:"\ud83d\udc92",label:"No, just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
+        ], valueMessage:{"Yes, make it a Love Story":"This is the difference between a wedding video and a Love Story.","No, just the wedding day":"The wedding day gives us plenty to work with.","Tell me more on the call":"We'd love to walk you through it. The Love Story Session is one of our favorite things."}}
+      ];
+    }
+
+    var ADDON_DESCRIPTIONS = {
+      teaser: "A cinematic sneak peek to share on social while your full film is being edited",
+      fomo: "Your entire wedding day in one continuous, cinematic film. Every major moment in full: ceremony, vows, toasts, speeches, dances, and everything in between",
+      storySession: "An intimate pre-wedding session with on-camera interviews woven into your final film. Takes your film from 'great wedding video' to 'this is our actual love story'"
     };
 
     var sessionData = null;
@@ -1269,6 +1635,21 @@
     // ========== RENDER THE EXPERIENCE ==========
     function renderExperience() {
       var d = sessionData;
+
+      // Act 0: Availability Hero
+      var availHero = document.getElementById('act-availability-hero');
+      if (d.availabilityMessage) {
+        document.getElementById('avail-hero-message').textContent = d.availabilityMessage;
+        var spotsText = '';
+        if (d.spotsLeft && d.season) {
+          spotsText = d.spotsLeft + ' spots left for ' + d.season;
+        }
+        document.getElementById('avail-hero-spots').textContent = spotsText;
+        availHero.style.display = '';
+      } else if (d.available) {
+        document.getElementById('avail-hero-message').textContent = "We'd love to film your wedding.";
+        availHero.style.display = '';
+      }
 
       // Act 1: Recognition
       var nameEl = document.getElementById('recognition-name');
@@ -1402,25 +1783,184 @@
       sections.forEach(function(s) { observer.observe(s); });
     }
 
-    // ========== BUILDER ==========
-    function initBuilder() {
-      var toggleBtn = document.getElementById('builder-toggle-btn');
-      var body = document.getElementById('builder-body');
+    // ========== DREAM CALCULATOR ==========
+    function initDreamCalc() {
+      var toggleBtn = document.getElementById('dream-calc-toggle-btn');
+      var calcBody = document.getElementById('dream-calc-body');
 
       toggleBtn.addEventListener('click', function() {
-        var isOpen = body.classList.contains('visible');
+        var isOpen = calcBody.classList.contains('visible');
         if (isOpen) {
-          body.classList.remove('visible');
+          calcBody.classList.remove('visible');
           toggleBtn.classList.remove('open');
-          // Hide mobile price summary if open
-          var ps = document.getElementById('price-summary');
-          if (ps) ps.style.display = '';
         } else {
-          body.classList.add('visible');
+          calcBody.classList.add('visible');
           toggleBtn.classList.add('open');
-          renderBuilder();
+          if (!dreamCalcState.completed) {
+            renderDreamCalcStep();
+          }
         }
       });
+    }
+
+    function renderDreamCalcStep() {
+      var container = document.getElementById('dream-calc-container');
+      var steps = getDreamCalcSteps();
+      var stepIdx = dreamCalcState.step;
+      var step = steps[stepIdx];
+      var cur = dreamCalcState.answers[step.id];
+
+      var h = '';
+      h += '<div class="dream-calc-progress"><div class="dream-calc-progress-fill" style="width:' + (((stepIdx + 1) / steps.length) * 100) + '%"></div></div>';
+      h += '<div class="dream-calc-step">';
+      h += '<h3 class="dream-calc-question">' + escHtml(step.question) + '</h3>';
+      h += '<p class="dream-calc-subtext">' + escHtml(step.subtext) + '</p>';
+      h += '<div class="dream-calc-options">';
+
+      for (var i = 0; i < step.options.length; i++) {
+        var opt = step.options[i];
+        var isSel = cur === opt.label;
+        h += '<button class="dream-calc-option' + (isSel ? ' selected' : '') + '" data-dcvalue="' + escHtml(opt.label) + '">';
+        h += '<span class="dream-calc-option-emoji">' + opt.emoji + '</span>';
+        h += '<div class="dream-calc-option-info">';
+        h += '<span class="dream-calc-option-label">' + escHtml(opt.label) + '</span>';
+        if (opt.desc) h += '<span class="dream-calc-option-desc">' + escHtml(opt.desc) + '</span>';
+        h += '</div>';
+        if (isSel) h += '<div class="dream-calc-option-check">\u2713</div>';
+        h += '</button>';
+      }
+      h += '</div>';
+
+      // Value message
+      if (cur && step.valueMessage && step.valueMessage[cur]) {
+        h += '<div class="dream-calc-value-msg">\u2726 ' + escHtml(step.valueMessage[cur]) + '</div>';
+      }
+
+      // Navigation
+      var canProceed = !!cur;
+      var isLast = stepIdx === steps.length - 1;
+      var nextLabel = isLast ? 'See my dream package \u2192' : 'Next \u2192';
+
+      h += '<div class="dream-calc-nav">';
+      h += '<button class="dream-calc-nav-back' + (stepIdx === 0 ? ' hidden' : '') + '" data-dcaction="prev">\u2190 Back</button>';
+      h += '<span class="dream-calc-nav-step">' + (stepIdx + 1) + ' of ' + steps.length + '</span>';
+      h += '<button class="dream-calc-nav-next' + (canProceed ? '' : ' disabled') + '" data-dcaction="next"' + (canProceed ? '' : ' disabled') + '>' + nextLabel + '</button>';
+      h += '</div></div>';
+
+      container.innerHTML = h;
+      bindDreamCalcEvents();
+    }
+
+    function renderDreamCalcComplete() {
+      var container = document.getElementById('dream-calc-container');
+      var h = '<div class="dream-calc-complete">';
+      h += '<h3>Your dream package is ready.</h3>';
+      h += '<p>We built a custom package based on everything you told us. Now let\'s show you what it looks like with real pricing.</p>';
+      h += '<button class="dream-calc-reveal-btn" id="dream-calc-reveal-btn">Show Me the Numbers \u2192</button>';
+      h += '</div>';
+      container.innerHTML = h;
+
+      document.getElementById('dream-calc-reveal-btn').addEventListener('click', function() {
+        applyDreamCalcToBuilder();
+        // Hide the calc body, show the builder
+        document.getElementById('dream-calc-body').classList.remove('visible');
+        document.getElementById('dream-calc-toggle-btn').classList.remove('open');
+        document.getElementById('dream-calc-toggle-btn').textContent = 'Dream Package Complete \u2713';
+        document.getElementById('dream-calc-toggle-btn').style.borderColor = 'var(--accent)';
+        document.getElementById('dream-calc-toggle-btn').style.color = 'var(--accent)';
+        document.getElementById('dream-calc-toggle-btn').disabled = true;
+
+        var builderBody = document.getElementById('builder-body');
+        builderBody.style.display = '';
+        builderBody.classList.add('visible');
+        renderBuilder();
+
+        // Scroll to the builder
+        setTimeout(function() {
+          builderBody.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      });
+    }
+
+    function applyDreamCalcToBuilder() {
+      var ca = dreamCalcState.answers;
+
+      // Map quality to tier
+      if (ca.quality === "We want an incredible wedding film") {
+        builderState.tier = 'team';
+      } else {
+        builderState.tier = 'ss';
+      }
+
+      // Map hours
+      var hoursMap = { '6 hours': '6', '8 hours': '8', '10 hours': '10', '12 hours': '12', 'Up to 12 hours': '12' };
+      if (ca.hours && hoursMap[ca.hours]) {
+        builderState.hours = hoursMap[ca.hours];
+      }
+
+      // Map highlight
+      var hlMap = { '3-5 min': '3-5 min', '6-8 min': '6-8 min', '9-12 min': '9-12 min', '13-15 min': '13-15 min', '15-20 min': '15-20 min', '13-20 min': '13-20 min' };
+      if (ca.highlight && hlMap[ca.highlight]) {
+        builderState.highlight = hlMap[ca.highlight];
+        // Validate highlight for tier
+        var validHl = builderState.tier === 'ss'
+          ? ['3-5 min', '6-8 min', '9-12 min', '13-20 min']
+          : ['3-5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min'];
+        if (validHl.indexOf(builderState.highlight) === -1) {
+          builderState.highlight = validHl[validHl.length - 1];
+        }
+      }
+
+      // Map teaser
+      builderState.addons.teaser = (ca.teaser === "Yes, give me something to post!");
+
+      // Map FOMO documentary
+      builderState.addons.fomo = (ca.extra === "Yes, I never want to miss a thing");
+
+      // Map story session
+      builderState.addons.storySession = (ca.storySession === "Yes, make it a Love Story");
+    }
+
+    function bindDreamCalcEvents() {
+      var container = document.getElementById('dream-calc-container');
+
+      container.querySelectorAll('[data-dcvalue]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var steps = getDreamCalcSteps();
+          var step = steps[dreamCalcState.step];
+          dreamCalcState.answers[step.id] = this.getAttribute('data-dcvalue');
+          renderDreamCalcStep();
+        });
+      });
+
+      var nextBtn = container.querySelector('[data-dcaction="next"]');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          var steps = getDreamCalcSteps();
+          if (dreamCalcState.step < steps.length - 1) {
+            dreamCalcState.step++;
+            renderDreamCalcStep();
+          } else {
+            dreamCalcState.completed = true;
+            renderDreamCalcComplete();
+          }
+        });
+      }
+
+      var prevBtn = container.querySelector('[data-dcaction="prev"]');
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          if (dreamCalcState.step > 0) {
+            dreamCalcState.step--;
+            renderDreamCalcStep();
+          }
+        });
+      }
+    }
+
+    // ========== BUILDER ==========
+    function initBuilder() {
+      initDreamCalc();
     }
 
     function calculateTotal() {
@@ -1497,8 +2037,11 @@
       ];
       addonList.forEach(function(a) {
         var sel = bs.addons[a.key] ? ' selected' : '';
+        var desc = ADDON_DESCRIPTIONS[a.key] || '';
         h += '<div class="b-addon-row' + sel + '" data-baddon="' + a.key + '">';
-        h += '<div class="b-addon-left"><img class="b-addon-thumb" src="' + ADDON_IMGS[a.key] + '" alt="' + a.name + '" loading="lazy"><span class="b-addon-name">' + a.name + '</span></div>';
+        h += '<div class="b-addon-left"><img class="b-addon-thumb" src="' + ADDON_IMGS[a.key] + '" alt="' + a.name + '" loading="lazy"><div class="b-addon-info"><span class="b-addon-name">' + a.name + '</span>';
+        if (desc) h += '<span class="b-addon-desc">' + escHtml(desc) + '</span>';
+        h += '</div></div>';
         h += '<span class="b-addon-price">+' + formatPrice(a.price) + '</span>';
         h += '<div class="b-addon-check"></div>';
         h += '</div>';
