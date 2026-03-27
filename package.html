@@ -500,13 +500,14 @@
         <p class="package-savings" id="packageSavings" style="display:none;"></p>
         <hr class="package-divider">
         <h3 class="package-includes-heading">What's Included</h3>
-        <ul class="package-list">
-          <li><span class="dash">&mdash;</span>Cinematic highlight film</li>
-          <li><span class="dash">&mdash;</span>Full ceremony coverage</li>
+        <ul class="package-list" id="packageList">
+          <li><span class="dash">&mdash;</span>6 hours of coverage</li>
+          <li><span class="dash">&mdash;</span>5-minute cinematic highlight film</li>
+          <li><span class="dash">&mdash;</span>FOMO documentary edit</li>
+          <li><span class="dash">&mdash;</span>Drone coverage</li>
           <li><span class="dash">&mdash;</span>Professional audio capture</li>
-          <li><span class="dash">&mdash;</span>Licensed music</li>
-          <li><span class="dash">&mdash;</span>Pre-wedding planning session</li>
-          <li><span class="dash">&mdash;</span>Teaser delivered within one week</li>
+          <li><span class="dash">&mdash;</span>Free travel within 120 miles</li>
+          <li><span class="dash">&mdash;</span>Netflix-style delivery</li>
         </ul>
       </div>
     </section>
@@ -555,6 +556,11 @@
       var tier = params.get('tier');
       var price = params.get('price');
       var savings = params.get('savings');
+      var hours = params.get('hours');
+      var highlight = params.get('highlight');
+      var ceremony = params.get('ceremony');
+      var teaser = params.get('teaser');
+      var story = params.get('story');
 
       // Format number with commas
       function formatNumber(str) {
@@ -598,6 +604,29 @@
           savingsEl.textContent = 'You\u2019re saving $' + formatNumber(savings) + ' with your bundle';
           savingsEl.style.display = 'block';
         }
+      }
+
+      // Dynamic package list based on query params
+      var list = document.getElementById('packageList');
+      if (hours || highlight || teaser || story || ceremony) {
+        var items = [];
+        items.push('<li><span class="dash">&mdash;</span>' + (hours || '6') + ' hours of coverage</li>');
+        items.push('<li><span class="dash">&mdash;</span>' + (highlight || '5 min') + ' cinematic highlight film</li>');
+        items.push('<li><span class="dash">&mdash;</span>FOMO documentary edit</li>');
+        items.push('<li><span class="dash">&mdash;</span>Drone coverage</li>');
+        if (ceremony && ceremony !== '30') {
+          var cerLabel = ceremony === '90' ? 'Ceremony coverage up to 1.5 hours' : 'Ceremony coverage up to 60 min';
+          items.push('<li><span class="dash">&mdash;</span>' + cerLabel + '</li>');
+        }
+        if (teaser === '1') {
+          items.push('<li><span class="dash">&mdash;</span>Social media teaser film</li>');
+        }
+        if (story === '1') {
+          items.push('<li><span class="dash">&mdash;</span>Story Session (engagement film + interviews)</li>');
+        }
+        items.push('<li><span class="dash">&mdash;</span>Free travel within 120 miles</li>');
+        items.push('<li><span class="dash">&mdash;</span>Netflix-style delivery</li>');
+        list.innerHTML = items.join('');
       }
     })();
   </script>
