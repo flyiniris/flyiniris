@@ -2590,9 +2590,8 @@
             {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all \u2014 is that too much to ask?"}
           ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story \u2014 the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt \u2014 your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all \u2014 that\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
           { id:"budget", label:"Budget", question:"What are you thinking for video investment?", subtext:"Just helps us understand what to put together for you.", type:"single", options:[
-            {emoji:"\ud83d\udcb0",label:"Under $3,000",desc:"Our Team package starts at $2,800"},
-            {emoji:"\ud83c\udfac",label:"$3,000 \u2013 $5,000",desc:"Our S&S Experience starts at $3,800"},
-            {emoji:"\u2728",label:"$5,000+",desc:"Going all in \u2014 we love it"}
+            {emoji:"\ud83c\udfac",label:"The essentials",desc:"Great coverage + a beautiful highlight film. Most couples land between $2,800 \u2013 $4,500"},
+            {emoji:"\u2728",label:"The whole experience",desc:"Longer films, teasers, story sessions, the works. $4,500+"}
           ]},
           { id:"contact", label:"Let\u2019s Talk!", question:"Last step \u2014 let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster \u2014 we get excited.", type:"contact" }
         ];
@@ -3341,14 +3340,14 @@
               if (typeof fbq === "function") {
                 fbq("trackCustom", "BudgetSelected", {
                   budget_range: selectedValue,
-                  qualified: selectedValue !== "Under $3,000"
+                  qualified: true
                 });
               }
               if (window.dataLayer) {
                 dataLayer.push({
                   event: "budget_selected",
                   budget_range: selectedValue,
-                  budget_qualified: selectedValue !== "Under $3,000"
+                  budget_qualified: true
                 });
               }
             }
