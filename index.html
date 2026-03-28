@@ -722,6 +722,103 @@
       width: 100%;
     }
 
+    /* ========== DIFFERENTIATORS ========== */
+
+    .differentiators {
+      background-color: var(--bg-primary);
+    }
+
+    .differentiators .section-inner {
+      max-width: 1100px;
+      padding: 120px 24px;
+    }
+
+    .differentiators .section-heading {
+      font-size: clamp(2rem, 4.5vw, 3rem);
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 56px;
+    }
+
+    .diff-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px 32px;
+      text-align: center;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .diff-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 189, 29, 0.08);
+    }
+
+    .diff-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 189, 29, 0.08);
+      border: 1px solid rgba(255, 189, 29, 0.2);
+    }
+
+    .diff-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--accent);
+    }
+
+    .diff-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .diff-body {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.02rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .diff-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: var(--accent);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .differentiators .section-inner {
+        padding: 80px 20px;
+      }
+
+      .diff-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-top: 40px;
+      }
+
+      .diff-card {
+        padding: 36px 24px;
+      }
+    }
+
     /* ========== WHY SECTION &mdash; CINEMATIC SCROLL ========== */
     .why-section {
       background-color: var(--bg-primary);
@@ -1955,6 +2052,36 @@
 
         <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Your Turn &#10022;</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ========== WHAT YOU GET ========== -->
+    <section class="section differentiators" aria-label="What sets Flyin' Iris apart">
+      <div class="section-inner reveal">
+        <p class="section-label reveal-child">Included In Every Package</p>
+        <h2 class="section-heading reveal-child">Two things no other videographer gives you.</h2>
+
+        <div class="diff-grid">
+          <div class="diff-card reveal-child">
+            <div class="diff-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+            </div>
+            <h3 class="diff-title">The FOMO Documentary Edit</h3>
+            <p class="diff-body">Your cinematic highlight film captures the magic. But what about the moments happening while you were taking photos? Your nephew's dance moves? Grandma's toast? The documentary edit is the raw, uncut footage of everything you missed. Every couple gets BOTH: the polished cinematic film AND the full documentary of their entire day.</p>
+            <p class="diff-tagline">Because you shouldn't miss a single moment.</p>
+          </div>
+
+          <div class="diff-card reveal-child">
+            <div class="diff-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zM10 8.5v7l5-3.5z"/></svg>
+            </div>
+            <h3 class="diff-title">Your Own Private Screening Room</h3>
+            <p class="diff-body">No Vimeo links. No Google Drive folders. Your films live on a personal streaming page at flyiniris.com/yours. Instant playback on any device, Netflix-quality adaptive streaming, and a shareable link for family and friends. Two years of hosting included.</p>
+            <p class="diff-tagline">Your film, streaming instantly. Share it with everyone who matters.</p>
+          </div>
         </div>
       </div>
     </section>
