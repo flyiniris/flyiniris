@@ -660,18 +660,12 @@
 <div id="success-screen" class="success-screen container">
   <canvas id="confetti-canvas"></canvas>
   <div class="success-icon">&#x1F389;</div>
-  <h2>You're officially booked!</h2>
-  <p class="success-sub">
-    Your signed agreement has been sent to your email. We are so excited to film your wedding!
+  <h2>Contract signed!</h2>
+  <p class="success-sub" id="success-message">
+    You're officially booked! Redirecting to payment...
   </p>
-  <a id="pdf-download-link" href="#" class="download-btn" target="_blank">Download Signed Agreement</a>
-  <div class="next-steps">
-    <h3>What happens next</h3>
-    <div class="step"><div class="step-num">1</div><div class="step-text">You'll receive a confirmation email with your signed agreement attached.</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text">Choose your payment plan and secure your date. Check your email for a link to pick what works best for you.</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text">We'll send a questionnaire so we can plan the perfect film for your day.</div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text">Sit back and enjoy planning your wedding. We've got the film covered.</div></div>
-  </div>
+  <a id="payment-redirect-btn" href="#" class="download-btn" style="display:none;">Continue to Payment</a>
+  <a id="pdf-download-link" href="#" class="download-btn" target="_blank" style="background:transparent;color:var(--text-secondary);font-size:13px;margin-top:8px;">Download Signed Agreement</a>
 </div>
 
 <!-- Submitting Overlay -->
@@ -1176,6 +1170,19 @@
 
       document.getElementById('success-screen').classList.add('visible');
       launchConfetti();
+
+      // Auto-redirect to payment page after 3 seconds
+      if (result.paymentUrl) {
+        const paymentBtn = document.getElementById('payment-redirect-btn');
+        paymentBtn.href = result.paymentUrl;
+        paymentBtn.style.display = 'inline-block';
+        setTimeout(function() {
+          window.location.href = result.paymentUrl;
+        }, 3000);
+      } else {
+        document.getElementById('success-message').textContent =
+          "You're officially booked! We'll send payment details to your email.";
+      }
 
     } catch (err) {
       document.getElementById('submitting-overlay').classList.remove('visible');
