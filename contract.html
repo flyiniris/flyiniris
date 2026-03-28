@@ -743,21 +743,8 @@
     <!-- Payment Schedule -->
     <div class="section" style="animation-delay: 0.4s;">
       <div class="section-title">Payment Schedule</div>
-      <div class="payment-grid">
-        <div class="payment-item">
-          <div>
-            <div class="payment-label">Retainer (50%)</div>
-            <div class="payment-detail">Due upon signing this agreement</div>
-          </div>
-          <div class="payment-amount" id="payment-retainer"></div>
-        </div>
-        <div class="payment-item">
-          <div>
-            <div class="payment-label">Final Balance (50%)</div>
-            <div class="payment-detail">Due one week before event</div>
-          </div>
-          <div class="payment-amount" id="payment-balance"></div>
-        </div>
+      <div class="payment-grid" id="payment-grid">
+        <!-- Populated by JS -->
       </div>
       <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.7;">
         Payments accepted via: Credit/Debit Card, ACH Bank Transfer (via Stripe). If Client fails to remit the final payment by the due date, Videographer reserves the right to terminate this agreement with no obligation to attend the event or refund the retainer.
@@ -765,45 +752,9 @@
     </div>
 
     <!-- Legal Terms -->
-    <div class="legal-section" style="animation: fadeUp 0.8s ease 0.5s both;">
+    <div class="legal-section" id="legal-terms-section" style="animation: fadeUp 0.8s ease 0.5s both;">
       <div class="section-title">Terms &amp; Conditions</div>
-
-      <h4>Delivery Timeline</h4>
-      <p>Teaser film: Within 2 weeks of event date</p>
-      <p>Highlight film: Within 12 weeks of event date</p>
-      <p>Ceremony edit: Within 16 weeks of event date</p>
-      <p>FOMO Documentary Edit (if included): Within 16 weeks of event date</p>
-      <p>Access period: All films remain on your private viewing page indefinitely. We recommend downloading and backing up all files within 90 days of delivery.</p>
-
-      <h4>Services</h4>
-      <p>Flyin' Iris Media Productions LLC agrees to perform video services for Client at the Event in a professional manner according to prevailing industry standards. Videographer may employ assistants as needed. Videographer is not responsible for the impact on the final product of any interference caused by guests or other vendors at the Event. Videographer will make every effort to obtain, but cannot guarantee delivery of, any specific footage requested by the Client due to lack of control over the Event, its participants, weather, and venue rules or restrictions.</p>
-
-      <h4>Exclusivity</h4>
-      <p>Client agrees that Videographer is hired exclusive of any other videography service provider. No other videographers, paid or unpaid, are permitted to provide the same or similar services at the Event without prior written consent from Videographer.</p>
-
-      <h4>Intellectual Property</h4>
-      <p>All footage captured by Videographer is copyright protected under federal law (Title 17, Chapter 2, Section 201-02 of the United States Code). Videographer owns all copyrights in works created pursuant to this agreement. Client permitted uses: Personal use including home display, social media sharing (with business tag to @flyinirismedia on Instagram and Facebook), and private viewing. Not permitted: Sale, commercial publication, or distribution for profit without Videographer's written permission.</p>
-
-      <h4>Artistic Release</h4>
-      <p>Client has reviewed Videographer's portfolio and has reasonable expectations regarding style and quality. Videographer will use reasonable efforts to incorporate Client's preferences but retains final artistic judgment. Dissatisfaction with aesthetic judgment is not grounds for termination or refund.</p>
-
-      <h4>Limit of Liability</h4>
-      <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
-
-      <h4>Cancellation &amp; Rescheduling</h4>
-      <p>If Client cancels, Client shall provide notice as soon as possible. Videographer has no obligation to refund any monies previously paid. Client is not relieved of payment obligations for cancelled or rescheduled services unless Parties agree in writing. If Videographer secures another client for the original date, Videographer may, at sole discretion, excuse all or a portion of Client's outstanding balance.</p>
-
-      <h4>Weather</h4>
-      <p>In the event of undesirable weather for outdoor filming, Client is responsible for having an indoor or alternative location. Due to potential equipment damage, Videographer may move to an alternative indoor location at their discretion. No refunds for weather-related limitations. Drone Services: Weather and location restrictions apply. Videographer will not fly if FAA regulations restrict the flight. Sierra Hernitz is FAA Part 107 certified.</p>
-
-      <h4>Force Majeure</h4>
-      <p>Either party may be excused from performance in the event of natural disaster, war, terrorism, or other events outside either party's control. Videographer will immediately notify Client and issue a pro-rated refund for undelivered Services.</p>
-
-      <h4>Meals</h4>
-      <p>Client shall arrange with the caterer to provide meal(s) for Videographer(s) onsite at the Event.</p>
-
-      <h4>General Provisions</h4>
-      <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between parties. Amendment: Only by written consent via proper notice.</p>
+      <!-- Populated by JS -->
     </div>
 
     <!-- Signature Section -->
@@ -1043,10 +994,84 @@
     tableHtml += `<tr class="total-row"><td class="item-name">Total</td><td class="item-price">$${formatNum(data.total)}</td></tr>`;
     table.innerHTML = tableHtml;
 
-    // Payment
-    const half = Math.round(data.total / 2);
-    document.getElementById('payment-retainer').textContent = `$${formatNum(half)}`;
-    document.getElementById('payment-balance').textContent = `$${formatNum(data.total - half)}`;
+    // Payment schedule (dynamic from API)
+    const paymentGrid = document.getElementById('payment-grid');
+    if (data.paymentSchedule && data.paymentSchedule.length > 0) {
+      paymentGrid.innerHTML = data.paymentSchedule.map(p =>
+        `<div class="payment-item">
+          <div>
+            <div class="payment-label">${escapeHtml(p.label)}</div>
+            <div class="payment-detail">${escapeHtml(p.detail)}</div>
+          </div>
+          <div class="payment-amount">$${formatNum(p.amount)}</div>
+        </div>`
+      ).join('');
+    } else {
+      // Fallback to 50/50 if no schedule provided
+      const half = Math.round(data.total / 2);
+      paymentGrid.innerHTML = `
+        <div class="payment-item">
+          <div>
+            <div class="payment-label">Retainer (50%)</div>
+            <div class="payment-detail">Due upon signing this agreement</div>
+          </div>
+          <div class="payment-amount">$${formatNum(half)}</div>
+        </div>
+        <div class="payment-item">
+          <div>
+            <div class="payment-label">Final Balance (50%)</div>
+            <div class="payment-detail">Due one week before event</div>
+          </div>
+          <div class="payment-amount">$${formatNum(data.total - half)}</div>
+        </div>`;
+    }
+
+    // Legal terms (dynamic with numVideographers and teaserDelivery)
+    const nv = data.numVideographers || 2;
+    const td = data.teaserDelivery || '2 weeks';
+    document.getElementById('legal-terms-section').innerHTML = `
+      <div class="section-title">Terms &amp; Conditions</div>
+
+      <h4>Deliverables</h4>
+      <p>All films delivered in 4K resolution (highlight film) and 1080p (FOMO documentary, if included). Drone footage included when conditions and regulations permit. Sierra Hernitz is FAA Part 107 certified.</p>
+
+      <h4>Delivery Timeline</h4>
+      <p>Teaser film: Within ${escapeHtml(td)} of event date</p>
+      <p>Highlight film: Within 12 weeks of event date</p>
+      <p>Ceremony edit: Within 16 weeks of event date</p>
+      <p>FOMO Documentary Edit (if included): Within 16 weeks of event date</p>
+      <p>Access period: All films remain on your private viewing page indefinitely. We recommend downloading and backing up all files within 90 days of delivery.</p>
+
+      <h4>Services</h4>
+      <p>Flyin' Iris Media Productions LLC agrees to provide ${nv} videographer${nv !== 1 ? 's' : ''} to perform video services for Client at the Event in a professional manner according to prevailing industry standards. Videographer may employ assistants as needed. Videographer is not responsible for the impact on the final product of any interference caused by guests or other vendors at the Event. Videographer will make every effort to obtain, but cannot guarantee delivery of, any specific footage requested by the Client due to lack of control over the Event, its participants, weather, and venue rules or restrictions.</p>
+
+      <h4>Meals</h4>
+      <p>Client shall arrange with the caterer to provide meal(s) for all ${nv} videographer${nv !== 1 ? 's' : ''} onsite at the Event.</p>
+
+      <h4>Exclusivity</h4>
+      <p>Client agrees that Videographer is hired exclusive of any other videography service provider. No other videographers, paid or unpaid, are permitted to provide the same or similar services at the Event without prior written consent from Videographer.</p>
+
+      <h4>Intellectual Property</h4>
+      <p>All footage captured by Videographer is copyright protected under federal law (Title 17, Chapter 2, Section 201-02 of the United States Code). Videographer owns all copyrights in works created pursuant to this agreement. Client permitted uses: Personal use including home display, social media sharing (with business tag to @flyinirismedia on Instagram and Facebook), and private viewing. Not permitted: Sale, commercial publication, or distribution for profit without Videographer's written permission.</p>
+
+      <h4>Artistic Release</h4>
+      <p>Client has reviewed Videographer's portfolio and has reasonable expectations regarding style and quality. Videographer will use reasonable efforts to incorporate Client's preferences but retains final artistic judgment. Dissatisfaction with aesthetic judgment is not grounds for termination or refund.</p>
+
+      <h4>Cancellation &amp; Rescheduling</h4>
+      <p>If Client cancels, Client shall provide notice as soon as possible. Videographer has no obligation to refund any monies previously paid. Client is not relieved of payment obligations for cancelled or rescheduled services unless Parties agree in writing. If Videographer secures another client for the original date, Videographer may, at sole discretion, excuse all or a portion of Client's outstanding balance.</p>
+
+      <h4>Force Majeure</h4>
+      <p>Either party may be excused from performance in the event of natural disaster, war, terrorism, or other events outside either party's control. Videographer will immediately notify Client and issue a pro-rated refund for undelivered Services.</p>
+
+      <h4>Limit of Liability</h4>
+      <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
+
+      <h4>Weather</h4>
+      <p>In the event of undesirable weather for outdoor filming, Client is responsible for having an indoor or alternative location. Due to potential equipment damage, Videographer may move to an alternative indoor location at their discretion. No refunds for weather-related limitations. Drone Services: Weather and location restrictions apply. Videographer will not fly if FAA regulations restrict the flight.</p>
+
+      <h4>General Provisions</h4>
+      <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between parties. Amendment: Only by written consent via proper notice.</p>
+    `;
 
     // Pre-fill signature names and update labels
     if (data.partyInfo.client1Name) {
