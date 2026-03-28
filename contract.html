@@ -660,7 +660,7 @@
 <div id="success-screen" class="success-screen container">
   <canvas id="confetti-canvas"></canvas>
   <div class="success-icon">&#x1F389;</div>
-  <h2>Contract signed!</h2>
+  <h2 id="success-heading">Contract signed!</h2>
   <p class="success-sub" id="success-message">
     You're officially booked! Redirecting to payment...
   </p>
@@ -1173,6 +1173,8 @@
 
       // Auto-redirect to payment page after 3 seconds
       if (result.paymentUrl) {
+        document.getElementById('success-heading').textContent = "You're officially booked!";
+        document.getElementById('success-message').textContent = "Redirecting to payment...";
         const paymentBtn = document.getElementById('payment-redirect-btn');
         paymentBtn.href = result.paymentUrl;
         paymentBtn.style.display = 'inline-block';
@@ -1180,8 +1182,9 @@
           window.location.href = result.paymentUrl;
         }, 3000);
       } else {
+        document.getElementById('success-heading').textContent = "Signatures received!";
         document.getElementById('success-message').textContent =
-          "You're officially booked! We'll send payment details to your email.";
+          "Sean & Sierra will review and finalize your agreement shortly. Once confirmed, we'll send you a link to select your payment plan and secure your date.";
       }
 
     } catch (err) {
