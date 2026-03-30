@@ -1523,7 +1523,7 @@
         <li><a href="https://www.flyiniris.com/#investment">Investment</a></li>
         <li><a href="https://www.flyiniris.com/privacy">Privacy</a></li>
       </ul>
-      <p style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-muted);margin-top:16px;"><a href="https://instagram.com/flyiniris" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;transition:color 0.25s ease;">Watch our films &#8594; @flyiniris</a></p>
+      <!-- IG footer link removed - was causing profile-style card to appear -->
     </footer>
 
   </div>
@@ -1735,16 +1735,16 @@
       if (d.available && d.weddingDate) {
         var dateStr = d.weddingDate;
         try {
-          var wd = new Date(d.weddingDate);
+          var wd = new Date(d.weddingDate + 'T12:00:00');
           if (!isNaN(wd.getTime())) {
             dateStr = wd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
           }
         } catch(e) {}
-        availEl.textContent = displayName + ', Sean & Sierra are available on ' + dateStr + '.';
+        availEl.textContent = displayName + ', good news! Sean & Sierra are available on ' + dateStr + '.';
       } else if (d.available && d.availabilityMessage) {
         availEl.textContent = displayName + ', ' + d.availabilityMessage;
       } else if (d.available) {
-        availEl.textContent = displayName + ', Sean & Sierra are available for your wedding.';
+        availEl.textContent = displayName + ', good news! Sean & Sierra are available for your wedding.';
       } else {
         availEl.textContent = displayName + ', let\'s talk about your day.';
       }
