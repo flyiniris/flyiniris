@@ -255,3 +255,37 @@ echo "## $(Get-Date -Format 'yyyy-MM-dd HH:mm') | flyiniris`n- [what you did]`n-
 ```
 
 Keep entries 2-4 lines. This lets Iris (the AI assistant) stay aware of changes across projects without interrupting your flow.
+
+---
+
+## Pre-Build Validation Protocol
+
+Before writing any code for a substantive task (anything beyond a trivial one-liner), ALWAYS complete this checklist first:
+
+1. **Validate assumptions against real data.** If the task involves reading from existing files (JSON reports, databases, configs), actually READ those files first and verify the data structure matches what the task assumes. Do not trust spec descriptions of data shape.
+
+2. **Check file existence and paths.** If the task references specific files, verify they exist where expected. If the task writes to specific paths, verify the parent directories exist.
+
+3. **Confirm external dependencies.** If the task uses APIs (Gemini, Claude, Stripe, GHL, etc.), model versions, SDK packages, or environment variables, verify the expected versions/names are current and correct. Specifically check that model strings are not deprecated.
+
+4. **Identify spec-vs-reality gaps.** Build a short table of anywhere the task's assumptions diverge from what's actually true. Include proposed handling for each gap.
+
+5. **Flag open questions.** List anything ambiguous that needs a decision from Sean before proceeding. Do not guess on creative, architectural, or irreversible decisions.
+
+6. **Use Agent Teams when appropriate.** For 3+ independent workstreams with clean contracts between them, split into parallel sub-agents. For self-contained single-file work, stay with single agent. Be honest about which category the task falls into.
+
+7. **Suggest optimizations.** If the task spec would produce suboptimal results or includes anti-patterns, surface those suggestions before building. Sean prefers catching issues at design time over debug time.
+
+8. **Report validation findings before writing code.** Summarize findings in a clear table or bullet list. Ask for green-light on any flagged issues.
+
+This protocol protects Sean's time by catching bugs in minutes instead of hours. A 2-minute validation pass routinely prevents 30+ minutes of debugging downstream.
+
+Skip this protocol ONLY for:
+- Trivial changes (under 20 lines of code, no new dependencies, no external calls)
+- Explicit "just do it" override from Sean with full context
+- Continuation of a previously validated task where assumptions haven't changed
+
+When in doubt, validate. Sean will never be annoyed by a validation pass. He WILL be annoyed by a preventable bug.
+
+---
+

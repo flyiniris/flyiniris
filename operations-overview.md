@@ -258,6 +258,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 | Node.js | v24.13.1 | Scripts, Worker builds |
 | GPU | NVIDIA RTX 5070 Ti | NVENC transcoding, Real-ESRGAN upscaling |
 | OpenClaw | `C:\Users\flyin\.openclaw\` | Iris AI agent (WhatsApp channel) |
+| Footage Analyzer | C:\Users\flyin\Claude Projects\footage-analyzer\ | Event footage analysis pipeline. Three scripts: footage-analyzer.py (Gemini 3.1 Pro analysis), cull-footage.py (8-bin organization via hard links), timeline-generator.py (Premiere FCP7 XML generation). Reusable across all shoot types. ~$1.84 per event. |
 
 ### GPU Usage Rule
 When transcoding video or upscaling images, ALWAYS use NVIDIA GPU acceleration:
