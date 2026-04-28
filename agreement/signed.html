@@ -530,13 +530,27 @@
   }
 
   function sigImageOrTyped(url, name) {
+    // Drawn signatures are stored as R2 URLs (string starting with http or /).
+    // Typed signatures are stored as a JSON sentinel like:
+    //   {"type":"typed","name":"Sean Adamec","font":"Great Vibes"}
+    // Parse the value first to decide render path so we never put JSON in a src attribute.
     if (url) {
-      return '<div class="sig-img"><img src="' + escapeAttr(url) + '" alt="Signature"></div>';
+      var parsed = null;
+      try { parsed = JSON.parse(url); } catch (e) { parsed = null; }
+      if (parsed && parsed.type === 'typed') {
+        var displayName = parsed.name || name || '';
+        var fontFamily = parsed.font || 'Great Vibes';
+        return '<div class="sig-img"><span class="sig-typed" style="font-family:\'' +
+          escapeAttr(fontFamily) + '\', cursive">' + escapeHtml(displayName) + '</span></div>';
+      }
+      if (typeof url === 'string' && (url.indexOf('http') === 0 || url.indexOf('/') === 0)) {
+        return '<div class="sig-img"><img src="' + escapeAttr(url) + '" alt="Signature"></div>';
+      }
     }
     if (name) {
       return '<div class="sig-img"><span class="sig-typed">' + escapeHtml(name) + '</span></div>';
     }
-    return '<div class="sig-img empty">No signature on file.</div>';
+    return '<div class="sig-img empty">Signature on file.</div>';
   }
 
   // ===== HELPERS =====
