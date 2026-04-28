@@ -22,8 +22,16 @@
 #
 # DO NOT add a Worker route for /contract or /payment back to wrangler.toml.
 # Cloudflare Pages SPA fallback intercepts query-string requests to those
-# paths before any Worker route can fire — the dispatch must live behind
-# the /agreement URL where the Worker has uncontested ownership.
+# paths before any Worker route can fire when matching static assets exist;
+# /contract and /payment redirect to /agreement at the Pages layer to dodge
+# that. /agreement and /agreement/* themselves are kept off the Pages SPA
+# via _routes.json (added 2026-04-28 after a routing-collision incident
+# where a stale agreement/signed.html intercepted real /agreement/signed
+# requests, bypassing the Worker's window.__AGREEMENT_DATA__ injection).
+# Worker ownership of /agreement and /agreement/* is now enforced by
+# _routes.json, not by accident. The agreement.html shell at the repo
+# root is still Pages-served and is fetched by the Worker as a subrequest
+# (see src/agreement.ts handleAgreementPage / handleAgreementSignedPage).
 /contract                  /agreement  301
 /contract/*                /agreement  301
 /payment                   /agreement  301
