@@ -11,8 +11,8 @@
 /blog/*                     /  301
 /story-sessions             /  301
 
-# /agreement system (deployed 2026-04-28) — old paths point at new flow
-/contract                  /agreement  301
-/contract/*                /agreement  301
-/payment                   /agreement  301
-/payment/*                 /agreement  301
+# /agreement system (deployed 2026-04-28) — /contract and /payment are now
+# claimed by the iris-automation Worker so the kill-switch logic can branch
+# on the agreement_killswitch KV key. Don't re-add /contract or /payment 301
+# rules here; the Pages-side rule fires before the Worker sees the request,
+# which would lock the kill-switch open.
