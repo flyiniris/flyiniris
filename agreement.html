@@ -1078,27 +1078,54 @@
 
   const API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
 
-  // Pull server-injected data. If missing, fall back to query token (defensive).
-  const DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
+  // Server-side injection is the primary path (Worker fetches this HTML and
+  // injects window.__AGREEMENT_DATA__ before </head>). When Cloudflare Pages
+  // serves the static HTML directly without the Worker route catching, the
+  // DOMContentLoaded handler below falls back to fetching the same payload
+  // from GET /api/agreement/:token on the Worker.
+  let DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
   const QS = new URLSearchParams(window.location.search);
   const TOKEN = (DATA && DATA.token) || QS.get('token');
 
-  // Local UI state (only what's needed for in-page interactions).
-  let selectedPlan = (DATA && DATA.plan_chosen) || null;
-  let currentSchedule = (DATA && DATA.schedule) || null;
+  // Local UI state (only what's needed for in-page interactions). Assigned
+  // from DATA after the fetch fallback resolves, since DATA may be null at
+  // module-load time.
+  let selectedPlan = null;
+  let currentSchedule = null;
   let retainerAmountDollars = 0;
-  let totalDollars = (DATA && typeof DATA.total === 'number') ? DATA.total : 0;
+  let totalDollars = 0;
   let sigPad1 = null;
   let sigPad2 = null;
   let sig1Mode = 'type';
   let sig2Mode = 'type';
 
   // ===== INIT =====
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Fallback: if Pages served us directly and DATA wasn't injected, fetch
+    // it ourselves. Same shape, same gating, just one extra round trip.
+    if (!DATA && TOKEN) {
+      try {
+        const resp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN), {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (resp.ok) {
+          DATA = await resp.json();
+        }
+      } catch (_e) {
+        // Fall through to the showError below.
+      }
+    }
+
     if (!DATA) {
       showError('Missing data', 'We couldn\'t load your agreement. Please use the link from your email.');
       return;
     }
+
+    // Now that DATA is resolved, populate UI state from it.
+    selectedPlan = DATA.plan_chosen || null;
+    currentSchedule = DATA.schedule || null;
+    totalDollars = (typeof DATA.total === 'number') ? DATA.total : 0;
 
     // Preview banner + lock interactions if preview_mode
     if (DATA.preview_mode) {

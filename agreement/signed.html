@@ -383,11 +383,31 @@
 
 <script>
   // /agreement/signed — permanent read-only signed agreement view.
-  // Worker injects window.__AGREEMENT_DATA__ at render time.
+  // Server-side injection is the primary path (Worker fetches this HTML and
+  // injects window.__AGREEMENT_DATA__). When Pages serves the file directly,
+  // we fall back to GET /api/agreement/:token?view=signed which performs the
+  // same state gating server-side.
 
-  const DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
+  const API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+  let DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
+  const QS = new URLSearchParams(window.location.search);
+  const TOKEN = (DATA && DATA.token) || QS.get('token');
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!DATA && TOKEN) {
+      try {
+        const resp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '?view=signed', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (resp.ok) {
+          DATA = await resp.json();
+        }
+      } catch (_e) {
+        // Fall through to the showError below.
+      }
+    }
+
     if (!DATA) {
       showError('Agreement Not Found', 'We couldn\'t load this signed agreement. Please use the link from your email.');
       return;
