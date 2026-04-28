@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Signed Agreement | Flyin' Iris</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <link rel="icon" type="image/png" href="/favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Great+Vibes&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+    .header {
+      text-align: center;
+      padding: 48px 0 32px;
+    }
+    .header .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text-primary);
+    }
+    .header .brand-sub {
+      font-size: 10px; font-weight: 400; letter-spacing: 2px;
+      color: var(--text-secondary); text-transform: uppercase; margin-top: 4px;
+    }
+    .header .gold-bar {
+      width: 48px; height: 2px; background: var(--accent); margin: 20px auto;
+    }
+    h1.page-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px; font-weight: 400; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .section h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 600; color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(42, 42, 40, 0.5);
+      font-size: 14px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--text-secondary); }
+    .info-row .val { color: var(--text-primary); font-weight: 400; }
+    .info-row .val.accent { color: var(--accent); font-weight: 500; }
+
+    .schedule-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; margin-bottom: 8px;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      border-left: 3px solid var(--border);
+    }
+    .schedule-row.paid { border-left-color: #22c55e; }
+    .schedule-row.pending { border-left-color: var(--accent); }
+    .schedule-row .sched-left .sched-label {
+      font-size: 14px; color: var(--text-primary);
+    }
+    .schedule-row .sched-left .sched-detail {
+      font-size: 12px; color: var(--text-muted);
+    }
+    .schedule-row .sched-right .sched-amount {
+      font-size: 16px; color: var(--accent); font-weight: 500;
+    }
+    .schedule-row .sched-right .sched-status {
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      text-align: right; margin-top: 2px;
+    }
+    .schedule-row.paid .sched-right .sched-status { color: #22c55e; }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .sig-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .sig-block .sig-name {
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .sig-block .sig-img {
+      background: #FAFAFA;
+      border-radius: 4px;
+      padding: 12px;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sig-block .sig-img img {
+      max-width: 100%;
+      max-height: 90px;
+      display: block;
+    }
+    .sig-block .sig-img.empty {
+      color: var(--text-muted); font-size: 12px; font-style: italic; background: transparent;
+    }
+    .sig-block .sig-typed {
+      font-family: 'Great Vibes', cursive;
+      font-size: 32px;
+      color: #1a1a1a;
+    }
+
+    /* Sierra Countersignature */
+    .countersignature {
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .signature-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: #FFBD1D;
+      line-height: 1;
+    }
+    .countersig-meta {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: #C8C3B9;
+      margin-top: 4px;
+    }
+    .countersig-date {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(200,195,185,0.5);
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #22c55e;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Legal body — copied from agreement.html so the signed view shows the
+       complete executed agreement. Couples need to refer back to the full
+       legal text from the permanent /agreement/signed URL. */
+    .legal-section-header {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+    .legal-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .legal-block .plain-header {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .legal-block .plain-summary {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 400;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-block h4 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 18px 0 6px;
+    }
+    .legal-block h4:first-of-type { margin-top: 0; }
+    .legal-block p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+    .pull-quote {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--text-primary);
+      text-align: center;
+      padding: 28px 24px;
+      margin: 16px 0;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-card);
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 32px 0 48px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    .loading-screen, .error-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+    }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-screen h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 600; margin-bottom: 12px;
+    }
+    .error-screen p { color: var(--text-secondary); max-width: 420px; }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .header { padding: 32px 0 20px; }
+      .section { padding: 22px 18px; }
+      .legal-block { padding: 24px 20px; }
+      .pull-quote { font-size: 18px; padding: 20px 18px; }
+      .signature-grid { grid-template-columns: 1fr; }
+      .signature-text { font-size: 2.4rem; }
+    }
+
+    /* Print-friendly */
+    @media print {
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-elevated: #f7f5f0;
+        --text-primary: #1a1a1a;
+        --text-secondary: #444;
+        --text-muted: #777;
+        --border: #ccc;
+      }
+      body { background: #fff; color: #1a1a1a; }
+      body::before { display: none; }
+      .section, .countersignature {
+        box-shadow: none;
+        page-break-inside: avoid;
+      }
+      .header { padding: 24px 0 16px; }
+      .footer { color: #555; }
+      a { color: #1a1a1a; text-decoration: none; }
+      .badge {
+        background: #fff;
+        color: #1a7c30;
+        border-color: #1a7c30;
+      }
+      .signature-text { color: #b07a00; }
+      .schedule-row { border: 1px solid #ccc; }
+      .schedule-row.paid { border-left: 3px solid #1a7c30; }
+      .schedule-row.pending { border-left: 3px solid #b07a00; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen" class="loading-screen container">
+  <div class="loading-spinner"></div>
+  <p style="color: var(--text-secondary); font-size: 14px;">Loading...</p>
+</div>
+
+<!-- Error -->
+<div id="error-screen" class="error-screen container" style="display: none;">
+  <h2 id="error-title">Agreement not found</h2>
+  <p id="error-message">We couldn't load this signed agreement. Please use the link from your email or contact us at sean@flyiniris.com.</p>
+</div>
+
+<!-- Main -->
+<div id="app" style="display: none;">
+  <div class="container">
+    <div class="header">
+      <div class="brand">Flyin' Iris</div>
+      <div class="brand-sub">Milwaukee &amp; Wisconsin Wedding Films</div>
+      <div class="gold-bar"></div>
+      <h1 class="page-title">Your signed agreement.</h1>
+      <div class="subline" id="couple-line"></div>
+      <span class="badge" id="status-badge">Fully Executed</span>
+    </div>
+
+    <!-- Wedding details -->
+    <div class="section">
+      <div class="section-title">Wedding</div>
+      <div class="info-row">
+        <span class="lbl">Couple</span><span class="val" id="couple-names"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Wedding date</span><span class="val" id="wedding-date"></span>
+      </div>
+      <div class="info-row" id="venue-row" style="display: none;">
+        <span class="lbl">Venue</span><span class="val" id="venue-name"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Tier</span><span class="val" id="tier"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Total</span><span class="val accent" id="total"></span>
+      </div>
+    </div>
+
+    <!-- Payment schedule -->
+    <div class="section">
+      <div class="section-title">Payment Schedule</div>
+      <div id="schedule-list"></div>
+    </div>
+
+    <!-- Full executed agreement legal text (mirrors Page 3 of the sign flow) -->
+    <div class="legal-section-header">Your Agreement</div>
+
+    <!-- Section 1: What we agree to -->
+    <div class="legal-block">
+      <div class="plain-header">What we agree to.</div>
+      <p class="plain-summary" id="agree-section-summary">
+        We agree to film your wedding. You agreed to the schedule and payment plan above.
+      </p>
+      <h4>Parties</h4>
+      <p>This Agreement is entered into between Flyin' Iris Media Productions LLC ("Videographer," owners Sierra Hernitz &amp; Sean Adamec) and the Client(s) named in this signed agreement.</p>
+      <h4>Event Details</h4>
+      <p id="event-summary"></p>
+    </div>
+
+    <!-- Section 2: The work -->
+    <div class="legal-block">
+      <div class="plain-header">The work.</div>
+      <p class="plain-summary">
+        Here's what we deliver and when. Final artistic call is ours, but we'll do everything we can to capture what matters to you.
+      </p>
+      <h4>Deliverables</h4>
+      <p>All films delivered in 4K resolution (highlight film) and 1080p (FOMO documentary, if included). Drone footage included when conditions and regulations permit. Sierra Hernitz is FAA Part 107 certified.</p>
+      <h4>Delivery Timeline</h4>
+      <p>Teaser film: Within 2 weeks of event date.</p>
+      <p>Highlight film: Within 12 weeks of event date.</p>
+      <p>Ceremony edit: Within 16 weeks of event date.</p>
+      <p>FOMO Documentary Edit (if included): Within 16 weeks of event date.</p>
+      <p>Access period: All films remain on your private viewing page indefinitely. We recommend downloading and backing up all files within 90 days of delivery.</p>
+      <h4>Services</h4>
+      <p>Flyin' Iris Media Productions LLC agrees to provide videographers to perform video services for Client at the Event in a professional manner according to prevailing industry standards. Videographer may employ assistants as needed. Videographer is not responsible for the impact on the final product of any interference caused by guests or other vendors at the Event. Videographer will make every effort to obtain, but cannot guarantee delivery of, any specific footage requested by the Client due to lack of control over the Event, its participants, weather, and venue rules or restrictions.</p>
+      <h4>Meals</h4>
+      <p>Client shall arrange with the caterer to provide meal(s) for all videographers onsite at the Event.</p>
+      <h4>Exclusivity</h4>
+      <p>Client agrees that Videographer is hired exclusive of any other videography service provider. No other videographers, paid or unpaid, are permitted to provide the same or similar services at the Event without prior written consent from Videographer.</p>
+    </div>
+
+    <!-- Section 3: The money -->
+    <div class="legal-block">
+      <div class="plain-header">The money.</div>
+      <p class="plain-summary">
+        This agreement is binding upon signature AND retainer clearing within 30 days of signature. If the retainer is not received within 30 days, this agreement automatically expires and your date is released back to general availability.
+      </p>
+      <h4>Payment Terms</h4>
+      <p>Payments accepted via Credit/Debit Card or ACH Bank Transfer (via Stripe). The first payment (the retainer) is due immediately upon signing this agreement. Subsequent payments follow the schedule selected above.</p>
+      <p>If Client fails to remit any scheduled payment by the due date, Videographer reserves the right to terminate this agreement with no obligation to attend the event or refund prior payments. Recurring payments on a multi-payment plan are charged automatically to the payment method on file.</p>
+      <h4>Non-Refundable</h4>
+      <p>All payments under this agreement are non-refundable. The retainer secures Client's wedding date and removes that date from general availability.</p>
+    </div>
+
+    <!-- Pull quote -->
+    <div class="pull-quote">
+      "Sierra edits every film we make. No assistants, no farm-outs, no templates."
+    </div>
+
+    <!-- Section 4: If life happens -->
+    <div class="legal-block">
+      <div class="plain-header">If life happens.</div>
+      <p class="plain-summary">
+        Cancellation, rescheduling, weather, and force majeure. The boring stuff that matters when something goes sideways.
+      </p>
+      <h4>Cancellation &amp; Rescheduling</h4>
+      <p>If Client cancels, Client shall provide notice as soon as possible. Videographer has no obligation to refund any monies previously paid. Client is not relieved of payment obligations for cancelled or rescheduled services unless Parties agree in writing. If Videographer secures another client for the original date, Videographer may, at sole discretion, excuse all or a portion of Client's outstanding balance.</p>
+      <h4>Force Majeure</h4>
+      <p>Either party may be excused from performance in the event of natural disaster, war, terrorism, or other events outside either party's control. Videographer will immediately notify Client and issue a pro-rated refund for undelivered Services.</p>
+      <h4>Weather</h4>
+      <p>In the event of undesirable weather for outdoor filming, Client is responsible for having an indoor or alternative location. Due to potential equipment damage, Videographer may move to an alternative indoor location at their discretion. No refunds for weather-related limitations. Drone Services: Weather and location restrictions apply. Videographer will not fly if FAA regulations restrict the flight.</p>
+    </div>
+
+    <!-- Section 5: The film itself -->
+    <div class="legal-block">
+      <div class="plain-header">The film itself.</div>
+      <p class="plain-summary">
+        We own the copyright. You get to share it on social, show it at home, and watch it forever. Selling it is the only thing off the table.
+      </p>
+      <h4>Intellectual Property</h4>
+      <p>All footage captured by Videographer is copyright protected under federal law (Title 17, Chapter 2, Section 201-02 of the United States Code). Videographer owns all copyrights in works created pursuant to this agreement. Client permitted uses: Personal use including home display, social media sharing (with business tag to @flyinirismedia on Instagram and Facebook), and private viewing. Not permitted: Sale, commercial publication, or distribution for profit without Videographer's written permission.</p>
+      <h4>Artistic Release</h4>
+      <p>Client has reviewed Videographer's portfolio and has reasonable expectations regarding style and quality. Videographer will use reasonable efforts to incorporate Client's preferences but retains final artistic judgment. Dissatisfaction with aesthetic judgment is not grounds for termination or refund.</p>
+    </div>
+
+    <!-- Section 6: The fine print -->
+    <div class="legal-block">
+      <div class="plain-header">The fine print.</div>
+      <p class="plain-summary">
+        Limit of liability, governing law, and the housekeeping that lawyers tell us we need.
+      </p>
+      <h4>Limit of Liability</h4>
+      <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
+      <h4>General Provisions</h4>
+      <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between Parties. Amendment: Only by written consent via proper notice.</p>
+    </div>
+
+    <!-- Client signatures -->
+    <div class="section">
+      <div class="section-title">Client Signatures</div>
+      <div class="signature-grid" id="signature-grid"></div>
+      <div class="info-row">
+        <span class="lbl">Client signed</span><span class="val" id="client-signed-at"></span>
+      </div>
+    </div>
+
+    <!-- Sierra countersignature -->
+    <div class="section">
+      <div class="section-title">Videographer Countersignature</div>
+      <div class="countersignature">
+        <div class="signature-text">Sierra Hernitz</div>
+        <div class="countersig-meta">Owner, Flyin' Iris Media Productions LLC</div>
+        <div class="countersig-date">Countersigned <span id="countersig-date"></span></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Flyin' Iris Media Productions LLC</p>
+      <p style="margin-top: 4px;">
+        <a href="https://flyiniris.com">flyiniris.com</a> &middot;
+        <a href="https://www.instagram.com/flyinirismedia/">@flyinirismedia</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // /agreement/signed — permanent read-only signed agreement view.
+  // Server-side injection is the primary path (Worker fetches this HTML and
+  // injects window.__AGREEMENT_DATA__). When Pages serves the file directly,
+  // we fall back to GET /api/agreement/:token?view=signed which performs the
+  // same state gating server-side.
+
+  const API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+  let DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
+  const QS = new URLSearchParams(window.location.search);
+  const TOKEN = (DATA && DATA.token) || QS.get('token');
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!DATA && TOKEN) {
+      try {
+        const resp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '?view=signed', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (resp.ok) {
+          DATA = await resp.json();
+        }
+      } catch (_e) {
+        // Fall through to the showError below.
+      }
+    }
+
+    if (!DATA) {
+      showError('Agreement Not Found', 'We couldn\'t load this signed agreement. Please use the link from your email.');
+      return;
+    }
+
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+
+    // Couple names
+    const bride = DATA.bride_first_name || '';
+    const groom = DATA.groom_first_name || '';
+    let coupleStr = '';
+    if (bride && groom) coupleStr = bride + ' & ' + groom;
+    else if (bride) coupleStr = bride;
+    else if (groom) coupleStr = groom;
+    document.getElementById('couple-line').textContent = coupleStr;
+    document.getElementById('couple-names').textContent = coupleStr || '(client)';
+
+    // Wedding date + venue
+    document.getElementById('wedding-date').textContent = formatDate(DATA.wedding_date) || '(date pending)';
+    if (DATA.venue_name) {
+      document.getElementById('venue-row').style.display = 'flex';
+      document.getElementById('venue-name').textContent = DATA.venue_name;
+    }
+
+    // Tier + total
+    document.getElementById('tier').textContent = DATA.tier || '';
+    document.getElementById('total').textContent = '$' + fmt(DATA.total || 0);
+
+    // Status badge
+    const badge = document.getElementById('status-badge');
+    const stateLabels = {
+      'fully-executed': 'Fully Executed',
+      'in-flight': 'In Flight',
+      'completed': 'Completed',
+      'charge-failed': 'Charge Issue',
+      'charge-recovered': 'In Flight',
+      'charge-abandoned': 'Charge Abandoned',
+    };
+    badge.textContent = stateLabels[DATA.agreement_state] || 'Signed';
+
+    // Schedule
+    renderSchedule();
+
+    // Signatures
+    renderSignatures();
+
+    // Sierra countersignature timestamp
+    const cdEl = document.getElementById('countersig-date');
+    if (cdEl) {
+      if (DATA.sierra_countersigned_at) {
+        cdEl.textContent = formatDateTime(DATA.sierra_countersigned_at);
+      } else {
+        cdEl.textContent = 'pending';
+      }
+    }
+
+    // Client signed timestamp
+    const csEl = document.getElementById('client-signed-at');
+    if (csEl) {
+      csEl.textContent = DATA.client_signed_at ? formatDateTime(DATA.client_signed_at) : 'pending';
+    }
+
+    // Populate event-specific text in the legal body sections.
+    const wedding = DATA.wedding_date ? formatDate(DATA.wedding_date) : 'your wedding date';
+    const venue = DATA.venue_name || 'your venue';
+    const summaryEl = document.getElementById('agree-section-summary');
+    if (summaryEl) {
+      summaryEl.textContent = 'We agree to film your wedding on ' + wedding + ' at ' + venue + '. You agreed to the schedule and payment plan above.';
+    }
+    const eventEl = document.getElementById('event-summary');
+    if (eventEl) {
+      eventEl.textContent = 'Wedding date: ' + wedding + '. Venue: ' + venue + '. Tier: ' + (DATA.tier || '') + '. Total contract: $' + fmt(DATA.total || 0) + '.';
+    }
+  });
+
+  function renderSchedule() {
+    const list = document.getElementById('schedule-list');
+    if (!list) return;
+    const schedule = Array.isArray(DATA.schedule) ? DATA.schedule : [];
+    if (!schedule.length) {
+      list.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No schedule on file.</p>';
+      return;
+    }
+
+    const todayIso = new Date().toISOString().slice(0, 10);
+
+    list.innerHTML = '';
+    for (const p of schedule) {
+      const isPaid = p.due_date <= todayIso && (
+        DATA.agreement_state === 'completed' ||
+        (DATA.agreement_state === 'fully-executed' && p.due_date === schedule[0].due_date) ||
+        (DATA.agreement_state === 'in-flight' && p.due_date <= todayIso)
+      );
+      const row = document.createElement('div');
+      row.className = 'schedule-row ' + (isPaid ? 'paid' : 'pending');
+      row.innerHTML =
+        '<div class="sched-left">' +
+          '<div class="sched-label">' + escapeHtml(p.description || '') + '</div>' +
+          '<div class="sched-detail">' + escapeHtml(formatDate(p.due_date)) + '</div>' +
+        '</div>' +
+        '<div class="sched-right">' +
+          '<div class="sched-amount">$' + fmt(p.amount) + '</div>' +
+          '<div class="sched-status">' + (isPaid ? 'Paid' : 'Pending') + '</div>' +
+        '</div>';
+      list.appendChild(row);
+    }
+  }
+
+  function renderSignatures() {
+    const grid = document.getElementById('signature-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Signer 1
+    const s1 = document.createElement('div');
+    s1.className = 'sig-block';
+    s1.innerHTML =
+      '<div class="sig-name">' + escapeHtml(DATA.signer1_name || 'Client 1') + '</div>' +
+      sigImageOrTyped(DATA.signer1_signature_url, DATA.signer1_name);
+    grid.appendChild(s1);
+
+    // Signer 2 (only if name present)
+    if (DATA.signer2_name) {
+      const s2 = document.createElement('div');
+      s2.className = 'sig-block';
+      s2.innerHTML =
+        '<div class="sig-name">' + escapeHtml(DATA.signer2_name) + '</div>' +
+        sigImageOrTyped(DATA.signer2_signature_url, DATA.signer2_name);
+      grid.appendChild(s2);
+    }
+  }
+
+  function sigImageOrTyped(url, name) {
+    // Drawn signatures are stored as R2 URLs (string starting with http or /).
+    // Typed signatures are stored as a JSON sentinel like:
+    //   {"type":"typed","name":"Sean Adamec","font":"Great Vibes"}
+    // Parse the value first to decide render path so we never put JSON in a src attribute.
+    if (url) {
+      var parsed = null;
+      try { parsed = JSON.parse(url); } catch (e) { parsed = null; }
+      if (parsed && parsed.type === 'typed') {
+        var displayName = parsed.name || name || '';
+        var fontFamily = parsed.font || 'Great Vibes';
+        return '<div class="sig-img"><span class="sig-typed" style="font-family:\'' +
+          escapeAttr(fontFamily) + '\', cursive">' + escapeHtml(displayName) + '</span></div>';
+      }
+      if (typeof url === 'string' && (url.indexOf('http') === 0 || url.indexOf('/') === 0)) {
+        return '<div class="sig-img"><img src="' + escapeAttr(url) + '" alt="Signature"></div>';
+      }
+    }
+    if (name) {
+      return '<div class="sig-img"><span class="sig-typed">' + escapeHtml(name) + '</span></div>';
+    }
+    return '<div class="sig-img empty">Signature on file.</div>';
+  }
+
+  // ===== HELPERS =====
+  function showError(title, message) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-screen').style.display = 'flex';
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s == null ? '' : String(s);
+    return div.innerHTML;
+  }
+
+  function escapeAttr(s) {
+    return String(s == null ? '' : s).replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function fmt(n) {
+    if (n == null || isNaN(n)) return '0';
+    return Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+    if (!m) return iso;
+    const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  }
+
+  function formatDateTime(unixMs) {
+    if (!unixMs) return '';
+    const d = new Date(unixMs);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+</script>
+</body>
+</html>
