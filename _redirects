@@ -11,20 +11,15 @@
 /blog/*                     /  301
 /story-sessions             /  301
 
-# /agreement system (deployed 2026-04-28) — single Worker dispatch point.
+# /agreement routing (subdomain migration deployed 2026-04-28).
 #
-# /contract and /payment 301-redirect to /agreement at the Pages layer.
-# The Worker's handleAgreementPage is the single source of truth for the
-# kill-switch flow: it reads the agreement_killswitch KV key and branches
-# on contract state, including serving legacy contract-legacy.html content
-# when the switch is ON for pristine tokens (URL stays on /agreement, only
-# the response body changes — no /contract URL is ever Worker-rendered).
-#
-# DO NOT add a Worker route for /contract or /payment back to wrangler.toml.
-# Cloudflare Pages SPA fallback intercepts query-string requests to those
-# paths before any Worker route can fire — the dispatch must live behind
-# the /agreement URL where the Worker has uncontested ownership.
-/contract                  /agreement  301
-/contract/*                /agreement  301
-/payment                   /agreement  301
-/payment/*                 /agreement  301
+# Pages serves SPA shells (agreement.html, agreement/signed.html). Worker on
+# agreement.flyiniris.com handles all dynamic routing, kill switch, and data
+# injection. These 301s redirect couples on legacy flyiniris.com links to the
+# canonical subdomain.
+/contract                  https://agreement.flyiniris.com/agreement  301
+/contract/*                https://agreement.flyiniris.com/agreement  301
+/payment                   https://agreement.flyiniris.com/agreement  301
+/payment/*                 https://agreement.flyiniris.com/agreement  301
+/agreement                 https://agreement.flyiniris.com/agreement              301
+/agreement/*               https://agreement.flyiniris.com/agreement/:splat       301
