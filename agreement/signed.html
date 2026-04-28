@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Signed Agreement | Flyin' Iris</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <link rel="icon" type="image/png" href="/favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Great+Vibes&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.5);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+    .header {
+      text-align: center;
+      padding: 48px 0 32px;
+    }
+    .header .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text-primary);
+    }
+    .header .brand-sub {
+      font-size: 10px; font-weight: 400; letter-spacing: 2px;
+      color: var(--text-secondary); text-transform: uppercase; margin-top: 4px;
+    }
+    .header .gold-bar {
+      width: 48px; height: 2px; background: var(--accent); margin: 20px auto;
+    }
+    h1.page-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px; font-weight: 400; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .section h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 600; color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(42, 42, 40, 0.5);
+      font-size: 14px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--text-secondary); }
+    .info-row .val { color: var(--text-primary); font-weight: 400; }
+    .info-row .val.accent { color: var(--accent); font-weight: 500; }
+
+    .schedule-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; margin-bottom: 8px;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      border-left: 3px solid var(--border);
+    }
+    .schedule-row.paid { border-left-color: #22c55e; }
+    .schedule-row.pending { border-left-color: var(--accent); }
+    .schedule-row .sched-left .sched-label {
+      font-size: 14px; color: var(--text-primary);
+    }
+    .schedule-row .sched-left .sched-detail {
+      font-size: 12px; color: var(--text-muted);
+    }
+    .schedule-row .sched-right .sched-amount {
+      font-size: 16px; color: var(--accent); font-weight: 500;
+    }
+    .schedule-row .sched-right .sched-status {
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      text-align: right; margin-top: 2px;
+    }
+    .schedule-row.paid .sched-right .sched-status { color: #22c55e; }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .sig-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .sig-block .sig-name {
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .sig-block .sig-img {
+      background: #FAFAFA;
+      border-radius: 4px;
+      padding: 12px;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sig-block .sig-img img {
+      max-width: 100%;
+      max-height: 90px;
+      display: block;
+    }
+    .sig-block .sig-img.empty {
+      color: var(--text-muted); font-size: 12px; font-style: italic; background: transparent;
+    }
+    .sig-block .sig-typed {
+      font-family: 'Great Vibes', cursive;
+      font-size: 32px;
+      color: #1a1a1a;
+    }
+
+    /* Sierra Countersignature */
+    .countersignature {
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .signature-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: #FFBD1D;
+      line-height: 1;
+    }
+    .countersig-meta {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: #C8C3B9;
+      margin-top: 4px;
+    }
+    .countersig-date {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(200,195,185,0.5);
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #22c55e;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 32px 0 48px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    .loading-screen, .error-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+    }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-screen h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 600; margin-bottom: 12px;
+    }
+    .error-screen p { color: var(--text-secondary); max-width: 420px; }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .header { padding: 32px 0 20px; }
+      .section { padding: 22px 18px; }
+      .signature-grid { grid-template-columns: 1fr; }
+      .signature-text { font-size: 2.4rem; }
+    }
+
+    /* Print-friendly */
+    @media print {
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-elevated: #f7f5f0;
+        --text-primary: #1a1a1a;
+        --text-secondary: #444;
+        --text-muted: #777;
+        --border: #ccc;
+      }
+      body { background: #fff; color: #1a1a1a; }
+      body::before { display: none; }
+      .section, .countersignature {
+        box-shadow: none;
+        page-break-inside: avoid;
+      }
+      .header { padding: 24px 0 16px; }
+      .footer { color: #555; }
+      a { color: #1a1a1a; text-decoration: none; }
+      .badge {
+        background: #fff;
+        color: #1a7c30;
+        border-color: #1a7c30;
+      }
+      .signature-text { color: #b07a00; }
+      .schedule-row { border: 1px solid #ccc; }
+      .schedule-row.paid { border-left: 3px solid #1a7c30; }
+      .schedule-row.pending { border-left: 3px solid #b07a00; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen" class="loading-screen container">
+  <div class="loading-spinner"></div>
+  <p style="color: var(--text-secondary); font-size: 14px;">Loading...</p>
+</div>
+
+<!-- Error -->
+<div id="error-screen" class="error-screen container" style="display: none;">
+  <h2 id="error-title">Agreement not found</h2>
+  <p id="error-message">We couldn't load this signed agreement. Please use the link from your email or contact us at sean@flyiniris.com.</p>
+</div>
+
+<!-- Main -->
+<div id="app" style="display: none;">
+  <div class="container">
+    <div class="header">
+      <div class="brand">Flyin' Iris</div>
+      <div class="brand-sub">Milwaukee &amp; Wisconsin Wedding Films</div>
+      <div class="gold-bar"></div>
+      <h1 class="page-title">Your signed agreement.</h1>
+      <div class="subline" id="couple-line"></div>
+      <span class="badge" id="status-badge">Fully Executed</span>
+    </div>
+
+    <!-- Wedding details -->
+    <div class="section">
+      <div class="section-title">Wedding</div>
+      <div class="info-row">
+        <span class="lbl">Couple</span><span class="val" id="couple-names"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Wedding date</span><span class="val" id="wedding-date"></span>
+      </div>
+      <div class="info-row" id="venue-row" style="display: none;">
+        <span class="lbl">Venue</span><span class="val" id="venue-name"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Tier</span><span class="val" id="tier"></span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Total</span><span class="val accent" id="total"></span>
+      </div>
+    </div>
+
+    <!-- Payment schedule -->
+    <div class="section">
+      <div class="section-title">Payment Schedule</div>
+      <div id="schedule-list"></div>
+    </div>
+
+    <!-- Client signatures -->
+    <div class="section">
+      <div class="section-title">Client Signatures</div>
+      <div class="signature-grid" id="signature-grid"></div>
+      <div class="info-row">
+        <span class="lbl">Client signed</span><span class="val" id="client-signed-at"></span>
+      </div>
+    </div>
+
+    <!-- Sierra countersignature -->
+    <div class="section">
+      <div class="section-title">Videographer Countersignature</div>
+      <div class="countersignature">
+        <div class="signature-text">Sierra Hernitz</div>
+        <div class="countersig-meta">Owner, Flyin' Iris Media Productions LLC</div>
+        <div class="countersig-date">Countersigned <span id="countersig-date"></span></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Flyin' Iris Media Productions LLC</p>
+      <p style="margin-top: 4px;">
+        <a href="https://flyiniris.com">flyiniris.com</a> &middot;
+        <a href="https://www.instagram.com/flyinirismedia/">@flyinirismedia</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // /agreement/signed — permanent read-only signed agreement view.
+  // Worker injects window.__AGREEMENT_DATA__ at render time.
+
+  const DATA = (typeof window !== 'undefined' && window.__AGREEMENT_DATA__) ? window.__AGREEMENT_DATA__ : null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!DATA) {
+      showError('Agreement Not Found', 'We couldn\'t load this signed agreement. Please use the link from your email.');
+      return;
+    }
+
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+
+    // Couple names
+    const bride = DATA.bride_first_name || '';
+    const groom = DATA.groom_first_name || '';
+    let coupleStr = '';
+    if (bride && groom) coupleStr = bride + ' & ' + groom;
+    else if (bride) coupleStr = bride;
+    else if (groom) coupleStr = groom;
+    document.getElementById('couple-line').textContent = coupleStr;
+    document.getElementById('couple-names').textContent = coupleStr || '(client)';
+
+    // Wedding date + venue
+    document.getElementById('wedding-date').textContent = formatDate(DATA.wedding_date) || '(date pending)';
+    if (DATA.venue_name) {
+      document.getElementById('venue-row').style.display = 'flex';
+      document.getElementById('venue-name').textContent = DATA.venue_name;
+    }
+
+    // Tier + total
+    document.getElementById('tier').textContent = DATA.tier || '';
+    document.getElementById('total').textContent = '$' + fmt(DATA.total || 0);
+
+    // Status badge
+    const badge = document.getElementById('status-badge');
+    const stateLabels = {
+      'fully-executed': 'Fully Executed',
+      'in-flight': 'In Flight',
+      'completed': 'Completed',
+      'charge-failed': 'Charge Issue',
+      'charge-recovered': 'In Flight',
+      'charge-abandoned': 'Charge Abandoned',
+    };
+    badge.textContent = stateLabels[DATA.agreement_state] || 'Signed';
+
+    // Schedule
+    renderSchedule();
+
+    // Signatures
+    renderSignatures();
+
+    // Sierra countersignature timestamp
+    const cdEl = document.getElementById('countersig-date');
+    if (cdEl) {
+      if (DATA.sierra_countersigned_at) {
+        cdEl.textContent = formatDateTime(DATA.sierra_countersigned_at);
+      } else {
+        cdEl.textContent = 'pending';
+      }
+    }
+
+    // Client signed timestamp
+    const csEl = document.getElementById('client-signed-at');
+    if (csEl) {
+      csEl.textContent = DATA.client_signed_at ? formatDateTime(DATA.client_signed_at) : 'pending';
+    }
+  });
+
+  function renderSchedule() {
+    const list = document.getElementById('schedule-list');
+    if (!list) return;
+    const schedule = Array.isArray(DATA.schedule) ? DATA.schedule : [];
+    if (!schedule.length) {
+      list.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No schedule on file.</p>';
+      return;
+    }
+
+    const todayIso = new Date().toISOString().slice(0, 10);
+
+    list.innerHTML = '';
+    for (const p of schedule) {
+      const isPaid = p.due_date <= todayIso && (
+        DATA.agreement_state === 'completed' ||
+        (DATA.agreement_state === 'fully-executed' && p.due_date === schedule[0].due_date) ||
+        (DATA.agreement_state === 'in-flight' && p.due_date <= todayIso)
+      );
+      const row = document.createElement('div');
+      row.className = 'schedule-row ' + (isPaid ? 'paid' : 'pending');
+      row.innerHTML =
+        '<div class="sched-left">' +
+          '<div class="sched-label">' + escapeHtml(p.description || '') + '</div>' +
+          '<div class="sched-detail">' + escapeHtml(formatDate(p.due_date)) + '</div>' +
+        '</div>' +
+        '<div class="sched-right">' +
+          '<div class="sched-amount">$' + fmt(p.amount) + '</div>' +
+          '<div class="sched-status">' + (isPaid ? 'Paid' : 'Pending') + '</div>' +
+        '</div>';
+      list.appendChild(row);
+    }
+  }
+
+  function renderSignatures() {
+    const grid = document.getElementById('signature-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Signer 1
+    const s1 = document.createElement('div');
+    s1.className = 'sig-block';
+    s1.innerHTML =
+      '<div class="sig-name">' + escapeHtml(DATA.signer1_name || 'Client 1') + '</div>' +
+      sigImageOrTyped(DATA.signer1_signature_url, DATA.signer1_name);
+    grid.appendChild(s1);
+
+    // Signer 2 (only if name present)
+    if (DATA.signer2_name) {
+      const s2 = document.createElement('div');
+      s2.className = 'sig-block';
+      s2.innerHTML =
+        '<div class="sig-name">' + escapeHtml(DATA.signer2_name) + '</div>' +
+        sigImageOrTyped(DATA.signer2_signature_url, DATA.signer2_name);
+      grid.appendChild(s2);
+    }
+  }
+
+  function sigImageOrTyped(url, name) {
+    if (url) {
+      return '<div class="sig-img"><img src="' + escapeAttr(url) + '" alt="Signature"></div>';
+    }
+    if (name) {
+      return '<div class="sig-img"><span class="sig-typed">' + escapeHtml(name) + '</span></div>';
+    }
+    return '<div class="sig-img empty">No signature on file.</div>';
+  }
+
+  // ===== HELPERS =====
+  function showError(title, message) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-screen').style.display = 'flex';
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s == null ? '' : String(s);
+    return div.innerHTML;
+  }
+
+  function escapeAttr(s) {
+    return String(s == null ? '' : s).replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function fmt(n) {
+    if (n == null || isNaN(n)) return '0';
+    return Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+    if (!m) return iso;
+    const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  }
+
+  function formatDateTime(unixMs) {
+    if (!unixMs) return '';
+    const d = new Date(unixMs);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+</script>
+</body>
+</html>

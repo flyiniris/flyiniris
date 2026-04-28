@@ -10,3 +10,9 @@
 /blog                       /  301
 /blog/*                     /  301
 /story-sessions             /  301
+
+# /agreement system (deployed 2026-04-28) — old paths point at new flow
+/contract                  /agreement  301
+/contract/*                /agreement  301
+/payment                   /agreement  301
+/payment/*                 /agreement  301
