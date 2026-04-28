@@ -11,19 +11,20 @@
 /blog/*                     /  301
 /story-sessions             /  301
 
-# /agreement system kill switch (deployed 2026-04-28)
+# /agreement system (deployed 2026-04-28) — single Worker dispatch point.
 #
-# Cloudflare Pages SPA fallback intercepts /contract?token=... before
-# Worker routes fire. These rules proxy /contract and /payment to the
-# Worker (status 200, transparent rewrite) so the Worker can own the
-# kill-switch routing decision.
+# /contract and /payment 301-redirect to /agreement at the Pages layer.
+# The Worker's handleAgreementPage is the single source of truth for the
+# kill-switch flow: it reads the agreement_killswitch KV key and branches
+# on contract state, including serving legacy contract-legacy.html content
+# when the switch is ON for pristine tokens (URL stays on /agreement, only
+# the response body changes — no /contract URL is ever Worker-rendered).
 #
-# DO NOT change to "/contract -> /agreement" 301s -- that bypasses the
-# Worker entirely and locks the kill switch open.
-# DO NOT remove without first updating wrangler.toml routes and Worker
-# handlers. See: src/agreement.ts and src/index.ts in iris-automation
-# for the routing logic these rules forward to.
-/contract     https://iris-automation.flyin-iris-mp.workers.dev/contract  200
-/contract/*   https://iris-automation.flyin-iris-mp.workers.dev/contract  200
-/payment      https://iris-automation.flyin-iris-mp.workers.dev/payment   200
-/payment/*    https://iris-automation.flyin-iris-mp.workers.dev/payment   200
+# DO NOT add a Worker route for /contract or /payment back to wrangler.toml.
+# Cloudflare Pages SPA fallback intercepts query-string requests to those
+# paths before any Worker route can fire — the dispatch must live behind
+# the /agreement URL where the Worker has uncontested ownership.
+/contract                  /agreement  301
+/contract/*                /agreement  301
+/payment                   /agreement  301
+/payment/*                 /agreement  301
