@@ -228,6 +228,70 @@
       font-weight: 500;
     }
 
+    /* Legal body — copied from agreement.html so the signed view shows the
+       complete executed agreement. Couples need to refer back to the full
+       legal text from the permanent /agreement/signed URL. */
+    .legal-section-header {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+    .legal-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .legal-block .plain-header {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .legal-block .plain-summary {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 400;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-block h4 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 18px 0 6px;
+    }
+    .legal-block h4:first-of-type { margin-top: 0; }
+    .legal-block p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+    .pull-quote {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--text-primary);
+      text-align: center;
+      padding: 28px 24px;
+      margin: 16px 0;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-card);
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
     .footer {
       text-align: center;
       padding: 32px 0 48px;
@@ -263,6 +327,8 @@
       .container { padding: 0 16px; }
       .header { padding: 32px 0 20px; }
       .section { padding: 22px 18px; }
+      .legal-block { padding: 24px 20px; }
+      .pull-quote { font-size: 18px; padding: 20px 18px; }
       .signature-grid { grid-template-columns: 1fr; }
       .signature-text { font-size: 2.4rem; }
     }
@@ -350,6 +416,99 @@
     <div class="section">
       <div class="section-title">Payment Schedule</div>
       <div id="schedule-list"></div>
+    </div>
+
+    <!-- Full executed agreement legal text (mirrors Page 3 of the sign flow) -->
+    <div class="legal-section-header">Your Agreement</div>
+
+    <!-- Section 1: What we agree to -->
+    <div class="legal-block">
+      <div class="plain-header">What we agree to.</div>
+      <p class="plain-summary" id="agree-section-summary">
+        We agree to film your wedding. You agreed to the schedule and payment plan above.
+      </p>
+      <h4>Parties</h4>
+      <p>This Agreement is entered into between Flyin' Iris Media Productions LLC ("Videographer," owners Sierra Hernitz &amp; Sean Adamec) and the Client(s) named in this signed agreement.</p>
+      <h4>Event Details</h4>
+      <p id="event-summary"></p>
+    </div>
+
+    <!-- Section 2: The work -->
+    <div class="legal-block">
+      <div class="plain-header">The work.</div>
+      <p class="plain-summary">
+        Here's what we deliver and when. Final artistic call is ours, but we'll do everything we can to capture what matters to you.
+      </p>
+      <h4>Deliverables</h4>
+      <p>All films delivered in 4K resolution (highlight film) and 1080p (FOMO documentary, if included). Drone footage included when conditions and regulations permit. Sierra Hernitz is FAA Part 107 certified.</p>
+      <h4>Delivery Timeline</h4>
+      <p>Teaser film: Within 2 weeks of event date.</p>
+      <p>Highlight film: Within 12 weeks of event date.</p>
+      <p>Ceremony edit: Within 16 weeks of event date.</p>
+      <p>FOMO Documentary Edit (if included): Within 16 weeks of event date.</p>
+      <p>Access period: All films remain on your private viewing page indefinitely. We recommend downloading and backing up all files within 90 days of delivery.</p>
+      <h4>Services</h4>
+      <p>Flyin' Iris Media Productions LLC agrees to provide videographers to perform video services for Client at the Event in a professional manner according to prevailing industry standards. Videographer may employ assistants as needed. Videographer is not responsible for the impact on the final product of any interference caused by guests or other vendors at the Event. Videographer will make every effort to obtain, but cannot guarantee delivery of, any specific footage requested by the Client due to lack of control over the Event, its participants, weather, and venue rules or restrictions.</p>
+      <h4>Meals</h4>
+      <p>Client shall arrange with the caterer to provide meal(s) for all videographers onsite at the Event.</p>
+      <h4>Exclusivity</h4>
+      <p>Client agrees that Videographer is hired exclusive of any other videography service provider. No other videographers, paid or unpaid, are permitted to provide the same or similar services at the Event without prior written consent from Videographer.</p>
+    </div>
+
+    <!-- Section 3: The money -->
+    <div class="legal-block">
+      <div class="plain-header">The money.</div>
+      <p class="plain-summary">
+        This agreement is binding upon signature AND retainer clearing within 30 days of signature. If the retainer is not received within 30 days, this agreement automatically expires and your date is released back to general availability.
+      </p>
+      <h4>Payment Terms</h4>
+      <p>Payments accepted via Credit/Debit Card or ACH Bank Transfer (via Stripe). The first payment (the retainer) is due immediately upon signing this agreement. Subsequent payments follow the schedule selected above.</p>
+      <p>If Client fails to remit any scheduled payment by the due date, Videographer reserves the right to terminate this agreement with no obligation to attend the event or refund prior payments. Recurring payments on a multi-payment plan are charged automatically to the payment method on file.</p>
+      <h4>Non-Refundable</h4>
+      <p>All payments under this agreement are non-refundable. The retainer secures Client's wedding date and removes that date from general availability.</p>
+    </div>
+
+    <!-- Pull quote -->
+    <div class="pull-quote">
+      "Sierra edits every film we make. No assistants, no farm-outs, no templates."
+    </div>
+
+    <!-- Section 4: If life happens -->
+    <div class="legal-block">
+      <div class="plain-header">If life happens.</div>
+      <p class="plain-summary">
+        Cancellation, rescheduling, weather, and force majeure. The boring stuff that matters when something goes sideways.
+      </p>
+      <h4>Cancellation &amp; Rescheduling</h4>
+      <p>If Client cancels, Client shall provide notice as soon as possible. Videographer has no obligation to refund any monies previously paid. Client is not relieved of payment obligations for cancelled or rescheduled services unless Parties agree in writing. If Videographer secures another client for the original date, Videographer may, at sole discretion, excuse all or a portion of Client's outstanding balance.</p>
+      <h4>Force Majeure</h4>
+      <p>Either party may be excused from performance in the event of natural disaster, war, terrorism, or other events outside either party's control. Videographer will immediately notify Client and issue a pro-rated refund for undelivered Services.</p>
+      <h4>Weather</h4>
+      <p>In the event of undesirable weather for outdoor filming, Client is responsible for having an indoor or alternative location. Due to potential equipment damage, Videographer may move to an alternative indoor location at their discretion. No refunds for weather-related limitations. Drone Services: Weather and location restrictions apply. Videographer will not fly if FAA regulations restrict the flight.</p>
+    </div>
+
+    <!-- Section 5: The film itself -->
+    <div class="legal-block">
+      <div class="plain-header">The film itself.</div>
+      <p class="plain-summary">
+        We own the copyright. You get to share it on social, show it at home, and watch it forever. Selling it is the only thing off the table.
+      </p>
+      <h4>Intellectual Property</h4>
+      <p>All footage captured by Videographer is copyright protected under federal law (Title 17, Chapter 2, Section 201-02 of the United States Code). Videographer owns all copyrights in works created pursuant to this agreement. Client permitted uses: Personal use including home display, social media sharing (with business tag to @flyinirismedia on Instagram and Facebook), and private viewing. Not permitted: Sale, commercial publication, or distribution for profit without Videographer's written permission.</p>
+      <h4>Artistic Release</h4>
+      <p>Client has reviewed Videographer's portfolio and has reasonable expectations regarding style and quality. Videographer will use reasonable efforts to incorporate Client's preferences but retains final artistic judgment. Dissatisfaction with aesthetic judgment is not grounds for termination or refund.</p>
+    </div>
+
+    <!-- Section 6: The fine print -->
+    <div class="legal-block">
+      <div class="plain-header">The fine print.</div>
+      <p class="plain-summary">
+        Limit of liability, governing law, and the housekeeping that lawyers tell us we need.
+      </p>
+      <h4>Limit of Liability</h4>
+      <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
+      <h4>General Provisions</h4>
+      <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between Parties. Amendment: Only by written consent via proper notice.</p>
     </div>
 
     <!-- Client signatures -->
@@ -469,6 +628,18 @@
     const csEl = document.getElementById('client-signed-at');
     if (csEl) {
       csEl.textContent = DATA.client_signed_at ? formatDateTime(DATA.client_signed_at) : 'pending';
+    }
+
+    // Populate event-specific text in the legal body sections.
+    const wedding = DATA.wedding_date ? formatDate(DATA.wedding_date) : 'your wedding date';
+    const venue = DATA.venue_name || 'your venue';
+    const summaryEl = document.getElementById('agree-section-summary');
+    if (summaryEl) {
+      summaryEl.textContent = 'We agree to film your wedding on ' + wedding + ' at ' + venue + '. You agreed to the schedule and payment plan above.';
+    }
+    const eventEl = document.getElementById('event-summary');
+    if (eventEl) {
+      eventEl.textContent = 'Wedding date: ' + wedding + '. Venue: ' + venue + '. Tier: ' + (DATA.tier || '') + '. Total contract: $' + fmt(DATA.total || 0) + '.';
     }
   });
 
