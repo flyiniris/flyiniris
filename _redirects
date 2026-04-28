@@ -11,8 +11,19 @@
 /blog/*                     /  301
 /story-sessions             /  301
 
-# /agreement system (deployed 2026-04-28) — /contract and /payment are now
-# claimed by the iris-automation Worker so the kill-switch logic can branch
-# on the agreement_killswitch KV key. Don't re-add /contract or /payment 301
-# rules here; the Pages-side rule fires before the Worker sees the request,
-# which would lock the kill-switch open.
+# /agreement system kill switch (deployed 2026-04-28)
+#
+# Cloudflare Pages SPA fallback intercepts /contract?token=... before
+# Worker routes fire. These rules proxy /contract and /payment to the
+# Worker (status 200, transparent rewrite) so the Worker can own the
+# kill-switch routing decision.
+#
+# DO NOT change to "/contract -> /agreement" 301s -- that bypasses the
+# Worker entirely and locks the kill switch open.
+# DO NOT remove without first updating wrangler.toml routes and Worker
+# handlers. See: src/agreement.ts and src/index.ts in iris-automation
+# for the routing logic these rules forward to.
+/contract     https://iris-automation.flyin-iris-mp.workers.dev/contract  200
+/contract/*   https://iris-automation.flyin-iris-mp.workers.dev/contract  200
+/payment      https://iris-automation.flyin-iris-mp.workers.dev/payment   200
+/payment/*    https://iris-automation.flyin-iris-mp.workers.dev/payment   200
