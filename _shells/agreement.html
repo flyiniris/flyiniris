@@ -567,6 +567,115 @@
       cursor: not-allowed;
     }
 
+    /* Back button (top-left of each page container, smaller / less prominent) */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 16px;
+    }
+    .back-btn:hover {
+      background: rgba(255, 189, 29, 0.08);
+      color: var(--accent-light);
+      border-color: var(--accent-light);
+    }
+
+    /* Package details card (Page 2, above payment plan grid) */
+    .package-details {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 24px 22px;
+      margin: 24px 0 24px;
+    }
+    .package-details .pd-tier {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .package-details .pd-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(42, 42, 40, 0.5);
+      font-size: 14px;
+    }
+    .package-details .pd-row:last-of-type { border-bottom: none; }
+    .package-details .pd-row .pd-label {
+      color: var(--text-primary);
+      font-weight: 400;
+      flex: 1;
+    }
+    .package-details .pd-row .pd-amount {
+      color: var(--text-primary);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .package-details .pd-summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    .package-details .pd-summary-row .pd-label {
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .package-details .pd-summary-row .pd-amount {
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+    .package-details .pd-summary-row.discount .pd-label,
+    .package-details .pd-summary-row.discount .pd-amount {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .package-details .pd-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0 8px;
+    }
+    .package-details .pd-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0 0;
+      border-top: 1.5px solid var(--accent);
+      margin-top: 10px;
+    }
+    .package-details .pd-total-row .pd-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .package-details .pd-total-row .pd-amount {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
     .footer-note {
       font-size: 12px;
       color: var(--text-muted);
@@ -787,7 +896,9 @@
   <!-- ============================================================ -->
   <section id="page-1" class="page-section">
     <div class="container">
-      <h1 class="page-title">We're going to film your wedding.</h1>
+      <button type="button" class="back-btn" onclick="goBackFromPage(1)">&larr; Back</button>
+
+      <h1 class="page-title">Let's lock this in.</h1>
 
       <div class="hero-wrap" id="hero-wrap">
         <video id="hero-video" autoplay muted loop playsinline></video>
@@ -812,6 +923,8 @@
   <!-- ============================================================ -->
   <section id="page-2" class="page-section">
     <div class="container">
+      <button type="button" class="back-btn" onclick="goBackFromPage(2)">&larr; Back</button>
+
       <h1 class="page-title">Lock your date.</h1>
       <p class="body-line" style="text-align: center;">
         Pick your payment plan. We'll send the agreement next.
@@ -822,6 +935,9 @@
           This is the part where it gets real. Once you pick a plan and sign, your date is officially ours. We only take one S&amp;S Experience and one TEAM wedding per weekend, so this lock matters.
         </p>
       </div>
+
+      <!-- Package details breakdown (rendered from itemization) -->
+      <div id="package-details" class="package-details" style="display: none;"></div>
 
       <!-- Top tier: full / two / four (equal weight) -->
       <div class="plan-grid" id="plan-grid-top"></div>
@@ -865,6 +981,8 @@
   <!-- ============================================================ -->
   <section id="page-3" class="page-section">
     <div class="container">
+      <button type="button" class="back-btn" onclick="goBackFromPage(3)">&larr; Back</button>
+
       <h1 class="page-title">The agreement.</h1>
 
       <div class="recap-card" id="recap-card"></div>
@@ -1195,6 +1313,23 @@
     }
   }
 
+  // Back button handler. Pages 2 and 3 step back one page in the SPA flow.
+  // Page 1 has no prior SPA page; defer to browser history (the couple
+  // typically arrived from an email link or another tab).
+  function goBackFromPage(n) {
+    if (DATA && DATA.preview_mode) return;
+    if (n === 1) {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.close();
+      }
+      return;
+    }
+    if (n === 2) { goToPage(1); return; }
+    if (n === 3) { goToPage(2); return; }
+  }
+
   // ===== PAGE 1: HERO VIDEO =====
   function initHero(data) {
     const video = document.getElementById('hero-video');
@@ -1221,6 +1356,9 @@
     const total = data.total || 0;
     totalDollars = total;
 
+    // Package details breakdown (above the plan grid)
+    renderPackageDetails(data);
+
     const topGrid = document.getElementById('plan-grid-top');
     topGrid.innerHTML = '';
 
@@ -1246,6 +1384,62 @@
       const btn = document.getElementById('page2-continue');
       if (btn && !data.preview_mode) btn.disabled = false;
     }
+  }
+
+  // Render the package details breakdown (tier, line items, subtotal, discount,
+  // tax, total) above the payment plan grid. Reads from data.itemization, which
+  // is the canonical shape produced by toItemization() on the Worker side. The
+  // tax line is already stripped from itemization.lineItems so it doesn't
+  // render twice; data.itemization.tax holds the tax amount separately.
+  function renderPackageDetails(data) {
+    const wrap = document.getElementById('package-details');
+    if (!wrap) return;
+    const it = data.itemization;
+    if (!it) { wrap.style.display = 'none'; return; }
+
+    const tierLabel = it.tier === 'S&S Experience' ? 'S&S Experience' : 'Team Experience';
+    const items = Array.isArray(it.lineItems) ? it.lineItems : [];
+
+    let html = '<div class="pd-tier">' + escapeHtml(tierLabel) + '</div>';
+
+    items.forEach(li => {
+      html += '<div class="pd-row">' +
+        '<span class="pd-label">' + escapeHtml(li.name || '') + '</span>' +
+        '<span class="pd-amount">$' + fmtMoney(li.price || 0) + '</span>' +
+      '</div>';
+    });
+
+    html += '<div class="pd-divider"></div>';
+    html += '<div class="pd-summary-row">' +
+      '<span class="pd-label">Subtotal</span>' +
+      '<span class="pd-amount">$' + fmtMoney(it.subtotal || 0) + '</span>' +
+    '</div>';
+
+    if ((it.discount || 0) > 0) {
+      html += '<div class="pd-summary-row discount">' +
+        '<span class="pd-label">Bundle savings</span>' +
+        '<span class="pd-amount">-$' + fmtMoney(it.discount) + '</span>' +
+      '</div>';
+    }
+
+    html += '<div class="pd-summary-row">' +
+      '<span class="pd-label">Sales tax (5.5%)</span>' +
+      '<span class="pd-amount">$' + fmtMoney(it.tax || 0) + '</span>' +
+    '</div>';
+
+    html += '<div class="pd-total-row">' +
+      '<span class="pd-label">Total</span>' +
+      '<span class="pd-amount">$' + fmtMoney(it.total || 0) + '</span>' +
+    '</div>';
+
+    wrap.innerHTML = html;
+    wrap.style.display = 'block';
+  }
+
+  // Money formatter: always two decimals so $5,538.75 renders correctly.
+  function fmtMoney(n) {
+    if (n == null || isNaN(n)) return '0.00';
+    return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function buildPlanCard(plan, total, data, lowerTier) {
