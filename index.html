@@ -2595,7 +2595,7 @@
             var finalPrice = (profit < 1000) ? Math.ceil((rawCost + 1000) / 10) * 10 : discountedPrice;
             var savings = rawPrice - finalPrice;
             var bd = [];
-            bd.push({label:"Base package (6hr + highlight + FOMO + drone)", value:TEAM_BASE_PRICE});
+            bd.push({label:"Base package (6hr + highlight + drone)", value:TEAM_BASE_PRICE});
             if (a.hours) {
               var h = getHoursNum(a.hours);
               if (h > 6) {
@@ -2611,7 +2611,8 @@
                 bd.push({label: "5 min highlight film", value: 0, display: "Included"});
               }
             }
-            bd.push({label:"FOMO Documentary Edit", value:0, display:"Included"});
+            bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
+            bd.push({label:"FOMO Documentary Edit (included free)", value:1000, prefix:"−"});
             if (hasTeas) {
               bd.push({label:"Teaser film", value:tp, prefix:"+"});
             } else {
@@ -2646,7 +2647,7 @@
           var discountedPrice = Math.ceil(rawPrice * (1 - discount) / 10) * 10;
           var savings = rawPrice - discountedPrice;
           var bd = [];
-          bd.push({label:"Base package (6hr + highlight + FOMO + drone)", value:SS_BASE_PRICE});
+          bd.push({label:"Base package (6hr + highlight + drone)", value:SS_BASE_PRICE});
           if (a.hours) {
             var hourNum = hours;
             if (hourNum > 6) {
@@ -2662,7 +2663,8 @@
               bd.push({label: "5 min highlight film", value: 0, display: "Included"});
             }
           }
-          bd.push({label:"FOMO Documentary Edit", value:0, display:"Included"});
+          bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
+          bd.push({label:"FOMO Documentary Edit (included free)", value:1000, prefix:"−"});
           if (hasTeas) {
             bd.push({label:"Teaser film", value:tp2, prefix:"+"});
           } else {

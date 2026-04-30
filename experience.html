@@ -2188,7 +2188,8 @@
       } else {
         h += '<div class="price-line included"><span>Ceremony (30 min)</span><span class="price-line-value">Included</span></div>';
       }
-      h += '<div class="price-line included"><span>FOMO Documentary Edit</span><span class="price-line-value">Included</span></div>';
+      h += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
+      h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (included free)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
       if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
       if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 

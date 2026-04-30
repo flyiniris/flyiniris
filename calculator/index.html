@@ -863,8 +863,16 @@
       </div>
       <div class="summary-breakdown" id="summaryBreakdown">
         <div class="breakdown-row">
-          <span class="breakdown-label">Base package (6hr + highlight + FOMO + drone)</span>
+          <span class="breakdown-label">Base package (6hr + highlight + drone)</span>
           <span class="breakdown-value">$2,800</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">FOMO Documentary Edit</span>
+          <span class="breakdown-value">+$1,000</span>
+        </div>
+        <div class="breakdown-row" style="color:var(--accent);font-weight:500">
+          <span class="breakdown-label">FOMO Documentary Edit (included free)</span>
+          <span class="breakdown-value" style="color:var(--accent)">-$1,000</span>
         </div>
         <div class="breakdown-row total">
           <span class="breakdown-label">Your Total</span>
@@ -999,7 +1007,9 @@
 
       // Build breakdown
       var breakdownHTML = '';
-      breakdownHTML += row('Base package (6hr + highlight + FOMO + drone)', fmt(tier.base));
+      breakdownHTML += row('Base package (6hr + highlight + drone)', fmt(tier.base));
+      breakdownHTML += row('FOMO Documentary Edit', '+' + fmt(1000));
+      breakdownHTML += '<div class="breakdown-row" style="color:var(--accent);font-weight:500"><span class="breakdown-label">FOMO Documentary Edit (included free)</span><span class="breakdown-value" style="color:var(--accent)">-' + fmt(1000) + '</span></div>';
 
       if (extraHours > 0) {
         breakdownHTML += row('+' + extraHours + ' additional hour' + (extraHours > 1 ? 's' : '') + ' (' + fmt(tier.hourlyRate) + '/hr)', '+' + fmt(hoursCost));
