@@ -1547,7 +1547,6 @@
         base: 2800,
         hours: { '6': 0, '7': 150, '8': 300, '9': 450, '10': 600, '11': 750, '12': 900 },
         highlight: { '5 min': 0, '6-8 min': 300, '9-12 min': 600, '13-15 min': 1000, '15-20 min': 1300 },
-        ceremony: { '30 min': 0, '60 min': 200, '1.5 hrs': 300 },
         addons: { teaser: 500, storySession: 1000 },
         bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
       },
@@ -1555,7 +1554,6 @@
         base: 3800,
         hours: { '6': 0, '7': 225, '8': 450, '9': 675, '10': 900, '11': 1125, '12': 1350 },
         highlight: { '5 min': 0, '6-8 min': 300, '9-12 min': 600, '13-15 min': 1000, '15-20 min': 1300 },
-        ceremony: { '30 min': 0, '60 min': 200, '1.5 hrs': 300 },
         addons: { teaser: 500, storySession: 1000 },
         bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
       },
@@ -1601,7 +1599,6 @@
       tier: 'team',
       hours: '6',
       highlight: '5 min',
-      ceremony: '30 min',
       addons: { teaser: false, storySession: false }
     };
 
@@ -2051,21 +2048,17 @@
       total += tier.hours[builderState.hours] || 0;
       total += tier.highlight[builderState.highlight] || 0;
 
-      var ceremonyPrice = tier.ceremony[builderState.ceremony] || 0;
-      total += ceremonyPrice;
-
       var addonTotal = 0;
       var addonCount = 0;
       if (builderState.addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
       if (builderState.addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
-      if (ceremonyPrice > 0) { addonCount++; }
 
       total += addonTotal;
       var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
       var discount = Math.round(total * discountPct);
 
       if (builderState.tier === 'team' && discount > 0) {
-        var floor = tier.base + (tier.hours[builderState.hours] || 0) + (tier.highlight[builderState.highlight] || 0) + ceremonyPrice;
+        var floor = tier.base + (tier.hours[builderState.hours] || 0) + (tier.highlight[builderState.highlight] || 0);
         if (total - discount < floor) discount = total - floor;
       }
 
@@ -2106,17 +2099,6 @@
         var price = tier.highlight[opt];
         var priceLabel = price === 0 ? 'Included' : '+' + formatPrice(price);
         h += '<div class="b-hl-btn' + (bs.highlight === opt ? ' selected' : '') + '" data-bhl="' + opt + '">' + opt + ' <span class="b-hl-price">' + priceLabel + '</span></div>';
-      });
-      h += '</div></div>';
-
-      // Ceremony Coverage
-      h += '<div class="builder-section">';
-      h += '<div class="builder-section-title">Ceremony Coverage</div>';
-      h += '<div class="b-hours-options" style="grid-template-columns:repeat(3,1fr)">';
-      ['30 min','60 min','1.5 hrs'].forEach(function(cer) {
-        var cerPrice = tier.ceremony[cer];
-        var cerLabel = cerPrice === 0 ? 'Included' : '+' + formatPrice(cerPrice);
-        h += '<div class="b-hour-btn' + (bs.ceremony === cer ? ' selected' : '') + '" data-bceremony="' + cer + '">' + cer + '<div class="b-hour-price">' + cerLabel + '</div></div>';
       });
       h += '</div></div>';
 
@@ -2182,12 +2164,6 @@
         h += '<div class="price-line included"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
       }
 
-      var ceremonyPrice = tier.ceremony[bs.ceremony] || 0;
-      if (ceremonyPrice > 0) {
-        h += '<div class="price-line"><span>Ceremony (' + bs.ceremony + ')</span><span class="price-line-value">+' + formatPrice(ceremonyPrice) + '</span></div>';
-      } else {
-        h += '<div class="price-line included"><span>Ceremony (30 min)</span><span class="price-line-value">Included</span></div>';
-      }
       h += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
       h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
       if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
@@ -2228,7 +2204,6 @@
                 tier: bs.tier,
                 hours: bs.hours,
                 highlight: bs.highlight,
-                ceremony: bs.ceremony,
                 teaser: bs.addons.teaser,
                 storySession: bs.addons.storySession
               },
@@ -2281,13 +2256,6 @@
       controls.querySelectorAll('[data-bhl]').forEach(function(btn) {
         btn.addEventListener('click', function() {
           builderState.highlight = this.getAttribute('data-bhl');
-          renderBuilder();
-        });
-      });
-
-      controls.querySelectorAll('[data-bceremony]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          builderState.ceremony = this.getAttribute('data-bceremony');
           renderBuilder();
         });
       });

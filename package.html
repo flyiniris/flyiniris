@@ -558,7 +558,6 @@
       var savings = params.get('savings');
       var hours = params.get('hours');
       var highlight = params.get('highlight');
-      var ceremony = params.get('ceremony');
       var teaser = params.get('teaser');
       var story = params.get('story');
 
@@ -608,16 +607,12 @@
 
       // Dynamic package list based on query params
       var list = document.getElementById('packageList');
-      if (hours || highlight || teaser || story || ceremony) {
+      if (hours || highlight || teaser || story) {
         var items = [];
         items.push('<li><span class="dash">&mdash;</span>' + (hours || '6') + ' hours of coverage</li>');
         items.push('<li><span class="dash">&mdash;</span>' + (highlight || '5 min') + ' cinematic highlight film</li>');
         items.push('<li><span class="dash">&mdash;</span>FOMO documentary edit (free for the first 3 couples each month, otherwise $1,000)</li>');
         items.push('<li><span class="dash">&mdash;</span>Drone coverage</li>');
-        if (ceremony && ceremony !== '30') {
-          var cerLabel = ceremony === '90' ? 'Ceremony coverage up to 1.5 hours' : 'Ceremony coverage up to 60 min';
-          items.push('<li><span class="dash">&mdash;</span>' + cerLabel + '</li>');
-        }
         if (teaser === '1') {
           items.push('<li><span class="dash">&mdash;</span>Social media teaser film</li>');
         }

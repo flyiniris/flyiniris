@@ -762,7 +762,7 @@
       </button>
       <button class="tier-tab" data-tier="ss" onclick="setTier('ss')">
         <span class="tier-tab-name">S&amp;S Experience</span>
-        <span class="tier-tab-price">$4,800</span>
+        <span class="tier-tab-price">$3,800</span>
         <span class="tier-tab-desc">Sean &amp; Sierra, both there</span>
       </button>
     </div>
@@ -806,18 +806,6 @@
           <option value="9-12">9-12 minutes (+$600)</option>
           <option value="13-15">13-15 minutes (+$1,000)</option>
           <option value="15-20">15-20 minutes (+$1,300)</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Ceremony Coverage -->
-    <div class="upgrade-section">
-      <div class="upgrade-label">Ceremony Duration <span class="upgrade-hint">(30 min included)</span></div>
-      <div class="custom-select">
-        <select id="ceremonySelect" onchange="recalc()">
-          <option value="30">Up to 30 minutes (included)</option>
-          <option value="60">Up to 60 minutes (+$200)</option>
-          <option value="90">Up to 1.5 hours (+$300)</option>
         </select>
       </div>
     </div>
@@ -924,12 +912,6 @@
       '15-20': 1300
     };
 
-    var CEREMONY = {
-      '30': 0,
-      '60': 200,
-      '90': 300
-    };
-
     var ADDONS = {
       teaser: 500,
       story: 1000
@@ -937,7 +919,7 @@
 
     // Bundle discount tiers
     // Qualifying: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
-    // NOT qualifying: ceremony, small hour bumps (+1-2hrs)
+    // NOT qualifying: small hour bumps (+1-2hrs)
     function getBundleDiscount(count) {
       if (count >= 4) return 0.12;
       if (count >= 3) return 0.08;
@@ -979,7 +961,6 @@
       var tier = PRICING[currentTier];
       var hours = parseInt(document.getElementById('hoursSelect').value);
       var highlight = document.getElementById('highlightSelect').value;
-      var ceremony = document.getElementById('ceremonySelect').value;
       var hasTeaser = document.getElementById('teaserCheck').checked;
       var hasStory = document.getElementById('storyCheck').checked;
 
@@ -987,7 +968,6 @@
       var extraHours = hours - 6;
       var hoursCost = extraHours * tier.hourlyRate;
       var highlightCost = HIGHLIGHT[highlight];
-      var ceremonyCost = CEREMONY[ceremony];
       var teaserCost = hasTeaser ? ADDONS.teaser : 0;
       var storyCost = hasStory ? ADDONS.story : 0;
 
@@ -998,7 +978,7 @@
       if (hasStory) qualifyingCount++;
       if (extraHours >= 3) qualifyingCount++;  // +3hrs or more
 
-      var rawTotal = tier.base + hoursCost + highlightCost + ceremonyCost + teaserCost + storyCost;
+      var rawTotal = tier.base + hoursCost + highlightCost + teaserCost + storyCost;
       var discountRate = getBundleDiscount(qualifyingCount);
       // Discount applies to entire package total
       var discountAmount = Math.round(rawTotal * discountRate);
@@ -1017,11 +997,6 @@
       if (highlightCost > 0) {
         var hlLabel = highlight + ' min highlight film';
         breakdownHTML += row(hlLabel, '+' + fmt(highlightCost));
-      }
-
-      if (ceremonyCost > 0) {
-        var cerLabel = ceremony === '60' ? 'Ceremony up to 60 min' : 'Ceremony up to 1.5 hrs';
-        breakdownHTML += row(cerLabel, '+' + fmt(ceremonyCost));
       }
 
       if (teaserCost > 0) {
