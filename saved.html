@@ -404,6 +404,10 @@
       var ceremonyPrice = tier.ceremony[ceremony] || 0;
       if (ceremonyPrice > 0) { addonTotal += ceremonyPrice; addonCount++; }
       total += addonTotal;
+      // FOMO Documentary Edit: paired ±$1,000 (net $0) when a free spot is available
+      // this month, single +$1,000 when spots are filled. Mirrors the server engine in
+      // src/pricing.ts. FOMO does not affect addonCount (never counts toward bundle).
+      if (!data.fomo_free_spot) total += 1000;
       var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
       var discount = Math.round(total * discountPct);
 
@@ -434,7 +438,12 @@
       if (addons.teaser) h += '<div class="sc-line"><span>60-Second Teaser</span><span class="sc-line-val">+' + formatPrice(tier.addons.teaser) + '</span></div>';
       if (addons.storySession) h += '<div class="sc-line"><span>Story Session</span><span class="sc-line-val">+' + formatPrice(tier.addons.storySession) + '</span></div>';
       h += '<div class="sc-line"><span>FOMO Documentary Edit</span><span class="sc-line-val">+' + formatPrice(1000) + '</span></div>';
-      h += '<div class="sc-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (included free)</span><span class="sc-line-val" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+      // fomo_free_spot is set by the Worker /api/saved/:token endpoint based on the
+      // live monthly spot count. When true, the credit line renders and net is $0.
+      // When false, the spots are filled this month and FOMO is a paid +$1,000.
+      if (data.fomo_free_spot) {
+        h += '<div class="sc-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="sc-line-val" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+      }
       if (ceremonyPrice > 0) h += '<div class="sc-line"><span>Ceremony (' + ceremony + ')</span><span class="sc-line-val">+' + formatPrice(ceremonyPrice) + '</span></div>';
 
       h += '<div class="sc-divider"></div>';

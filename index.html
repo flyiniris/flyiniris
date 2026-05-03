@@ -2195,7 +2195,7 @@
         <div class="investment-text">
           <p class="reveal-child">Every couple is different - so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish - we'll build it around you.</p>
           <p class="investment-price reveal-child">Film Packages Starting at $2,800</p>
-          <p class="reveal-child investment-desc">6 hours of coverage, a cinematic highlight film, FOMO documentary edit, drone coverage, professional audio, and free travel within 120 miles of Milwaukee all come standard. Netflix-style delivery so you can relive it anytime.</p>
+          <p class="reveal-child investment-desc">6 hours of coverage, a cinematic highlight film, drone coverage, professional audio, and free travel within 120 miles of Milwaukee all come standard. The FOMO Documentary Edit ($1,000 value) is free for the first 3 couples who book each month, otherwise a $1,000 add-on. Netflix-style delivery so you can relive it anytime.</p>
           <div class="reveal-child cta-center">
             <a href="#quiz" class="btn">Let's Build Yours</a>
           </div>
@@ -2570,7 +2570,11 @@
           var hours = getHoursNum(a.hours);
           var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
           var hasStory = a.storySession && a.storySession.indexOf("Yes") >= 0;
-          // FOMO is now included in every package - no longer an add-on
+          // FOMO is on a monthly rolling promo (free for first 3 couples each month,
+          // $1,000 paid after). The breakdown lines below render the paired +$1,000 /
+          // -$1,000 visible-value pattern; the public calculator can't query the live
+          // spot count from this page, so we present the promo framing as the default
+          // and the discovery call confirms whether the spot is actually available.
           var extraHours = hours - 6;
 
           if (isTeam) {
@@ -2612,7 +2616,7 @@
               }
             }
             bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-            bd.push({label:"FOMO Documentary Edit (included free)", value:1000, prefix:"−"});
+            bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
             if (hasTeas) {
               bd.push({label:"Teaser film", value:tp, prefix:"+"});
             } else {
@@ -2664,7 +2668,7 @@
             }
           }
           bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-          bd.push({label:"FOMO Documentary Edit (included free)", value:1000, prefix:"−"});
+          bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
           if (hasTeas) {
             bd.push({label:"Teaser film", value:tp2, prefix:"+"});
           } else {
@@ -3324,7 +3328,7 @@
               delete state.calcAnswers.highlight;
               delete state.calcAnswers.teaser;
               delete state.calcAnswers.storySession;
-              // extra (FOMO) removed - now included in every package
+              // extra (FOMO) removed from quiz; FOMO is rendered separately in the breakdown (monthly promo).
             }
             state[answersKey][step.id] = label;
           }

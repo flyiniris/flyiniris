@@ -747,7 +747,7 @@
   <section class="hero">
     <div class="hero-eyebrow">Package Builder</div>
     <h1>Build your <em>dream film</em> package</h1>
-    <p class="hero-sub">Pick your tier, customize your coverage, and see your price update in real time. Every package includes 6 hours, a 5-minute highlight film, FOMO documentary edit, drone, and free travel within 120 miles.</p>
+    <p class="hero-sub">Pick your tier, customize your coverage, and see your price update in real time. Every package includes 6 hours, a 5-minute highlight film, drone, and free travel within 120 miles. The FOMO Documentary Edit ($1,000 value) is free for the first 3 couples who book each month, otherwise a $1,000 add-on.</p>
   </section>
 
   <!-- Calculator -->
@@ -774,7 +774,6 @@
       <div class="base-includes">
         <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>6hr coverage</span>
         <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>5 min highlight film</span>
-        <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>FOMO documentary edit</span>
         <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Drone coverage</span>
         <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Free travel (120mi)</span>
         <span class="base-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Netflix-style delivery</span>
@@ -871,7 +870,7 @@
           <span class="breakdown-value">+$1,000</span>
         </div>
         <div class="breakdown-row" style="color:var(--accent);font-weight:500">
-          <span class="breakdown-label">FOMO Documentary Edit (included free)</span>
+          <span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span>
           <span class="breakdown-value" style="color:var(--accent)">-$1,000</span>
         </div>
         <div class="breakdown-row total">
@@ -1009,7 +1008,7 @@
       var breakdownHTML = '';
       breakdownHTML += row('Base package (6hr + highlight + drone)', fmt(tier.base));
       breakdownHTML += row('FOMO Documentary Edit', '+' + fmt(1000));
-      breakdownHTML += '<div class="breakdown-row" style="color:var(--accent);font-weight:500"><span class="breakdown-label">FOMO Documentary Edit (included free)</span><span class="breakdown-value" style="color:var(--accent)">-' + fmt(1000) + '</span></div>';
+      breakdownHTML += '<div class="breakdown-row" style="color:var(--accent);font-weight:500"><span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span><span class="breakdown-value" style="color:var(--accent)">-' + fmt(1000) + '</span></div>';
 
       if (extraHours > 0) {
         breakdownHTML += row('+' + extraHours + ' additional hour' + (extraHours > 1 ? 's' : '') + ' (' + fmt(tier.hourlyRate) + '/hr)', '+' + fmt(hoursCost));

@@ -1462,7 +1462,7 @@
         </div>
         <div class="included-item">
           <span class="included-check">&check;</span>
-          <span class="included-label">FOMO Documentary Edit of your full day</span>
+          <span class="included-label">FOMO Documentary Edit of your full day (free for the first 3 couples each month)</span>
         </div>
         <div class="included-item">
           <span class="included-check">&check;</span>
@@ -2120,11 +2120,11 @@
       });
       h += '</div></div>';
 
-      // FOMO Documentary (included)
+      // FOMO Documentary (monthly rolling promo: free for first 3 couples each month, $1,000 add-on after)
       h += '<div class="builder-section" style="background:rgba(255,189,29,0.03);border-color:rgba(255,189,29,0.15)">';
-      h += '<div class="builder-section-title">Included with Every Package</div>';
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:4px 0"><span style="color:var(--accent);font-size:1rem">\u2713</span><span style="font-family:\'Outfit\',sans-serif;font-weight:400;font-size:0.875rem;color:var(--text-primary)">FOMO Documentary Edit</span></div>';
-      h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-secondary);line-height:1.5;padding-left:26px">Your entire wedding day in one continuous, cinematic film. Every major moment in full.</div>';
+      h += '<div class="builder-section-title">Monthly Promo</div>';
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:4px 0"><span style="color:var(--accent);font-size:1rem">\u2713</span><span style="font-family:\'Outfit\',sans-serif;font-weight:400;font-size:0.875rem;color:var(--text-primary)">FOMO Documentary Edit ($1,000 value)</span></div>';
+      h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-secondary);line-height:1.5;padding-left:26px">Free for the first 3 couples who book each month, otherwise a $1,000 add-on. Your entire wedding day in one continuous, cinematic film. Every major moment in full.</div>';
       h += '</div>';
 
       // Add-ons
@@ -2189,7 +2189,7 @@
         h += '<div class="price-line included"><span>Ceremony (30 min)</span><span class="price-line-value">Included</span></div>';
       }
       h += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
-      h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (included free)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+      h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
       if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
       if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 
