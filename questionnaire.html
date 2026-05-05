@@ -1,1825 +1,2513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wedding Vision Questionnaire | Flyin' Iris</title>
-  <meta name="description" content="Help us capture your love story perfectly. Fill out this questionnaire so we can craft the wedding film of your dreams.">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#0A0A0A">
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Questionnaire | Flyin' Iris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg-primary: #0A0A0A;
-      --bg-secondary: #111110;
-      --bg-card: #161615;
-      --text-primary: #F5F0EB;
-      --text-secondary: #C8C3B9;
-      --text-muted: rgba(200,195,185,0.5);
-      --accent-gold: #FFBD1D;
-      --accent-dark: #D99E0A;
-      --accent-light: #FFF0C9;
-      --border: #2A2A28;
-      --border-focus: #FFBD1D;
-      --radius: 8px;
-      --error: #E85D5D;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      accent-color: #ffbd1d;
+    :root {
+      --bg: #0A0A0A;
+      --card: #111110;
+      --dark: #0F0F0E;
+      --gold: #FFBD1D;
+      --gold-soft: rgba(255,189,29,0.10);
+      --gold-glow: rgba(255,189,29,0.25);
+      --autofill-bg: #2A2410;
+      --autofill-border: rgba(255,189,29,0.55);
+      --confirmed-bg: rgba(50,200,120,0.08);
+      --confirmed-border: rgba(80,210,140,0.45);
+      --edited-bg: rgba(120,180,255,0.06);
+      --edited-border: rgba(120,180,255,0.4);
+      --lowconf-bg: #2A1A10;
+      --lowconf-border: rgba(255,140,80,0.55);
+      --error: #ff7a7a;
+      --text: #F5F0EB;
+      --dim: #C8C3B9;
+      --muted: #8A857B;
+      --border: rgba(255,189,29,0.2);
+      --radius: 8px;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', Arial, sans-serif;
       font-weight: 300;
-      background: var(--bg-primary);
-      color: var(--text-secondary);
       line-height: 1.6;
       min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      padding: 40px 20px 80px;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-size: 128px 128px;
-      opacity: 0.04;
-      pointer-events: none;
-      animation: grain 8s steps(10) infinite;
-      z-index: 9999;
-    }
-
-    @keyframes grain {
-      0%, 100% { transform: translate(0, 0); }
-      10% { transform: translate(-5%, -10%); }
-      20% { transform: translate(-15%, 5%); }
-      30% { transform: translate(7%, -25%); }
-      40% { transform: translate(-5%, 25%); }
-      50% { transform: translate(-15%, 10%); }
-      60% { transform: translate(15%, 0%); }
-      70% { transform: translate(0%, 15%); }
-      80% { transform: translate(3%, 35%); }
-      90% { transform: translate(-10%, 10%); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========== LAYOUT ========== */
-
-    .page-wrapper {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 48px 20px 80px;
-    }
-
-    /* ========== HEADER ========== */
-
-    .page-header {
+    /* ---- Logo Header ---- */
+    .logo-header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 32px;
     }
-
-    .wordmark {
-      font-family: 'Cormorant Garamond', serif;
+    .logo-header .wordmark {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
       font-weight: 600;
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
-      color: var(--accent-gold);
-      letter-spacing: 0.12em;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      color: var(--text);
     }
-
-    .wordmark a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .page-subtitle {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      letter-spacing: 0.2em;
+    .logo-header .tagline {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--dim);
       text-transform: uppercase;
+      margin-top: 6px;
     }
-
-    .header-divider {
-      width: 60px;
-      height: 1px;
-      background: var(--accent-gold);
-      margin: 20px auto 0;
-      opacity: 0.5;
-    }
-
-    /* ========== PROGRESS BAR ========== */
-
-    .progress-wrapper {
-      margin-bottom: 40px;
-    }
-
-    .progress-steps {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .progress-step {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      background: var(--bg-secondary);
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 2;
-    }
-
-    .progress-step.active {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      background: var(--bg-primary);
-    }
-
-    .progress-step.completed {
-      border-color: var(--accent-gold);
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-    }
-
-    .progress-bar-track {
-      width: 100%;
+    .logo-header .gold-bar {
+      width: 48px;
       height: 2px;
-      background: var(--border);
-      border-radius: 2px;
+      background: var(--gold);
+      margin: 16px auto 0;
+    }
+
+    /* ---- Card ---- */
+    .card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: var(--radius);
       overflow: hidden;
     }
 
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--accent-gold);
-      border-radius: 2px;
-      transition: width 0.4s ease;
-      width: 0%;
-    }
-
-    .progress-label {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    /* ========== FORM STEPS ========== */
-
-    .form-step {
-      display: none;
-      animation: fadeUp 0.4s ease;
-    }
-
-    .form-step.active {
-      display: block;
-    }
-
-    /* ========== SECTION ========== */
-
-    .section-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 36px 28px;
-    }
-
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(1.5rem, 4vw, 1.85rem);
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .section-intro {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      font-style: italic;
-      margin-bottom: 32px;
-      line-height: 1.7;
-    }
-
-    /* ========== FORM FIELDS ========== */
-
-    .field-group {
-      margin-bottom: 24px;
-    }
-
-    .field-group:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .field-label {
-      display: block;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      letter-spacing: 0.02em;
-    }
-
-    .field-label .required {
-      color: var(--accent-gold);
-      margin-left: 2px;
-    }
-
-    .field-helper {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="time"],
-    input[type="date"],
-    input[type="url"],
-    input[type="number"],
-    select,
-    textarea {
-      display: block;
+    /* ---- Progress Bar ---- */
+    .progress-wrap {
+      background: rgba(255,189,29,0.08);
+      height: 4px;
       width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.875rem;
-      padding: 12px 16px;
-      transition: border-color 0.25s ease;
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      text-align: right;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      padding: 12px 32px 0;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--border-focus);
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 100px;
-      line-height: 1.6;
-    }
-
-    select {
-      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23C8C3B9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 40px;
-      cursor: pointer;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    /* ========== VIBE CHIPS ========== */
-
-    .chip-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 9px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      letter-spacing: 0.02em;
-      cursor: pointer;
-      transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
-      user-select: none;
-    }
-
-    .chip:hover {
-      border-color: var(--accent-gold);
-      color: var(--text-primary);
-    }
-
-    .chip.selected {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      background: rgba(255, 189, 29, 0.08);
-    }
-
-    /* ========== RADIO GROUP ========== */
-
-    .radio-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .radio-item {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .radio-item input[type="radio"] {
+    /* ---- Step ---- */
+    .step {
       display: none;
+      padding: 40px 40px 48px;
     }
+    .step.active { display: block; }
 
-    .radio-label {
-      display: block;
-      padding: 10px 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+    .step-eyebrow {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
-
-    .radio-item input[type="radio"]:checked + .radio-label {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      background: rgba(255, 189, 29, 0.08);
-    }
-
-    .radio-label:hover {
-      border-color: var(--accent-gold);
-      color: var(--text-primary);
-    }
-
-    /* ========== NAV BUTTONS ========== */
-
-    .step-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 32px;
-      gap: 16px;
-    }
-
-    .btn {
-      font-family: 'Outfit', sans-serif;
+    .step-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 32px;
       font-weight: 600;
-      font-size: 0.8125rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 14px 32px;
-      border-radius: var(--radius);
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-decoration: none;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .step-intro {
+      font-size: 15px;
+      color: var(--dim);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .step-helper {
+      font-size: 14px;
+      color: var(--dim);
+      line-height: 1.65;
+      background: rgba(255,189,29,0.05);
+      border-left: 2px solid var(--gold);
+      padding: 14px 16px;
+      border-radius: 4px;
+      margin-bottom: 28px;
     }
 
-    .btn-back {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-    }
-
-    .btn-back:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
-
-    .btn-next,
-    .btn-submit {
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-      margin-left: auto;
-    }
-
-    .btn-next:hover,
-    .btn-submit:hover {
-      background: var(--accent-dark);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-submit.sending {
-      pointer-events: none;
-    }
-
-    .btn-skip {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    .btn-skip:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-secondary);
-    }
-
-    /* ========== PRE-FILLED BADGE ========== */
-
-    .prefilled-badge {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      background: rgba(255, 189, 29, 0.08);
-      border: 1px solid rgba(255, 189, 29, 0.2);
-      border-radius: 100px;
-      padding: 2px 10px;
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-
-    .timeline-badge {
-      display: none;
-      font-size: 0.6rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #7dd3a8;
-      background: rgba(125, 211, 168, 0.08);
-      border: 1px solid rgba(125, 211, 168, 0.2);
-      border-radius: 100px;
-      padding: 2px 8px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-
-    .timeline-badge.visible {
-      display: inline-block;
-    }
-
-    /* ========== UPLOAD ZONE ========== */
-
-    .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 48px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.25s ease, background 0.25s ease;
+    /* ---- Field wrapper ---- */
+    .field {
+      margin-bottom: 22px;
       position: relative;
     }
-
-    .upload-zone:hover,
-    .upload-zone.dragover {
-      border-color: var(--accent-gold);
-      background: rgba(255, 189, 29, 0.03);
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-right: 140px; /* room for badge */
+    }
+    .field-required::after {
+      content: ' *';
+      color: var(--gold);
+    }
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-style: italic;
     }
 
-    .upload-zone.has-file {
-      border-color: rgba(125, 211, 168, 0.4);
-      background: rgba(125, 211, 168, 0.03);
-    }
-
-    .upload-zone input[type="file"] {
+    /* Badge for autofilled / confirmed / edited */
+    .field-badge {
       position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
+      top: 0;
+      right: 0;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      display: none;
+    }
+    .field-badge.show { display: inline-block; }
+    .badge-autofilled {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--autofill-border);
+    }
+    .badge-lowconf {
+      background: rgba(255,140,80,0.10);
+      color: #ffb185;
+      border: 1px solid var(--lowconf-border);
+    }
+    .badge-confirmed {
+      background: rgba(80,210,140,0.10);
+      color: #7be3a4;
+      border: 1px solid var(--confirmed-border);
+    }
+    .badge-edited {
+      background: rgba(120,180,255,0.08);
+      color: #a4c8ff;
+      border: 1px solid var(--edited-border);
     }
 
-    .upload-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 16px;
-      color: var(--text-muted);
+    /* Inputs */
+    input[type="text"],
+    input[type="number"],
+    input[type="time"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    textarea {
+      width: 100%;
+      background: var(--dark);
+      border: 1px solid rgba(255,189,29,0.15);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus { border-color: var(--gold); }
+    input[readonly] { opacity: 0.7; cursor: not-allowed; }
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* Auto-fill state visuals. The data-field-key selectors mirror state
+       onto compound sub-inputs whose canonical .field wrapper lives in a
+       hidden mirror div elsewhere (e.g. first_dances_count, speeches_givers,
+       wedding_party_photos_location). */
+    .field[data-state="auto_filled"] input,
+    .field[data-state="auto_filled"] textarea,
+    input[data-field-key][data-state="auto_filled"],
+    textarea[data-field-key][data-state="auto_filled"] {
+      background: var(--autofill-bg);
+      border-color: var(--autofill-border);
+    }
+    .field[data-state="low_confidence"] input,
+    .field[data-state="low_confidence"] textarea,
+    input[data-field-key][data-state="low_confidence"],
+    textarea[data-field-key][data-state="low_confidence"] {
+      background: var(--lowconf-bg);
+      border-color: var(--lowconf-border);
+    }
+    .field[data-state="confirmed"] input,
+    .field[data-state="confirmed"] textarea,
+    input[data-field-key][data-state="confirmed"],
+    textarea[data-field-key][data-state="confirmed"] {
+      background: var(--confirmed-bg);
+      border-color: var(--confirmed-border);
+    }
+    .field[data-state="edited"] input,
+    .field[data-state="edited"] textarea,
+    input[data-field-key][data-state="edited"],
+    textarea[data-field-key][data-state="edited"] {
+      background: var(--edited-bg);
+      border-color: var(--edited-border);
     }
 
-    .upload-zone.has-file .upload-icon { color: #7dd3a8; }
+    /* Pulse animation */
+    @keyframes pulseGold {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,189,29,0); }
+      50% { box-shadow: 0 0 0 8px rgba(255,189,29,0.25); }
+    }
+    .field.pulsing input,
+    .field.pulsing textarea {
+      animation: pulseGold 1s ease-in-out 2;
+    }
 
-    .upload-title {
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      font-weight: 400;
+    /* Compound row */
+    .compound-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .compound-row > .compound-cell {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    .compound-cell-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      text-transform: uppercase;
       margin-bottom: 6px;
     }
 
-    .upload-hint {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+    /* Y/N quick-click buttons */
+    .yn-row {
+      display: flex;
+      gap: 12px;
     }
-
-    .upload-filename {
-      display: none;
-      margin-top: 12px;
-      font-size: 0.8rem;
-      color: #7dd3a8;
-      font-weight: 400;
-    }
-
-    .upload-zone.has-file .upload-filename { display: block; }
-
-    .upload-status {
-      display: none;
-      margin-top: 20px;
+    .yn-btn {
+      flex: 1;
+      background: var(--dark);
+      border: 1px solid rgba(255,189,29,0.15);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       padding: 14px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 0.8125rem;
-    }
-
-    .upload-status.active { display: block; }
-
-    .upload-status.parsing { color: var(--accent-gold); border-color: rgba(255,189,29,0.2); }
-    .upload-status.success { color: #7dd3a8; border-color: rgba(125,211,168,0.2); }
-    .upload-status.error { color: var(--error); border-color: rgba(232,93,93,0.2); }
-
-    /* ========== TIMELINE FILE UPLOAD (Section 6) ========== */
-
-    .file-upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 36px 24px;
-      text-align: center;
       cursor: pointer;
-      transition: border-color 0.25s ease, background 0.25s ease;
-      position: relative;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+    .yn-btn:hover { border-color: var(--gold); }
+    .yn-btn.active {
+      background: rgba(255,189,29,0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .yn-followup {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.3s ease;
+      margin-top: 0;
+    }
+    .yn-followup.open {
+      max-height: 600px;
+      margin-top: 14px;
     }
 
-    .file-upload-zone:hover,
-    .file-upload-zone.dragover {
-      border-color: var(--accent-gold);
-      background: rgba(255, 189, 29, 0.03);
+    /* Radio cards (single-select) */
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-card { position: relative; cursor: pointer; }
+    .radio-card input[type="radio"] {
+      position: absolute; opacity: 0; width: 0; height: 0;
     }
-
-    .file-upload-zone.has-file {
-      border-color: rgba(125, 211, 168, 0.4);
-      background: rgba(125, 211, 168, 0.03);
-      cursor: default;
-    }
-
-    .file-upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .file-upload-zone.has-file input[type="file"] {
-      display: none;
-    }
-
-    .file-upload-icon {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto 12px;
-      color: var(--text-muted);
-    }
-
-    .file-upload-zone.has-file .file-upload-icon { color: #7dd3a8; }
-
-    .file-upload-title {
-      font-size: 0.875rem;
-      color: var(--text-primary);
-      font-weight: 400;
-      margin-bottom: 4px;
-    }
-
-    .file-upload-hint {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .file-upload-result {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 12px;
-      font-size: 0.8rem;
-      color: #7dd3a8;
-      font-weight: 400;
-    }
-
-    .file-upload-zone.has-file .file-upload-result { display: flex; }
-    .file-upload-zone.has-file .file-upload-prompt { display: none; }
-
-    .file-upload-result svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .file-upload-remove {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.75rem;
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      padding: 0;
-      margin-left: 4px;
-      transition: color 0.25s ease;
-    }
-
-    .file-upload-remove:hover { color: var(--error); }
-
-    .file-upload-fallback {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-style: italic;
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-
-    .file-upload-zone.has-file ~ .file-upload-fallback { display: none; }
-
-    /* ========== SUCCESS / ERROR ========== */
-
-    .success-screen {
-      display: none;
-      text-align: center;
-      padding: 60px 20px;
-      animation: fadeUp 0.5s ease;
-    }
-
-    .success-screen.active {
-      display: block;
-    }
-
-    .success-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: rgba(255, 189, 29, 0.1);
-      border: 2px solid var(--accent-gold);
+    .radio-card-label {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 28px;
-    }
-
-    .success-icon svg {
-      width: 36px;
-      height: 36px;
-      color: var(--accent-gold);
-    }
-
-    @keyframes checkDraw {
-      from { stroke-dashoffset: 30; }
-      to { stroke-dashoffset: 0; }
-    }
-
-    @keyframes iconPop {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .success-icon {
-      animation: iconPop 0.5s ease forwards;
-    }
-
-    .success-icon svg polyline {
-      stroke-dasharray: 30;
-      stroke-dashoffset: 30;
-      animation: checkDraw 0.4s ease 0.4s forwards;
-    }
-
-    .success-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.8rem;
-      color: var(--text-primary);
-      margin-bottom: 12px;
-    }
-
-    .success-text {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      max-width: 440px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    .success-details {
-      max-width: 440px;
-      margin: 28px auto 0;
-      text-align: left;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--dark);
+      border: 1px solid rgba(255,189,29,0.15);
       border-radius: var(--radius);
-      padding: 24px 28px;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
     }
-
-    .success-details-title {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.8125rem;
-      color: var(--text-primary);
-      margin-bottom: 14px;
-      letter-spacing: 0.02em;
-    }
-
-    .success-details ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .success-details li {
-      position: relative;
-      padding-left: 20px;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 8px;
-    }
-
-    .success-details li:last-child { margin-bottom: 0; }
-
-    .success-details li::before {
+    .radio-card-label::before {
       content: '';
-      position: absolute;
-      left: 0;
-      top: 8px;
-      width: 6px;
-      height: 6px;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      background: var(--accent-gold);
-      opacity: 0.6;
-    }
-
-    .success-heart {
-      display: inline-block;
-      color: var(--accent-gold);
-      font-size: 1rem;
-      margin-top: 24px;
-    }
-
-    .success-cta {
-      display: inline-block;
-      margin-top: 28px;
-      padding: 14px 32px;
+      border: 2px solid rgba(255,189,29,0.3);
       background: transparent;
-      border: 1px solid var(--accent-gold);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .radio-card input[type="radio"]:checked + .radio-card-label {
+      border-color: var(--gold);
+      background: rgba(255,189,29,0.06);
+    }
+    .radio-card input[type="radio"]:checked + .radio-card-label::before {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* Checkbox grid (multi-select) */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 520px) {
+      .checkbox-group { grid-template-columns: 1fr; }
+    }
+    .checkbox-card { position: relative; cursor: pointer; }
+    .checkbox-card input[type="checkbox"] {
+      position: absolute; opacity: 0; width: 0; height: 0;
+    }
+    .checkbox-card-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--dark);
+      border: 1px solid rgba(255,189,29,0.15);
       border-radius: var(--radius);
-      color: var(--accent-gold);
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 0.8125rem;
-      letter-spacing: 0.08em;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .checkbox-card-label::before {
+      content: '';
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 2px solid rgba(255,189,29,0.3);
+      background: transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .checkbox-card input[type="checkbox"]:checked + .checkbox-card-label {
+      border-color: var(--gold);
+      background: rgba(255,189,29,0.06);
+    }
+    .checkbox-card input[type="checkbox"]:checked + .checkbox-card-label::before {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* 3-option Y/N/maybe */
+    .three-opt-row {
+      display: flex;
+      gap: 10px;
+    }
+    @media (max-width: 520px) {
+      .three-opt-row { flex-direction: column; }
+    }
+    .three-opt-row .yn-btn { flex: 1; }
+
+    /* ---- Buttons ---- */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-back, .btn-secondary, .btn-text {
+      background: transparent;
+      border: 1px solid rgba(255,189,29,0.3);
+      border-radius: var(--radius);
+      color: var(--dim);
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.25s ease;
+      padding: 14px 22px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-back:hover, .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+    .btn-text {
+      border: none;
+      padding: 8px 12px;
+      letter-spacing: 0.5px;
+      text-transform: none;
+      color: var(--gold);
+      font-size: 13px;
+    }
+    .btn-text:hover { color: var(--text); }
+
+    .btn-next, .btn-primary, .btn-submit {
+      flex: 1;
+      background: var(--gold);
+      border: none;
+      border-radius: var(--radius);
+      color: #0A0A0A;
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-next:hover, .btn-primary:hover, .btn-submit:hover { opacity: 0.92; }
+    .btn-next:active { transform: translateY(1px); }
+    .btn-next:disabled, .btn-submit:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
-    .success-cta:hover {
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-    }
-
-    /* ========== SUBMIT STATUS ========== */
-
-    .submit-status {
-      text-align: center;
-      font-size: 0.8125rem;
-      color: var(--accent-gold);
+    /* Validation message */
+    .validation-msg {
+      color: var(--error);
+      font-size: 13px;
       margin-top: 12px;
       display: none;
     }
+    .validation-msg.show { display: block; }
 
-    .submit-status.active { display: block; }
-
-    .error-banner {
-      display: none;
-      background: rgba(232, 93, 93, 0.1);
-      border: 1px solid rgba(232, 93, 93, 0.3);
+    /* ---- Timeline upload box ---- */
+    .timeline-box {
+      border: 1px solid var(--gold-glow);
       border-radius: var(--radius);
-      padding: 12px 16px;
-      margin-top: 16px;
-      font-size: 0.8125rem;
-      color: var(--error);
-      text-align: center;
+      padding: 24px;
+      background: rgba(255,189,29,0.03);
+      margin-bottom: 24px;
     }
-
-    .error-banner.active {
-      display: block;
+    .timeline-box-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
     }
-
-    /* ========== RESPONSIVE ========== */
-
-    @media (max-width: 600px) {
-      .page-wrapper {
-        padding: 32px 16px 60px;
-      }
-
-      .section-card {
-        padding: 28px 20px;
-      }
-
-      .field-row {
-        grid-template-columns: 1fr;
-      }
-
-      .radio-row {
-        flex-direction: column;
-      }
-
-      .radio-item {
-        flex: none;
-      }
-
-      .progress-step {
-        width: 26px;
-        height: 26px;
-        font-size: 0.65rem;
-      }
-
-      .step-nav {
-        flex-direction: column-reverse;
-        gap: 12px;
-      }
-
-      .btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      .btn-next, .btn-submit {
-        margin-left: 0;
-      }
+    .timeline-box-sub {
+      color: var(--dim);
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
     }
-
-    /* ========== FOOTER ========== */
-
-    .page-footer {
-      text-align: center;
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
+    .timeline-options {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-
-    .footer-brand {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
+    .timeline-options > * { flex: 1 1 220px; }
+    .timeline-upload-btn {
+      background: var(--gold);
+      border: none;
+      border-radius: var(--radius);
+      color: #0A0A0A;
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
+      padding: 14px 20px;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+    }
+    .timeline-upload-btn:hover { opacity: 0.92; }
+    .timeline-paste-toggle {
+      background: transparent;
+      border: 1px solid var(--gold-glow);
+      border-radius: var(--radius);
+      color: var(--gold);
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .timeline-paste-toggle:hover { background: var(--gold-soft); }
+    .timeline-paste-area {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.3s ease;
+    }
+    .timeline-paste-area.open {
+      max-height: 600px;
+      margin-top: 16px;
+    }
+    .timeline-file-name {
+      color: var(--gold);
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    .timeline-status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      display: none;
+    }
+    .timeline-status.show { display: block; }
+    .timeline-status.info {
+      background: rgba(255,189,29,0.08);
+      color: var(--gold);
+    }
+    .timeline-status.success {
+      background: rgba(80,210,140,0.08);
+      color: #7be3a4;
+      border: 1px solid var(--confirmed-border);
+    }
+    .timeline-status.error {
+      background: rgba(255,120,120,0.08);
+      color: var(--error);
+      border: 1px solid rgba(255,120,120,0.3);
     }
 
-    .footer-brand a {
-      color: var(--text-muted);
+    .timeline-spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--gold-soft);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Submit gate summary */
+    .submit-summary {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--dim);
+      line-height: 1.6;
+    }
+    .submit-summary strong { color: var(--text); font-weight: 500; }
+    .submit-summary-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px;
+      max-width: 440px;
+      width: 100%;
+      border: 1px solid var(--border);
+    }
+    .modal h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .modal p {
+      color: var(--dim);
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* Success screen */
+    .success-wrap {
+      padding: 64px 40px 80px;
+      text-align: center;
+    }
+    .success-mark {
+      width: 56px;
+      height: 56px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    .success-mark::after {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 11px;
+      width: 14px;
+      height: 24px;
+      border-right: 2px solid var(--gold);
+      border-bottom: 2px solid var(--gold);
+      transform: rotate(45deg);
+    }
+    .success-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 18px;
+    }
+    .success-body {
+      color: var(--dim);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+    .success-cta {
+      display: inline-block;
+      background: var(--gold);
+      color: #0A0A0A;
+      font-family: 'Outfit', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      border-radius: var(--radius);
       text-decoration: none;
-      transition: color 0.25s ease;
+      transition: opacity 0.2s;
+    }
+    .success-cta:hover { opacity: 0.92; }
+    .success-sign {
+      margin-top: 56px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--dim);
+    }
+    .success-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 600;
+      margin-top: 6px;
+      color: var(--text);
+    }
+    .success-brand {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-top: 4px;
     }
 
-    .footer-brand a:hover {
-      color: var(--accent-gold);
+    /* ---- Mobile tweaks ---- */
+    @media (max-width: 520px) {
+      body { padding: 24px 12px 60px; }
+      .step { padding: 32px 22px 40px; }
+      .step-title { font-size: 26px; }
+      .progress-label { padding-right: 22px; }
+      .field-label { padding-right: 0; }
+      .field-badge {
+        position: static;
+        margin-bottom: 6px;
+      }
+      .timeline-box { padding: 20px; }
+      .success-wrap { padding: 48px 22px 60px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="page-wrapper">
+<!-- Logo -->
+<div class="logo-header">
+  <div class="wordmark">Flyin' Iris</div>
+  <div class="tagline">Wedding Videography</div>
+  <div class="gold-bar"></div>
+</div>
 
-    <!-- ========== HEADER ========== -->
-    <header class="page-header">
-      <h1 class="wordmark"><a href="https://www.flyiniris.com">Flyin' Iris</a></h1>
-      <p class="page-subtitle">Wedding Vision Questionnaire</p>
-      <div class="header-divider"></div>
-    </header>
+<!-- Card -->
+<div class="card" id="main-card">
 
-    <!-- ========== PROGRESS ========== -->
-    <div class="progress-wrapper">
-      <div class="progress-steps">
-        <span class="progress-step active" data-step="0">0</span>
-        <span class="progress-step" data-step="1">1</span>
-        <span class="progress-step" data-step="2">2</span>
-        <span class="progress-step" data-step="3">3</span>
-        <span class="progress-step" data-step="4">4</span>
-        <span class="progress-step" data-step="5">5</span>
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">Getting started</div>
+
+  <!-- ===================== STEP 0: TIMELINE UPLOAD ===================== -->
+  <div class="step active" id="step-0">
+    <div class="step-eyebrow">Welcome</div>
+    <h1 class="step-title">Your Wedding Day Questionnaire</h1>
+    <p class="step-intro">This is how we get to know your day before the call. Six short sections, around 15 minutes total. You can save and come back anytime.</p>
+
+    <div class="timeline-box">
+      <div class="timeline-box-heading">Have your timeline already?</div>
+      <div class="timeline-box-sub">Upload it or paste it below and we'll pre-fill the timeline section for you. Saves you about 8 minutes.</div>
+
+      <div class="timeline-options">
+        <div>
+          <button type="button" class="timeline-upload-btn" id="timeline-upload-btn">Upload File</button>
+          <input type="file" id="timeline-file" accept=".pdf,.docx,.xlsx,.xls,.txt,.png,.jpg,.jpeg,.webp,.gif,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,image/png,image/jpeg,image/webp,image/gif,text/plain" style="display:none;" />
+          <div class="timeline-file-name" id="timeline-file-name" style="display:none;"></div>
+          <div class="timeline-file-hint" style="margin-top:8px; font-size:12px; color:#9A958A; line-height:1.5; font-family:'Outfit',Arial,Helvetica,sans-serif;">PDF, Word (.docx), Excel (.xlsx), or a photo (typed or handwritten). 5 MB max.</div>
+        </div>
+        <div>
+          <button type="button" class="timeline-paste-toggle" id="timeline-paste-toggle">Or paste timeline text</button>
+          <div class="timeline-paste-hint" style="margin-top:8px; font-size:12px; color:#9A958A; line-height:1.5; font-family:'Outfit',Arial,Helvetica,sans-serif;">Have a Google Doc? Open it, copy the contents, and paste them in below.</div>
+        </div>
       </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill" id="progressFill"></div>
+
+      <div class="timeline-paste-area" id="timeline-paste-area">
+        <textarea id="timeline-pasted-text" rows="8" placeholder="Paste your timeline here. Anything works: planner doc, Google Doc, notes, an email."></textarea>
       </div>
-      <p class="progress-label" id="progressLabel">Upload Your Timeline</p>
+
+      <div style="margin-top: 16px; display: none;" id="analyze-row">
+        <button type="button" class="btn-primary" id="btn-analyze" style="flex: none; width: 100%;">Analyze my timeline</button>
+      </div>
+
+      <div class="timeline-status" id="timeline-status"></div>
     </div>
 
-    <form id="questionnaireForm" novalidate>
-
-      <!-- ========== STEP 0: UPLOAD TIMELINE ========== -->
-      <div class="form-step active" data-step="0">
-        <div class="section-card">
-          <h2 class="section-title">Upload Your Timeline</h2>
-          <p class="section-intro">Got a timeline from your planner? Drop it here and we'll fill in what we can &mdash; you just review and add the fun stuff. This step is totally optional.</p>
-
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="timelineFile" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp">
-            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            <p class="upload-title">Drop your timeline here, or tap to browse</p>
-            <p class="upload-hint">PDF, Word doc, or photo of a printed timeline</p>
-            <p class="upload-filename" id="uploadFilename"></p>
-          </div>
-
-          <div class="upload-status" id="uploadStatus"></div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-skip" onclick="nextStep()">Skip &mdash; I don't have one</button>
-          <button type="button" class="btn btn-next" id="uploadNextBtn" onclick="nextStep()" style="display:none">Continue</button>
-        </div>
-      </div>
-
-      <!-- ========== STEP 1: YOUR LOVE STORY ========== -->
-      <div class="form-step" data-step="1">
-        <div class="section-card">
-          <h2 class="section-title">Your Love Story</h2>
-          <p class="section-intro">Every great film starts with a great story. Tell us yours &mdash; the real, unscripted version. These details help us weave your history into your wedding film in a way that feels authentically you.</p>
-
-          <div class="field-group">
-            <label class="field-label" for="how_they_met">How did you two meet? <span class="required">*</span></label>
-            <textarea id="how_they_met" name="how_they_met" placeholder="Was it a chance encounter? A dating app? Through friends? Tell us the story..." required></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="knew_the_one">When did you know they were "the one"?</label>
-            <textarea id="knew_the_one" name="knew_the_one" placeholder="Was there a specific moment, or did it slowly hit you one day?"></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="proposal_story">Tell us about the proposal <span class="required">*</span></label>
-            <textarea id="proposal_story" name="proposal_story" placeholder="Both sides if possible! Who planned it? Were you surprised? We want all the details..." required></textarea>
-            <p class="field-helper">We love hearing both perspectives &mdash; feel free to share his, hers, or both!</p>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
-        </div>
-      </div>
-
-      <!-- ========== STEP 2: YOUR WEDDING DAY ========== -->
-      <div class="form-step" data-step="2">
-        <div class="section-card">
-          <h2 class="section-title">Your Wedding Day</h2>
-          <p class="section-intro">The logistics matter just as much as the love. Knowing the rhythm of your day helps us plan our coverage so we never miss a beat &mdash; from the quiet getting-ready moments to the last dance.</p>
-
-          <div class="field-group">
-            <div class="field-row">
-              <div>
-                <label class="field-label" for="wedding_date">Wedding Date
-                  <span class="prefilled-badge" id="wdBadge" style="display:none">Pre-filled</span>
-                  <span class="timeline-badge" id="wdTlBadge">From timeline</span>
-                </label>
-                <input type="date" id="wedding_date" name="wedding_date">
-              </div>
-              <div>
-                <label class="field-label" for="ceremony_time">Ceremony Start Time
-                  <span class="timeline-badge" id="ceremony_timeTlBadge">From timeline</span>
-                </label>
-                <input type="time" id="ceremony_time" name="ceremony_time">
-              </div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="venue_name">Venue Name
-              <span class="prefilled-badge" id="vnBadge" style="display:none">Pre-filled</span>
-              <span class="timeline-badge" id="venue_nameTlBadge">From timeline</span>
-            </label>
-            <input type="text" id="venue_name" name="venue_name" placeholder="e.g., The Paine Art Center & Gardens">
-          </div>
-
-          <div class="field-group">
-            <div class="field-row">
-              <div>
-                <label class="field-label" for="getting_ready_bride">Getting Ready Location (Bride)
-                  <span class="timeline-badge" id="getting_ready_brideTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="getting_ready_bride" name="getting_ready_bride" placeholder="Hotel name or venue suite">
-              </div>
-              <div>
-                <label class="field-label" for="getting_ready_groom">Getting Ready Location (Groom)
-                  <span class="timeline-badge" id="getting_ready_groomTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="getting_ready_groom" name="getting_ready_groom" placeholder="Hotel name or venue suite">
-              </div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="end_of_night">End of Night Plans
-              <span class="timeline-badge" id="end_of_nightTlBadge">From timeline</span>
-            </label>
-            <input type="text" id="end_of_night" name="end_of_night" placeholder="Last dance? Sparkler exit? After party?">
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="guest_count">Estimated Guest Count
-              <span class="timeline-badge" id="guest_countTlBadge">From timeline</span>
-            </label>
-            <select id="guest_count" name="guest_count">
-              <option value="">Select...</option>
-              <option value="Under 50">Under 50 (Intimate)</option>
-              <option value="50-100">50 &ndash; 100</option>
-              <option value="100-150">100 &ndash; 150</option>
-              <option value="150-200">150 &ndash; 200</option>
-              <option value="200+">200+</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
-        </div>
-      </div>
-
-      <!-- ========== STEP 3: MUST-CAPTURE MOMENTS ========== -->
-      <div class="form-step" data-step="3">
-        <div class="section-card">
-          <h2 class="section-title">Must-Capture Moments</h2>
-          <p class="section-intro">Some moments happen once and can never be recreated. Help us know what matters most to you so our cameras are exactly where they need to be when it counts.</p>
-
-          <div class="field-group">
-            <label class="field-label" for="must_capture_moments">Are there specific people whose reactions you NEED captured?
-              <span class="timeline-badge" id="must_capture_momentsTlBadge">From timeline</span>
-            </label>
-            <textarea id="must_capture_moments" name="must_capture_moments" placeholder="Grandparents, parents, a best friend who flew in from overseas? Tell us who and why they matter..."></textarea>
-            <p class="field-helper">Think about who you'll want to see in the film 20 years from now.</p>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="surprises_planned">Any surprises planned that we should know about?</label>
-            <textarea id="surprises_planned" name="surprises_planned" placeholder="Secret dance? Unexpected guest? A special song? We'll keep it between us..."></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="special_traditions">Special dances, traditions, or cultural elements?
-              <span class="timeline-badge" id="special_traditionsTlBadge">From timeline</span>
-            </label>
-            <textarea id="special_traditions" name="special_traditions" placeholder="Hora? Jumping the broom? Handfasting? A family tradition that's uniquely yours?"></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Is there a first look planned?
-              <span class="timeline-badge" id="first_lookTlBadge">From timeline</span>
-            </label>
-            <div class="radio-row">
-              <div class="radio-item">
-                <input type="radio" id="first_look_yes" name="first_look" value="Yes">
-                <label class="radio-label" for="first_look_yes">Yes</label>
-              </div>
-              <div class="radio-item">
-                <input type="radio" id="first_look_no" name="first_look" value="No">
-                <label class="radio-label" for="first_look_no">No</label>
-              </div>
-              <div class="radio-item">
-                <input type="radio" id="first_look_maybe" name="first_look" value="Not sure yet">
-                <label class="radio-label" for="first_look_maybe">Not sure yet</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
-        </div>
-      </div>
-
-      <!-- ========== STEP 4: YOUR FILM VISION ========== -->
-      <div class="form-step" data-step="4">
-        <div class="section-card">
-          <h2 class="section-title">Your Film Vision</h2>
-          <p class="section-intro">This is where your film starts to take shape. There's no wrong answer here &mdash; we want to understand how you see your day, so we can create something that feels like it was made for you. Because it will be.</p>
-
-          <div class="field-group">
-            <label class="field-label">What's the vibe of your wedding? <span class="required">*</span></label>
-            <p class="field-helper" style="margin-bottom: 10px; margin-top: 0;">Select all that feel right</p>
-            <div class="chip-grid" id="vibeChips">
-              <span class="chip" data-value="Elegant & timeless">Elegant & Timeless</span>
-              <span class="chip" data-value="Fun & energetic">Fun & Energetic</span>
-              <span class="chip" data-value="Intimate & emotional">Intimate & Emotional</span>
-              <span class="chip" data-value="Cinematic & dramatic">Cinematic & Dramatic</span>
-              <span class="chip" data-value="Raw & authentic">Raw & Authentic</span>
-              <span class="chip" data-value="Romantic">Romantic</span>
-              <span class="chip" data-value="Boho">Boho</span>
-              <span class="chip" data-value="Modern">Modern</span>
-              <span class="chip" data-value="Classic">Classic</span>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="film_feeling">What feeling do you want when you watch your film?</label>
-            <textarea id="film_feeling" name="film_feeling" placeholder="Do you want to cry? Laugh? Get goosebumps? Feel transported back to that exact moment?"></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="music_preferences">Music preferences &mdash; any songs meaningful to you both?</label>
-            <textarea id="music_preferences" name="music_preferences" placeholder="Your song, your first dance song, a genre you love, or just a general vibe (acoustic, cinematic, indie...)"></textarea>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="reference_films">Any wedding films you've seen that you loved?</label>
-            <textarea id="reference_films" name="reference_films" placeholder="YouTube or Vimeo links welcome! Or just describe what you liked about them."></textarea>
-            <p class="field-helper">No pressure &mdash; if you haven't watched any, that's totally fine!</p>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-next" onclick="nextStep()">Continue</button>
-        </div>
-      </div>
-
-      <!-- ========== STEP 5: THE DETAILS ========== -->
-      <div class="form-step" data-step="5">
-        <div class="section-card">
-          <h2 class="section-title">The Details</h2>
-          <p class="section-intro">Almost done! Knowing your vendor team helps us coordinate seamlessly on the day of. And if there's anything else on your heart, this is the place to share it.</p>
-
-          <div class="field-group">
-            <div class="field-row">
-              <div>
-                <label class="field-label" for="photographer_name">Photographer
-                  <span class="timeline-badge" id="photographer_nameTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="photographer_name" name="photographer_name" placeholder="Name & company">
-              </div>
-              <div>
-                <label class="field-label" for="planner_name">Planner / Coordinator
-                  <span class="timeline-badge" id="planner_nameTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="planner_name" name="planner_name" placeholder="Name & company">
-              </div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-row">
-              <div>
-                <label class="field-label" for="dj_band_name">DJ / Band
-                  <span class="timeline-badge" id="dj_band_nameTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="dj_band_name" name="dj_band_name" placeholder="Name & company">
-              </div>
-              <div>
-                <label class="field-label" for="other_vendors">Other Key Vendors
-                  <span class="timeline-badge" id="other_vendorsTlBadge">From timeline</span>
-                </label>
-                <input type="text" id="other_vendors" name="other_vendors" placeholder="Florist, caterer, etc.">
-              </div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Upload Your Timeline</label>
-            <p class="field-helper" style="margin-top: 0; margin-bottom: 10px;">If you have a timeline from your planner, drop it here so we can review it before your call.</p>
-            <div class="file-upload-zone" id="timelineUploadZone">
-              <input type="file" id="timelineUploadFile" accept=".pdf,.jpg,.jpeg,.png,.heic,.docx">
-              <div class="file-upload-prompt">
-                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                <p class="file-upload-title">Drop your timeline here or tap to browse</p>
-                <p class="file-upload-hint">PDF, JPG, PNG, HEIC, or DOCX &mdash; max 10MB</p>
-              </div>
-              <div class="file-upload-result">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                <span id="timelineUploadName"></span>
-                <button type="button" class="file-upload-remove" id="timelineUploadRemove">Remove</button>
-              </div>
-            </div>
-            <p class="file-upload-fallback" id="timelineUploadFallback">No timeline yet? That's totally fine. We'll chat through it on our call.</p>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="additional_notes">Anything else we should know?
-              <span class="timeline-badge" id="additional_notesTlBadge">From timeline</span>
-            </label>
-            <textarea id="additional_notes" name="additional_notes" placeholder="Nervous about being on camera? Special family dynamics? Something that makes your wedding uniquely yours? We're all ears."></textarea>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button type="button" class="btn btn-back" onclick="prevStep()">Back</button>
-          <button type="submit" class="btn btn-submit" id="submitBtn">Submit Questionnaire</button>
-        </div>
-
-        <div class="submit-status" id="submitStatus"></div>
-        <div class="error-banner" id="errorBanner"></div>
-      </div>
-
-    </form>
-
-    <!-- ========== SUCCESS SCREEN ========== -->
-    <div class="success-screen" id="successScreen">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <h2 class="success-title">You're amazing.</h2>
-      <p class="success-text">We've got everything we need. Sean is going to love reading your story before your call.</p>
-
-      <div class="success-details">
-        <p class="success-details-title">A few things to know before we chat:</p>
-        <ul>
-          <li>The call is about 20&ndash;30 minutes &mdash; super casual, no pressure.</li>
-          <li>We'll talk through your vision, answer any questions, and see if we're the right fit.</li>
-          <li>Feel free to have your partner there too &mdash; the more the merrier!</li>
-        </ul>
-      </div>
-
-      <p class="success-text" style="margin-top: 28px;">Can't wait to meet you</p>
-      <span class="success-heart">
-        <svg width="20" height="18" viewBox="0 0 20 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 18l-1.45-1.32C3.4 12.36 0 9.28 0 5.5 0 2.42 2.42 0 5.5 0 7.24 0 8.91.81 10 2.09 11.09.81 12.76 0 14.5 0 17.58 0 20 2.42 20 5.5c0 3.78-3.4 6.86-8.55 11.18L10 18z"/>
-        </svg>
-      </span>
-
-      <p class="success-text" style="margin-top: 20px; color: var(--text-muted); font-size: 0.8rem;">
-        &mdash; Sean & Sierra, Flyin' Iris
-      </p>
-
-      <a href="https://flyiniris.com/films" class="success-cta">Check out some of our films while you wait</a>
+    <div class="btn-row">
+      <button class="btn-next" type="button" id="btn-start">Start the questionnaire</button>
     </div>
-
-    <!-- ========== FOOTER ========== -->
-    <footer class="page-footer">
-      <p class="footer-brand"><a href="https://www.flyiniris.com">Flyin' Iris</a> &middot; Milwaukee, Wisconsin</p>
-    </footer>
-
   </div>
 
-  <script>
-    // ========== CONFIG ==========
+  <!-- ===================== STEP 1: SECTION 1 (THE BASICS) ===================== -->
+  <div class="step" id="step-1">
+    <div class="step-eyebrow">Section 1 of 6</div>
+    <h1 class="step-title">The Basics</h1>
+    <p class="step-intro">Five quick ones to ground us. Around 2 minutes.</p>
 
-    const SUBMIT_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/webhook/questionnaire';
-    const TIMELINE_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/webhook/parse-timeline';
-    const STORAGE_KEY = 'fi_questionnaire_progress';
-    const SECTION_NAMES = [
-      'Upload Your Timeline',
-      'Your Love Story',
-      'Your Wedding Day',
-      'Must-Capture Moments',
-      'Your Film Vision',
-      'The Details'
-    ];
+    <!-- Q1 wedding_date -->
+    <div class="field" data-field="wedding_date" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="wedding_date">Wedding date</label>
+      <input type="date" id="wedding_date" />
+    </div>
 
-    let currentStep = 0;
-    const totalSteps = 6; // 0-5
+    <!-- Q2 venue_name -->
+    <div class="field" data-field="venue_name" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="venue_name">Venue name</label>
+      <input type="text" id="venue_name" placeholder="e.g. The Pfister Hotel" />
+    </div>
 
-    // ========== URL PARAMS ==========
+    <!-- Q3 + Q4 traveling_other_locations_yn + detail -->
+    <div class="field" data-field="traveling_other_locations_yn" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required">Will we (Flyin' Iris) be traveling to any other locations, other than your venue, on your wedding day? (getting ready, first look, ceremony, bridal pictures, reception, speeches, first dances, etc.)</label>
+      <div class="yn-row" data-yn-group="traveling_other_locations_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="traveling_other_locations_yn">
+        <div class="field" data-field="traveling_other_locations_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="traveling_other_locations_detail">Please list each location: the EVENT(s) taking place, the NAME of the location(s), and ADDRESS of each. You only need to list events and locations not happening at your venue.</label>
+          <textarea id="traveling_other_locations_detail" rows="5"></textarea>
+        </div>
+      </div>
+    </div>
 
-    const params = new URLSearchParams(window.location.search);
-    const prefill = {
-      fn: params.get('fn') || '',
-      vn: params.get('vn') || '',
-      wd: params.get('wd') || '',
-      email: params.get('email') || '',
-      cid: params.get('cid') || ''
-    };
+    <!-- Q5 estimated_coverage_window -->
+    <div class="field" data-field="estimated_coverage_window" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="estimated_coverage_window">Estimated start and end time you have for us</label>
+      <input type="text" id="estimated_coverage_window" placeholder="e.g. 12pm to 9pm" />
+    </div>
 
-    // Pre-fill fields
-    if (prefill.vn) {
-      document.getElementById('venue_name').value = prefill.vn;
-      document.getElementById('vnBadge').style.display = 'inline-block';
+    <div class="validation-msg" id="vmsg-1">Please fill in the required fields above.</div>
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-next" type="button" data-action="next">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 2: SECTION 2 (TIMELINE DETAILS) ===================== -->
+  <div class="step" id="step-2">
+    <div class="step-eyebrow">Section 2 of 6</div>
+    <h1 class="step-title">Timeline Details</h1>
+    <p class="step-intro">All optional. Around 10 minutes if you fill it manually, or 30 seconds if you uploaded a timeline above.</p>
+    <div class="step-helper">If you've got these answers nailed down, share them. If not, we'll work through them on our consultation call. If you have a timeline document already, upload it at the top of this page and we'll pre-fill this section for you.</div>
+
+    <!-- Q6 bride_dress_time -->
+    <div class="field" data-field="bride_dress_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="bride_dress_time">What time is bride putting on the dress? (or upload your timeline above and we'll pre-fill this section for you)</label>
+      <input type="text" id="bride_dress_time" placeholder="e.g. 1:30pm" />
+    </div>
+
+    <!-- Q7 groom_tux_time -->
+    <div class="field" data-field="groom_tux_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="groom_tux_time">What time is groom putting on the tux?</label>
+      <input type="text" id="groom_tux_time" placeholder="e.g. 1:30pm" />
+    </div>
+
+    <!-- Q8 compound: getting ready locations -->
+    <div class="field" data-field="getting_ready_bride" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Getting ready locations (bride and groom separately, including hotel/room number if applicable)</label>
+      <div class="compound-row">
+        <div class="compound-cell">
+          <span class="compound-cell-label">Bride: location</span>
+          <input type="text" id="getting_ready_bride_loc" placeholder="e.g. Lakeside Manor" />
+        </div>
+        <div class="compound-cell">
+          <span class="compound-cell-label">Bride: room (optional)</span>
+          <input type="text" id="getting_ready_bride_room" placeholder="e.g. Bridal Suite" />
+        </div>
+      </div>
+      <input type="hidden" id="getting_ready_bride" />
+    </div>
+
+    <div class="field" data-field="getting_ready_groom" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">&nbsp;</label>
+      <div class="compound-row">
+        <div class="compound-cell">
+          <span class="compound-cell-label">Groom: location</span>
+          <input type="text" id="getting_ready_groom_loc" placeholder="e.g. Lakeside Manor" />
+        </div>
+        <div class="compound-cell">
+          <span class="compound-cell-label">Groom: room (optional)</span>
+          <input type="text" id="getting_ready_groom_room" placeholder="e.g. Groom's Lounge" />
+        </div>
+      </div>
+      <input type="hidden" id="getting_ready_groom" />
+    </div>
+
+    <!-- Q9-10 first_look (Y/N + conditional detail combined into one field) -->
+    <div class="field" data-field="first_look" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Is there a first look or first touch planned? (yes/no)</label>
+      <div class="yn-row" data-yn-group="first_look_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="first_look_yn">
+        <span class="compound-cell-label" style="margin-top: 4px;">With who and when?</span>
+        <textarea id="first_look_detail" rows="3" placeholder="e.g. bride and groom in the garden at 1pm"></textarea>
+      </div>
+      <input type="hidden" id="first_look" />
+    </div>
+
+    <!-- Q11 ceremony_time -->
+    <div class="field" data-field="ceremony_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="ceremony_time">Ceremony start time</label>
+      <input type="text" id="ceremony_time" placeholder="e.g. 4:00pm" />
+    </div>
+
+    <!-- Q12 ceremony_length -->
+    <div class="field" data-field="ceremony_length" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="ceremony_length">How long is your ceremony?</label>
+      <input type="text" id="ceremony_length" placeholder="e.g. 30 minutes" />
+    </div>
+
+    <!-- Q13 special_traditions -->
+    <div class="field" data-field="special_traditions" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="special_traditions">During the ceremony, will there be anything special, unique, or unity ceremony events we shouldn't miss? (tree planting, sand ceremony, family-only blessing, etc.)</label>
+      <textarea id="special_traditions" rows="3"></textarea>
+    </div>
+
+    <!-- Q14-15 letter_reading_yn + detail -->
+    <div class="field" data-field="letter_reading_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Are you doing a letter reading? (yes/no)</label>
+      <div class="yn-row" data-yn-group="letter_reading_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="letter_reading_yn">
+        <div class="field" data-field="letter_reading_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="letter_reading_detail">When and where?</label>
+          <textarea id="letter_reading_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q16 compound: wedding party photos -->
+    <div class="field" data-field="wedding_party_photos_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Wedding party photos: when and where?</label>
+      <div class="compound-row">
+        <div class="compound-cell">
+          <span class="compound-cell-label">When</span>
+          <input type="text" id="wedding_party_photos_time" placeholder="e.g. 2:30pm" />
+        </div>
+        <div class="compound-cell">
+          <span class="compound-cell-label">Where</span>
+          <input type="text" id="wedding_party_photos_location" data-field-key="wedding_party_photos_location" placeholder="e.g. garden behind venue" />
+        </div>
+      </div>
+    </div>
+    <!-- hidden mirror field -->
+    <div class="field" data-field="wedding_party_photos_location" data-state="user_entered" style="display:none;">
+      <span class="field-badge"></span>
+    </div>
+
+    <!-- Q17-18 sunset_photos_yn + when -->
+    <div class="field" data-field="sunset_photos_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Sunset photos? (yes/no)</label>
+      <div class="yn-row" data-yn-group="sunset_photos_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="sunset_photos_yn">
+        <div class="field" data-field="sunset_photos_when" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="sunset_photos_when">Roughly when?</label>
+          <input type="text" id="sunset_photos_when" placeholder="e.g. 7:15pm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Q19 cocktail_hour_start -->
+    <div class="field" data-field="cocktail_hour_start" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="cocktail_hour_start">Cocktail/happy hour start time</label>
+      <input type="text" id="cocktail_hour_start" placeholder="e.g. 5:00pm" />
+    </div>
+
+    <!-- Q20 cocktail_hour_couple_time -->
+    <div class="field" data-field="cocktail_hour_couple_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="cocktail_hour_couple_time">How much time would you like to spend at cocktail hour before reception kicks off?</label>
+      <input type="text" id="cocktail_hour_couple_time" placeholder="e.g. 30 minutes" />
+    </div>
+
+    <!-- Q21-22 grand_march_yn + when -->
+    <div class="field" data-field="grand_march_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Grand march or grand entrance? (yes/no)</label>
+      <div class="yn-row" data-yn-group="grand_march_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="grand_march_yn">
+        <div class="field" data-field="grand_march_when" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="grand_march_when">When?</label>
+          <input type="text" id="grand_march_when" placeholder="e.g. 6:30pm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Q23 dinner_start -->
+    <div class="field" data-field="dinner_start" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="dinner_start">Dinner start time</label>
+      <input type="text" id="dinner_start" placeholder="e.g. 6:45pm" />
+    </div>
+
+    <!-- Q24-25 prayer_before_dinner_yn + detail -->
+    <div class="field" data-field="prayer_before_dinner_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Will anyone say a prayer before dinner that we should film? (yes/no)</label>
+      <div class="yn-row" data-yn-group="prayer_before_dinner_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="prayer_before_dinner_yn">
+        <div class="field" data-field="prayer_before_dinner_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="prayer_before_dinner_detail">Who, and any context?</label>
+          <textarea id="prayer_before_dinner_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q26 compound: speeches -->
+    <div class="field" data-field="speeches_start_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Speeches: when do they start, and who's giving them? (relationship to couple if helpful)</label>
+      <div class="compound-row">
+        <div class="compound-cell" style="flex: 0 0 100%;">
+          <span class="compound-cell-label">Start time</span>
+          <input type="text" id="speeches_start_time" placeholder="e.g. 7:30pm" />
+        </div>
+        <div class="compound-cell" style="flex: 0 0 100%;">
+          <span class="compound-cell-label">Who (and relationship)</span>
+          <textarea id="speeches_givers" data-field-key="speeches_givers" rows="3" placeholder="e.g. Maid of honor (sister), best man (brother), father of bride"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="field" data-field="speeches_givers" data-state="user_entered" style="display:none;">
+      <span class="field-badge"></span>
+    </div>
+
+    <!-- Q27-28 couple_welcome_speech -->
+    <div class="field" data-field="couple_welcome_speech_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Are bride and groom giving a welcome or thank-you speech? (yes/no)</label>
+      <div class="yn-row" data-yn-group="couple_welcome_speech_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="couple_welcome_speech_yn">
+        <div class="field" data-field="couple_welcome_speech_when" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="couple_welcome_speech_when">When?</label>
+          <input type="text" id="couple_welcome_speech_when" placeholder="e.g. before dinner" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Q29 compound: first dances -->
+    <div class="field" data-field="first_dances_start_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">First dances: when, how many, and with who?</label>
+      <div class="compound-row">
+        <div class="compound-cell">
+          <span class="compound-cell-label">Start time</span>
+          <input type="text" id="first_dances_start_time" placeholder="e.g. 8:00pm" />
+        </div>
+        <div class="compound-cell">
+          <span class="compound-cell-label">How many</span>
+          <input type="text" id="first_dances_count" data-field-key="first_dances_count" placeholder="e.g. 3" />
+        </div>
+        <div class="compound-cell" style="flex: 0 0 100%;">
+          <span class="compound-cell-label">Pairings</span>
+          <textarea id="first_dances_pairings" data-field-key="first_dances_pairings" rows="3" placeholder="e.g. couple's first dance, father-daughter, mother-son"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="field" data-field="first_dances_count" data-state="user_entered" style="display:none;"><span class="field-badge"></span></div>
+    <div class="field" data-field="first_dances_pairings" data-state="user_entered" style="display:none;"><span class="field-badge"></span></div>
+
+    <!-- Q30-31 other_special_dances -->
+    <div class="field" data-field="other_special_dances_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Any other special dances? (anniversary dance, money dance, etc.) (yes/no)</label>
+      <div class="yn-row" data-yn-group="other_special_dances_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="other_special_dances_yn">
+        <div class="field" data-field="other_special_dances_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="other_special_dances_detail">Describe</label>
+          <textarea id="other_special_dances_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q32 end_of_night radio + other -->
+    <div class="field" data-field="end_of_night" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">End of night plans (last dance, sparkler exit, after-party, etc.)</label>
+      <div class="radio-group" data-radio-group="end_of_night_choice">
+        <label class="radio-card">
+          <input type="radio" name="end_of_night_choice" value="last dance" />
+          <span class="radio-card-label">Last dance</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="end_of_night_choice" value="sparkler exit" />
+          <span class="radio-card-label">Sparkler exit</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="end_of_night_choice" value="after-party" />
+          <span class="radio-card-label">After-party</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="end_of_night_choice" value="other" />
+          <span class="radio-card-label">Other</span>
+        </label>
+      </div>
+      <div class="yn-followup" id="end_of_night_other_wrap">
+        <input type="text" id="end_of_night_other" placeholder="Describe" style="margin-top: 12px;" />
+      </div>
+      <input type="hidden" id="end_of_night" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-next" type="button" data-action="next">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 3: SECTION 3 (THE PEOPLE) ===================== -->
+  <div class="step" id="step-3">
+    <div class="step-eyebrow">Section 3 of 6</div>
+    <h1 class="step-title">The People</h1>
+    <p class="step-intro">Eight short questions, around 4 minutes.</p>
+
+    <div class="field" data-field="wedding_party_names" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="wedding_party_names">Names of everyone in the wedding party (please specify best man and maid of honor)</label>
+      <textarea id="wedding_party_names" rows="4"></textarea>
+    </div>
+
+    <div class="field" data-field="couple_parents_names" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="couple_parents_names">Bride and groom's parents/guardians (first and last names; please list step-parents if we'll be filming them)</label>
+      <textarea id="couple_parents_names" rows="4"></textarea>
+    </div>
+
+    <div class="field" data-field="officiant_name_relationship" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="officiant_name_relationship">Officiant name and your relationship to them (family friend? hired? religious leader?)</label>
+      <input type="text" id="officiant_name_relationship" />
+    </div>
+
+    <div class="field" data-field="photographer_name" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="photographer_name">Photographer name and company (Instagram handles welcome)</label>
+      <input type="text" id="photographer_name" />
+    </div>
+
+    <div class="field" data-field="planner_name" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="planner_name">Planner or day-of coordinator name and contact info</label>
+      <input type="text" id="planner_name" />
+    </div>
+
+    <div class="field" data-field="dj_band_name" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="dj_band_name">DJ or band name</label>
+      <input type="text" id="dj_band_name" />
+    </div>
+
+    <div class="field" data-field="hair_makeup_artists" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="hair_makeup_artists">Hair and makeup artist(s)</label>
+      <input type="text" id="hair_makeup_artists" />
+    </div>
+
+    <div class="field" data-field="other_vendors" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="other_vendors">Other vendors (florist, baker, transportation, entertainment, attire vendors, etc.). Instagram handles welcome, we love tagging everyone we work with</label>
+      <textarea id="other_vendors" rows="4"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-next" type="button" data-action="next">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 4: SECTION 4 (DAY-OF DETAILS) ===================== -->
+  <div class="step" id="step-4">
+    <div class="step-eyebrow">Section 4 of 6</div>
+    <h1 class="step-title">Day-of Details</h1>
+    <p class="step-intro">Around 5 minutes. Some are optional.</p>
+
+    <!-- Q41-42 dress code -->
+    <div class="field" data-field="dress_code_for_filming_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Is there a dress code or filming-attire preference for us? (yes/no)</label>
+      <div class="yn-row" data-yn-group="dress_code_for_filming_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="dress_code_for_filming_yn">
+        <div class="field" data-field="dress_code_for_filming_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="dress_code_for_filming_detail">Describe</label>
+          <textarea id="dress_code_for_filming_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q43 color_scheme -->
+    <div class="field" data-field="color_scheme" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="color_scheme">What's your color scheme or theme?</label>
+      <input type="text" id="color_scheme" />
+    </div>
+
+    <!-- Q44 guest_count -->
+    <div class="field" data-field="guest_count" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="guest_count">Estimated guest count</label>
+      <input type="text" id="guest_count" placeholder="e.g. 150" />
+    </div>
+
+    <!-- Q45 wedding_hashtag -->
+    <div class="field" data-field="wedding_hashtag" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="wedding_hashtag">Wedding hashtag, if you have one (optional)</label>
+      <input type="text" id="wedding_hashtag" placeholder="#mrandmrs2026" />
+    </div>
+
+    <!-- Q46 detail_items_yn (3-option) -->
+    <div class="field" data-field="detail_items_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Will you have detail items for us to capture? (invitations, save-the-dates, rings, jewelry, cuff links, etc.)</label>
+      <div class="three-opt-row" data-yn-group="detail_items_yn" data-mode="three">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+        <button type="button" class="yn-btn" data-val="not sure yet">Not sure yet</button>
+      </div>
+    </div>
+
+    <!-- Q47 family_heirlooms -->
+    <div class="field" data-field="family_heirlooms" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="family_heirlooms">Are there family heirlooms or meaningful objects we should make sure to capture? (grandmother's veil, dad's pocket watch, vows in a journal, etc.) (optional)</label>
+      <textarea id="family_heirlooms" rows="3"></textarea>
+    </div>
+
+    <!-- Q48-49 accessibility -->
+    <div class="field" data-field="accessibility_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Anything we should know about accessibility for the day? (yes/no, optional)</label>
+      <div class="yn-row" data-yn-group="accessibility_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="accessibility_yn">
+        <div class="field" data-field="accessibility_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="accessibility_detail">Describe</label>
+          <textarea id="accessibility_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q50-51 family_dynamics -->
+    <div class="field" data-field="family_dynamics_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Anything we should know about family dynamics? (divorces, blended families, sensitivities, we want to film with care) (yes/no, optional)</label>
+      <div class="yn-row" data-yn-group="family_dynamics_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="family_dynamics_yn">
+        <div class="field" data-field="family_dynamics_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="family_dynamics_detail">Describe (kept private, only Sierra and Sean see this)</label>
+          <textarea id="family_dynamics_detail" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q52-53 pets -->
+    <div class="field" data-field="pets_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Are pets going to be part of the day? (yes/no)</label>
+      <div class="yn-row" data-yn-group="pets_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="pets_yn">
+        <div class="field" data-field="pets_detail" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="pets_detail">Tell us about them</label>
+          <textarea id="pets_detail" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q54-55 other_special_events_yn + surprises_planned (detail) -->
+    <div class="field" data-field="other_special_events_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Any other special events we should be aware of? (champagne pop, bubble exit, unique first dance, etc.) (yes/no)</label>
+      <div class="yn-row" data-yn-group="other_special_events_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="yn-followup" data-followup-for="other_special_events_yn">
+        <div class="field" data-field="surprises_planned" data-state="user_entered" style="margin-bottom: 0;">
+          <span class="field-badge"></span>
+          <label class="field-label" for="surprises_planned">Describe</label>
+          <textarea id="surprises_planned" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q56 timeline_sent_yn (3-option) -->
+    <div class="field" data-field="timeline_sent_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Have you sent us your timeline yet?</label>
+      <div class="three-opt-row" data-yn-group="timeline_sent_yn" data-mode="three">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+        <button type="button" class="yn-btn" data-val="will send soon">Will send soon</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-next" type="button" data-action="next">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 5: SECTION 5 (FILM VISION) ===================== -->
+  <div class="step" id="step-5">
+    <div class="step-eyebrow">Section 5 of 6</div>
+    <h1 class="step-title">Your Film Vision</h1>
+    <p class="step-intro">Around 3 minutes. The fun part.</p>
+
+    <!-- Q57 film_style_multi_select -->
+    <div class="field" data-field="film_style_multi_select" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label">Wedding film style (select all that apply)</label>
+      <div class="checkbox-group" data-checkbox-group="film_style_multi_select" data-options="film_style">
+        <label class="checkbox-card"><input type="checkbox" value="Epic and powerful, like a Hollywood movie trailer" /><span class="checkbox-card-label">Epic and powerful, like a Hollywood movie trailer</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Soft, sweet, and romantic" /><span class="checkbox-card-label">Soft, sweet, and romantic</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Quirky and funny" /><span class="checkbox-card-label">Quirky and funny</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Traditional and simple" /><span class="checkbox-card-label">Traditional and simple</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Raw and exciting" /><span class="checkbox-card-label">Raw and exciting</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="All of the above" data-exclusive="true" /><span class="checkbox-card-label">All of the above</span></label>
+      </div>
+    </div>
+
+    <!-- Q58 film_feeling -->
+    <div class="field" data-field="film_feeling" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label" for="film_feeling">What feeling do you want when you watch your film?</label>
+      <textarea id="film_feeling" rows="3"></textarea>
+    </div>
+
+    <!-- Q59 music_preferences -->
+    <div class="field" data-field="music_preferences" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Music genres you both enjoy on a daily basis (this helps us choose the right music vibe for your film, even if it's different from what you want IN the film). Select all that apply</label>
+      <div class="checkbox-group" data-checkbox-group="music_preferences">
+        <label class="checkbox-card"><input type="checkbox" value="Alternative" /><span class="checkbox-card-label">Alternative</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Acoustic" /><span class="checkbox-card-label">Acoustic</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Classical" /><span class="checkbox-card-label">Classical</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Country" /><span class="checkbox-card-label">Country</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Electronic" /><span class="checkbox-card-label">Electronic</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Folk" /><span class="checkbox-card-label">Folk</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Hip Hop / Rap" /><span class="checkbox-card-label">Hip Hop / Rap</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Indie" /><span class="checkbox-card-label">Indie</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Jazz" /><span class="checkbox-card-label">Jazz</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Pop" /><span class="checkbox-card-label">Pop</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="R&B" /><span class="checkbox-card-label">R&B</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Rock" /><span class="checkbox-card-label">Rock</span></label>
+      </div>
+    </div>
+
+    <!-- Q60 music_specifications -->
+    <div class="field" data-field="music_specifications" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="music_specifications">Any music genre specifications? (optional). Example: I like Country but only from the 1970s. Please avoid heavy metal.</label>
+      <textarea id="music_specifications" rows="3"></textarea>
+    </div>
+
+    <!-- Q61 bloopers_preference (single radio) -->
+    <div class="field" data-field="bloopers_preference" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">How do you feel about lighthearted bloopers in your film?</label>
+      <div class="radio-group" data-radio-group="bloopers_preference">
+        <label class="radio-card"><input type="radio" name="bloopers_preference" value="Give me all the bloopers!" /><span class="radio-card-label">Give me all the bloopers!</span></label>
+        <label class="radio-card"><input type="radio" name="bloopers_preference" value="Sure, maybe. I don't really have an opinion." /><span class="radio-card-label">Sure, maybe. I don't really have an opinion.</span></label>
+        <label class="radio-card"><input type="radio" name="bloopers_preference" value="I'll leave it up to Flyin' Iris to decide" /><span class="radio-card-label">I'll leave it up to Flyin' Iris to decide</span></label>
+        <label class="radio-card"><input type="radio" name="bloopers_preference" value="I'd rather remember all the things that went right" /><span class="radio-card-label">I'd rather remember all the things that went right</span></label>
+        <label class="radio-card"><input type="radio" name="bloopers_preference" value="Just... no." /><span class="radio-card-label">Just... no.</span></label>
+      </div>
+    </div>
+
+    <!-- Q62 reference_films -->
+    <div class="field" data-field="reference_films" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="reference_films">Any wedding films you've seen that you loved? (links welcome) (optional)</label>
+      <textarea id="reference_films" rows="3"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-next" type="button" data-action="next">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 6: SECTION 6 (FINAL DETAILS) ===================== -->
+  <div class="step" id="step-6">
+    <div class="step-eyebrow">Section 6 of 6</div>
+    <h1 class="step-title">Final Details</h1>
+    <p class="step-intro">Last stretch. Around 2 minutes.</p>
+
+    <div class="field" data-field="home_address" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="home_address">Your home address</label>
+      <input type="text" id="home_address" />
+    </div>
+
+    <div class="field" data-field="partners_phone" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="partners_phone">Partner's cell phone number</label>
+      <input type="tel" id="partners_phone" />
+    </div>
+
+    <div class="field" data-field="partners_email" data-state="user_entered" data-required="true">
+      <span class="field-badge"></span>
+      <label class="field-label field-required" for="partners_email">Partner's email address</label>
+      <input type="email" id="partners_email" />
+    </div>
+
+    <div class="field" data-field="consultation_call_topics" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="consultation_call_topics">Comments, thoughts, or questions you'd like us to talk about on our call (optional)</label>
+      <textarea id="consultation_call_topics" rows="4"></textarea>
+    </div>
+
+    <!-- Submit gate summary -->
+    <div class="submit-summary" id="submit-summary" style="display: none;">
+      <div id="submit-summary-text"></div>
+      <div class="submit-summary-actions" id="submit-summary-actions" style="display: none;">
+        <button type="button" class="btn-text" id="btn-jump-unreviewed">Jump to first unreviewed</button>
+        <button type="button" class="btn-text" id="btn-confirm-all">Confirm all remaining</button>
+      </div>
+    </div>
+
+    <div class="validation-msg" id="vmsg-6">Please fill in the required fields above.</div>
+
+    <div class="btn-row">
+      <button class="btn-back" type="button" data-action="prev">Back</button>
+      <button class="btn-submit" type="button" id="btn-submit">Submit questionnaire</button>
+    </div>
+  </div>
+
+  <!-- ===================== STEP 7: SUCCESS ===================== -->
+  <div class="step" id="step-7">
+    <div class="success-wrap">
+      <div class="success-mark"></div>
+      <h1 class="success-title">We've got it. Here's what's next.</h1>
+      <p class="success-body">This is where we'll go through your wedding day in detail. We'll review your timeline, talk through your film vibe, and answer any questions. Block out about 60 minutes.</p>
+      <a class="success-cta" href="https://book.flyiniris.com/widget/booking/nI6DSeEhe8NiQsdzR5Qe" target="_blank" rel="noopener">Schedule your consultation call</a>
+      <div class="success-sign">Can't wait,</div>
+      <div class="success-name">Sierra &amp; Sean</div>
+      <div class="success-brand">Flyin' Iris</div>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<!-- Confirm-all modal -->
+<div class="modal-backdrop" id="confirm-all-modal">
+  <div class="modal">
+    <h3>Confirm all remaining?</h3>
+    <p id="confirm-all-text">You're confirming X fields without reviewing them individually. Are you sure?</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-back" id="confirm-all-cancel" autofocus>Cancel</button>
+      <button type="button" class="btn-next" id="confirm-all-yes" style="flex: 0 0 auto;">Yes, confirm all</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+   * URL Params + Identity
+   * ============================================================ */
+  var params = new URLSearchParams(location.search);
+  var contactId = params.get('contactId') || '';
+  var prefillEmail = params.get('email') || '';
+  var prefillFirstName = params.get('firstName') || '';
+  var prefillVenue = params.get('venue') || '';
+  var prefillDate = params.get('date') || '';
+
+  var STORAGE_KEY = 'iris_questionnaire_' + (contactId || 'anon') + '_v2';
+  // API_BASE pinned to the Worker because this form is served from
+  // flyiniris.com (Pages) but submits to the iris-automation Worker.
+  var API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+
+  /* ============================================================
+   * Field registry: all 66 canonical fields
+   * Each entry: { name, requiredOnSection2: bool? }
+   * ============================================================ */
+  var FIELD_NAMES = [
+    // Section 1
+    'wedding_date', 'venue_name', 'traveling_other_locations_yn', 'traveling_other_locations_detail',
+    'estimated_coverage_window',
+    // Section 2
+    'bride_dress_time', 'groom_tux_time', 'getting_ready_bride', 'getting_ready_groom',
+    'first_look', 'ceremony_time', 'ceremony_length', 'special_traditions',
+    'letter_reading_yn', 'letter_reading_detail', 'wedding_party_photos_time', 'wedding_party_photos_location',
+    'sunset_photos_yn', 'sunset_photos_when', 'cocktail_hour_start', 'cocktail_hour_couple_time',
+    'grand_march_yn', 'grand_march_when', 'dinner_start', 'prayer_before_dinner_yn',
+    'prayer_before_dinner_detail', 'speeches_start_time', 'speeches_givers',
+    'couple_welcome_speech_yn', 'couple_welcome_speech_when', 'first_dances_start_time',
+    'first_dances_count', 'first_dances_pairings', 'other_special_dances_yn',
+    'other_special_dances_detail', 'end_of_night',
+    // Section 3
+    'wedding_party_names', 'couple_parents_names', 'officiant_name_relationship',
+    'photographer_name', 'planner_name', 'dj_band_name', 'hair_makeup_artists', 'other_vendors',
+    // Section 4
+    'dress_code_for_filming_yn', 'dress_code_for_filming_detail', 'color_scheme', 'guest_count',
+    'wedding_hashtag', 'detail_items_yn', 'family_heirlooms', 'accessibility_yn',
+    'accessibility_detail', 'family_dynamics_yn', 'family_dynamics_detail', 'pets_yn',
+    'pets_detail', 'surprises_planned', 'other_special_events_yn', 'timeline_sent_yn',
+    // Section 5
+    'film_style_multi_select', 'film_feeling', 'music_preferences', 'music_specifications',
+    'bloopers_preference', 'reference_films',
+    // Section 6
+    'home_address', 'partners_phone', 'partners_email', 'consultation_call_topics'
+  ];
+
+  // Section 2 fields (used to gate submit on review)
+  var SECTION_2_FIELDS = [
+    'bride_dress_time', 'groom_tux_time', 'getting_ready_bride', 'getting_ready_groom',
+    'first_look', 'ceremony_time', 'ceremony_length', 'special_traditions',
+    'letter_reading_yn', 'letter_reading_detail', 'wedding_party_photos_time', 'wedding_party_photos_location',
+    'sunset_photos_yn', 'sunset_photos_when', 'cocktail_hour_start', 'cocktail_hour_couple_time',
+    'grand_march_yn', 'grand_march_when', 'dinner_start', 'prayer_before_dinner_yn',
+    'prayer_before_dinner_detail', 'speeches_start_time', 'speeches_givers',
+    'couple_welcome_speech_yn', 'couple_welcome_speech_when', 'first_dances_start_time',
+    'first_dances_count', 'first_dances_pairings', 'other_special_dances_yn',
+    'other_special_dances_detail', 'end_of_night'
+  ];
+
+  /* ============================================================
+   * State
+   * ============================================================ */
+  var TOTAL_STEPS = 8; // 0=upload, 1-6=sections, 7=success
+  var currentStep = 0;
+  // fieldStates: { [fieldName]: { value, prefilled_value, state } }
+  var fieldStates = {};
+  FIELD_NAMES.forEach(function (n) {
+    fieldStates[n] = { value: '', prefilled_value: null, state: 'user_entered' };
+  });
+
+  /* ============================================================
+   * Helpers: get all fields, lookup field-element
+   * ============================================================ */
+  function getFieldEl(name) {
+    // First .field with data-field=name
+    return document.querySelector('.field[data-field="' + name + '"]');
+  }
+
+  function getInputEl(name) {
+    var el = document.getElementById(name);
+    if (el) return el;
+    // some compound inputs use ids matching names already; otherwise return the wrapper
+    return null;
+  }
+
+  /* ============================================================
+   * Read/write field values across all input types
+   * ============================================================ */
+  function readFieldValue(name) {
+    // Special compound and radio cases
+    if (name === 'getting_ready_bride') {
+      var loc = (val('getting_ready_bride_loc') || '').trim();
+      var room = (val('getting_ready_bride_room') || '').trim();
+      return room ? (loc + (loc && room ? ', ' : '') + room) : loc;
     }
-    if (prefill.wd) {
-      document.getElementById('wedding_date').value = prefill.wd;
-      document.getElementById('wdBadge').style.display = 'inline-block';
+    if (name === 'getting_ready_groom') {
+      var glo = (val('getting_ready_groom_loc') || '').trim();
+      var grm = (val('getting_ready_groom_room') || '').trim();
+      return grm ? (glo + (glo && grm ? ', ' : '') + grm) : glo;
     }
+    if (name === 'first_look') {
+      var ynVal = ynState['first_look_yn'];
+      if (!ynVal) return '';
+      if (ynVal === 'no') return 'no';
+      var detail = (val('first_look_detail') || '').trim();
+      return detail ? ('yes - ' + detail) : 'yes';
+    }
+    if (name === 'wedding_party_photos_location') {
+      return (val('wedding_party_photos_location') || '').trim();
+    }
+    if (name === 'end_of_night') {
+      var checked = document.querySelector('input[name="end_of_night_choice"]:checked');
+      if (!checked) return '';
+      if (checked.value === 'other') {
+        var other = (val('end_of_night_other') || '').trim();
+        return other ? ('other: ' + other) : 'other';
+      }
+      return checked.value;
+    }
+    if (name === 'film_style_multi_select') {
+      return readCheckboxGroup('film_style_multi_select');
+    }
+    if (name === 'music_preferences') {
+      return readCheckboxGroup('music_preferences');
+    }
+    if (name === 'bloopers_preference') {
+      var b = document.querySelector('input[name="bloopers_preference"]:checked');
+      return b ? b.value : '';
+    }
+    // Y/N grouped fields (single button group with no input id)
+    if (ynGroups.indexOf(name) >= 0) {
+      return ynState[name] || '';
+    }
+    // default: input element by id
+    var el = document.getElementById(name);
+    if (!el) return '';
+    return (el.value || '').trim();
+  }
 
-    // ========== TIMELINE UPLOAD ==========
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  }
 
-    const uploadZone = document.getElementById('uploadZone');
-    const fileInput = document.getElementById('timelineFile');
-    const uploadStatus = document.getElementById('uploadStatus');
-    const uploadFilename = document.getElementById('uploadFilename');
-    const uploadNextBtn = document.getElementById('uploadNextBtn');
+  function readCheckboxGroup(name) {
+    var box = document.querySelector('[data-checkbox-group="' + name + '"]');
+    if (!box) return '';
+    var checked = box.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.prototype.map.call(checked, function (c) { return c.value; }).join(', ');
+  }
 
-    // Drag events
-    uploadZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadZone.classList.add('dragover');
+  function writeFieldValue(name, value) {
+    if (value == null) value = '';
+    if (name === 'getting_ready_bride') {
+      // Try to split: if value contains comma, parts[0]=loc, parts[1]=room
+      var parts = value.split(/,\s*/);
+      setVal('getting_ready_bride_loc', parts[0] || '');
+      setVal('getting_ready_bride_room', parts.slice(1).join(', ') || '');
+      return;
+    }
+    if (name === 'getting_ready_groom') {
+      var pp = value.split(/,\s*/);
+      setVal('getting_ready_groom_loc', pp[0] || '');
+      setVal('getting_ready_groom_room', pp.slice(1).join(', ') || '');
+      return;
+    }
+    if (name === 'first_look') {
+      var lv = value.toLowerCase();
+      if (lv.indexOf('yes') === 0) {
+        setYn('first_look_yn', 'yes');
+        var d = value.replace(/^yes\s*-\s*/i, '');
+        setVal('first_look_detail', d === value ? '' : d);
+      } else if (lv.indexOf('no') === 0) {
+        setYn('first_look_yn', 'no');
+      }
+      return;
+    }
+    if (name === 'end_of_night') {
+      var lv2 = value.toLowerCase();
+      var match = ['last dance', 'sparkler exit', 'after-party'];
+      var found = null;
+      for (var i = 0; i < match.length; i++) {
+        if (lv2.indexOf(match[i]) >= 0) { found = match[i]; break; }
+      }
+      if (found) {
+        var radio = document.querySelector('input[name="end_of_night_choice"][value="' + found + '"]');
+        if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+      } else if (value) {
+        var radio2 = document.querySelector('input[name="end_of_night_choice"][value="other"]');
+        if (radio2) { radio2.checked = true; radio2.dispatchEvent(new Event('change')); }
+        setVal('end_of_night_other', value.replace(/^other:\s*/i, ''));
+      }
+      return;
+    }
+    if (name === 'film_style_multi_select' || name === 'music_preferences') {
+      writeCheckboxGroup(name, value);
+      return;
+    }
+    if (name === 'bloopers_preference') {
+      var br = document.querySelector('input[name="bloopers_preference"][value="' + cssEscape(value) + '"]');
+      if (br) br.checked = true;
+      return;
+    }
+    if (ynGroups.indexOf(name) >= 0) {
+      var v = (value || '').toLowerCase();
+      if (v === 'yes' || v === 'no' || v === 'not sure yet' || v === 'will send soon') {
+        setYn(name, v);
+      }
+      return;
+    }
+    var el = document.getElementById(name);
+    if (el) el.value = value;
+  }
+
+  function setVal(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.value = v || '';
+  }
+
+  function writeCheckboxGroup(name, value) {
+    var box = document.querySelector('[data-checkbox-group="' + name + '"]');
+    if (!box) return;
+    var values = (value || '').split(/,\s*/).map(function (s) { return s.trim().toLowerCase(); });
+    var boxes = box.querySelectorAll('input[type="checkbox"]');
+    Array.prototype.forEach.call(boxes, function (cb) {
+      cb.checked = values.indexOf(cb.value.toLowerCase()) >= 0;
     });
-    uploadZone.addEventListener('dragleave', () => {
-      uploadZone.classList.remove('dragover');
-    });
-    uploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        handleFileSelect(e.dataTransfer.files[0]);
-      }
-    });
+  }
 
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        handleFileSelect(fileInput.files[0]);
-      }
-    });
+  function cssEscape(s) {
+    return (s || '').replace(/"/g, '\\"');
+  }
 
-    async function handleFileSelect(file) {
-      // Validate file type
-      const allowed = /\.(pdf|docx?|txt|jpe?g|png|webp)$/i;
-      if (!allowed.test(file.name)) {
-        showUploadStatus('error', 'Unsupported file type. Please use PDF, Word, or an image.');
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        showUploadStatus('error', 'File is too large. Maximum 10MB.');
-        return;
-      }
+  /* ============================================================
+   * Y/N quick-click behavior
+   * ============================================================ */
+  var ynGroups = [
+    'traveling_other_locations_yn', 'letter_reading_yn',
+    'sunset_photos_yn', 'grand_march_yn', 'prayer_before_dinner_yn',
+    'couple_welcome_speech_yn', 'other_special_dances_yn',
+    'dress_code_for_filming_yn', 'detail_items_yn', 'accessibility_yn',
+    'family_dynamics_yn', 'pets_yn', 'other_special_events_yn',
+    'timeline_sent_yn'
+  ];
+  // first_look_yn is a UI-only group (combined into first_look field)
+  var ynState = {};
 
-      // Show file name
-      uploadZone.classList.add('has-file');
-      uploadFilename.textContent = file.name;
-
-      // Parse the timeline
-      showUploadStatus('parsing', 'Reading your timeline... this takes a few seconds.');
-
-      if (!prefill.cid) {
-        showUploadStatus('error', 'Missing contact ID. Timeline parsing requires a valid questionnaire link.');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('timeline', file);
-      formData.append('contactId', prefill.cid);
-
-      try {
-        const res = await fetch(TIMELINE_URL, {
-          method: 'POST',
-          body: formData
+  function setupYnGroup(group) {
+    var rows = document.querySelectorAll('[data-yn-group="' + group + '"]');
+    rows.forEach(function (row) {
+      var btns = row.querySelectorAll('.yn-btn');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var v = btn.getAttribute('data-val');
+          setYn(group, v);
+          // mark field state
+          if (FIELD_NAMES.indexOf(group) >= 0) {
+            handleFieldChange(group);
+          }
+          // first_look_yn special: drives the first_look canonical field
+          if (group === 'first_look_yn') {
+            handleFieldChange('first_look');
+          }
+          maybeSave();
         });
+      });
+    });
+  }
 
-        const result = await res.json();
-
-        if (!res.ok || !result.parsed) {
-          showUploadStatus('error', result.error || 'Could not parse the timeline. You can fill in the fields manually.');
-          uploadNextBtn.style.display = '';
-          return;
-        }
-
-        // Auto-fill fields from parsed data
-        const parsed = result.parsed;
-        let filledCount = 0;
-
-        const fieldMap = {
-          ceremony_time: 'ceremony_time',
-          getting_ready_bride: 'getting_ready_bride',
-          getting_ready_groom: 'getting_ready_groom',
-          end_of_night: 'end_of_night',
-          guest_count: 'guest_count',
-          photographer_name: 'photographer_name',
-          planner_name: 'planner_name',
-          dj_band_name: 'dj_band_name',
-          other_vendors: 'other_vendors',
-          venue_name: 'venue_name',
-          special_traditions: 'special_traditions',
-          must_capture_moments: 'must_capture_moments',
-          additional_notes: 'additional_notes',
-          first_look: 'first_look',
-        };
-
-        for (const [parseKey, fieldId] of Object.entries(fieldMap)) {
-          const val = parsed[parseKey];
-          if (!val || val === '' || val === 'null') continue;
-
-          if (parseKey === 'first_look') {
-            const radioVal = val.toLowerCase().includes('yes') ? 'Yes' : val.toLowerCase().includes('no') ? 'No' : null;
-            if (radioVal) {
-              const radio = document.querySelector(`input[name="first_look"][value="${radioVal}"]`);
-              if (radio) {
-                radio.checked = true;
-                showTimelineBadge('first_look');
-                filledCount++;
-              }
-            }
-            continue;
-          }
-
-          if (parseKey === 'ceremony_time') {
-            // Try to convert time string like "4:00 PM" to 24h "16:00"
-            const el = document.getElementById(fieldId);
-            if (el && !el.value) {
-              const converted = convertTo24h(val);
-              if (converted) {
-                el.value = converted;
-                showTimelineBadge(fieldId);
-                filledCount++;
-              }
-            }
-            continue;
-          }
-
-          if (parseKey === 'guest_count') {
-            const el = document.getElementById(fieldId);
-            if (el && !el.value) {
-              // Try to match to select options
-              const num = parseInt(val.replace(/\D/g, ''));
-              if (num) {
-                if (num < 50) el.value = 'Under 50';
-                else if (num <= 100) el.value = '50-100';
-                else if (num <= 150) el.value = '100-150';
-                else if (num <= 200) el.value = '150-200';
-                else el.value = '200+';
-                showTimelineBadge(fieldId);
-                filledCount++;
-              }
-            }
-            continue;
-          }
-
-          const el = document.getElementById(fieldId);
-          if (el && !el.value) {
-            el.value = val;
-            showTimelineBadge(fieldId);
-            filledCount++;
-          }
-        }
-
-        if (filledCount > 0) {
-          showUploadStatus('success', `Got it! We pre-filled ${filledCount} field${filledCount > 1 ? 's' : ''} from your timeline. You'll see green "From timeline" badges as you go &mdash; review and adjust anything that needs tweaking.`);
+  function setYn(group, value) {
+    ynState[group] = value;
+    var rows = document.querySelectorAll('[data-yn-group="' + group + '"]');
+    rows.forEach(function (row) {
+      row.querySelectorAll('.yn-btn').forEach(function (btn) {
+        if (btn.getAttribute('data-val') === value) {
+          btn.classList.add('active');
         } else {
-          showUploadStatus('success', 'Timeline uploaded, but we couldn\'t extract specific fields. No worries &mdash; you can fill everything in manually.');
+          btn.classList.remove('active');
         }
-
-        uploadNextBtn.style.display = '';
-        saveProgress();
-
-      } catch (err) {
-        showUploadStatus('error', 'Something went wrong parsing your timeline. You can still fill in the fields manually.');
-        uploadNextBtn.style.display = '';
-      }
-    }
-
-    function showUploadStatus(type, message) {
-      uploadStatus.className = 'upload-status active ' + type;
-      uploadStatus.innerHTML = message;
-    }
-
-    function showTimelineBadge(fieldId) {
-      const badge = document.getElementById(fieldId + 'TlBadge');
-      if (badge) badge.classList.add('visible');
-    }
-
-    function convertTo24h(timeStr) {
-      if (!timeStr) return null;
-      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/);
-      if (!match) return null;
-      let h = parseInt(match[1]);
-      const m = match[2];
-      const period = (match[3] || '').toUpperCase();
-      if (period === 'PM' && h < 12) h += 12;
-      if (period === 'AM' && h === 12) h = 0;
-      return String(h).padStart(2, '0') + ':' + m;
-    }
-
-    // ========== SECTION 6 TIMELINE FILE UPLOAD ==========
-
-    const UPLOAD_TIMELINE_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/api/upload-timeline';
-    let selectedTimelineFile = null;
-
-    const tlUploadZone = document.getElementById('timelineUploadZone');
-    const tlFileInput = document.getElementById('timelineUploadFile');
-    const tlFileName = document.getElementById('timelineUploadName');
-    const tlRemoveBtn = document.getElementById('timelineUploadRemove');
-
-    tlUploadZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (!selectedTimelineFile) tlUploadZone.classList.add('dragover');
-    });
-    tlUploadZone.addEventListener('dragleave', () => {
-      tlUploadZone.classList.remove('dragover');
-    });
-    tlUploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      tlUploadZone.classList.remove('dragover');
-      if (!selectedTimelineFile && e.dataTransfer.files.length) {
-        handleTimelineFileSelect(e.dataTransfer.files[0]);
-      }
-    });
-
-    tlFileInput.addEventListener('change', () => {
-      if (tlFileInput.files.length) {
-        handleTimelineFileSelect(tlFileInput.files[0]);
-      }
-    });
-
-    function handleTimelineFileSelect(file) {
-      const allowed = /\.(pdf|jpe?g|png|heic|docx)$/i;
-      if (!allowed.test(file.name)) {
-        alert('Unsupported file type. Please use PDF, JPG, PNG, HEIC, or DOCX.');
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        alert('File is too large. Maximum 10MB.');
-        return;
-      }
-      selectedTimelineFile = file;
-      tlFileName.textContent = file.name;
-      tlUploadZone.classList.add('has-file');
-    }
-
-    tlRemoveBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      selectedTimelineFile = null;
-      tlFileInput.value = '';
-      tlFileName.textContent = '';
-      tlUploadZone.classList.remove('has-file');
-    });
-
-    // ========== CHIP TOGGLE ==========
-
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        chip.classList.toggle('selected');
-        saveProgress();
       });
     });
-
-    // ========== STEP NAVIGATION ==========
-
-    function updateProgress() {
-      const fill = (currentStep / (totalSteps - 1)) * 100;
-      document.getElementById('progressFill').style.width = fill + '%';
-      document.getElementById('progressLabel').textContent = SECTION_NAMES[currentStep];
-
-      document.querySelectorAll('.progress-step').forEach(step => {
-        const s = parseInt(step.dataset.step);
-        step.classList.remove('active', 'completed');
-        if (s === currentStep) step.classList.add('active');
-        else if (s < currentStep) step.classList.add('completed');
-      });
-
-      document.querySelectorAll('.form-step').forEach(step => {
-        step.classList.remove('active');
-      });
-      const target = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-      if (target) target.classList.add('active');
+    var followup = document.querySelector('[data-followup-for="' + group + '"]');
+    if (followup) {
+      if (value === 'yes') followup.classList.add('open');
+      else followup.classList.remove('open');
     }
+  }
 
-    function nextStep() {
-      if (currentStep < totalSteps - 1) {
-        currentStep++;
-        updateProgress();
-        saveProgress();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
+  // Initialize all Y/N groups
+  ['first_look_yn'].concat(ynGroups).forEach(setupYnGroup);
 
-    function prevStep() {
-      if (currentStep > 0) {
-        currentStep--;
-        updateProgress();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    // ========== LOCAL STORAGE ==========
-
-    function getFormData() {
-      const data = {};
-
-      // Text / textarea / date / time / select
-      document.querySelectorAll('#questionnaireForm input[type="text"], #questionnaireForm input[type="email"], #questionnaireForm input[type="date"], #questionnaireForm input[type="time"], #questionnaireForm input[type="url"], #questionnaireForm input[type="number"], #questionnaireForm textarea, #questionnaireForm select').forEach(el => {
-        if (el.name) data[el.name] = el.value;
-      });
-
-      // Radio buttons
-      document.querySelectorAll('#questionnaireForm input[type="radio"]:checked').forEach(el => {
-        data[el.name] = el.value;
-      });
-
-      // Vibe chips
-      const vibes = [];
-      document.querySelectorAll('#vibeChips .chip.selected').forEach(chip => {
-        vibes.push(chip.dataset.value);
-      });
-      data.film_vibe = vibes.join(', ');
-
-      return data;
-    }
-
-    function saveProgress() {
-      try {
-        const data = getFormData();
-        data._step = currentStep;
-        data._timestamp = new Date().toISOString();
-        // Save which fields were filled from timeline
-        const tlBadges = [];
-        document.querySelectorAll('.timeline-badge.visible').forEach(b => {
-          tlBadges.push(b.id.replace('TlBadge', ''));
-        });
-        data._timelineFilled = tlBadges;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch (e) {
-        // localStorage unavailable
-      }
-    }
-
-    function restoreProgress() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return;
-
-        const data = JSON.parse(saved);
-
-        // Restore text fields
-        Object.keys(data).forEach(key => {
-          if (key.startsWith('_')) return;
-          if (key === 'film_vibe') return;
-          if (key === 'first_look') {
-            const radio = document.querySelector(`input[name="first_look"][value="${data[key]}"]`);
-            if (radio) radio.checked = true;
-            return;
-          }
-          const el = document.querySelector(`[name="${key}"]`);
-          if (el) el.value = data[key];
-        });
-
-        // Restore vibe chips
-        if (data.film_vibe) {
-          const vibes = data.film_vibe.split(', ');
-          document.querySelectorAll('#vibeChips .chip').forEach(chip => {
-            if (vibes.includes(chip.dataset.value)) {
-              chip.classList.add('selected');
-            }
+  /* ============================================================
+   * Multi-select checkbox handling (with exclusive option)
+   * ============================================================ */
+  document.querySelectorAll('[data-checkbox-group]').forEach(function (group) {
+    var groupName = group.getAttribute('data-checkbox-group');
+    var boxes = group.querySelectorAll('input[type="checkbox"]');
+    boxes.forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (cb.checked && cb.getAttribute('data-exclusive') === 'true') {
+          // uncheck others
+          boxes.forEach(function (other) {
+            if (other !== cb) other.checked = false;
+          });
+        } else if (cb.checked) {
+          // uncheck the exclusive option, if any
+          boxes.forEach(function (other) {
+            if (other.getAttribute('data-exclusive') === 'true') other.checked = false;
           });
         }
-
-        // Restore timeline badges
-        if (data._timelineFilled) {
-          data._timelineFilled.forEach(fieldId => showTimelineBadge(fieldId));
-        }
-
-        // Restore step
-        if (data._step != null && data._step > 0) {
-          currentStep = data._step;
-          updateProgress();
-        }
-      } catch (e) {
-        // Corrupted — start fresh
-      }
-    }
-
-    // Auto-save on input
-    document.querySelectorAll('#questionnaireForm input, #questionnaireForm textarea, #questionnaireForm select').forEach(el => {
-      el.addEventListener('input', saveProgress);
-      el.addEventListener('change', saveProgress);
+        handleFieldChange(groupName);
+        maybeSave();
+      });
     });
+  });
 
-    // ========== FORM SUBMISSION ==========
+  /* ============================================================
+   * Radio handling
+   * ============================================================ */
+  document.querySelectorAll('input[name="bloopers_preference"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      handleFieldChange('bloopers_preference');
+      maybeSave();
+    });
+  });
+  document.querySelectorAll('input[name="end_of_night_choice"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      var otherWrap = document.getElementById('end_of_night_other_wrap');
+      if (r.value === 'other' && r.checked) otherWrap.classList.add('open');
+      else if (r.checked) otherWrap.classList.remove('open');
+      handleFieldChange('end_of_night');
+      maybeSave();
+    });
+  });
+  var eonOther = document.getElementById('end_of_night_other');
+  if (eonOther) eonOther.addEventListener('input', function () {
+    handleFieldChange('end_of_night');
+    maybeSave();
+  });
 
-    function showSubmitStatus(msg) {
-      const el = document.getElementById('submitStatus');
-      if (msg) {
-        el.textContent = msg;
-        el.classList.add('active');
-      } else {
-        el.classList.remove('active');
-        el.textContent = '';
-      }
-    }
-
-    document.getElementById('questionnaireForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const submitBtn = document.getElementById('submitBtn');
-      const errorBanner = document.getElementById('errorBanner');
-      errorBanner.classList.remove('active');
-      showSubmitStatus(null);
-
-      submitBtn.textContent = 'Sending...';
-      submitBtn.disabled = true;
-      submitBtn.classList.add('sending');
-
-      const data = getFormData();
-
-      // Add URL params
-      data.contactId = prefill.cid;
-      data.email = prefill.email;
-      data.firstName = prefill.fn;
-
-      // Apply pre-fills if fields are still empty
-      if (!data.venue_name && prefill.vn) data.venue_name = prefill.vn;
-      if (!data.wedding_date && prefill.wd) data.wedding_date = prefill.wd;
-
-      try {
-        // Step 1: Upload timeline file if one was selected
-        if (selectedTimelineFile) {
-          showSubmitStatus('Uploading your timeline...');
-
-          const uploadForm = new FormData();
-          uploadForm.append('file', selectedTimelineFile);
-          uploadForm.append('contactId', prefill.cid || '');
-
-          const uploadRes = await fetch(UPLOAD_TIMELINE_URL, {
-            method: 'POST',
-            body: uploadForm
-          });
-
-          if (uploadRes.ok) {
-            const uploadResult = await uploadRes.json();
-            if (uploadResult.key) {
-              data.timeline_file_key = uploadResult.key;
-            }
-          }
-          // If upload fails, we still proceed with the questionnaire submission
-        }
-
-        // Step 2: Submit the questionnaire
-        showSubmitStatus('Sending your story to Sean...');
-
-        const res = await fetch(SUBMIT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        if (!res.ok) throw new Error(`Server responded ${res.status}`);
-
-        // Success
-        showSubmitStatus(null);
-        localStorage.removeItem(STORAGE_KEY);
-        document.getElementById('questionnaireForm').style.display = 'none';
-        document.querySelector('.progress-wrapper').style.display = 'none';
-        document.getElementById('successScreen').classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      } catch (err) {
-        showSubmitStatus(null);
-        saveProgress();
-        errorBanner.textContent = 'Something went wrong. Your answers have been saved locally — please try again in a moment.';
-        errorBanner.classList.add('active');
-        submitBtn.textContent = 'Submit Questionnaire';
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('sending');
+  /* ============================================================
+   * Wire up plain text/textarea/date inputs to handleFieldChange
+   * ============================================================ */
+  function bindInput(id, fieldName) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('focus', function () {
+      var fieldEl = getFieldEl(fieldName);
+      if (!fieldEl) return;
+      if (fieldEl.getAttribute('data-state') === 'auto_filled' || fieldEl.getAttribute('data-state') === 'low_confidence') {
+        fieldEl.setAttribute('data-touched', 'true');
       }
     });
+    el.addEventListener('input', function () { handleFieldChange(fieldName); maybeSave(); });
+    el.addEventListener('blur', function () {
+      var fieldEl = getFieldEl(fieldName);
+      if (!fieldEl) return;
+      var st = fieldEl.getAttribute('data-state');
+      var touched = fieldEl.getAttribute('data-touched') === 'true';
+      var s = fieldStates[fieldName];
+      if ((st === 'auto_filled' || st === 'low_confidence') && touched && s.value === s.prefilled_value) {
+        s.state = 'confirmed';
+        applyStateToField(fieldName);
+        updateSubmitGate();
+        saveLocal();
+      }
+    });
+  }
 
-    // ========== INIT ==========
+  // Map all canonical fields to their input ids
+  var DIRECT_INPUT_FIELDS = {
+    'wedding_date': 'wedding_date',
+    'venue_name': 'venue_name',
+    'traveling_other_locations_detail': 'traveling_other_locations_detail',
+    'estimated_coverage_window': 'estimated_coverage_window',
+    'bride_dress_time': 'bride_dress_time',
+    'groom_tux_time': 'groom_tux_time',
+    'ceremony_time': 'ceremony_time',
+    'ceremony_length': 'ceremony_length',
+    'special_traditions': 'special_traditions',
+    'letter_reading_detail': 'letter_reading_detail',
+    'wedding_party_photos_time': 'wedding_party_photos_time',
+    'wedding_party_photos_location': 'wedding_party_photos_location',
+    'sunset_photos_when': 'sunset_photos_when',
+    'cocktail_hour_start': 'cocktail_hour_start',
+    'cocktail_hour_couple_time': 'cocktail_hour_couple_time',
+    'grand_march_when': 'grand_march_when',
+    'dinner_start': 'dinner_start',
+    'prayer_before_dinner_detail': 'prayer_before_dinner_detail',
+    'speeches_start_time': 'speeches_start_time',
+    'speeches_givers': 'speeches_givers',
+    'couple_welcome_speech_when': 'couple_welcome_speech_when',
+    'first_dances_start_time': 'first_dances_start_time',
+    'first_dances_count': 'first_dances_count',
+    'first_dances_pairings': 'first_dances_pairings',
+    'other_special_dances_detail': 'other_special_dances_detail',
+    'wedding_party_names': 'wedding_party_names',
+    'couple_parents_names': 'couple_parents_names',
+    'officiant_name_relationship': 'officiant_name_relationship',
+    'photographer_name': 'photographer_name',
+    'planner_name': 'planner_name',
+    'dj_band_name': 'dj_band_name',
+    'hair_makeup_artists': 'hair_makeup_artists',
+    'other_vendors': 'other_vendors',
+    'dress_code_for_filming_detail': 'dress_code_for_filming_detail',
+    'color_scheme': 'color_scheme',
+    'guest_count': 'guest_count',
+    'wedding_hashtag': 'wedding_hashtag',
+    'family_heirlooms': 'family_heirlooms',
+    'accessibility_detail': 'accessibility_detail',
+    'family_dynamics_detail': 'family_dynamics_detail',
+    'pets_detail': 'pets_detail',
+    'surprises_planned': 'surprises_planned',
+    'film_feeling': 'film_feeling',
+    'music_specifications': 'music_specifications',
+    'reference_films': 'reference_films',
+    'home_address': 'home_address',
+    'partners_phone': 'partners_phone',
+    'partners_email': 'partners_email',
+    'consultation_call_topics': 'consultation_call_topics'
+  };
+  Object.keys(DIRECT_INPUT_FIELDS).forEach(function (k) {
+    bindInput(DIRECT_INPUT_FIELDS[k], k);
+  });
 
-    restoreProgress();
+  // Compound inputs that map onto getting_ready_bride / getting_ready_groom / first_look
+  ['getting_ready_bride_loc', 'getting_ready_bride_room'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function () { handleFieldChange('getting_ready_bride'); maybeSave(); });
+  });
+  ['getting_ready_groom_loc', 'getting_ready_groom_room'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function () { handleFieldChange('getting_ready_groom'); maybeSave(); });
+  });
+  var firstLookDetail = document.getElementById('first_look_detail');
+  if (firstLookDetail) firstLookDetail.addEventListener('input', function () { handleFieldChange('first_look'); maybeSave(); });
+
+  /* ============================================================
+   * State machine for field states
+   * ============================================================ */
+  function handleFieldChange(name) {
+    var s = fieldStates[name];
+    if (!s) return;
+    var newVal = readFieldValue(name);
+    s.value = newVal;
+    if (s.prefilled_value != null) {
+      if (newVal !== s.prefilled_value && newVal !== '') {
+        s.state = 'edited';
+      } else if (newVal === s.prefilled_value && (s.state === 'edited' || s.state === 'user_entered')) {
+        // back to original prefilled
+        s.state = 'auto_filled';
+      }
+    } else {
+      s.state = 'user_entered';
+    }
+    applyStateToField(name);
+    updateSubmitGate();
+  }
+
+  function applyStateToField(name) {
+    var fieldEl = getFieldEl(name);
+    if (!fieldEl) return;
+    var s = fieldStates[name];
+    fieldEl.setAttribute('data-state', s.state);
+    // Mirror data-state onto any compound sub-inputs that opt in via
+    // data-field-key=name. Their canonical .field wrapper is a hidden mirror
+    // div, so without this the visible input never picks up the auto-fill
+    // background or border.
+    document.querySelectorAll('[data-field-key="' + name + '"]').forEach(function (el) {
+      el.setAttribute('data-state', s.state);
+    });
+    var badge = fieldEl.querySelector('.field-badge');
+    if (!badge) return;
+    badge.className = 'field-badge';
+    badge.textContent = '';
+    if (s.state === 'auto_filled') {
+      badge.classList.add('show', 'badge-autofilled');
+      badge.textContent = 'auto-filled, please review';
+    } else if (s.state === 'low_confidence') {
+      badge.classList.add('show', 'badge-lowconf');
+      badge.textContent = 'low-confidence, please verify';
+    } else if (s.state === 'confirmed') {
+      badge.classList.add('show', 'badge-confirmed');
+      badge.textContent = 'confirmed';
+    } else if (s.state === 'edited') {
+      badge.classList.add('show', 'badge-edited');
+      badge.textContent = 'edited';
+    }
+  }
+
+  /* ============================================================
+   * URL prefills (date, venue)
+   * ============================================================ */
+  if (prefillDate) {
+    var dateEl = document.getElementById('wedding_date');
+    if (dateEl) {
+      dateEl.value = prefillDate;
+      fieldStates.wedding_date.value = prefillDate;
+    }
+  }
+  if (prefillVenue) {
+    var venueEl = document.getElementById('venue_name');
+    if (venueEl) {
+      venueEl.value = prefillVenue;
+      fieldStates.venue_name.value = prefillVenue;
+    }
+  }
+
+  /* ============================================================
+   * Navigation
+   * ============================================================ */
+  var stepEls = document.querySelectorAll('.step');
+
+  function goToStep(n) {
+    if (n < 0 || n > TOTAL_STEPS - 1) return;
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    var prev = currentStep;
+    currentStep = n;
+    document.getElementById('step-' + currentStep).classList.add('active');
     updateProgress();
+    if (currentStep === 6) updateSubmitGate();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  </script>
+    // Section-completed beacon
+    if (prev >= 1 && prev <= 6 && n > prev) {
+      sendBeacon('section_completed', { section_number: prev, populated_field_count: countPopulated() });
+    }
+  }
 
+  function updateProgress() {
+    var fill = document.getElementById('progress-fill');
+    var label = document.getElementById('progress-label');
+    if (currentStep === 0) {
+      fill.style.width = '0%';
+      label.textContent = 'Getting started';
+    } else if (currentStep >= 1 && currentStep <= 6) {
+      var pct = (currentStep / 6) * 100;
+      fill.style.width = pct + '%';
+      label.textContent = 'Section ' + currentStep + ' of 6';
+    } else {
+      fill.style.width = '100%';
+      label.textContent = '';
+    }
+  }
+
+  function validateStep(n) {
+    var step = document.getElementById('step-' + n);
+    if (!step) return true;
+    var requiredFields = step.querySelectorAll('.field[data-required="true"]');
+    var firstBad = null;
+    Array.prototype.forEach.call(requiredFields, function (f) {
+      var name = f.getAttribute('data-field');
+      var v = readFieldValue(name);
+      if (!v) {
+        f.style.outline = '1px solid var(--error)';
+        if (!firstBad) firstBad = f;
+      } else {
+        f.style.outline = '';
+      }
+    });
+    var msg = document.getElementById('vmsg-' + n);
+    if (firstBad) {
+      if (msg) msg.classList.add('show');
+      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    } else {
+      if (msg) msg.classList.remove('show');
+      return true;
+    }
+  }
+
+  document.querySelectorAll('[data-action="next"]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!validateStep(currentStep)) return;
+      saveLocal();
+      goToStep(currentStep + 1);
+    });
+  });
+  document.querySelectorAll('[data-action="prev"]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      saveLocal();
+      goToStep(currentStep - 1);
+    });
+  });
+
+  document.getElementById('btn-start').addEventListener('click', function () {
+    goToStep(1);
+  });
+
+  /* ============================================================
+   * Timeline upload UX
+   * ============================================================ */
+  var uploadBtn = document.getElementById('timeline-upload-btn');
+  var fileInput = document.getElementById('timeline-file');
+  var fileNameEl = document.getElementById('timeline-file-name');
+  var pasteToggle = document.getElementById('timeline-paste-toggle');
+  var pasteArea = document.getElementById('timeline-paste-area');
+  var pastedTextEl = document.getElementById('timeline-pasted-text');
+  var analyzeRow = document.getElementById('analyze-row');
+  var analyzeBtn = document.getElementById('btn-analyze');
+  var statusEl = document.getElementById('timeline-status');
+
+  function showAnalyzeRow() { analyzeRow.style.display = 'block'; }
+  function hideAnalyzeRow() { analyzeRow.style.display = 'none'; }
+
+  uploadBtn.addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files && fileInput.files[0]) {
+      var f = fileInput.files[0];
+      if (f.size > 5 * 1024 * 1024) {
+        showStatus('error', 'That file is over 5MB. Try a smaller file or paste the text instead.');
+        fileInput.value = '';
+        return;
+      }
+      fileNameEl.style.display = 'block';
+      fileNameEl.textContent = 'Selected: ' + f.name;
+      showAnalyzeRow();
+    }
+  });
+
+  pasteToggle.addEventListener('click', function () {
+    pasteArea.classList.toggle('open');
+    if (pasteArea.classList.contains('open')) pastedTextEl.focus();
+  });
+  pastedTextEl.addEventListener('input', function () {
+    if (pastedTextEl.value.trim()) showAnalyzeRow();
+  });
+
+  function showStatus(kind, html) {
+    statusEl.classList.remove('info', 'success', 'error');
+    statusEl.classList.add('show', kind);
+    statusEl.innerHTML = html;
+  }
+  function clearStatus() {
+    statusEl.classList.remove('show');
+    statusEl.innerHTML = '';
+  }
+
+  analyzeBtn.addEventListener('click', function () {
+    var f = fileInput.files && fileInput.files[0];
+    var text = pastedTextEl.value.trim();
+    if (!f && !text) {
+      showStatus('error', 'Pick a file or paste your timeline first.');
+      return;
+    }
+    runAnalyzer(f, text);
+  });
+
+  function runAnalyzer(file, text) {
+    analyzeBtn.disabled = true;
+    showStatus('info', '<span class="timeline-spinner"></span>Reading your timeline...');
+
+    var fetchOpts;
+    var url = API_BASE + '/api/questionnaire/analyze-timeline';
+    if (file) {
+      var fd = new FormData();
+      fd.append('file', file);
+      if (contactId) fd.append('contact_id', contactId);
+      fetchOpts = { method: 'POST', body: fd };
+    } else {
+      fetchOpts = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text, contact_id: contactId || null })
+      };
+    }
+
+    fetch(url, fetchOpts).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (resp) {
+      analyzeBtn.disabled = false;
+      applyAnalyzerResult(resp);
+    }).catch(function (err) {
+      analyzeBtn.disabled = false;
+      showStatus('error',
+        "Couldn't read that timeline. Try a different file or paste the text instead. (We'll fall back to manual fill if this isn't working.) " +
+        '<button type="button" class="btn-text" id="btn-retry">Try again</button> ' +
+        '<button type="button" class="btn-text" id="btn-skip">Skip and fill manually</button>'
+      );
+      var retry = document.getElementById('btn-retry');
+      var skip = document.getElementById('btn-skip');
+      if (retry) retry.addEventListener('click', function () { clearStatus(); });
+      if (skip) skip.addEventListener('click', function () { clearStatus(); goToStep(1); });
+    });
+  }
+
+  function applyAnalyzerResult(resp) {
+    var fields = resp && resp.fields ? resp.fields : {};
+    var lowConf = (resp && resp.low_confidence_fields) || [];
+    var lowConfSet = {};
+    lowConf.forEach(function (n) { lowConfSet[n] = true; });
+
+    var filledCount = 0;
+    Object.keys(fields).forEach(function (name) {
+      if (FIELD_NAMES.indexOf(name) < 0) return;
+      var v = fields[name];
+      if (v == null || v === '') return;
+      writeFieldValue(name, v);
+      var s = fieldStates[name];
+      s.value = readFieldValue(name);
+      s.prefilled_value = s.value;
+      s.state = lowConfSet[name] ? 'low_confidence' : 'auto_filled';
+      applyStateToField(name);
+      filledCount++;
+    });
+
+    saveLocal();
+
+    sendBeacon('timeline_analyzed', {
+      fields_count: filledCount,
+      low_confidence_count: lowConf.length
+    });
+
+    showStatus('success',
+      "We pulled what we could. Section 2 has " + filledCount + " auto-filled fields ready for your review. " +
+      '<button type="button" class="btn-text" id="btn-continue-q">Continue to questionnaire</button>'
+    );
+    var cont = document.getElementById('btn-continue-q');
+    if (cont) cont.addEventListener('click', function () { goToStep(1); });
+  }
+
+  /* ============================================================
+   * Submit gate
+   * ============================================================ */
+  function updateSubmitGate() {
+    if (currentStep !== 6) return;
+    var summary = document.getElementById('submit-summary');
+    var summaryText = document.getElementById('submit-summary-text');
+    var summaryActions = document.getElementById('submit-summary-actions');
+    var btn = document.getElementById('btn-submit');
+
+    var prefilled = 0, confirmed = 0, edited = 0, needsReview = 0;
+    SECTION_2_FIELDS.forEach(function (n) {
+      var s = fieldStates[n];
+      if (!s) return;
+      if (s.state === 'auto_filled' || s.state === 'low_confidence') {
+        prefilled++;
+        needsReview++;
+      } else if (s.state === 'confirmed') {
+        prefilled++; confirmed++;
+      } else if (s.state === 'edited') {
+        prefilled++; edited++;
+      }
+    });
+
+    if (prefilled === 0) {
+      summary.style.display = 'none';
+      btn.disabled = !sectionSixRequiredOk();
+      return;
+    }
+
+    summary.style.display = 'block';
+    summaryText.innerHTML = '<strong>' + prefilled + '</strong> field' + (prefilled === 1 ? '' : 's') +
+      ' pre-filled from your timeline. <strong>' + (confirmed + edited) + '</strong> confirmed. <strong>' +
+      needsReview + '</strong> still need review.';
+
+    if (needsReview > 0) {
+      summaryActions.style.display = 'flex';
+      btn.disabled = true;
+    } else {
+      summaryActions.style.display = 'none';
+      btn.disabled = !sectionSixRequiredOk();
+    }
+  }
+
+  function sectionSixRequiredOk() {
+    return readFieldValue('home_address') && readFieldValue('partners_phone') && readFieldValue('partners_email');
+  }
+
+  document.getElementById('btn-jump-unreviewed').addEventListener('click', function () {
+    var firstUnreviewed = null;
+    SECTION_2_FIELDS.forEach(function (n) {
+      if (firstUnreviewed) return;
+      var s = fieldStates[n];
+      if (s && (s.state === 'auto_filled' || s.state === 'low_confidence')) firstUnreviewed = n;
+    });
+    if (firstUnreviewed) {
+      goToStep(2);
+      setTimeout(function () {
+        var el = getFieldEl(firstUnreviewed);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('pulsing');
+          setTimeout(function () { el.classList.remove('pulsing'); }, 2000);
+        }
+      }, 300);
+    }
+  });
+
+  document.getElementById('btn-confirm-all').addEventListener('click', function () {
+    var pending = [];
+    SECTION_2_FIELDS.forEach(function (n) {
+      var s = fieldStates[n];
+      if (s && (s.state === 'auto_filled' || s.state === 'low_confidence')) pending.push(n);
+    });
+    if (pending.length === 0) return;
+    document.getElementById('confirm-all-text').textContent =
+      "You're confirming " + pending.length + " field" + (pending.length === 1 ? '' : 's') +
+      " without reviewing them individually. Are you sure?";
+    document.getElementById('confirm-all-modal').classList.add('show');
+    setTimeout(function () { document.getElementById('confirm-all-cancel').focus(); }, 50);
+  });
+
+  document.getElementById('confirm-all-cancel').addEventListener('click', function () {
+    document.getElementById('confirm-all-modal').classList.remove('show');
+  });
+  document.getElementById('confirm-all-yes').addEventListener('click', function () {
+    SECTION_2_FIELDS.forEach(function (n) {
+      var s = fieldStates[n];
+      if (s && (s.state === 'auto_filled' || s.state === 'low_confidence')) {
+        s.state = 'confirmed';
+        applyStateToField(n);
+      }
+    });
+    document.getElementById('confirm-all-modal').classList.remove('show');
+    saveLocal();
+    updateSubmitGate();
+  });
+
+  /* ============================================================
+   * Submit handler
+   * ============================================================ */
+  document.getElementById('btn-submit').addEventListener('click', submitForm);
+
+  function submitForm() {
+    if (!validateStep(6)) return;
+    var btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    // Build body with all 66 canonical fields + identity
+    var body = { contact_id: contactId, email: prefillEmail, first_name: prefillFirstName };
+    var totalPopulated = 0, autofilledCount = 0, confirmedCount = 0, editedCount = 0;
+    FIELD_NAMES.forEach(function (n) {
+      var v = readFieldValue(n);
+      body[n] = v;
+      var s = fieldStates[n];
+      if (v) totalPopulated++;
+      if (s) {
+        if (s.state === 'auto_filled' || s.state === 'low_confidence') autofilledCount++;
+        else if (s.state === 'confirmed') confirmedCount++;
+        else if (s.state === 'edited') editedCount++;
+      }
+    });
+
+    sendBeacon('form_submitted', {
+      total_populated: totalPopulated,
+      autofilled_count: autofilledCount,
+      confirmed_count: confirmedCount,
+      edited_count: editedCount
+    });
+
+    fetch(API_BASE + '/webhook/questionnaire', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json().catch(function () { return {}; });
+    }).then(function () {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      goToStep(7);
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = 'Submit questionnaire';
+      alert('Something went wrong sending your answers. Please try again, or email us at sean@flyiniris.com.');
+    });
+  }
+
+  /* ============================================================
+   * localStorage save/load
+   * ============================================================ */
+  var saveTimer = null;
+  function maybeSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveLocal, 400);
+  }
+  function saveLocal() {
+    try {
+      // Make sure values are current
+      FIELD_NAMES.forEach(function (n) {
+        fieldStates[n].value = readFieldValue(n);
+      });
+      var snapshot = {
+        _step: currentStep,
+        _yn: ynState,
+        fields: fieldStates
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    } catch (e) {}
+  }
+
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var snap = JSON.parse(raw);
+      if (snap._yn) {
+        Object.keys(snap._yn).forEach(function (g) {
+          setYn(g, snap._yn[g]);
+        });
+      }
+      if (snap.fields) {
+        Object.keys(snap.fields).forEach(function (n) {
+          if (FIELD_NAMES.indexOf(n) < 0) return;
+          var s = snap.fields[n];
+          if (!s) return;
+          fieldStates[n] = {
+            value: s.value || '',
+            prefilled_value: s.prefilled_value == null ? null : s.prefilled_value,
+            state: s.state || 'user_entered'
+          };
+          if (s.value) writeFieldValue(n, s.value);
+          applyStateToField(n);
+        });
+      }
+      if (typeof snap._step === 'number' && snap._step >= 0 && snap._step <= 6) {
+        goToStep(snap._step);
+      }
+    } catch (e) {}
+  }
+
+  function countPopulated() {
+    var c = 0;
+    FIELD_NAMES.forEach(function (n) {
+      if (readFieldValue(n)) c++;
+    });
+    return c;
+  }
+
+  /* ============================================================
+   * Analytics beacons
+   * ============================================================ */
+  function sendBeacon(eventType, eventData) {
+    var body = JSON.stringify({
+      contact_id: contactId || null,
+      event_type: eventType,
+      event_data: eventData || {}
+    });
+    var url = API_BASE + '/api/questionnaire/analytics';
+    try {
+      if (navigator.sendBeacon) {
+        var blob = new Blob([body], { type: 'application/json' });
+        navigator.sendBeacon(url, blob);
+        return;
+      }
+    } catch (e) {}
+    // fallback fetch (won't block)
+    try {
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body,
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  // form_started
+  setTimeout(function () { sendBeacon('form_started', {}); }, 200);
+
+  // form_abandoned on beforeunload
+  window.addEventListener('beforeunload', function () {
+    var populated = countPopulated();
+    if (populated > 0 && currentStep < 7) {
+      sendBeacon('form_abandoned', {
+        current_section: currentStep,
+        populated_field_count: populated
+      });
+    }
+  });
+
+  /* ============================================================
+   * Boot
+   * ============================================================ */
+  loadLocal();
+  updateProgress();
+  updateSubmitGate();
+
+})();
+</script>
 </body>
 </html>
