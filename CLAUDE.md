@@ -1,5 +1,50 @@
 # Flyin' Iris — Website, Film Delivery & Video Infrastructure
 
+## Cross-repo source of truth (locked 2026-05-08)
+
+This repo is the static Pages site (flyiniris.com, agreement.flyiniris.com,
+prep.flyiniris.com SPA shells). It is NOT the source of truth for pricing,
+brand, voice, or cross-cutting standards. Those all live in
+`C:\Users\flyin\Claude Projects\iris-automation\`.
+
+When working in this repo, before making any change that touches pricing,
+brand, voice, or copy conventions, read these files in iris-automation first:
+
+| Topic | File | Rule |
+|---|---|---|
+| Pricing constants | `src/pricing.ts` | Canonical. PRICING_VERSION drives validation. Calculators in this repo MIRROR these constants exactly. Any drift is a bug. When pricing.ts changes, this repo follows. Never the reverse. |
+| Brand (colors, fonts, voice) | `docs/project-knowledge-2026-05/BRAND.md` | Canonical. Colors, fonts, voice rules, forbidden patterns, ad creative rules. Any UI work here references that doc. |
+| FOMO live availability | `src/lib/fomo-spots.ts` + `/api/pricing/constants` endpoint | Live monthly spot count. Public calculator fetches via the endpoint, never hardcoded. |
+| GHL field map, pipeline IDs | `iris-automation CLAUDE.md` | Canonical. |
+
+### Cross-cutting hard rules (enforced from iris-automation/BRAND.md)
+
+1. **No em or en dashes anywhere.** Hyphens in compound words (`9-12 min`) are fine. Rule applies to customer copy, code, comments, commit messages, internal docs, chat replies. Use periods, colons, commas, parentheses.
+2. **Name order: "Sierra & Sean".** Sierra first, always, in any customer-facing copy. No exceptions in DMs, emails, signoffs, contracts, agreements, web. Single-name references unaffected.
+3. **Sierra's surname is Hernitz.** Never Adamec, Malone, or invented. Use "Sierra Hernitz" for legal/signed copy, "Sierra" for everyday voice.
+4. **Sean's surname is Adamec.**
+5. **Greeting opener: "Hey [Name]!"** Never "Hi", "Dear", or "Hello".
+6. **Sign-off: "Sierra & Sean" or "Sierra & Sean, Flyin' Iris".**
+
+### When in doubt
+
+If a question arises about pricing, copy, brand, or any cross-cutting standard
+while working in this Pages repo, the answer lives in iris-automation. Read
+those files first. If still ambiguous, ask Sean.
+
+### For future Code-Pages sessions
+
+Before any change that touches pricing, brand, voice, or copy:
+1. Read `C:\Users\flyin\Claude Projects\iris-automation\CLAUDE.md`
+2. Read `C:\Users\flyin\Claude Projects\iris-automation\docs\project-knowledge-2026-05\BRAND.md`
+3. Read `C:\Users\flyin\Claude Projects\iris-automation\src\pricing.ts` if pricing-adjacent
+
+Do not duplicate constants. If a constant must be embedded client-side, fetch
+it from `/api/pricing/constants` on the iris-automation Worker. CORS already
+allows flyiniris.com origins.
+
+---
+
 ## What This Project Is
 The flyiniris.com website + video delivery platform for Flyin' Iris wedding videography.
 - **Main site:** `flyiniris.com` (interactive landing page with HLS film teasers, quiz/calculator, inquiry form)
