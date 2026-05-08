@@ -265,6 +265,44 @@
       color: var(--accent-light);
     }
 
+    /* Tier label and breakdown block (contract card) */
+    .contract-tier {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+    .contract-breakdown {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(42, 42, 40, 0.6);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .breakdown-row.breakdown-total {
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(42, 42, 40, 0.6);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Payment plan label above invoice list */
+    .plan-label {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
     /* Progress bar */
     .progress-track {
       width: 100%;
@@ -663,6 +701,8 @@
         </div>
         <div id="contract-badge"></div>
         <div class="status-card-detail" id="contract-detail"></div>
+        <div class="contract-tier" id="contract-tier" style="display: none;"></div>
+        <div class="contract-breakdown" id="contract-breakdown" style="display: none;"></div>
         <a id="contract-link" class="status-card-link" href="#" style="display: none;">View Contract</a>
       </div>
 
@@ -724,6 +764,7 @@
     <div class="payments-section" id="payments-detail" style="display: none;">
       <div class="section-title">Your Payments</div>
       <h3 class="section-heading" id="payments-heading">Payment Schedule</h3>
+      <div class="plan-label" id="plan-label" style="display: none;"></div>
       <div class="invoice-list" id="invoice-list">
         <!-- Populated by JS -->
       </div>
@@ -795,8 +836,10 @@
   function renderPortal(data, token) {
     const { contact, contract, invoices, questionnaire_completed, timeline_uploaded, milestones } = data;
 
-    // Welcome heading
-    const names = [contact.first_name, contact.partner_name].filter(Boolean);
+    // Welcome heading. Defensive title-case on partner_name because upstream
+    // GHL data sometimes lands lowercase (DM-bot capture). Display only; the
+    // GHL value is not modified here.
+    const names = [contact.first_name, titleCase(contact.partner_name)].filter(Boolean);
     const welcomeName = names.length === 2 ? `${names[0]} & ${names[1]}` : (names[0] || 'there');
     document.getElementById('welcome-heading').textContent = `Welcome, ${welcomeName}!`;
 
@@ -871,6 +914,8 @@
     const badge = document.getElementById('contract-badge');
     const detail = document.getElementById('contract-detail');
     const link = document.getElementById('contract-link');
+    const tierEl = document.getElementById('contract-tier');
+    const breakdownEl = document.getElementById('contract-breakdown');
 
     if (contract.status === 'signed' || contract.signed_at) {
       badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Signed</span>';
@@ -891,6 +936,28 @@
       link.textContent = 'View Contract';
       link.href = `https://flyiniris.com/contract?token=${token}`;
       link.style.display = 'inline-block';
+    }
+
+    // Tier label below the status detail
+    if (tierEl && contract.tier) {
+      tierEl.textContent = contract.tier;
+      tierEl.style.display = 'block';
+    }
+
+    // 4-line breakdown (subtotal / discount / tax / total). Tax computed as
+    // total minus (subtotal minus discount). All values are dollars.
+    if (breakdownEl && contract.total != null && contract.subtotal != null) {
+      const subtotal = Number(contract.subtotal) || 0;
+      const discount = Number(contract.discount) || 0;
+      const total = Number(contract.total) || 0;
+      const tax = Math.max(0, total - (subtotal - discount));
+      breakdownEl.innerHTML = `
+        <div class="breakdown-row"><span>Subtotal</span><span>${formatCurrency(subtotal)}</span></div>
+        ${discount > 0 ? `<div class="breakdown-row"><span>Discount</span><span>${formatCurrency(-discount)}</span></div>` : ''}
+        <div class="breakdown-row"><span>Sales tax</span><span>${formatCurrency(tax)}</span></div>
+        <div class="breakdown-row breakdown-total"><span>Total</span><span>${formatCurrency(total)}</span></div>
+      `;
+      breakdownEl.style.display = 'block';
     }
   }
 
@@ -965,7 +1032,18 @@
 
     const section = document.getElementById('payments-detail');
     const list = document.getElementById('invoice-list');
+    const planLabel = document.getElementById('plan-label');
     section.style.display = 'block';
+
+    // Plan label derived from invoice count. Couple-facing wording reflects
+    // what is actually billed, which is more reliable than the legacy
+    // contract.payment_plan column (per audit M4).
+    if (planLabel) {
+      const n = invoices.length;
+      const labelText = n === 1 ? 'Pay in full' : `${n}-payment plan`;
+      planLabel.textContent = labelText;
+      planLabel.style.display = 'block';
+    }
 
     // Header row
     let html = `
@@ -1065,6 +1143,11 @@
   function formatCurrency(amount) {
     if (amount == null || isNaN(amount)) return '$0.00';
     return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function titleCase(s) {
+    if (!s) return '';
+    return String(s).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
   }
 </script>
 </body>
