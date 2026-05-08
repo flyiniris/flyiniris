@@ -2532,15 +2532,16 @@
           return dateStr;
         }
 
-        // --- PRICING (V2 - March 2026) ---
+        // --- PRICING (mirrors iris-automation/src/pricing.ts; update both together) ---
+        var SALES_TAX_RATE = 0.055;
+        var FOMO_COST = 200;
         // Team pricing (We want an incredible wedding film)
         var TEAM_BASE_PRICE = 2800;
-        var TEAM_BASE_COST = 1500;
         var TEAM_HOURLY = 150;
-        var TEAM_HOURS = { 6:{price:0,cost:0}, 7:{price:150,cost:100}, 8:{price:300,cost:150}, 9:{price:450,cost:225}, 10:{price:600,cost:300}, 11:{price:750,cost:375}, 12:{price:900,cost:450} };
+        var TEAM_HOURS = { 6:{price:0,cost:0}, 7:{price:150,cost:25}, 8:{price:300,cost:50}, 9:{price:450,cost:75}, 10:{price:600,cost:100}, 11:{price:750,cost:125}, 12:{price:900,cost:150} };
         var TEAM_HIGHLIGHT = {
-          "5 min":{price:0,cost:0}, "6-8 min":{price:300,cost:200},
-          "9-12 min":{price:600,cost:350}, "13-15 min":{price:1000,cost:500}, "15-20 min":{price:1300,cost:600}
+          "5 min":{price:0,cost:0}, "6-8 min":{price:300,cost:150},
+          "9-12 min":{price:600,cost:300}, "13-15 min":{price:1000,cost:450}, "15-20 min":{price:1300,cost:600}
         };
         var TEAM_ADDONS = { teaser:{price:500,cost:250}, storySession:{price:1000,cost:400} };
         // S&S pricing (We want Sean & Sierra creating with us)
@@ -2581,7 +2582,6 @@
             var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0, tc = hasTeas ? TEAM_ADDONS.teaser.cost : 0;
             var sp = hasStory ? TEAM_ADDONS.storySession.price : 0, sc = hasStory ? TEAM_ADDONS.storySession.cost : 0;
             var rawPrice = TEAM_BASE_PRICE + hd.price + hld.price + tp + sp;
-            var rawCost = TEAM_BASE_COST + hd.cost + hld.cost + tc + sc;
             // Bundle: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
             var addOnCount = 0;
             if (hasTeas) addOnCount++;
@@ -2592,10 +2592,21 @@
             if (addOnCount >= 4) discount = 0.12;
             else if (addOnCount >= 3) discount = 0.08;
             else if (addOnCount >= 2) discount = 0.05;
-            var discountedPrice = Math.ceil(rawPrice * (1 - discount) / 10) * 10;
-            var profit = discountedPrice - rawCost;
-            var finalPrice = (profit < 1000) ? Math.ceil((rawCost + 1000) / 10) * 10 : discountedPrice;
-            var savings = rawPrice - finalPrice;
+            // Canonical rounding: Math.round on discount, subtract from raw.
+            var discountAmount = Math.round(rawPrice * discount);
+            var preTaxTotal = rawPrice - discountAmount;
+            // Team profit floor (canonical pricing.ts): incremental upgrade costs +
+            // FOMO production cost. No base-package cost. Only applies when discounted.
+            if (discount > 0) {
+              var totalCost = hd.cost + hld.cost + tc + sc + FOMO_COST;
+              if (preTaxTotal - totalCost < 1000) {
+                preTaxTotal = totalCost + 1000;
+                discountAmount = rawPrice - preTaxTotal;
+              }
+            }
+            var savings = discountAmount;
+            var tax = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
+            var finalPrice = preTaxTotal + tax;
             var bd = [];
             bd.push({label:"Base package (6hr + highlight + drone)", value:TEAM_BASE_PRICE});
             if (a.hours) {
@@ -2628,6 +2639,7 @@
               bd.push({label:"Story Session", value:0, display:"Declined"});
             }
             if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
+            bd.push({label:"Sales tax (5.5% Wisconsin)", value:tax, prefix:"+", decimals:true});
             return { price:finalPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
           }
           // S&S path
@@ -2646,8 +2658,12 @@
           if (addOnCount >= 4) discount = 0.12;
           else if (addOnCount >= 3) discount = 0.08;
           else if (addOnCount >= 2) discount = 0.05;
-          var discountedPrice = Math.ceil(rawPrice * (1 - discount) / 10) * 10;
-          var savings = rawPrice - discountedPrice;
+          // Canonical rounding: Math.round on discount, subtract from raw. No profit floor on S&S.
+          var discountAmount = Math.round(rawPrice * discount);
+          var preTaxTotal = rawPrice - discountAmount;
+          var savings = discountAmount;
+          var tax = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
+          var finalPrice = preTaxTotal + tax;
           var bd = [];
           bd.push({label:"Base package (6hr + highlight + drone)", value:SS_BASE_PRICE});
           if (a.hours) {
@@ -2680,9 +2696,12 @@
             bd.push({label:"Story Session", value:0, display:"Declined"});
           }
           if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
-          return { price:discountedPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
+          bd.push({label:"Sales tax (5.5% Wisconsin)", value:tax, prefix:"+", decimals:true});
+          return { price:finalPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
         }
         function fp(n) { return "$" + n.toLocaleString(); }
+        // Always-2-decimal formatter for tax + estimated total (which can have fractional cents).
+        function fpMoney(n) { return "$" + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
         function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
         function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
         function isValidPhone(p) { return p.replace(/\D/g, "").length >= 10; }
@@ -2721,7 +2740,7 @@
             {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all \u2014 is that too much to ask?"}
           ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story \u2014 the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt \u2014 your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all \u2014 that\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
           { id:"budget", label:"Budget", question:"What are you thinking for video investment?", subtext:"Just helps us understand what to put together for you.", type:"single", options:[
-            {emoji:"\ud83c\udfac",label:"The essentials",desc:"Great coverage + a beautiful highlight film. Most couples land between $2,800 \u2013 $4,500"},
+            {emoji:"\ud83c\udfac",label:"The essentials",desc:"Great coverage + a beautiful highlight film. Most couples land between $2,800 to $4,500"},
             {emoji:"\u2728",label:"The whole experience",desc:"Longer films, teasers, story sessions, the works. $4,500+"}
           ]},
           { id:"contact", label:"Let\u2019s Talk!", question:"Last step. Let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster, we get excited.", type:"contact" }
@@ -2907,7 +2926,7 @@
           if (vm) h += '<div class="quiz-value-msg"><p><span class="vm-icon">\u2726 </span>' + vm + '</p></div>';
 
           if (isCalc && step.id === "quality" && cur) {
-            h += '<p style="font-size:0.75rem;color:var(--text-secondary);font-family:\'Outfit\',sans-serif;text-align:center;margin-top:10px;font-style:italic">The more you add, the better the value \u2014 we\u2019ll show you everything at the end.</p>';
+            h += '<p style="font-size:0.75rem;color:var(--text-secondary);font-family:\'Outfit\',sans-serif;text-align:center;margin-top:10px;font-style:italic">The more you add, the better the value. We\u2019ll show you everything at the end.</p>';
           }
 
           // Navigation
@@ -3182,13 +3201,16 @@
                 valStr = item.display;
               }
             }
-            else if (item.prefix === "\u2212") { valStr = "\u2212" + fp(item.value); }
-            else if (item.prefix === "+") { valStr = "+" + fp(item.value); }
-            else { valStr = fp(item.value); }
+            else {
+              var formatter = item.decimals ? fpMoney : fp;
+              if (item.prefix === "\u2212") { valStr = "\u2212" + formatter(item.value); }
+              else if (item.prefix === "+") { valStr = "+" + formatter(item.value); }
+              else { valStr = formatter(item.value); }
+            }
             h += '<div class="quiz-answer-row"><span class="quiz-answer-key">' + esc(item.label) + '</span><span class="quiz-answer-val"' + (item.prefix === "\u2212" ? ' style="color:#4CAF50"' : '') + '>' + valStr + '</span></div>';
           }
           h += '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">';
-          h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fp(est.price) + '*</span></div>';
+          h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Estimated total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fpMoney(est.price) + '*</span></div>';
           h += '</div></div>';
           h += '<button class="calc-back-btn" data-action="start-calc" style="border:2px solid var(--accent);color:var(--accent);background:transparent;margin-bottom:48px;margin-top:12px">Redo My Estimate \u2726</button>';
 

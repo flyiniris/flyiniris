@@ -844,7 +844,7 @@
       <div class="summary-header">
         <div>
           <div class="summary-tier" id="summaryTier">TEAM PACKAGE</div>
-          <div class="summary-price" id="summaryPrice">$2,800</div>
+          <div class="summary-price" id="summaryPrice">$2,954.00</div>
         </div>
         <div class="summary-savings" id="summarySavings"></div>
       </div>
@@ -861,9 +861,13 @@
           <span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span>
           <span class="breakdown-value" style="color:var(--accent)">-$1,000</span>
         </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">Sales tax (5.5% Wisconsin)</span>
+          <span class="breakdown-value">+$154.00</span>
+        </div>
         <div class="breakdown-row total">
-          <span class="breakdown-label">Your Total</span>
-          <span class="breakdown-value">$2,800</span>
+          <span class="breakdown-label">Estimated total</span>
+          <span class="breakdown-value">$2,954.00</span>
         </div>
       </div>
     </div>
@@ -916,6 +920,19 @@
       teaser: 500,
       story: 1000
     };
+
+    // Mirror of iris-automation/src/pricing.ts TEAM_COSTS. Used for the Team
+    // profit floor: if (total - cost) < $1,000, bump total to cost + $1,000.
+    // Update this when pricing.ts changes.
+    var TEAM_COSTS = {
+      hours: { '6': 0, '7': 25, '8': 50, '9': 75, '10': 100, '11': 125, '12': 150 },
+      highlight: { '5': 0, '6-8': 150, '9-12': 300, '13-15': 450, '15-20': 600 },
+      teaser: 250,
+      storySession: 400,
+      fomo: 200
+    };
+
+    var SALES_TAX_RATE = 0.055;
 
     // Bundle discount tiers
     // Qualifying: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
@@ -980,9 +997,28 @@
 
       var rawTotal = tier.base + hoursCost + highlightCost + teaserCost + storyCost;
       var discountRate = getBundleDiscount(qualifyingCount);
-      // Discount applies to entire package total
+      // Discount applies to entire package total (matches canonical pricing.ts)
       var discountAmount = Math.round(rawTotal * discountRate);
-      var finalTotal = rawTotal - discountAmount;
+      var preTaxTotal = rawTotal - discountAmount;
+
+      // Team profit floor (mirrors canonical pricing.ts): if discount applies
+      // and (total - cost) drops below $1,000, bump total to cost + $1,000.
+      // Cost includes only incremental upgrade costs plus FOMO production cost.
+      if (currentTier === 'team' && discountAmount > 0) {
+        var hoursKey = String(hours);
+        var totalCost = (TEAM_COSTS.hours[hoursKey] || 0)
+          + (TEAM_COSTS.highlight[highlight] || 0)
+          + (hasTeaser ? TEAM_COSTS.teaser : 0)
+          + (hasStory ? TEAM_COSTS.storySession : 0)
+          + TEAM_COSTS.fomo;
+        if (preTaxTotal - totalCost < 1000) {
+          preTaxTotal = totalCost + 1000;
+          discountAmount = rawTotal - preTaxTotal;
+        }
+      }
+
+      var taxAmount = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
+      var finalTotal = preTaxTotal + taxAmount;
 
       // Build breakdown
       var breakdownHTML = '';
@@ -1011,10 +1047,12 @@
         breakdownHTML += '<div class="breakdown-row discount"><span class="breakdown-label">Bundle discount (' + Math.round(discountRate * 100) + '% off)</span><span class="breakdown-value">' + ('-' + fmt(discountAmount)) + '</span></div>';
       }
 
-      breakdownHTML += '<div class="breakdown-row total"><span class="breakdown-label">Your Total</span><span class="breakdown-value">' + fmt(finalTotal) + '</span></div>';
+      breakdownHTML += row('Sales tax (5.5% Wisconsin)', '+' + fmtMoney(taxAmount));
+
+      breakdownHTML += '<div class="breakdown-row total"><span class="breakdown-label">Estimated total</span><span class="breakdown-value">' + fmtMoney(finalTotal) + '</span></div>';
 
       document.getElementById('summaryBreakdown').innerHTML = breakdownHTML;
-      document.getElementById('summaryPrice').textContent = fmt(finalTotal);
+      document.getElementById('summaryPrice').textContent = fmtMoney(finalTotal);
       document.getElementById('summaryTier').textContent = tier.tierLabel;
 
       // Savings badge
@@ -1033,6 +1071,11 @@
 
     function fmt(n) {
       return '$' + n.toLocaleString('en-US');
+    }
+
+    // Always-2-decimal formatter for tax + estimated total (which can be fractional cents).
+    function fmtMoney(n) {
+      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // Init
