@@ -1500,6 +1500,7 @@
       retainerAmountDollars = result.retainer_amount || 0;
       totalDollars = result.total || totalDollars;
       renderScheduleSummary();
+      refreshRecapCard();
       const btn = document.getElementById('page2-continue');
       if (btn) btn.disabled = false;
     } catch (err) {
@@ -1508,6 +1509,7 @@
       currentSchedule = localSchedule(plan, totalDollars, DATA.wedding_date);
       retainerAmountDollars = currentSchedule[0] ? currentSchedule[0].amount : 0;
       renderScheduleSummary();
+      refreshRecapCard();
       const btn = document.getElementById('page2-continue');
       if (btn) btn.disabled = false;
     }
@@ -1588,22 +1590,30 @@
   }
 
   // ===== PAGE 3: AGREEMENT + SIGNATURE =====
-  function renderPage3(data) {
-    // Recap card
-    const retainer = retainerAmountDollars
-      || (currentSchedule && currentSchedule[0] ? currentSchedule[0].amount : 0)
-      || (data.retainer_amount ? data.retainer_amount / 100 : 0);
-    const remainingCount = currentSchedule ? Math.max(0, currentSchedule.length - 1) : 0;
+  // Recap card render. Extracted so selectPlan() can refresh after state
+  // mutates without re-running the full Page 3 render.
+  function refreshRecapCard() {
     const recap = document.getElementById('recap-card');
-    if (recap) {
-      let recapText = 'Your retainer of <strong>$' + fmt(retainer) + '</strong> today';
-      if (remainingCount > 0) {
-        recapText += ', plus <strong>' + remainingCount + '</strong> more payment' + (remainingCount === 1 ? '' : 's') + '. Full schedule below.';
-      } else {
-        recapText += '. One and done.';
-      }
-      recap.innerHTML = recapText;
+    if (!recap) return;
+    if (!selectedPlan || !currentSchedule || currentSchedule.length === 0) {
+      recap.innerHTML = 'Pick a payment plan to see your schedule.';
+      return;
     }
+    const retainer = retainerAmountDollars
+      || (currentSchedule[0] ? currentSchedule[0].amount : 0)
+      || (DATA && DATA.retainer_amount ? DATA.retainer_amount / 100 : 0);
+    const remainingCount = Math.max(0, currentSchedule.length - 1);
+    let recapText = 'Your retainer of <strong>$' + fmt(retainer) + '</strong> today';
+    if (remainingCount > 0) {
+      recapText += ', plus <strong>' + remainingCount + '</strong> more payment' + (remainingCount === 1 ? '' : 's') + '. Full schedule below.';
+    } else {
+      recapText += '. One and done.';
+    }
+    recap.innerHTML = recapText;
+  }
+
+  function renderPage3(data) {
+    refreshRecapCard();
 
     // Section 1 plain summary (event-specific)
     const wedding = data.wedding_date ? formatDate(data.wedding_date) : 'your wedding date';
