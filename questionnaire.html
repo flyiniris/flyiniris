@@ -2501,11 +2501,68 @@
   });
 
   /* ============================================================
+   * GHL prefill: pull contact + custom fields from iris-automation
+   *
+   * Precedence (lowest priority, runs last): URL params > localStorage >
+   * GHL prefill. We only fill fields that are still empty after the URL
+   * + localStorage steps, so a couple resuming a partial fill never has
+   * their in-progress work overwritten by older GHL state.
+   *
+   * Endpoint: GET /api/contact/:contactId on the iris-automation Worker.
+   * Returns { firstName, lastName, email, customFields: {...} } where
+   * customFields is a flat key->value map of every populated GHL custom
+   * field on the contact. Fields are matched by canonical FIELD_NAMES.
+   *
+   * Realistic prefill candidates by the 6-week mark: wedding_date,
+   * venue_name, partners_email, partners_phone, guest_count. Most other
+   * questionnaire fields (Section 2 timeline, Section 3 vendors, Section
+   * 4 details, Section 5 style) are first captured by this form, so GHL
+   * does not have them yet.
+   *
+   * Filled fields get state='auto_filled' which triggers the existing
+   * visual badge treatment in CSS (data-field-key[data-state="auto_filled"]
+   * declaration). Couples can confirm or edit; edits flip to state='edited'.
+   *
+   * Failure modes are silent: missing contactId, 404, network blip, or
+   * unexpected response shape all degrade gracefully to "URL + local only".
+   * ============================================================ */
+  function loadContactPrefill() {
+    if (!contactId) return;
+    fetch(API_BASE + '/api/contact/' + encodeURIComponent(contactId))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.customFields) return;
+        var cf = data.customFields;
+        FIELD_NAMES.forEach(function (name) {
+          var raw = cf[name];
+          if (raw == null) return;
+          var ghlValue = String(raw);
+          if (ghlValue === '') return;
+          var current = fieldStates[name];
+          if (current && current.value !== '' && current.value != null) return;
+          var input = document.querySelector('[data-field-key="' + name + '"]');
+          if (!input) return;
+          input.value = ghlValue;
+          fieldStates[name].value = ghlValue;
+          fieldStates[name].prefilled_value = ghlValue;
+          fieldStates[name].state = 'auto_filled';
+          input.setAttribute('data-state', 'auto_filled');
+          var fieldDiv = document.querySelector('[data-field="' + name + '"]');
+          if (fieldDiv) fieldDiv.setAttribute('data-state', 'auto_filled');
+        });
+        updateProgress();
+        updateSubmitGate();
+      })
+      .catch(function () { /* network blip, leave form as URL + local fill */ });
+  }
+
+  /* ============================================================
    * Boot
    * ============================================================ */
   loadLocal();
   updateProgress();
   updateSubmitGate();
+  loadContactPrefill();
 
 })();
 </script>
