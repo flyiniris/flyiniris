@@ -1,4 +1,4 @@
-# Flyin' Iris — Website, Film Delivery & Video Infrastructure
+# Flyin' Iris: Website, Film Delivery & Video Infrastructure
 
 ## Cross-repo source of truth (locked 2026-05-08)
 
@@ -48,7 +48,7 @@ allows flyiniris.com origins.
 ## What This Project Is
 The flyiniris.com website + video delivery platform for Flyin' Iris wedding videography.
 - **Main site:** `flyiniris.com` (interactive landing page with HLS film teasers, quiz/calculator, inquiry form)
-- **Film delivery:** `flyiniris.com/films/{couple-slug}` — Netflix-style branded pages per couple
+- **Film delivery:** `flyiniris.com/films/{couple-slug}`, Netflix-style branded pages per couple
 - **Video streaming:** `video.flyiniris.com` via `fi-video-serve` Worker → R2 HLS
 - **Static assets:** `pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev` (thumbnails, images)
 - Deploys to Cloudflare Pages via git push to main branch
@@ -57,9 +57,9 @@ The flyiniris.com website + video delivery platform for Flyin' Iris wedding vide
 - **Landing page LIVE** with hero videos, film portfolio (HLS teasers), quiz, inquiry form
 - **15 wedding films** transcoded to HLS (4K + 1080p), thumbnails upscaled with Real-ESRGAN
 - **Inquiry form** → Apps Script → `iris-automation` Worker (see iris-automation project)
-- **Individual film pages** (`/films/{slug}`) — NOT YET BUILT, currently redirect to main site
-- **Film delivery pages** — template exists but no couples deployed yet
-- **Video matching engine** — logic embedded in `iris-automation` Worker (not in this project anymore)
+- **Individual film pages** (`/films/{slug}`), NOT YET BUILT, currently redirect to main site
+- **Film delivery pages**, template exists but no couples deployed yet
+- **Video matching engine**, logic embedded in `iris-automation` Worker (not in this project anymore)
 
 ## How It Connects to the Automation System
 ```
@@ -82,7 +82,7 @@ C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing
 ├── privacy.html                              # Existing (DON'T TOUCH)
 ├── terms.html                                # Existing (DON'T TOUCH)
 ├── CLAUDE.md                                 # This file
-├── delivery/                                 # NEW — Film delivery platform
+├── delivery/                                 # NEW: Film delivery platform
 │   ├── scripts/
 │   │   ├── transcode.sh                      # FFmpeg HLS transcoder
 │   │   ├── transcode.ps1                     # PowerShell version for Windows
@@ -103,7 +103,7 @@ C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing
 │   ├── sample/
 │   │   └── amanda-boris.json                 # Sample couple config for testing
 │   └── README.md                             # Setup & usage documentation
-├── films/                                    # NEW — Generated couple pages (auto-deploy)
+├── films/                                    # NEW: Generated couple pages (auto-deploy)
 │   └── amanda-boris/
 │       └── index.html                        # Generated from template + config
 ```
@@ -111,7 +111,7 @@ C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing
 ## CRITICAL RULES
 1. **DO NOT modify** index.html, privacy.html, terms.html, or any existing files
 2. All new work goes in `delivery/` (source code) and `films/` (generated output)
-3. This is a Windows machine — provide both .sh (bash/WSL) and .ps1 (PowerShell) versions of scripts
+3. This is a Windows machine, provide both .sh (bash/WSL) and .ps1 (PowerShell) versions of scripts
 4. The project auto-deploys to Cloudflare Pages from GitHub main branch
 5. Film pages will be accessible at flyiniris.com/films/{slug} via Cloudflare Pages routing
 
@@ -228,7 +228,7 @@ C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing
 }
 ```
 
-**Note:** `date_short` is optional — the generator auto-generates it from `date` (e.g., "August 31, 2025" → "08.31.2025"). Durations are empty until filled by the transcode script.
+**Note:** `date_short` is optional. The generator auto-generates it from `date` (e.g., "August 31, 2025" → "08.31.2025"). Durations are empty until filled by the transcode script.
 
 ## R2 Bucket Structure
 ```
@@ -269,7 +269,7 @@ fi-films/                                     # R2 bucket name
 - `POST /couples/{slug}/auth` → validates password, returns session token
 
 ## Video Player
-Use **Vidstack** (https://www.vidstack.io/) — modern HLS player with:
+Use **Vidstack** (https://www.vidstack.io/), modern HLS player with:
 - Adaptive bitrate streaming
 - Quality selector UI
 - Fullscreen, PiP
@@ -286,11 +286,10 @@ Import via CDN:
 ```
 
 ## Dependencies & Tools
-- **FFmpeg** — installed locally, available in PATH
-- **rclone** — installed locally, R2 remote configured as `r2fi`
-- **Python 3** — for page generator script
-- **Node.js 18+** — for Cloudflare Worker development (wrangler)
-- **Wrangler CLI** — `npm install -g wrangler` for Worker deployment
+- **FFmpeg**, installed locally, available in PATH
+- **rclone**, installed locally, R2 remote configured as `r2fi`
+- **Node.js 18+**, for Cloudflare Worker development (wrangler) and the page generator
+- **Wrangler CLI**, `npm install -g wrangler` for Worker deployment
 
 ## SESSION LOGGING (Important!)
 After completing each significant task (new feature, bug fix, refactor, deployment), append a brief summary to the shared session log:
