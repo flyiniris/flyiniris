@@ -849,6 +849,10 @@
         <div class="summary-savings" id="summarySavings"></div>
       </div>
       <div class="summary-breakdown" id="summaryBreakdown">
+        <!-- Initial render is the safe-default PAID layout (revenue-safe). On
+             page load, loadFomoState() fetches /api/pricing/constants and the
+             first recalc() call replaces this innerHTML with the live-spot
+             rendering (paired free lines if a monthly free spot remains). -->
         <div class="breakdown-row">
           <span class="breakdown-label">Base package (6hr + highlight + drone)</span>
           <span class="breakdown-value">$2,800</span>
@@ -857,17 +861,13 @@
           <span class="breakdown-label">FOMO Documentary Edit</span>
           <span class="breakdown-value">+$1,000</span>
         </div>
-        <div class="breakdown-row" style="color:var(--accent);font-weight:500">
-          <span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span>
-          <span class="breakdown-value" style="color:var(--accent)">-$1,000</span>
-        </div>
         <div class="breakdown-row">
           <span class="breakdown-label">Sales tax (5.5% Wisconsin)</span>
-          <span class="breakdown-value">+$154.00</span>
+          <span class="breakdown-value">+$209.00</span>
         </div>
         <div class="breakdown-row total">
           <span class="breakdown-label">Estimated total</span>
-          <span class="breakdown-value">$2,954.00</span>
+          <span class="breakdown-value">$4,009.00</span>
         </div>
       </div>
     </div>
@@ -946,6 +946,12 @@
 
     // ========== STATE ==========
     var currentTier = 'team';
+    // Live FOMO spot count, fetched from iris-automation Worker on init.
+    // Default false (PAID) is the revenue-safe fail-closed state. If the
+    // fetch fails or returns an unexpected shape we render the paid single
+    // line, never accidentally the free pair.
+    var fomoFreeSpot = false;
+    var PRICING_CONSTANTS_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/api/pricing/constants';
 
     // ========== FUNCTIONS ==========
     window.setTier = function(tier) {
@@ -1024,7 +1030,11 @@
       var breakdownHTML = '';
       breakdownHTML += row('Base package (6hr + highlight + drone)', fmt(tier.base));
       breakdownHTML += row('FOMO Documentary Edit', '+' + fmt(1000));
-      breakdownHTML += '<div class="breakdown-row" style="color:var(--accent);font-weight:500"><span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span><span class="breakdown-value" style="color:var(--accent)">-' + fmt(1000) + '</span></div>';
+      // Live free-spot pairing: only render the -$1,000 discount line when
+      // a monthly free spot is still available (per /api/pricing/constants).
+      if (fomoFreeSpot) {
+        breakdownHTML += '<div class="breakdown-row" style="color:var(--accent);font-weight:500"><span class="breakdown-label">FOMO Documentary Edit (free, monthly promo)</span><span class="breakdown-value" style="color:var(--accent)">-' + fmt(1000) + '</span></div>';
+      }
 
       if (extraHours > 0) {
         breakdownHTML += row('+' + extraHours + ' additional hour' + (extraHours > 1 ? 's' : '') + ' (' + fmt(tier.hourlyRate) + '/hr)', '+' + fmt(hoursCost));
@@ -1078,8 +1088,21 @@
       return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // Init
-    recalc();
+    // Init: fetch live FOMO spot state, then render the breakdown. Recalc
+    // fires once after the fetch resolves (success OR failure) so the user
+    // sees a single render with the correct free-vs-paid framing.
+    function loadFomoState() {
+      fetch(PRICING_CONSTANTS_URL)
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (data && typeof data.fomoFreeSpot === 'boolean') {
+            fomoFreeSpot = data.fomoFreeSpot;
+          }
+          recalc();
+        })
+        .catch(function() { recalc(); });
+    }
+    loadFomoState();
   })();
   </script>
 

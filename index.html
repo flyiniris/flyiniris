@@ -2428,6 +2428,23 @@
         // Availability now served from Worker D1 database (no more Apps Script)
         var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
+        // --- LIVE FOMO SPOT STATE ---
+        // Fetched from iris-automation Worker /api/pricing/constants on load.
+        // Default false (PAID) is the revenue-safe fail-closed state. The
+        // breakdown lines in calcPrice render the +$1,000 / -$1,000 paired
+        // free framing only when fomoFreeSpot is true. On any fetch failure
+        // we stay at the paid default rather than accidentally giving away
+        // a free spot that does not exist.
+        var fomoFreeSpot = false;
+        fetch(WORKER_URL + '/api/pricing/constants')
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(data) {
+            if (data && typeof data.fomoFreeSpot === 'boolean') {
+              fomoFreeSpot = data.fomoFreeSpot;
+            }
+          })
+          .catch(function() { /* stay at safe-default false */ });
+
         // --- UNIFIED EXPERIENCE (split test removed) ---
         window.__fi_variant = 'unified';
         window.__fi_variant_source = 'unified';
@@ -2569,11 +2586,12 @@
           var hours = getHoursNum(a.hours);
           var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
           var hasStory = a.storySession && a.storySession.indexOf("Yes") >= 0;
-          // FOMO is on a monthly rolling promo (free for first 3 couples each month,
-          // $1,000 paid after). The breakdown lines below render the paired +$1,000 /
-          // -$1,000 visible-value pattern; the public calculator can't query the live
-          // spot count from this page, so we present the promo framing as the default
-          // and the discovery call confirms whether the spot is actually available.
+          // FOMO is on a monthly rolling promo (free for first 3 couples each
+          // month, $1,000 paid after). The fomoFreeSpot module flag, fetched
+          // on init from iris-automation /api/pricing/constants, drives the
+          // breakdown rendering: when true, the paired +$1,000 / -$1,000
+          // visible-value pattern (free framing); when false, a single
+          // +$1,000 line (paid). Default is false until fetch resolves.
           var extraHours = hours - 6;
 
           if (isTeam) {
@@ -2625,7 +2643,9 @@
               }
             }
             bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-            bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
+            if (fomoFreeSpot) {
+              bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
+            }
             if (hasTeas) {
               bd.push({label:"Teaser film", value:tp, prefix:"+"});
             } else {
@@ -2682,7 +2702,9 @@
             }
           }
           bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-          bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
+          if (fomoFreeSpot) {
+            bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
+          }
           if (hasTeas) {
             bd.push({label:"Teaser film", value:tp2, prefix:"+"});
           } else {
