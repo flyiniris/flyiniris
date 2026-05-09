@@ -1280,6 +1280,11 @@
     document.getElementById('sig-type-2').addEventListener('input', updateSignButton);
     if (DATA.signer1_name) document.getElementById('sig-type-1').value = DATA.signer1_name;
     if (DATA.signer2_name) document.getElementById('sig-type-2').value = DATA.signer2_name;
+    // Programmatic .value assignment does not fire the 'input' event, so the
+    // button's disabled state stays at its initial true. Call updateSignButton
+    // once on load so a pre-filled signature (resume from client-signed-no-payment)
+    // enables the Continue button without forcing the user to edit the field.
+    updateSignButton();
 
     // Lock interactive elements in preview mode
     if (DATA.preview_mode) {
