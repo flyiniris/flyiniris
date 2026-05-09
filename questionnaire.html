@@ -763,6 +763,7 @@
   <div class="progress-label" id="progress-label">Getting started</div>
 
   <!-- ===================== STEP 0: TIMELINE UPLOAD ===================== -->
+  <a id="timeline-upload"></a>
   <div class="step active" id="step-0">
     <div class="step-eyebrow">Welcome</div>
     <h1 class="step-title">Your Wedding Day Questionnaire</h1>
@@ -1538,7 +1539,26 @@
   var prefillVenue = params.get('venue') || '';
   var prefillDate = params.get('date') || '';
 
-  var STORAGE_KEY = 'iris_questionnaire_' + (contactId || 'anon') + '_v2';
+  // Hash anchor routing. Email CTAs include #fragment to land couples on a
+  // specific step. Without this override, loadLocal silently restores the
+  // last-visited step from localStorage and ignores the explicit anchor,
+  // which is how Sierra landed on Section 1 instead of Step 0 on the
+  // 2026-05-08 smoke. Synchronous override after loadLocal restore.
+  var HASH_TO_STEP = {
+    'timeline-upload': 0, 'step-0': 0,
+    'section-1': 1, 'section-2': 2, 'section-3': 3,
+    'section-4': 4, 'section-5': 5, 'section-6': 6
+  };
+  var hashKey = (location.hash || '').replace(/^#/, '');
+  var hashStepOverride = Object.prototype.hasOwnProperty.call(HASH_TO_STEP, hashKey)
+    ? HASH_TO_STEP[hashKey]
+    : null;
+
+  // Namespace by token when contactId absent so anonymous-token visitors
+  // don't share state with each other. Pre-fix every token URL, smoke test,
+  // and dev open shared iris_questionnaire_anon_v2 and stomped on each
+  // other; the cross-contamination silently restored stale step state.
+  var STORAGE_KEY = 'iris_questionnaire_' + (contactId || token || 'anon') + '_v2';
   // API_BASE pinned to the Worker because this form is served from
   // flyiniris.com (Pages) but submits to the iris-automation Worker.
   var API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
@@ -2631,6 +2651,7 @@
    * Boot
    * ============================================================ */
   loadLocal();
+  if (hashStepOverride !== null) goToStep(hashStepOverride);
   updateProgress();
   updateSubmitGate();
   loadContactPrefill();
