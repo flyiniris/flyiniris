@@ -1,7 +1,7 @@
 {
   "slug": "amanda-boris",
-  "names": ["Amanda", "Boris"],
-  "date": "August 31, 2025",
+  "coupleNames": "Amanda & Boris",
+  "weddingDate": "August 31, 2025",
   "password": "ab083125",
   "videos": [
     {
@@ -89,9 +89,5 @@
       "duration": "",
       "order": 11
     }
-  ],
-  "photos": {
-    "enabled": false,
-    "message": "Your photos from the big day will be viewable here soon."
-  }
+  ]
 }
