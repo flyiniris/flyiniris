@@ -62,15 +62,15 @@
       "order": 7
     },
     {
-      "id": "speeches",
-      "title": "Speeches",
+      "id": "parent-dances",
+      "title": "Parent Dances",
       "category": "archival",
       "duration": "",
       "order": 8
     },
     {
-      "id": "parent-dances",
-      "title": "Parent Dances",
+      "id": "speeches",
+      "title": "Speeches",
       "category": "archival",
       "duration": "",
       "order": 9
@@ -81,13 +81,6 @@
       "category": "bonus",
       "duration": "",
       "order": 10
-    },
-    {
-      "id": "grand-raw",
-      "title": "Full Ceremony (Raw)",
-      "category": "archival",
-      "duration": "",
-      "order": 11
     }
   ]
 }

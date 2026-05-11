@@ -202,6 +202,13 @@ function main() {
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
 
+  // Playlist: archival + bonus, exclude featured, chronological order
+  // (see delivery-page-standard.md Section 3.4 for ordering convention)
+  const playlistArray = videosArray
+    .filter(v => (v.category === 'archival' || v.category === 'bonus') && v.featured !== true)
+    .sort((a, b) => a.order - b.order)
+    .map(v => ({ id: v.id, title: v.title, duration: v.duration }));
+
   // Read templates
   const templateDir = path.join(__dirname, 'templates');
   const htmlTemplate = fs.readFileSync(path.join(templateDir, 'couple-page.html'), 'utf-8');
@@ -216,6 +223,7 @@ function main() {
     .replace(/\{\{SLUG\}\}/g, config.slug)
     .replace(/\{\{WORKER_BASE\}\}/g, workerBase)
     .replace(/\{\{VIDEOS_JSON\}\}/g, JSON.stringify(videosArray))
+    .replace(/\{\{PLAYLIST_JSON\}\}/g, JSON.stringify(playlistArray))
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, featuredId)
     .replace(/\{\{YEAR\}\}/g, year);
 

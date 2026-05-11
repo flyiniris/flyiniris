@@ -329,6 +329,72 @@
       font-size: 1.15rem;
     }
 
+    /* ========== Playlist Card ========== */
+    .playlist-card {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 28px 32px;
+      background: linear-gradient(135deg, #161615 0%, #1A1A19 100%);
+      border: 1px solid rgba(255, 189, 29, 0.25);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .playlist-card:hover {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.12);
+      transform: translateY(-2px);
+    }
+    .playlist-card-icon {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 189, 29, 0.1);
+      border: 1px solid rgba(255, 189, 29, 0.2);
+    }
+    .playlist-card-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #FFBD1D;
+    }
+    .playlist-card-info {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+    }
+    .playlist-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .playlist-card-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
+    }
+    .playlist-card-arrow {
+      flex-shrink: 0;
+      color: #FFBD1D;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .playlist-card:hover .playlist-card-arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+    .playlist-card-arrow svg {
+      width: 24px;
+      height: 24px;
+    }
+
     /* ========== Video Modal ========== */
     .modal-overlay {
       position: fixed;
@@ -373,6 +439,10 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
     }
+    .modal-player-wrap.has-playlist {
+      border-radius: 8px 8px 0 0;
+      border-bottom: none;
+    }
     .modal-player-wrap media-player {
       --media-brand: #FFBD1D;
       width: 100%;
@@ -383,6 +453,53 @@
       font-weight: 600;
       font-size: 1.3rem;
       margin-top: 16px;
+    }
+
+    /* ========== Playlist Bar (in modal) ========== */
+    .playlist-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      gap: 12px;
+    }
+    .playlist-bar.visible {
+      display: flex;
+    }
+    .playlist-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .playlist-bar-progress {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: #FFBD1D;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+    }
+    .playlist-bar-current {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #F5F0EB;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .playlist-bar-next {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: #C8C3B9;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* ========== Download Section ========== */
@@ -550,6 +667,7 @@
 
     /* ========== TV / Remote-Friendly ========== */
     .film-card:focus-visible,
+    .playlist-card:focus-visible,
     .hero-cta:focus-visible,
     .download-btn:focus-visible,
     .download-all-btn:focus-visible,
@@ -563,12 +681,14 @@
       box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .film-card { min-height: 48px; }
+    .playlist-card { min-height: 48px; }
     .hero-cta,
     .download-btn,
     .download-all-btn,
     .download-item-btn,
     .modal-close { min-height: 48px; min-width: 48px; }
     .film-card { -webkit-tap-highlight-color: transparent; }
+    .playlist-card { -webkit-tap-highlight-color: transparent; }
 
     /* ========== Scroll Reveal ========== */
     .reveal {
@@ -600,6 +720,10 @@
       .modal-content { max-width: 100%; }
       .modal-close { top: -40px; }
       .download-form { flex-direction: column; }
+      .playlist-card { padding: 20px 20px; gap: 16px; }
+      .playlist-card-icon { width: 44px; height: 44px; }
+      .playlist-card-icon svg { width: 20px; height: 20px; }
+      .playlist-bar { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 16px; }
     }
   </style>
 </head>
@@ -721,6 +845,13 @@
       <div class="modal-player-wrap" id="modal-player-wrap">
         <!-- Vidstack player injected by JS -->
       </div>
+      <div class="playlist-bar" id="playlist-bar">
+        <div class="playlist-bar-left">
+          <span class="playlist-bar-progress" id="playlist-bar-progress"></span>
+          <span class="playlist-bar-current" id="playlist-bar-current"></span>
+        </div>
+        <span class="playlist-bar-next" id="playlist-bar-next"></span>
+      </div>
       <p class="modal-title" id="modal-title"></p>
     </div>
   </div>
@@ -729,11 +860,31 @@
   <script>
     // --- Data ---
     const VIDEOS = {{VIDEOS_JSON}};
+    const PLAYLIST = {{PLAYLIST_JSON}};
     const WORKER_BASE = '{{WORKER_BASE}}';
     const SLUG = '{{SLUG}}';
 
     const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
     const collection = VIDEOS.filter(v => v !== featured).sort((a, b) => a.order - b.order);
+
+    function computePlaylistDurationLabel() {
+      var total = 0;
+      for (var i = 0; i < PLAYLIST.length; i++) {
+        var d = PLAYLIST[i].duration;
+        if (!d) return null;
+        var parts = d.split(':').map(Number);
+        var secs;
+        if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
+        else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
+        else return null;
+        if (isNaN(secs)) return null;
+        total += secs;
+      }
+      var hours = Math.floor(total / 3600);
+      var minutes = Math.round((total % 3600) / 60);
+      if (hours > 0) return '~' + hours + ' hr ' + minutes + ' min';
+      return '~' + minutes + ' min';
+    }
 
     function hlsUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
@@ -803,6 +954,29 @@
           '  </div>' +
           '</div>';
       }
+
+      // "Watch the Full Day" playlist card (renders only if 2+ archival/bonus cuts exist)
+      if (PLAYLIST.length >= 2) {
+        var totalLabel = computePlaylistDurationLabel();
+        var subtitle = PLAYLIST.length + ' films in chronological order';
+        if (totalLabel) subtitle += ' &bull; ' + totalLabel;
+        html +=
+          '<div class="playlist-card reveal" id="playlist-card" tabindex="0" role="button" aria-label="Watch the Full Day, plays ' + PLAYLIST.length + ' films in chronological order">' +
+          '  <div class="playlist-card-icon">' +
+          '    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '  </div>' +
+          '  <div class="playlist-card-info">' +
+          '    <p class="playlist-card-title">Watch the Full Day</p>' +
+          '    <p class="playlist-card-subtitle">' + subtitle + '</p>' +
+          '  </div>' +
+          '  <div class="playlist-card-arrow">' +
+          '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '      <polyline points="9 18 15 12 9 6"></polyline>' +
+          '    </svg>' +
+          '  </div>' +
+          '</div>';
+      }
+
       grid.innerHTML = html;
     })();
 
@@ -810,8 +984,19 @@
     var modalOverlay = document.getElementById('modal-overlay');
     var modalPlayerWrap = document.getElementById('modal-player-wrap');
     var modalTitle = document.getElementById('modal-title');
+    var playlistBar = document.getElementById('playlist-bar');
+    var playlistBarProgress = document.getElementById('playlist-bar-progress');
+    var playlistBarCurrent = document.getElementById('playlist-bar-current');
+    var playlistBarNext = document.getElementById('playlist-bar-next');
+
+    var playlistMode = false;
+    var playlistIndex = 0;
 
     function openModal(videoId, title) {
+      playlistMode = false;
+      playlistBar.classList.remove('visible');
+      modalPlayerWrap.classList.remove('has-playlist');
+
       modalPlayerWrap.innerHTML =
         '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay storage="fi-modal">' +
         '  <media-provider>' +
@@ -828,12 +1013,62 @@
       document.body.style.overflow = 'hidden';
     }
 
+    function openPlaylist() {
+      if (PLAYLIST.length === 0) return;
+      playlistMode = true;
+      playlistIndex = 0;
+      modalPlayerWrap.classList.add('has-playlist');
+      playlistBar.classList.add('visible');
+      loadPlaylistVideo(0);
+      updatePlaylistBar();
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function loadPlaylistVideo(index) {
+      var item = PLAYLIST[index];
+      modalPlayerWrap.innerHTML =
+        '<media-player title="' + escapeAttr(item.title) + '" src="' + hlsUrl(item.id) + '" crossorigin playsinline autoplay storage="fi-playlist">' +
+        '  <media-provider>' +
+        '    <media-poster src="' + thumbUrl(item.id) + '" alt="' + escapeAttr(item.title) + '"></media-poster>' +
+        '  </media-provider>' +
+        '  <media-video-layout></media-video-layout>' +
+        '</media-player>';
+
+      var player = modalPlayerWrap.querySelector('media-player');
+      if (player) {
+        configureHls(player);
+        player.addEventListener('ended', function() {
+          if (playlistMode && playlistIndex < PLAYLIST.length - 1) {
+            playlistIndex++;
+            loadPlaylistVideo(playlistIndex);
+            updatePlaylistBar();
+          }
+        });
+      }
+
+      modalTitle.textContent = item.title;
+    }
+
+    function updatePlaylistBar() {
+      playlistBarProgress.textContent = (playlistIndex + 1) + ' of ' + PLAYLIST.length;
+      playlistBarCurrent.textContent = PLAYLIST[playlistIndex].title;
+      if (playlistIndex < PLAYLIST.length - 1) {
+        playlistBarNext.textContent = 'Up Next: ' + PLAYLIST[playlistIndex + 1].title;
+      } else {
+        playlistBarNext.textContent = 'Last in playlist';
+      }
+    }
+
     function closeModal() {
       modalOverlay.classList.remove('active');
       document.body.style.overflow = '';
+      playlistMode = false;
       // Give transition time to finish before clearing
       setTimeout(function() {
         modalPlayerWrap.innerHTML = '';
+        modalPlayerWrap.classList.remove('has-playlist');
+        playlistBar.classList.remove('visible');
         modalTitle.textContent = '';
       }, 300);
     }
@@ -848,9 +1083,23 @@
 
     // Card click delegation
     document.getElementById('collection-grid').addEventListener('click', function(e) {
+      var playlistCard = e.target.closest('#playlist-card');
+      if (playlistCard) {
+        openPlaylist();
+        return;
+      }
       var card = e.target.closest('.film-card');
       if (!card) return;
       openModal(card.dataset.videoId, card.dataset.videoTitle);
+    });
+    // Keyboard activation for playlist card (TV / remote-friendly)
+    document.getElementById('collection-grid').addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var playlistCard = e.target.closest('#playlist-card');
+      if (playlistCard) {
+        e.preventDefault();
+        openPlaylist();
+      }
     });
 
     // --- Navbar Scroll ---
