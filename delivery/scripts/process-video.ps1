@@ -1,16 +1,17 @@
 param(
     [Parameter(Mandatory=$true)][string]$Slug,
-    [Parameter(Mandatory=$true)][string]$VimeoId
+    [Parameter(Mandatory=$true)][string]$VimeoId,
+    [Parameter(Mandatory=$true)][string]$VideoId
 )
 
 $ErrorActionPreference = "Stop"
 $token = "60da9fb557043177a683cb20188859fb"
 $basePath = "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery"
 $downloadDir = "$basePath\downloads"
-$outputDir = "$basePath\output\$Slug"
+$outputDir = "$basePath\output\$Slug\$VideoId"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "Processing: $Slug (Vimeo ID: $VimeoId)" -ForegroundColor Cyan
+Write-Host "Processing: $Slug / $VideoId (Vimeo ID: $VimeoId)" -ForegroundColor Cyan
 Write-Host "========================================`n"
 
 # Ensure dirs exist
@@ -31,7 +32,7 @@ Write-Host "  Duration: $($video.duration)s"
 Write-Host "  Source: $($best.quality) $($best.width)x$($best.height) ($($best.type))"
 Write-Host "  Size: $([math]::Round($best.size / 1MB, 1)) MB"
 
-$inputFile = "$downloadDir\$Slug.mp4"
+$inputFile = "$downloadDir\$Slug-$VideoId.mp4"
 
 # Step 2: Download
 Write-Host "`n[2/5] Downloading..." -ForegroundColor Yellow
@@ -128,9 +129,9 @@ foreach ($ts in $timestamps) {
     }
 }
 
-# Copy best thumbnail as teaser.jpg
+# Copy best thumbnail to <video-id>.jpg
 if ($bestThumb) {
-    Copy-Item $bestThumb "$outputDir\teaser.jpg" -Force
+    Copy-Item $bestThumb "$outputDir\$VideoId.jpg" -Force
     # Clean up candidates
     Get-ChildItem "$outputDir\thumb_*s.jpg" | Remove-Item -Force
     Write-Host "  Thumbnail saved (from $bestThumb)"
@@ -143,17 +144,17 @@ Write-Host "`n[5/5] Uploading to R2..." -ForegroundColor Yellow
 
 # Upload HLS files (master.m3u8, 4k/, 1080p/)
 Write-Host "  Uploading HLS files..."
-& rclone copy "$outputDir\master.m3u8" "r2fi:fi-films/couples/$Slug/hls/teaser/" --progress
-& rclone copy "$outputDir\4k" "r2fi:fi-films/couples/$Slug/hls/teaser/4k/" --progress
-& rclone copy "$outputDir\1080p" "r2fi:fi-films/couples/$Slug/hls/teaser/1080p/" --progress
+& rclone copy "$outputDir\master.m3u8" "r2fi:fi-films/couples/$Slug/hls/$VideoId/" --progress
+& rclone copy "$outputDir\4k" "r2fi:fi-films/couples/$Slug/hls/$VideoId/4k/" --progress
+& rclone copy "$outputDir\1080p" "r2fi:fi-films/couples/$Slug/hls/$VideoId/1080p/" --progress
 
 # Upload thumbnail
 Write-Host "  Uploading thumbnail..."
-& rclone copy "$outputDir\teaser.jpg" "r2fi:fi-films/couples/$Slug/thumbs/" --progress
+& rclone copy "$outputDir\$VideoId.jpg" "r2fi:fi-films/couples/$Slug/thumbs/" --progress
 
 # Verify upload
 Write-Host "`n  Verifying upload..."
-$verify = & rclone ls "r2fi:fi-films/couples/$Slug/hls/teaser/master.m3u8" 2>&1
+$verify = & rclone ls "r2fi:fi-films/couples/$Slug/hls/$VideoId/master.m3u8" 2>&1
 if ($verify -match "master.m3u8") {
     Write-Host "  VERIFIED: master.m3u8 exists on R2" -ForegroundColor Green
 } else {
@@ -166,5 +167,5 @@ Remove-Item $inputFile -Force -ErrorAction SilentlyContinue
 Remove-Item $outputDir -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "`n========================================" -ForegroundColor Green
-Write-Host "DONE: $Slug" -ForegroundColor Green
+Write-Host "DONE: $Slug / $VideoId" -ForegroundColor Green
 Write-Host "========================================`n"
