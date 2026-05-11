@@ -62,10 +62,10 @@ if ($srcWidth -ge 3840) {
     Write-Host "  Creating 4K + 1080p streams..."
     & ffmpeg -y -i $inputFile `
         -filter_complex "[0:v]split=2[v4k][v1080];[v4k]copy[v4kout];[v1080]scale=1920:1080:flags=lanczos[v1080out]" `
-        -map "[v4kout]" -map 0:a? -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k `
+        -map "[v4kout]" -map 0:a? -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k `
         -hls_time 6 -hls_playlist_type vod `
         -hls_segment_filename "$outputDir\4k\segment_%03d.ts" "$outputDir\4k\playlist.m3u8" `
-        -map "[v1080out]" -map 0:a? -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 128k `
+        -map "[v1080out]" -map 0:a? -c:v h264_nvenc -preset p7 -cq 20 -pix_fmt yuv420p -c:a aac -b:a 128k `
         -hls_time 6 -hls_playlist_type vod `
         -hls_segment_filename "$outputDir\1080p\segment_%03d.ts" "$outputDir\1080p\playlist.m3u8"
 
@@ -83,14 +83,14 @@ if ($srcWidth -ge 3840) {
 
     # Stream 1: source resolution (in 4k folder)
     & ffmpeg -y -i $inputFile `
-        -map 0:v -map 0:a? -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k `
+        -map 0:v -map 0:a? -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k `
         -hls_time 6 -hls_playlist_type vod `
         -hls_segment_filename "$outputDir\4k\segment_%03d.ts" "$outputDir\4k\playlist.m3u8"
 
     # Stream 2: 1080p
     & ffmpeg -y -i $inputFile `
         -map 0:v -map 0:a? -vf "scale=1920:1080:flags=lanczos" `
-        -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 128k `
+        -c:v h264_nvenc -preset p7 -cq 20 -pix_fmt yuv420p -c:a aac -b:a 128k `
         -hls_time 6 -hls_playlist_type vod `
         -hls_segment_filename "$outputDir\1080p\segment_%03d.ts" "$outputDir\1080p\playlist.m3u8"
 
