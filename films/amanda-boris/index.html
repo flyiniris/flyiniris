@@ -1041,11 +1041,17 @@
 
         var hasAdvanced = false;
         var lastSeekAt = 0;
+        var playerStartedAt = Date.now();
 
         function advance() {
           if (hasAdvanced) return;
           if (!playlistMode) return;
           if (playlistIndex >= PLAYLIST.length - 1) return;
+          // Ignore spurious 'ended' / near-end signals during the first 2 sec
+          // of player init (HLS load races, stale buffers from the prior player).
+          // Real wedding-clip durations are far above 2 sec, so this cannot
+          // block a legitimate advance.
+          if (Date.now() - playerStartedAt < 2000) return;
           hasAdvanced = true;
           playlistIndex++;
           loadPlaylistVideo(playlistIndex);
@@ -1069,10 +1075,10 @@
             ct = e.detail.currentTime;
             dur = e.detail.duration;
           }
-          if (typeof ct !== 'number' && player.state) {
-            ct = player.state.currentTime;
-            dur = player.state.duration;
-          }
+          // Backfill ct AND dur independently from player.state. Vidstack's
+          // time-update detail typically includes currentTime but not duration.
+          if (typeof ct !== 'number' && player.state) ct = player.state.currentTime;
+          if (typeof dur !== 'number' && player.state) dur = player.state.duration;
           if (typeof ct !== 'number' || typeof dur !== 'number' || dur <= 0) return;
           if (dur - ct < 0.4) advance();
         });
