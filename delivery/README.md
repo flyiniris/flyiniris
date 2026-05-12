@@ -156,7 +156,13 @@ Real configs live in `delivery/live/<slug>.json` and are gitignored. Copy `deliv
 
 ### Step 3: Transcode videos
 
-Creates HLS streams (1080p, 720p, 480p) and thumbnails from the source MP4s.
+Creates source-resolution-aware HLS streams and a fallback thumbnail from the source MP4s. The ladder depends on the source resolution:
+
+- **4K source (3840+ wide):** 4K + 1080p ladder (two rungs).
+- **1080p / 2K source (1920+ wide):** 1080p only (one rung).
+- **Sub-1080p source (rare):** source-res passthrough into the 1080p folder. No upscale.
+
+Encoder is NVIDIA NVENC (`h264_nvenc -preset p7 -cq 18` for the top rung, `-cq 20` for the 1080p downscale rung). This step requires an NVIDIA GPU available to ffmpeg.
 
 **PowerShell (Windows):**
 
@@ -174,7 +180,9 @@ Creates HLS streams (1080p, 720p, 480p) and thumbnails from the source MP4s.
   -c delivery/live/amanda-boris.json
 ```
 
-Output goes to `./output/` by default. This step can take a while depending on number of videos and length.
+Output goes to `./output/` by default. NVENC is roughly 5 to 10x faster than libx264 on equivalent quality, so a typical 8-clip wedding catalog transcodes in roughly 10 to 20 minutes total depending on source lengths.
+
+The fallback thumbnail extracted here is overwritten by Sierra-curated Vimeo thumbnails when `delivery/scripts/pull-vimeo-thumbs.ps1` runs (Step 4.5 below). The ffmpeg fallback is useful only for local-MP4 flows that bypass Vimeo entirely.
 
 ### Step 4: Upload to R2
 
@@ -202,10 +210,10 @@ Uploads HLS streams, original MP4s, and thumbnails to the R2 bucket.
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv:key put --binding=PASSWORDS "amanda-boris" "ab083125"
+wrangler kv key put --binding=PASSWORDS "amanda-boris" "ab083125"
 ```
 
-Replace `amanda-boris` with the couple's slug and `ab083125` with the password from the config JSON.
+Replace `amanda-boris` with the couple's slug and `ab083125` with the password from the config JSON. Note: modern wrangler 4.x uses `kv key` with a space, not `kv:key` with a colon. Older docs and prior session notes used the colon form, which now silently fails.
 
 ### Step 6: Generate the couple page
 
@@ -281,20 +289,23 @@ fi-films/
 └── couples/
     └── amanda-boris/
         ├── hls/
-        │   ├── highlight/
-        │   │   ├── master.m3u8          # Multi-bitrate master playlist
-        │   │   ├── 1080p/playlist.m3u8 + segments
-        │   │   ├── 720p/playlist.m3u8 + segments
-        │   │   └── 480p/playlist.m3u8 + segments
-        │   ├── teaser/
+        │   ├── highlight/                       # 4K source
+        │   │   ├── master.m3u8                  # Multi-rung master playlist
+        │   │   ├── 4k/playlist.m3u8 + segments
+        │   │   └── 1080p/playlist.m3u8 + segments
+        │   ├── ceremony/                        # 1080p source
+        │   │   ├── master.m3u8                  # Single-rung master playlist
+        │   │   └── 1080p/playlist.m3u8 + segments
         │   └── ...
         ├── originals/
-        │   ├── highlight.mp4            # Full-resolution downloads
+        │   ├── highlight.mp4                    # Full-resolution downloads
         │   └── ...
         └── thumbs/
-            ├── highlight.jpg            # Video thumbnails
+            ├── highlight.jpg                    # Sierra-curated, pulled from Vimeo
             └── ...
 ```
+
+The folder shape per video depends on the source. 4K hero deliverables (teaser, highlight, story session) get both a `4k/` and a `1080p/` folder. Day-of archival clips and GoPro typically have a 1080p source and get a `1080p/` folder only. Master playlist lists only the variants that exist.
 
 ## Maintenance
 
@@ -302,7 +313,7 @@ fi-films/
 
 Cloudflare R2 pricing:
 - Storage: $0.015/GB per month.
-- At roughly 5 GB per couple (HLS + originals + thumbs), about $0.08/month per couple.
+- At roughly 3 to 8 GB per couple under the source-aware ladder (varies with how many clips are 4K hero deliverables vs 1080p day-of), about $0.05 to $0.12 per month per couple.
 - Class A operations (writes): $4.50 per million requests.
 - Class B operations (reads): $0.36 per million requests.
 - Egress: free (this is why R2 is great for video delivery).
@@ -347,6 +358,7 @@ If `r2fi:` is not listed, run `rclone config` to set it up (see Initial Setup st
 1. Verify the Worker is deployed: `cd delivery/workers/video-serve && wrangler tail` to see live logs.
 2. Check that HLS files exist in R2: `rclone ls r2fi:fi-films/couples/<slug>/hls/<video-id>/master.m3u8`.
 3. Ensure the custom domain `video.flyiniris.com` is set up on the Worker triggers.
+4. If only some clips fail and they happen to be 1080p source, double-check the master.m3u8 lists `1080p/playlist.m3u8` (single rung) and there is no orphan `4k/` reference left over from a prior run.
 
 ### Password not working
 
@@ -354,10 +366,10 @@ The password lives in Worker KV. Ensure the KV key matches the slug exactly:
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv:key get --binding=PASSWORDS "amanda-boris"
+wrangler kv key get --binding=PASSWORDS "amanda-boris"
 ```
 
-If it returns nothing, the key was not set. Re-run the `kv:key put` command from Step 5.
+If it returns nothing, the key was not set. Re-run the `kv key put` command from Step 5.
 
 ### Page not loading after git push
 

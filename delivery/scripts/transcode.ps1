@@ -1,11 +1,28 @@
 <#
 .SYNOPSIS
-    Transcodes MP4 video files into multi-bitrate HLS streams for the Flyin' Iris delivery platform.
+    Transcodes MP4 video files into source-resolution-aware HLS streams for the
+    Flyin' Iris delivery platform.
 
 .DESCRIPTION
-    For each MP4 in InputDir, creates 3 HLS quality variants (1080p, 720p, 480p),
-    generates a master playlist, extracts a thumbnail, and updates the couple config
-    JSON with detected durations.
+    For each MP4 in InputDir, probes the source resolution and creates an HLS
+    ladder that matches the source (no upscaling, no useless duplicate streams).
+
+      4K source (>= 3840 wide)         -> 4k/ + 1080p/ ladder (2 rungs)
+      Sub-4K source (1080p, 2K, etc.)  -> 1080p/ only (1 rung, scaled to fit if needed)
+      Sub-1080p source (rare)          -> 1080p/ only, source-res passthrough (no upscale)
+
+    Encoder is NVIDIA NVENC (h264_nvenc -preset p7 -cq 18 top rung, -cq 20 1080p rung)
+    so this script requires an NVIDIA GPU. Audio is AAC 192k for the top rung,
+    128k for the 1080p downscale rung.
+
+    Each video gets a master.m3u8 with the actual variants present, plus a
+    fallback thumbnail extracted at 25 percent of duration via ffmpeg. The
+    canonical per-couple thumbnail flow is Sierra-curated via Vimeo's
+    pictures.sizes API (see delivery/scripts/pull-vimeo-thumbs.ps1); the
+    ffmpeg-extracted thumb here exists for local-MP4 cases where Vimeo
+    has no curated thumb yet.
+
+    The config JSON is updated in place with measured durations.
 
 .PARAMETER InputDir
     Directory containing source MP4 files.
@@ -17,7 +34,7 @@
     Output directory for HLS files (default: ./output).
 
 .EXAMPLE
-    .\transcode.ps1 -InputDir "C:\Videos\amanda-boris" -ConfigFile ".\sample\amanda-boris.json"
+    .\transcode.ps1 -InputDir "C:\Videos\rachel-michael-street" -ConfigFile ".\delivery\live\rachel-michael-street.json"
 #>
 
 param(
@@ -78,7 +95,7 @@ if ($mp4Files.Count -eq 0) {
 }
 
 Write-Host ""
-Write-Host "=== Flyin' Iris HLS Transcoder ===" -ForegroundColor Cyan
+Write-Host "=== Flyin' Iris HLS Transcoder (NVENC, source-resolution-aware) ===" -ForegroundColor Cyan
 Write-Host "Input:  $InputDir"
 Write-Host "Output: $OutputDir"
 Write-Host "Config: $ConfigFile"
@@ -98,14 +115,14 @@ foreach ($mp4 in $mp4Files) {
     $inputPath = $mp4.FullName
     $videoOutDir = Join-Path $OutputDir $videoId
 
-    Write-Host "[$counter/$($mp4Files.Count)] Processing $($mp4.Name)..." -ForegroundColor Yellow -NoNewline
+    Write-Host "[$counter/$($mp4Files.Count)] Processing $($mp4.Name)..." -ForegroundColor Yellow
 
-    # --- Probe duration ---
+    # --- Probe duration + resolution ---
     try {
         $durationSec = & ffprobe -v error -show_entries format=duration -of csv=p=0 "$inputPath" 2>&1
         $durationSec = [double]$durationSec.Trim()
     } catch {
-        Write-Host " FAILED (could not probe duration)" -ForegroundColor Red
+        Write-Host "  FAILED (could not probe duration)" -ForegroundColor Red
         $failCount++
         continue
     }
@@ -114,67 +131,136 @@ foreach ($mp4 in $mp4Files) {
     $totalSeconds = [int][math]::Floor($durationSec % 60)
     $durationFormatted = "{0}:{1:D2}" -f $totalMinutes, $totalSeconds
 
-    # --- Create output directories ---
-    foreach ($quality in @("1080p", "720p", "480p")) {
-        New-Item -ItemType Directory -Path (Join-Path $videoOutDir $quality) -Force | Out-Null
-    }
-
-    # --- Transcode to HLS (single-pass, 3 qualities) ---
-    $segDir1080 = (Join-Path (Join-Path $videoOutDir "1080p") "segment%03d.ts")
-    $playlist1080 = (Join-Path (Join-Path $videoOutDir "1080p") "playlist.m3u8")
-    $segDir720 = (Join-Path (Join-Path $videoOutDir "720p") "segment%03d.ts")
-    $playlist720 = (Join-Path (Join-Path $videoOutDir "720p") "playlist.m3u8")
-    $segDir480 = (Join-Path (Join-Path $videoOutDir "480p") "segment%03d.ts")
-    $playlist480 = (Join-Path (Join-Path $videoOutDir "480p") "playlist.m3u8")
-
-    $ffmpegLog = Join-Path $videoOutDir "ffmpeg.log"
-    $filterComplex = "[0:v]split=3[v1][v2][v3];[v1]scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2[v1out];[v2]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2[v2out];[v3]scale=854:480:force_original_aspect_ratio=decrease,pad=854:480:(ow-iw)/2:(oh-ih)/2[v3out]"
-
-    # Build argument string for Start-Process (handles spaces in paths)
-    $ffmpegArgStr = "-nostdin -i `"$inputPath`" -filter_complex `"$filterComplex`" " +
-        "-map `"[v1out]`" -map 0:a? " +
-        "-c:v:0 libx264 -b:v:0 5000k -c:a:0 aac -b:a:0 128k " +
-        "-preset medium -g 48 -keyint_min 48 " +
-        "-hls_time 4 -hls_segment_type mpegts " +
-        "-hls_segment_filename `"$segDir1080`" " +
-        "-hls_playlist_type vod `"$playlist1080`" " +
-        "-map `"[v2out]`" -map 0:a? " +
-        "-c:v:1 libx264 -b:v:1 2500k -c:a:1 aac -b:a:1 128k " +
-        "-preset medium -g 48 -keyint_min 48 " +
-        "-hls_time 4 -hls_segment_type mpegts " +
-        "-hls_segment_filename `"$segDir720`" " +
-        "-hls_playlist_type vod `"$playlist720`" " +
-        "-map `"[v3out]`" -map 0:a? " +
-        "-c:v:2 libx264 -b:v:2 1000k -c:a:2 aac -b:a:2 128k " +
-        "-preset medium -g 48 -keyint_min 48 " +
-        "-hls_time 4 -hls_segment_type mpegts " +
-        "-hls_segment_filename `"$segDir480`" " +
-        "-hls_playlist_type vod `"$playlist480`" " +
-        "-y"
-
-    $ffmpegProcess = Start-Process -FilePath "ffmpeg" -ArgumentList $ffmpegArgStr -NoNewWindow -Wait -PassThru -RedirectStandardError $ffmpegLog
-    if ($ffmpegProcess.ExitCode -ne 0) {
-        Write-Host " FAILED (ffmpeg exit code $($ffmpegProcess.ExitCode))" -ForegroundColor Red
-        Write-Host "  Check log: $ffmpegLog" -ForegroundColor DarkGray
+    try {
+        $probeJson = & ffprobe -v quiet -print_format json -show_streams "$inputPath" 2>&1
+        $probeData = $probeJson | ConvertFrom-Json
+        $videoStream = $probeData.streams | Where-Object { $_.codec_type -eq "video" } | Select-Object -First 1
+        $srcWidth = [int]$videoStream.width
+        $srcHeight = [int]$videoStream.height
+    } catch {
+        Write-Host "  FAILED (could not probe resolution)" -ForegroundColor Red
         $failCount++
         continue
     }
 
-    # --- Generate master.m3u8 ---
-    $masterPlaylist = @"
+    Write-Host "  Source: ${srcWidth}x${srcHeight}, $durationFormatted"
+
+    # --- Branch on source resolution ---
+    $ffmpegLog = Join-Path $videoOutDir "ffmpeg.log"
+    New-Item -ItemType Directory -Path $videoOutDir -Force | Out-Null
+
+    if ($srcWidth -ge 3840) {
+        # 4K source: 4K + 1080p ladder
+        Write-Host "  Ladder: 4K + 1080p (NVENC h264_nvenc, preset p7)" -ForegroundColor DarkGray
+
+        New-Item -ItemType Directory -Path (Join-Path $videoOutDir "4k") -Force | Out-Null
+        New-Item -ItemType Directory -Path (Join-Path $videoOutDir "1080p") -Force | Out-Null
+
+        $seg4k = Join-Path $videoOutDir "4k\segment_%03d.ts"
+        $play4k = Join-Path $videoOutDir "4k\playlist.m3u8"
+        $seg1080 = Join-Path $videoOutDir "1080p\segment_%03d.ts"
+        $play1080 = Join-Path $videoOutDir "1080p\playlist.m3u8"
+
+        $ffmpegArgStr = "-nostdin -y -i `"$inputPath`" " +
+            "-filter_complex `"[0:v]split=2[v4k][v1080];[v4k]copy[v4kout];[v1080]scale=1920:1080:flags=lanczos[v1080out]`" " +
+            "-map `"[v4kout]`" -map 0:a? -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k " +
+            "-hls_time 6 -hls_playlist_type vod " +
+            "-hls_segment_filename `"$seg4k`" `"$play4k`" " +
+            "-map `"[v1080out]`" -map 0:a? -c:v h264_nvenc -preset p7 -cq 20 -pix_fmt yuv420p -c:a aac -b:a 128k " +
+            "-hls_time 6 -hls_playlist_type vod " +
+            "-hls_segment_filename `"$seg1080`" `"$play1080`""
+
+        $ffmpegProcess = Start-Process -FilePath "ffmpeg" -ArgumentList $ffmpegArgStr -NoNewWindow -Wait -PassThru -RedirectStandardError $ffmpegLog
+        if ($ffmpegProcess.ExitCode -ne 0) {
+            Write-Host "  FAILED (ffmpeg exit code $($ffmpegProcess.ExitCode))" -ForegroundColor Red
+            Write-Host "  Check log: $ffmpegLog" -ForegroundColor DarkGray
+            $failCount++
+            continue
+        }
+
+        $masterPlaylist = @"
 #EXTM3U
 #EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=5128000,RESOLUTION=1920x1080,NAME="1080p"
+#EXT-X-STREAM-INF:BANDWIDTH=15000000,RESOLUTION=${srcWidth}x${srcHeight},NAME="4K"
+4k/playlist.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080,NAME="1080p"
 1080p/playlist.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=2628000,RESOLUTION=1280x720,NAME="720p"
-720p/playlist.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=1128000,RESOLUTION=854x480,NAME="480p"
-480p/playlist.m3u8
 "@
+    } elseif ($srcWidth -ge 1920) {
+        # 1080p (or near-1080p / 2K) source: 1080p only ladder, single rung
+        Write-Host "  Ladder: 1080p only (NVENC h264_nvenc, preset p7)" -ForegroundColor DarkGray
+
+        New-Item -ItemType Directory -Path (Join-Path $videoOutDir "1080p") -Force | Out-Null
+
+        $seg1080 = Join-Path $videoOutDir "1080p\segment_%03d.ts"
+        $play1080 = Join-Path $videoOutDir "1080p\playlist.m3u8"
+
+        # If source is exactly 1920x1080, passthrough scale (no-op). If source is wider
+        # (e.g., 2K 2048-wide DCI), downscale to 1920x1080. Either way: 1080p target.
+        if ($srcWidth -eq 1920 -and $srcHeight -eq 1080) {
+            $vfArg = ""
+        } else {
+            $vfArg = "-vf `"scale=1920:1080:flags=lanczos:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2`" "
+        }
+
+        $ffmpegArgStr = "-nostdin -y -i `"$inputPath`" -map 0:v -map 0:a? " +
+            $vfArg +
+            "-c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k " +
+            "-hls_time 6 -hls_playlist_type vod " +
+            "-hls_segment_filename `"$seg1080`" `"$play1080`""
+
+        $ffmpegProcess = Start-Process -FilePath "ffmpeg" -ArgumentList $ffmpegArgStr -NoNewWindow -Wait -PassThru -RedirectStandardError $ffmpegLog
+        if ($ffmpegProcess.ExitCode -ne 0) {
+            Write-Host "  FAILED (ffmpeg exit code $($ffmpegProcess.ExitCode))" -ForegroundColor Red
+            Write-Host "  Check log: $ffmpegLog" -ForegroundColor DarkGray
+            $failCount++
+            continue
+        }
+
+        $masterPlaylist = @"
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080,NAME="1080p"
+1080p/playlist.m3u8
+"@
+    } else {
+        # Sub-1080p source (rare): passthrough at source res into the 1080p/ folder.
+        # No upscale. Master playlist reports actual source resolution.
+        Write-Host "  Ladder: source-res passthrough (NVENC h264_nvenc, preset p7). No upscale." -ForegroundColor DarkYellow
+
+        New-Item -ItemType Directory -Path (Join-Path $videoOutDir "1080p") -Force | Out-Null
+
+        $seg1080 = Join-Path $videoOutDir "1080p\segment_%03d.ts"
+        $play1080 = Join-Path $videoOutDir "1080p\playlist.m3u8"
+
+        $ffmpegArgStr = "-nostdin -y -i `"$inputPath`" -map 0:v -map 0:a? " +
+            "-c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k " +
+            "-hls_time 6 -hls_playlist_type vod " +
+            "-hls_segment_filename `"$seg1080`" `"$play1080`""
+
+        $ffmpegProcess = Start-Process -FilePath "ffmpeg" -ArgumentList $ffmpegArgStr -NoNewWindow -Wait -PassThru -RedirectStandardError $ffmpegLog
+        if ($ffmpegProcess.ExitCode -ne 0) {
+            Write-Host "  FAILED (ffmpeg exit code $($ffmpegProcess.ExitCode))" -ForegroundColor Red
+            Write-Host "  Check log: $ffmpegLog" -ForegroundColor DarkGray
+            $failCount++
+            continue
+        }
+
+        $masterPlaylist = @"
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=3000000,RESOLUTION=${srcWidth}x${srcHeight},NAME="source"
+1080p/playlist.m3u8
+"@
+    }
+
+    # --- Write master playlist ---
     $masterPath = Join-Path $videoOutDir "master.m3u8"
     [System.IO.File]::WriteAllText($masterPath, $masterPlaylist, [System.Text.UTF8Encoding]::new($false))
 
-    # --- Generate thumbnail (frame at 25% duration) ---
+    # --- Generate fallback thumbnail (frame at 25 percent of duration) ---
+    # Canonical per-couple thumb flow is Sierra-curated via Vimeo pictures.sizes
+    # (see pull-vimeo-thumbs.ps1). This ffmpeg fallback covers local-MP4-only cases.
     $thumbTime = $durationSec * 0.25
     $thumbPath = Join-Path (Join-Path $OutputDir "thumbs") "$videoId.jpg"
     $thumbLog = Join-Path $videoOutDir "thumb.log"
@@ -183,7 +269,7 @@ foreach ($mp4 in $mp4Files) {
         "-q:v 2 `"$thumbPath`" -y"
     $thumbProcess = Start-Process -FilePath "ffmpeg" -ArgumentList $thumbArgStr -NoNewWindow -Wait -PassThru -RedirectStandardError $thumbLog
     if ($thumbProcess.ExitCode -ne 0) {
-        Write-Host " (thumbnail failed)" -ForegroundColor DarkYellow -NoNewline
+        Write-Host "  (thumbnail failed, non-fatal)" -ForegroundColor DarkYellow
     }
 
     # --- Update config JSON duration ---
@@ -197,10 +283,10 @@ foreach ($mp4 in $mp4Files) {
     }
 
     if (-not $found) {
-        Write-Host " (no matching config entry)" -ForegroundColor DarkYellow -NoNewline
+        Write-Host "  (no matching config entry for id=$videoId, duration not recorded)" -ForegroundColor DarkYellow
     }
 
-    Write-Host " done ($durationFormatted)" -ForegroundColor Green
+    Write-Host "  done ($durationFormatted)" -ForegroundColor Green
 
     # Clean up log files on success
     Remove-Item -Path $ffmpegLog -ErrorAction SilentlyContinue

@@ -23,7 +23,7 @@ End-to-end guide for setting up a new couple's film delivery page on flyiniris.c
 │     (video.flyiniris.com)                                    │
 │                                                             │
 │  Handles:                                                   │
-│  - HLS streaming (adaptive 1080p/720p/480p)                 │
+│  - HLS streaming (source-aware: 4K + 1080p, or 1080p only)  │
 │  - Thumbnail serving                                        │
 │  - Password auth (JWT tokens)                               │
 │  - Full-resolution MP4 downloads (after auth)               │
@@ -34,12 +34,11 @@ End-to-end guide for setting up a new couple's film delivery page on flyiniris.c
 │              fi-films R2 bucket                              │
 │                                                             │
 │  couples/<slug>/                                            │
-│    hls/<video-id>/master.m3u8        ← HLS playlists        │
-│    hls/<video-id>/1080p/             ← HD segments          │
-│    hls/<video-id>/720p/              ← Med segments         │
-│    hls/<video-id>/480p/              ← Low segments         │
+│    hls/<video-id>/master.m3u8        ← HLS playlist         │
+│    hls/<video-id>/4k/                ← present if 4K source │
+│    hls/<video-id>/1080p/             ← always present       │
 │    originals/<video-id>.mp4          ← Full-res downloads   │
-│    thumbs/<video-id>.jpg             ← Video thumbnails     │
+│    thumbs/<video-id>.jpg             ← Sierra-curated thumb │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -118,7 +117,11 @@ Edit:
 
 ### Step 3: Transcode to HLS
 
-Converts each MP4 into 3 quality levels of HLS segments.
+Converts each MP4 into a source-resolution-aware HLS ladder using NVIDIA NVENC.
+
+- 4K source (3840+ wide): `4k/` + `1080p/` ladder (2 rungs)
+- 1080p / 2K source: `1080p/` only (1 rung)
+- Sub-1080p source (rare): source-res passthrough into `1080p/`, no upscale
 
 **PowerShell (Windows):**
 ```powershell
@@ -142,12 +145,14 @@ cd ~/flyiniris/delivery/scripts
 
 **What it does:**
 - Reads each MP4 from InputDir.
-- Creates `output/<video-id>/1080p/`, `720p/`, `480p/` with HLS segments.
-- Generates `master.m3u8` for adaptive bitrate switching.
-- Extracts a thumbnail at 25% of the video.
+- Probes resolution per clip and emits the matching ladder.
+- 4K source: writes `output/<video-id>/4k/` and `output/<video-id>/1080p/` with HLS segments.
+- Sub-4K source: writes `output/<video-id>/1080p/` only.
+- Generates `master.m3u8` listing only the variants that exist.
+- Extracts a 1280x720 fallback thumbnail at 25 percent of duration via ffmpeg. This is a fallback for local-MP4-only flows; the canonical thumbnail flow is Sierra-curated via `pull-vimeo-thumbs.ps1`.
 - Updates the config JSON with measured durations.
 
-**Time estimate:** roughly 2 to 5 min per minute of source video, depending on CPU.
+**Time estimate:** roughly 0.3 to 0.8 min per minute of source video on the RTX hardware (NVENC `-preset p7`). An 8-clip wedding catalog totaling 30 minutes of source typically finishes in 10 to 15 minutes wall clock.
 
 ### Step 4: Upload to R2
 
@@ -181,8 +186,10 @@ The couple's download password lives in Cloudflare KV. Set via wrangler:
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv:key put --binding=PASSWORDS "rachel-brandon" "rb101224"
+wrangler kv key put --binding=PASSWORDS "rachel-brandon" "rb101224"
 ```
+
+(Note: modern wrangler 4.x uses `kv key` with a space, not the older `kv:key` colon form. The colon form silently fails on current wrangler.)
 
 The key is the couple slug. The value is the password from the config JSON.
 
@@ -271,7 +278,7 @@ curl -s "https://video.flyiniris.com/couples/rachel-brandon/hls/highlight/master
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv:key put --binding=PASSWORDS "<slug>" "new-password-here"
+wrangler kv key put --binding=PASSWORDS "<slug>" "new-password-here"
 ```
 
 Update the password in `delivery/live/<slug>.json` to keep the local source aligned with KV. The config file is gitignored so the new password stays local.
@@ -279,7 +286,7 @@ Update the password in `delivery/live/<slug>.json` to keep the local source alig
 ## Playback features
 
 Every couple page includes:
-- **Adaptive HLS streaming**, auto-adjusts to 1080p/720p/480p based on connection.
+- **Adaptive HLS streaming**, source-aware ladder: 4K + 1080p for hero deliverables (teaser, highlight, story session), 1080p only for day-of archival clips. Player picks the right rung based on connection and viewport.
 - **Chromecast**, cast to any Chromecast-enabled TV.
 - **AirPlay**, cast to Apple TV from Safari/iOS.
 - **Quality selector**, manual quality override in player controls.
@@ -295,9 +302,9 @@ Every couple page includes:
 |---------|-----|
 | Video shows loading spinner forever | Check HLS files exist in R2: `rclone ls r2fi:fi-films/couples/<slug>/hls/<video-id>/`. |
 | Thumbnail missing (dark placeholder) | Upload thumbnail: `rclone copy output/thumbs/<id>.jpg r2fi:fi-films/couples/<slug>/thumbs/`. |
-| Download password not working | Verify KV value: `wrangler kv:key get --binding=PASSWORDS <slug>`. |
+| Download password not working | Verify KV value: `wrangler kv key get --binding=PASSWORDS <slug>`. |
 | Chromecast not showing | Must be on same Wi-Fi as Cast device. Only works in Chrome. |
 | Page not updating after push | Hard refresh (`Ctrl+Shift+R`). Cloudflare Pages can take 1 to 2 min. |
-| Transcode is very slow | Use `-preset fast` instead of `medium` in transcode script (slightly lower quality). |
+| Transcode is very slow | Confirm NVENC is actually being used. ffmpeg should print `h264_nvenc` in stream encoder lines. If it's falling back to libx264 the GPU isn't reachable. Check `nvidia-smi`. |
 | rclone upload fails | Check remote: `rclone lsd r2fi:fi-films/`. If auth error, re-run `rclone config`. |
 | Generator rejects config | Read every error printed. Common: deprecated `names`/`date`/`photos` fields, missing `featured: true`, invalid category. See spec Section 5.2. |

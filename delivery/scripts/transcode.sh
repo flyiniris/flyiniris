@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 #
-# transcode.sh — Flyin' Iris HLS Transcoder
+# transcode.sh - Flyin' Iris HLS Transcoder (NVENC, source-resolution-aware)
 #
-# Transcodes MP4 files into multi-bitrate HLS streams.
-# For each MP4, creates 1080p/720p/480p variants, master playlist,
-# thumbnail, and updates the couple config JSON with detected durations.
+# Transcodes MP4 files into source-aware HLS ladders.
+#
+#   4K source (>= 3840 wide)         -> 4k/ + 1080p/ ladder (2 rungs)
+#   Sub-4K source (1080p, 2K, etc.)  -> 1080p/ only (1 rung)
+#   Sub-1080p source (rare)          -> 1080p/ only, source-res passthrough, no upscale
+#
+# Encoder is NVIDIA NVENC (h264_nvenc -preset p7 -cq 18 top rung, -cq 20 1080p
+# rung). This script requires an NVIDIA GPU available to ffmpeg.
 #
 # Usage:
 #   ./transcode.sh -i <input_dir> -c <config_file> [-o <output_dir>]
 #
-# Dependencies: ffmpeg, ffprobe, jq
+# Dependencies: ffmpeg (with NVENC support), ffprobe, jq
 
 set -euo pipefail
 
@@ -48,12 +53,12 @@ fi
 # --- Preflight checks ---
 
 if ! command -v ffmpeg &>/dev/null; then
-    echo "ERROR: ffmpeg not found in PATH. Install FFmpeg and ensure it is on your PATH."
+    echo "ERROR: ffmpeg not found in PATH. Install FFmpeg with NVENC support."
     exit 1
 fi
 
 if ! command -v ffprobe &>/dev/null; then
-    echo "ERROR: ffprobe not found in PATH. Install FFmpeg and ensure it is on your PATH."
+    echo "ERROR: ffprobe not found in PATH."
     exit 1
 fi
 
@@ -95,7 +100,7 @@ if [[ ${#mp4_files[@]} -eq 0 ]]; then
 fi
 
 echo ""
-echo "=== Flyin' Iris HLS Transcoder ==="
+echo "=== Flyin' Iris HLS Transcoder (NVENC, source-resolution-aware) ==="
 echo "Input:  $INPUT_DIR"
 echo "Output: $OUTPUT_DIR"
 echo "Config: $CONFIG_FILE"
@@ -119,79 +124,138 @@ for mp4_path in "${mp4_files[@]}"; do
     video_id="${filename%.mp4}"
     video_out_dir="$OUTPUT_DIR/$video_id"
 
-    printf "[%d/%d] Processing %s..." "$counter" "$total" "$filename"
+    printf "[%d/%d] Processing %s...\n" "$counter" "$total" "$filename"
 
     # --- Probe duration ---
     duration_sec="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$mp4_path" 2>/dev/null)" || {
-        echo " FAILED (could not probe duration)"
+        echo "  FAILED (could not probe duration)"
         fail_count=$((fail_count + 1))
         continue
     }
-    # Trim whitespace
     duration_sec="$(echo "$duration_sec" | tr -d '[:space:]')"
 
-    # Convert to M:SS format
     total_seconds="${duration_sec%%.*}"
     minutes=$((total_seconds / 60))
     seconds=$((total_seconds % 60))
     duration_formatted="$(printf "%d:%02d" "$minutes" "$seconds")"
 
-    # --- Create output directories ---
-    mkdir -p "$video_out_dir/1080p" "$video_out_dir/720p" "$video_out_dir/480p"
-
-    # --- Transcode to HLS (single-pass, 3 qualities) ---
-    if ! ffmpeg -i "$mp4_path" \
-        -filter_complex "[0:v]split=3[v1][v2][v3];[v1]scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2[v1out];[v2]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2[v2out];[v3]scale=854:480:force_original_aspect_ratio=decrease,pad=854:480:(ow-iw)/2:(oh-ih)/2[v3out]" \
-        -map "[v1out]" -map "0:a?" \
-        -c:v:0 libx264 -b:v:0 5000k -c:a:0 aac -b:a:0 128k \
-        -preset medium -g 48 -keyint_min 48 \
-        -hls_time 4 -hls_segment_type mpegts \
-        -hls_segment_filename "$video_out_dir/1080p/segment%03d.ts" \
-        -hls_playlist_type vod \
-        "$video_out_dir/1080p/playlist.m3u8" \
-        -map "[v2out]" -map "0:a?" \
-        -c:v:1 libx264 -b:v:1 2500k -c:a:1 aac -b:a:1 128k \
-        -preset medium -g 48 -keyint_min 48 \
-        -hls_time 4 -hls_segment_type mpegts \
-        -hls_segment_filename "$video_out_dir/720p/segment%03d.ts" \
-        -hls_playlist_type vod \
-        "$video_out_dir/720p/playlist.m3u8" \
-        -map "[v3out]" -map "0:a?" \
-        -c:v:2 libx264 -b:v:2 1000k -c:a:2 aac -b:a:2 128k \
-        -preset medium -g 48 -keyint_min 48 \
-        -hls_time 4 -hls_segment_type mpegts \
-        -hls_segment_filename "$video_out_dir/480p/segment%03d.ts" \
-        -hls_playlist_type vod \
-        "$video_out_dir/480p/playlist.m3u8" \
-        -y 2>"$video_out_dir/ffmpeg.log"; then
-        echo " FAILED (ffmpeg error)"
-        echo "  Check log: $video_out_dir/ffmpeg.log"
+    # --- Probe resolution ---
+    src_width="$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$mp4_path" 2>/dev/null | tr -d '[:space:]')" || {
+        echo "  FAILED (could not probe width)"
         fail_count=$((fail_count + 1))
         continue
-    fi
+    }
+    src_height="$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$mp4_path" 2>/dev/null | tr -d '[:space:]')"
 
-    # --- Generate master.m3u8 ---
-    cat > "$video_out_dir/master.m3u8" <<'MASTER'
+    echo "  Source: ${src_width}x${src_height}, ${duration_formatted}"
+
+    mkdir -p "$video_out_dir"
+    ffmpeg_log="$video_out_dir/ffmpeg.log"
+
+    if [[ "$src_width" -ge 3840 ]]; then
+        # 4K source: 4K + 1080p ladder
+        echo "  Ladder: 4K + 1080p (NVENC h264_nvenc, preset p7)"
+        mkdir -p "$video_out_dir/4k" "$video_out_dir/1080p"
+
+        if ! ffmpeg -nostdin -y -i "$mp4_path" \
+            -filter_complex "[0:v]split=2[v4k][v1080];[v4k]copy[v4kout];[v1080]scale=1920:1080:flags=lanczos[v1080out]" \
+            -map "[v4kout]" -map "0:a?" \
+            -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k \
+            -hls_time 6 -hls_playlist_type vod \
+            -hls_segment_filename "$video_out_dir/4k/segment_%03d.ts" \
+            "$video_out_dir/4k/playlist.m3u8" \
+            -map "[v1080out]" -map "0:a?" \
+            -c:v h264_nvenc -preset p7 -cq 20 -pix_fmt yuv420p -c:a aac -b:a 128k \
+            -hls_time 6 -hls_playlist_type vod \
+            -hls_segment_filename "$video_out_dir/1080p/segment_%03d.ts" \
+            "$video_out_dir/1080p/playlist.m3u8" \
+            2>"$ffmpeg_log"; then
+            echo "  FAILED (ffmpeg error)"
+            echo "  Check log: $ffmpeg_log"
+            fail_count=$((fail_count + 1))
+            continue
+        fi
+
+        cat > "$video_out_dir/master.m3u8" <<MASTER
 #EXTM3U
 #EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=5128000,RESOLUTION=1920x1080,NAME="1080p"
+#EXT-X-STREAM-INF:BANDWIDTH=15000000,RESOLUTION=${src_width}x${src_height},NAME="4K"
+4k/playlist.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080,NAME="1080p"
 1080p/playlist.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=2628000,RESOLUTION=1280x720,NAME="720p"
-720p/playlist.m3u8
-#EXT-X-STREAM-INF:BANDWIDTH=1128000,RESOLUTION=854x480,NAME="480p"
-480p/playlist.m3u8
 MASTER
 
-    # --- Generate thumbnail (frame at 25% duration) ---
+    elif [[ "$src_width" -ge 1920 ]]; then
+        # 1080p (or near-1080p / 2K) source: 1080p only
+        echo "  Ladder: 1080p only (NVENC h264_nvenc, preset p7)"
+        mkdir -p "$video_out_dir/1080p"
+
+        # Passthrough if exactly 1920x1080; otherwise scale-with-pad to 1920x1080.
+        if [[ "$src_width" -eq 1920 && "$src_height" -eq 1080 ]]; then
+            vf_args=()
+        else
+            vf_args=(-vf "scale=1920:1080:flags=lanczos:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2")
+        fi
+
+        if ! ffmpeg -nostdin -y -i "$mp4_path" \
+            -map 0:v -map "0:a?" \
+            "${vf_args[@]}" \
+            -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k \
+            -hls_time 6 -hls_playlist_type vod \
+            -hls_segment_filename "$video_out_dir/1080p/segment_%03d.ts" \
+            "$video_out_dir/1080p/playlist.m3u8" \
+            2>"$ffmpeg_log"; then
+            echo "  FAILED (ffmpeg error)"
+            echo "  Check log: $ffmpeg_log"
+            fail_count=$((fail_count + 1))
+            continue
+        fi
+
+        cat > "$video_out_dir/master.m3u8" <<MASTER
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080,NAME="1080p"
+1080p/playlist.m3u8
+MASTER
+
+    else
+        # Sub-1080p source (rare): source-res passthrough, no upscale.
+        echo "  Ladder: source-res passthrough (NVENC h264_nvenc, preset p7). No upscale."
+        mkdir -p "$video_out_dir/1080p"
+
+        if ! ffmpeg -nostdin -y -i "$mp4_path" \
+            -map 0:v -map "0:a?" \
+            -c:v h264_nvenc -preset p7 -cq 18 -pix_fmt yuv420p -c:a aac -b:a 192k \
+            -hls_time 6 -hls_playlist_type vod \
+            -hls_segment_filename "$video_out_dir/1080p/segment_%03d.ts" \
+            "$video_out_dir/1080p/playlist.m3u8" \
+            2>"$ffmpeg_log"; then
+            echo "  FAILED (ffmpeg error)"
+            echo "  Check log: $ffmpeg_log"
+            fail_count=$((fail_count + 1))
+            continue
+        fi
+
+        cat > "$video_out_dir/master.m3u8" <<MASTER
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=3000000,RESOLUTION=${src_width}x${src_height},NAME="source"
+1080p/playlist.m3u8
+MASTER
+    fi
+
+    # --- Generate fallback thumbnail (25 percent of duration) ---
+    # Canonical per-couple thumb flow is Sierra-curated via Vimeo pictures.sizes
+    # (see pull-vimeo-thumbs.ps1). This ffmpeg fallback covers local-MP4-only cases.
     thumb_time="$(echo "$duration_sec * 0.25" | bc -l 2>/dev/null || echo "$(( total_seconds / 4 ))")"
     thumb_path="$OUTPUT_DIR/thumbs/$video_id.jpg"
-    if ! ffmpeg -ss "$thumb_time" -i "$mp4_path" \
+    if ! ffmpeg -nostdin -ss "$thumb_time" -i "$mp4_path" \
         -frames:v 1 \
         -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2" \
         -q:v 2 \
         "$thumb_path" \
         -y 2>/dev/null; then
-        printf " (thumbnail failed)"
+        printf "  (thumbnail failed, non-fatal)\n"
     fi
 
     # --- Update config JSON duration ---
@@ -201,10 +265,10 @@ MASTER
         "$config_tmp" > "$config_tmp_new"
     mv "$config_tmp_new" "$config_tmp"
 
-    echo " done ($duration_formatted)"
+    echo "  done (${duration_formatted})"
 
     # Clean up log on success
-    rm -f "$video_out_dir/ffmpeg.log"
+    rm -f "$ffmpeg_log"
 done
 
 # --- Write updated config JSON ---
