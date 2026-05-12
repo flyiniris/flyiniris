@@ -218,6 +218,13 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
+
+    /* Brand-align Vidstack player UI typography (title, button text, etc.).
+       SVG icons are unaffected by font changes. */
+    media-player {
+      font-family: 'Outfit', sans-serif;
+      color: #F5F0EB;
+    }
     .featured-info {
       display: flex;
       align-items: center;
@@ -1038,6 +1045,22 @@
       var player = modalPlayerWrap.querySelector('media-player');
       if (player) {
         configureHls(player);
+
+        // Force playlist videos to start at t=0 regardless of any persisted
+        // playback position from storage="fi-playlist" (set on the <media-player>
+        // attribute). Storage is good for the single-card modal (resume from where
+        // you left off) but breaks the "Watch the Full Day" sequential experience
+        // when a video has been watched previously in standalone modal.
+        // Try multiple Vidstack lifecycle events since the exact emission
+        // ordering may vary by provider; the flag makes the reset idempotent.
+        var startResetDone = false;
+        function resetToStart() {
+          if (startResetDone) return;
+          startResetDone = true;
+          try { player.currentTime = 0; } catch (e) { /* ignore if not yet writable */ }
+        }
+        player.addEventListener('loaded-metadata', resetToStart, { once: true });
+        player.addEventListener('can-play', resetToStart, { once: true });
 
         var hasAdvanced = false;
         var lastSeekAt = 0;
