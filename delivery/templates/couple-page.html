@@ -224,12 +224,6 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
       position: relative;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .hero-card:hover .hero-player-wrap,
-    .hero-card:focus-within .hero-player-wrap {
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
@@ -260,12 +254,6 @@
       background-color: #1A1A19;
       cursor: pointer;
       transition: opacity 0.25s ease;
-    }
-    .hero-overlay::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
     }
     .hero-overlay.hidden {
       opacity: 0;
