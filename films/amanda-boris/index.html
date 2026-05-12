@@ -977,7 +977,7 @@
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
         '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
+        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
         '  <div class="fi-remote-buttons">' +
         '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
         '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
@@ -1064,7 +1064,7 @@
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
         '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
+        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
         '  <div class="fi-remote-buttons">' +
         '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
         '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
@@ -1102,7 +1102,7 @@
         '  <media-provider>' +
         '    <media-poster src="' + thumbUrl(item.id) + '" alt="' + escapeAttr(item.title) + '"></media-poster>' +
         '  </media-provider>' +
-        '  <media-video-layout></media-video-layout>' +
+        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
         '  <div class="fi-remote-buttons">' +
         '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
         '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
@@ -1410,6 +1410,38 @@
     }
     function escapeAttr(str) {
       return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Vidstack's default <media-video-layout> ships Playback/Accessibility/Audio/Captions
+    // but no quality submenu. We slot a custom Quality submenu into the layout's
+    // settings-menu-items-end slot. The <media-quality-radio-group> auto-populates radio
+    // items from the HLS provider's reported quality levels (and an "Auto" option).
+    // CSS classes match Vidstack's default-layout styling so it visually matches the
+    // built-in submenus. Render hidden if only one quality reported (single-ladder source).
+    function qualitySubmenuHtml() {
+      return (
+        '<media-menu class="vds-menu" slot="settings-menu-items-end">' +
+        '  <media-menu-button class="vds-menu-button">' +
+        '    <svg class="vds-icon" viewBox="0 0 32 32" aria-hidden="true">' +
+        '      <path d="M21.928 9.072l-2.121 2.121A6.5 6.5 0 0 1 22.5 16a6.5 6.5 0 0 1-2.693 4.807l2.121 2.121A9.5 9.5 0 0 0 25.5 16a9.5 9.5 0 0 0-3.572-6.928zM16 6.5a9.5 9.5 0 0 0-6.928 3.572l2.121 2.121A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 4.807 2.693l-2.014 2.014A3.5 3.5 0 0 0 16 13.5 3.5 3.5 0 0 0 12.5 17a3.5 3.5 0 0 0 .793 2.207L11.279 21.22A6.5 6.5 0 0 1 9.5 16a6.5 6.5 0 0 1 .572-2.679L7.951 11.2A9.5 9.5 0 0 0 6.5 16a9.5 9.5 0 0 0 3.572 6.928L7.951 25.05A12.448 12.448 0 0 1 3.5 16 12.5 12.5 0 0 1 16 3.5a12.5 12.5 0 0 1 9.05 3.45z" fill="currentColor"/>' +
+        '    </svg>' +
+        '    <span class="vds-menu-button-label">Quality</span>' +
+        '    <span class="vds-menu-button-hint" data-part="hint"></span>' +
+        '    <media-menu-button-arrow class="vds-menu-button-arrow"></media-menu-button-arrow>' +
+        '  </media-menu-button>' +
+        '  <media-menu-items class="vds-menu-items">' +
+        '    <media-quality-radio-group class="vds-radio-group" auto-label="Auto">' +
+        '      <template>' +
+        '        <media-radio class="vds-radio">' +
+        '          <div class="vds-radio-check"></div>' +
+        '          <span class="vds-radio-label" data-part="label"></span>' +
+        '          <span class="vds-radio-hint" data-part="bitrate"></span>' +
+        '        </media-radio>' +
+        '      </template>' +
+        '    </media-quality-radio-group>' +
+        '  </media-menu-items>' +
+        '</media-menu>'
+      );
     }
   </script>
 </body>
