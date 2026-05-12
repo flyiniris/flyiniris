@@ -191,6 +191,8 @@
       padding: 100px 0;
     }
     .section-label {
+      display: block;
+      text-align: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.75rem;
@@ -201,6 +203,7 @@
     }
     .section-title {
       font-size: clamp(1.8rem, 4vw, 2.8rem);
+      text-align: center;
       margin-bottom: 48px;
     }
 
@@ -220,6 +223,13 @@
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid #2A2A28;
+      position: relative;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .hero-card:hover .hero-player-wrap,
+    .hero-card:focus-within .hero-player-wrap {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
@@ -233,10 +243,63 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
-    .hero-info {
+    /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
+       treatment Featured era (commit 7621991) and re-styled to match the
+       landing page's .video-play-btn (index.html line 647): a 70px gold-
+       bordered circle with a centered play-triangle SVG, visible by
+       default over the poster thumbnail. Click fades the overlay and
+       starts Vidstack playback. After play, the overlay stays hidden
+       (pointer-events: none) so Vidstack's own controls bar becomes
+       interactive without interception. */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A19;
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+    .hero-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+    }
+    .hero-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .hero-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      pointer-events: none;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+    .hero-overlay:hover .hero-play-btn {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .hero-play-btn svg {
+      width: 28px;
+      height: 28px;
+      margin-left: 3px;
+      fill: #FFBD1D;
+    }
+    .hero-info {
+      text-align: center;
       padding: 20px 0 0;
     }
     .hero-title {
@@ -1034,6 +1097,13 @@
             // on page load. With at most 5 hero entries that is under 3KB
             // of manifest fetches, which is negligible.
           }) +
+          '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
+          '      <div class="hero-play-btn">' +
+          '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>' +
+          '        </svg>' +
+          '      </div>' +
+          '    </div>' +
           '  </div>' +
           '  <div class="hero-info">' +
           '    <span class="hero-title">' + escapeHtml(h.title) + '</span>' +
@@ -1042,6 +1112,33 @@
           '</div>';
       }
       stack.innerHTML = html;
+
+      // Wire overlay click + Enter/Space keyboard activation. Pattern from the
+      // pre-hero-treatment Featured era (commit 7621991): clicking the
+      // thumb-as-overlay hides it and starts Vidstack playback. After hide,
+      // pointer-events: none lets all subsequent clicks reach Vidstack's
+      // controls bar naturally.
+      var overlays = stack.querySelectorAll('.hero-overlay');
+      for (var o = 0; o < overlays.length; o++) {
+        (function(overlay) {
+          var activate = function() {
+            if (overlay.classList.contains('hidden')) return;
+            overlay.classList.add('hidden');
+            var player = overlay.parentElement.querySelector('media-player');
+            if (player && typeof player.play === 'function') {
+              var p = player.play();
+              if (p && typeof p.catch === 'function') p.catch(function() {});
+            }
+          };
+          overlay.addEventListener('click', activate);
+          overlay.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              activate();
+            }
+          });
+        })(overlays[o]);
+      }
 
       // Wire HLS config on every hero player.
       var players = stack.querySelectorAll('media-player');
