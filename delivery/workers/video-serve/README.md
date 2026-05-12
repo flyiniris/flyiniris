@@ -24,7 +24,7 @@ wrangler r2 bucket create fi-films
 ### Create KV namespace
 
 ```bash
-wrangler kv:namespace create PASSWORDS
+wrangler kv namespace create PASSWORDS
 ```
 
 Copy the output ID and replace `REPLACE_WITH_KV_NAMESPACE_ID` in `wrangler.toml`.
@@ -40,7 +40,7 @@ Enter a strong random string when prompted.
 ### Add a couple password
 
 ```bash
-wrangler kv:key put --binding=PASSWORDS "amanda-boris" "ab083125"
+wrangler kv key put --binding=PASSWORDS "amanda-boris" "ab083125"
 ```
 
 ## Deploy
