@@ -251,53 +251,6 @@
       color: #F5F0EB;
     }
 
-    /* Cast + AirPlay remote-playback buttons. Vidstack's default
-       <media-video-layout> does not include these (API drift since the
-       Feb 2026 implementation that used the now-deprecated
-       <media-google-cast-provider> pattern). Positioned top-right corner
-       of the player. Each button is a Vidstack custom element with
-       built-in click handler for requestGoogleCast() / requestAirPlay(). */
-    .fi-remote-buttons {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 10;
-      display: flex;
-      gap: 8px;
-      pointer-events: auto;
-    }
-    .fi-remote-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      background: rgba(10, 10, 10, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
-      color: #F5F0EB;
-      cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-    .fi-remote-button:hover {
-      background: rgba(255, 189, 29, 0.35);
-      border-color: rgba(255, 189, 29, 0.6);
-    }
-    .fi-remote-button svg {
-      width: 20px;
-      height: 20px;
-      pointer-events: none;
-    }
-    .fi-remote-button[hidden] {
-      display: none;
-    }
-    .fi-remote-button[aria-disabled="true"] {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
     /* ========== Archival Collection ========== */
     .collection-grid {
       display: grid;
@@ -1010,6 +963,17 @@
     function createPlayerHtml(opts) {
       // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
       var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
+      // Vidstack's default media-video-layout already renders the standard
+      // controls bar including play / seek / volume / captions / quality /
+      // settings / airplay / cast / fullscreen. We do NOT add custom child
+      // elements for cast, airplay, or a quality submenu: prior attempts
+      // shipped duplicates that floated on top of the video (cast/airplay
+      // at top-right via absolute CSS) and a slot="settings-menu-items-end"
+      // menu that rendered as inline text because the web component layout
+      // does not support React's slots-prop mechanism. See Vidstack source
+      // at packages/vidstack/src/elements/define/layouts/default/slots.ts
+      // (icon slots only) and video-layout.ts (DefaultGoogleCastButton +
+      // DefaultAirPlayButton are already in the layout's render output).
       return (
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
         (opts.autoplay ? ' autoplay' : '') +
@@ -1018,15 +982,7 @@
         '  <media-provider>' +
         '    <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
         '  </media-provider>' +
-        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
-        '  <div class="fi-remote-buttons">' +
-        '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
-        '    </media-google-cast-button>' +
-        '    <media-airplay-button class="fi-remote-button" aria-label="AirPlay">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h3v-2H3V5h18v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>' +
-        '    </media-airplay-button>' +
-        '  </div>' +
+        '  <media-video-layout></media-video-layout>' +
         '</media-player>'
       );
     }
@@ -1506,37 +1462,6 @@
       return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    // Vidstack's default <media-video-layout> ships Playback/Accessibility/Audio/Captions
-    // but no quality submenu. We slot a custom Quality submenu into the layout's
-    // settings-menu-items-end slot. The <media-quality-radio-group> auto-populates radio
-    // items from the HLS provider's reported quality levels (and an "Auto" option).
-    // CSS classes match Vidstack's default-layout styling so it visually matches the
-    // built-in submenus. Render hidden if only one quality reported (single-ladder source).
-    function qualitySubmenuHtml() {
-      return (
-        '<media-menu class="vds-menu" slot="settings-menu-items-end">' +
-        '  <media-menu-button class="vds-menu-button">' +
-        '    <svg class="vds-icon" viewBox="0 0 24 24" aria-hidden="true">' +
-        '      <path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm2.5 0V9H17c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1h-3.5zm1.5-1.5h2v-3h-2v3z" fill="currentColor"/>' +
-        '    </svg>' +
-        '    <span class="vds-menu-button-label">Quality</span>' +
-        '    <span class="vds-menu-button-hint" data-part="hint"></span>' +
-        '    <media-menu-button-arrow class="vds-menu-button-arrow"></media-menu-button-arrow>' +
-        '  </media-menu-button>' +
-        '  <media-menu-items class="vds-menu-items">' +
-        '    <media-quality-radio-group class="vds-radio-group" auto-label="Auto">' +
-        '      <template>' +
-        '        <media-radio class="vds-radio">' +
-        '          <div class="vds-radio-check"></div>' +
-        '          <span class="vds-radio-label" data-part="label"></span>' +
-        '          <span class="vds-radio-hint" data-part="bitrate"></span>' +
-        '        </media-radio>' +
-        '      </template>' +
-        '    </media-quality-radio-group>' +
-        '  </media-menu-items>' +
-        '</media-menu>'
-      );
-    }
   </script>
 </body>
 </html>

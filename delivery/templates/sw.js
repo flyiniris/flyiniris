@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fi-shell-v6';
+const CACHE_NAME = 'fi-shell-v7';
 const SHELL_ASSETS = [
   './',
   'https://cdn.vidstack.io/player/theme.css',
