@@ -221,6 +221,26 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
     }
+    /* Count-aware hero sizing. Caps player width per hero count so multi-hero
+       pages don't render visually heavier than fewer-hero pages at the same
+       viewport. Ladder calibrated to Amanda 2-hero baseline (960px) per Sean.
+       The container above already caps at 1200px; these caps apply *within*
+       that. Mobile (<768px) is unaffected: container content width is below
+       the smallest cap, so max-width is dormant. */
+    #hero-row[data-hero-count="1"] .hero-player-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    #hero-row[data-hero-count="2"] .hero-player-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    #hero-row[data-hero-count="3"] .hero-player-wrap,
+    #hero-row[data-hero-count="4"] .hero-player-wrap,
+    #hero-row[data-hero-count="5"] .hero-player-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
          theme.css source. --media-brand was a phantom (no effect). Set both
@@ -776,7 +796,7 @@
   </section>
 
   <!-- ========== Hero Row ========== -->
-  <section class="section hero-row" id="hero-row">
+  <section class="section hero-row" id="hero-row" data-hero-count="{{HERO_COUNT}}">
     <div class="container reveal">
       <p class="section-label">Your Films</p>
       <div class="hero-stack" id="hero-stack">
