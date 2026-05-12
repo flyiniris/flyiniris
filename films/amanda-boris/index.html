@@ -1038,12 +1038,43 @@
       var player = modalPlayerWrap.querySelector('media-player');
       if (player) {
         configureHls(player);
-        player.addEventListener('ended', function() {
-          if (playlistMode && playlistIndex < PLAYLIST.length - 1) {
-            playlistIndex++;
-            loadPlaylistVideo(playlistIndex);
-            updatePlaylistBar();
+
+        var hasAdvanced = false;
+        var lastSeekAt = 0;
+
+        function advance() {
+          if (hasAdvanced) return;
+          if (!playlistMode) return;
+          if (playlistIndex >= PLAYLIST.length - 1) return;
+          hasAdvanced = true;
+          playlistIndex++;
+          loadPlaylistVideo(playlistIndex);
+          updatePlaylistBar();
+        }
+
+        // Primary: Vidstack 'ended' event (works on most providers/streams).
+        player.addEventListener('ended', advance);
+
+        // Track seeks so the time-update fallback below does not yank a user
+        // who scrubbed to within 0.4 sec of the end (they want to watch, not advance).
+        player.addEventListener('seeking', function() { lastSeekAt = Date.now(); });
+        player.addEventListener('seeked', function() { lastSeekAt = Date.now(); });
+
+        // Fallback: HLS streams sometimes do not fire 'ended' (hls.js issue #5000).
+        // Detect natural end via time-update proximity to duration.
+        player.addEventListener('time-update', function(e) {
+          if (Date.now() - lastSeekAt < 1500) return;
+          var ct, dur;
+          if (e.detail) {
+            ct = e.detail.currentTime;
+            dur = e.detail.duration;
           }
+          if (typeof ct !== 'number' && player.state) {
+            ct = player.state.currentTime;
+            dur = player.state.duration;
+          }
+          if (typeof ct !== 'number' || typeof dur !== 'number' || dur <= 0) return;
+          if (dur - ct < 0.4) advance();
         });
       }
 
