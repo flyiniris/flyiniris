@@ -224,6 +224,12 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
       position: relative;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .hero-card:hover .hero-player-wrap,
+    .hero-card:focus-within .hero-player-wrap {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
@@ -1068,7 +1074,15 @@
       for (var i = 0; i < HERO.length; i++) {
         var h = HERO[i];
         html +=
-          '<div class="hero-card reveal" data-hero-id="' + escapeAttr(h.id) + '">' +
+          // No .reveal class. Hero cards are the page's primary content;
+          // applying the scroll-reveal animation made sub-fold heroes
+          // (R+M's third hero, story-session) sit at opacity 0 +
+          // translateY(30px) until 15% of the card scrolled into view,
+          // which read as "wrong size" mid-scroll when the card was
+          // partially through its 0.6s transition. The reveal animation
+          // is still used for the Collection grid and Downloads section
+          // below, which are appropriate sub-fold reveal targets.
+          '<div class="hero-card" data-hero-id="' + escapeAttr(h.id) + '">' +
           '  <div class="hero-player-wrap">' +
           createPlayerHtml({
             title: h.title,
