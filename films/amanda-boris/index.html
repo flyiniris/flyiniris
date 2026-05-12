@@ -222,6 +222,13 @@
       border: 1px solid #2A2A28;
     }
     .hero-player-wrap media-player {
+      /* Vidstack's actual brand variables use the --vds-* prefix per the
+         theme.css source. --media-brand was a phantom (no effect). Set both
+         names so the page works regardless of which Vidstack version the CDN
+         bundle is serving. */
+      --vds-primary: #FFBD1D;
+      --vds-primary-hover: #D99E0A;
+      --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
       width: 100%;
       aspect-ratio: 16/9;
@@ -459,6 +466,9 @@
       border-bottom: none;
     }
     .modal-player-wrap media-player {
+      --vds-primary: #FFBD1D;
+      --vds-primary-hover: #D99E0A;
+      --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
       width: 100%;
       aspect-ratio: 16/9;
@@ -963,25 +973,27 @@
     function createPlayerHtml(opts) {
       // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
       var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
+      // <media-poster> MUST be a direct child of <media-player>, NOT nested
+      // inside <media-provider>. Per Vidstack's canonical example
+      // (vidstack.io/docs/wc/player/components/display/poster):
+      //   <media-player>
+      //     <media-provider></media-provider>
+      //     <media-poster src="..."></media-poster>
+      //     <media-video-layout></media-video-layout>
+      //   </media-player>
+      // Earlier template versions had the poster inside media-provider, which
+      // caused Vidstack to silently ignore it and never render the thumbnail.
+      //
       // Vidstack's default media-video-layout already renders the standard
-      // controls bar including play / seek / volume / captions / quality /
-      // settings / airplay / cast / fullscreen. We do NOT add custom child
-      // elements for cast, airplay, or a quality submenu: prior attempts
-      // shipped duplicates that floated on top of the video (cast/airplay
-      // at top-right via absolute CSS) and a slot="settings-menu-items-end"
-      // menu that rendered as inline text because the web component layout
-      // does not support React's slots-prop mechanism. See Vidstack source
-      // at packages/vidstack/src/elements/define/layouts/default/slots.ts
-      // (icon slots only) and video-layout.ts (DefaultGoogleCastButton +
-      // DefaultAirPlayButton are already in the layout's render output).
+      // controls bar including play / seek / volume / captions / settings /
+      // airplay / cast / fullscreen. No custom child elements needed.
       return (
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
         (opts.autoplay ? ' autoplay' : '') +
         loadAttr +
         ' storage="' + escapeAttr(opts.storage) + '">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
-        '  </media-provider>' +
+        '  <media-provider></media-provider>' +
+        '  <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
         '  <media-video-layout></media-video-layout>' +
         '</media-player>'
       );
