@@ -202,10 +202,16 @@ function main() {
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
 
-  // Playlist: archival + bonus, exclude featured, chronological order
-  // (see delivery-page-standard.md Section 3.4 for ordering convention)
+  // Playlist: archival + bonus, exclude featured + explicit playlist: false opt-outs,
+  // chronological order. See delivery-page-standard.md Section 3.4 for ordering convention.
+  // playlist: false is a temporary opt-out for pre-wedding deliverables (story session,
+  // story-session-interview). Spec rewrite post-R+M migrates to partOfDay: false.
   const playlistArray = videosArray
-    .filter(v => (v.category === 'archival' || v.category === 'bonus') && v.featured !== true)
+    .filter(v =>
+      (v.category === 'archival' || v.category === 'bonus') &&
+      v.featured !== true &&
+      v.playlist !== false
+    )
     .sort((a, b) => a.order - b.order)
     .map(v => ({ id: v.id, title: v.title, duration: v.duration }));
 
