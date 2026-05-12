@@ -204,19 +204,44 @@
       margin-bottom: 48px;
     }
 
-    /* ========== Featured Film ========== */
-    .featured {
+    /* ========== Hero Row ========== */
+    .hero-row {
       background: #111110;
     }
-    .featured-player-wrap {
+    .hero-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+    .hero-card {
+      position: relative;
+    }
+    .hero-player-wrap {
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid #2A2A28;
     }
-    .featured-player-wrap media-player {
+    .hero-player-wrap media-player {
       --media-brand: #FFBD1D;
       width: 100%;
       aspect-ratio: 16/9;
+    }
+    .hero-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 0;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.6rem;
+    }
+    .hero-duration {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: #C8C3B9;
     }
 
     /* Brand-align Vidstack player UI typography (title, button text, etc.).
@@ -271,23 +296,6 @@
     .fi-remote-button[aria-disabled="true"] {
       opacity: 0.4;
       cursor: not-allowed;
-    }
-    .featured-info {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0 0;
-    }
-    .featured-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.4rem;
-    }
-    .featured-duration {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.85rem;
-      color: #C8C3B9;
     }
 
     /* ========== Archival Collection ========== */
@@ -771,6 +779,8 @@
       .hero { padding: 100px 20px 60px; }
       .hero-cta { padding: 14px 32px; font-size: 0.8rem; }
       .section { padding: 72px 0; }
+      .hero-stack { gap: 32px; }
+      .hero-title { font-size: 1.3rem; }
       .modal-content { max-width: 100%; }
       .modal-close { top: -40px; }
       .download-form { flex-direction: column; }
@@ -802,15 +812,13 @@
     </div>
   </section>
 
-  <!-- ========== Featured Film ========== -->
-  <section class="section featured" id="featured">
+  <!-- ========== Hero Row ========== -->
+  <section class="section hero-row" id="hero-row">
     <div class="container reveal">
-      <p class="section-label">Featured Film</p>
-      <div class="featured-player-wrap" id="featured-player-wrap">
-        <!-- Vidstack player injected by JS -->
-      </div>
-      <div class="featured-info" id="featured-info">
-        <!-- Title + duration injected by JS -->
+      <p class="section-label">Featured</p>
+      <div class="hero-stack" id="hero-stack">
+        <!-- One inline player + title row per hero entry, injected by JS.
+             Hidden entirely if HERO is empty. -->
       </div>
     </div>
   </section>
@@ -913,13 +921,16 @@
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    const VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"","order":0,"featured":true},{"id":"highlight","title":"Amanda & Boris's Wedding","category":"highlight","duration":"","order":1},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"","order":3},{"id":"first-look-vows","title":"First Look & Vows","category":"archival","duration":"","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"","order":6},{"id":"grand-march-first-dance","title":"Grand March & First Dance","category":"archival","duration":"","order":7},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"","order":8},{"id":"speeches","title":"Speeches","category":"archival","duration":"","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"","order":10}];
+    const VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Amanda & Boris's Wedding","category":"highlight","duration":"","order":1,"hero":true},{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","category":"archival","duration":"","order":2},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"","order":3},{"id":"first-look-vows","title":"First Look & Vows","category":"archival","duration":"","order":4},{"id":"ketubah-signing","title":"Ketubah Signing","category":"archival","duration":"","order":5},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"","order":6},{"id":"grand-march-first-dance","title":"Grand March & First Dance","category":"archival","duration":"","order":7},{"id":"parent-dances","title":"Parent Dances","category":"archival","duration":"","order":8},{"id":"speeches","title":"Speeches","category":"archival","duration":"","order":9},{"id":"gopro","title":"GoPro","category":"bonus","duration":"","order":10}];
     const PLAYLIST = [{"id":"first-look-bridesmaids","title":"First Look: Bridesmaids","duration":""},{"id":"first-look-dad","title":"First Look: Dad","duration":""},{"id":"first-look-vows","title":"First Look & Vows","duration":""},{"id":"ketubah-signing","title":"Ketubah Signing","duration":""},{"id":"ceremony","title":"Ceremony","duration":""},{"id":"grand-march-first-dance","title":"Grand March & First Dance","duration":""},{"id":"parent-dances","title":"Parent Dances","duration":""},{"id":"speeches","title":"Speeches","duration":""},{"id":"gopro","title":"GoPro","duration":""}];
+    const HERO = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Amanda & Boris's Wedding","category":"highlight","duration":"","order":1,"hero":true}];
     const WORKER_BASE = 'https://video.flyiniris.com';
     const SLUG = 'amanda-boris';
 
-    const featured = VIDEOS.find(v => v.featured) || VIDEOS[0];
-    const collection = VIDEOS.filter(v => v !== featured).sort((a, b) => a.order - b.order);
+    // Hero entries (sorted server-side by order) play as full-width inline players
+    // above the Collection grid. Collection grid excludes them to avoid duplicate
+    // rendering. See delivery-page-standard.md Section 4.5.
+    const collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
 
     function computePlaylistDurationLabel() {
       var total = 0;
@@ -967,15 +978,19 @@
       });
     }
 
-    // --- Featured Player ---
-    (function initFeatured() {
-      const wrap = document.getElementById('featured-player-wrap');
-      const info = document.getElementById('featured-info');
-
-      wrap.innerHTML =
-        '<media-player title="' + escapeAttr(featured.title) + '" src="' + hlsUrl(featured.id) + '" crossorigin playsinline storage="fi-featured">' +
+    // --- Player markup helper (shared by hero row, modal, and playlist) ---
+    // Returns the full <media-player> markup. The quality submenu, cast / airplay
+    // buttons, and HLS provider config are identical across all three call sites;
+    // this helper keeps them in lockstep so a single template change applies
+    // everywhere a player is rendered.
+    function createPlayerHtml(opts) {
+      // opts: { title, src, poster, autoplay (bool), storage (string) }
+      return (
+        '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
+        (opts.autoplay ? ' autoplay' : '') +
+        ' storage="' + escapeAttr(opts.storage) + '">' +
         '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(featured.id) + '" alt="' + escapeAttr(featured.title) + '"></media-poster>' +
+        '    <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
         '  </media-provider>' +
         '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
         '  <div class="fi-remote-buttons">' +
@@ -986,14 +1001,49 @@
         '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h3v-2H3V5h18v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>' +
         '    </media-airplay-button>' +
         '  </div>' +
-        '</media-player>';
+        '</media-player>'
+      );
+    }
 
-      var player = wrap.querySelector('media-player');
-      if (player) configureHls(player);
+    // --- Hero Row ---
+    // Renders one full-width inline player per HERO entry, stacked vertically.
+    // Section hides entirely when HERO is empty (page degrades to Collection-only).
+    (function initHeroRow() {
+      var stack = document.getElementById('hero-stack');
+      var section = document.getElementById('hero-row');
 
-      info.innerHTML =
-        '<span class="featured-title">' + escapeHtml(featured.title) + '</span>' +
-        (featured.duration ? '<span class="featured-duration">' + escapeHtml(featured.duration) + '</span>' : '');
+      if (!HERO || HERO.length === 0) {
+        // No hero entries: hide the section entirely. Page renders Navbar -> Hero
+        // (couple names) -> Collection grid -> Downloads -> Footer.
+        section.style.display = 'none';
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < HERO.length; i++) {
+        var h = HERO[i];
+        html +=
+          '<div class="hero-card reveal" data-hero-id="' + escapeAttr(h.id) + '">' +
+          '  <div class="hero-player-wrap">' +
+          createPlayerHtml({
+            title: h.title,
+            src: hlsUrl(h.id),
+            poster: thumbUrl(h.id),
+            autoplay: false,
+            storage: 'fi-hero-' + h.id
+          }) +
+          '  </div>' +
+          '  <div class="hero-info">' +
+          '    <span class="hero-title">' + escapeHtml(h.title) + '</span>' +
+          (h.duration ? '    <span class="hero-duration">' + escapeHtml(h.duration) + '</span>' : '') +
+          '  </div>' +
+          '</div>';
+      }
+      stack.innerHTML = html;
+
+      // Wire HLS config on every hero player.
+      var players = stack.querySelectorAll('media-player');
+      for (var p = 0; p < players.length; p++) configureHls(players[p]);
     })();
 
     // --- Collection Grid ---
@@ -1059,21 +1109,13 @@
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
 
-      modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(title) + '" src="' + hlsUrl(videoId) + '" crossorigin playsinline autoplay storage="fi-modal">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(videoId) + '" alt="' + escapeAttr(title) + '"></media-poster>' +
-        '  </media-provider>' +
-        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
-        '  <div class="fi-remote-buttons">' +
-        '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
-        '    </media-google-cast-button>' +
-        '    <media-airplay-button class="fi-remote-button" aria-label="AirPlay">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h3v-2H3V5h18v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>' +
-        '    </media-airplay-button>' +
-        '  </div>' +
-        '</media-player>';
+      modalPlayerWrap.innerHTML = createPlayerHtml({
+        title: title,
+        src: hlsUrl(videoId),
+        poster: thumbUrl(videoId),
+        autoplay: true,
+        storage: 'fi-modal'
+      });
 
       var player = modalPlayerWrap.querySelector('media-player');
       if (player) configureHls(player);
@@ -1097,21 +1139,13 @@
 
     function loadPlaylistVideo(index) {
       var item = PLAYLIST[index];
-      modalPlayerWrap.innerHTML =
-        '<media-player title="' + escapeAttr(item.title) + '" src="' + hlsUrl(item.id) + '" crossorigin playsinline autoplay storage="fi-playlist">' +
-        '  <media-provider>' +
-        '    <media-poster src="' + thumbUrl(item.id) + '" alt="' + escapeAttr(item.title) + '"></media-poster>' +
-        '  </media-provider>' +
-        '  <media-video-layout>' + qualitySubmenuHtml() + '</media-video-layout>' +
-        '  <div class="fi-remote-buttons">' +
-        '    <media-google-cast-button class="fi-remote-button" aria-label="Cast to TV">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>' +
-        '    </media-google-cast-button>' +
-        '    <media-airplay-button class="fi-remote-button" aria-label="AirPlay">' +
-        '      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h3v-2H3V5h18v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>' +
-        '    </media-airplay-button>' +
-        '  </div>' +
-        '</media-player>';
+      modalPlayerWrap.innerHTML = createPlayerHtml({
+        title: item.title,
+        src: hlsUrl(item.id),
+        poster: thumbUrl(item.id),
+        autoplay: true,
+        storage: 'fi-playlist'
+      });
 
       var player = modalPlayerWrap.querySelector('media-player');
       if (player) {
@@ -1253,8 +1287,15 @@
     })();
 
     // --- Hero CTA ---
+    // Scrolls to the hero row when hero entries exist (the new "featured experience"),
+    // else to the Collection grid. The CTA copy "Watch the Teaser" is intentionally
+    // static; copy variability per featured-slot category is tracked as a future
+    // ticket in delivery-page-standard.md Section 11.
     document.getElementById('hero-cta').addEventListener('click', function() {
-      document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+      var heroSection = document.getElementById('hero-row');
+      var heroVisible = heroSection && heroSection.style.display !== 'none';
+      var target = heroVisible ? heroSection : document.getElementById('collection');
+      target.scrollIntoView({ behavior: 'smooth' });
     });
 
     // --- Scroll Reveal ---

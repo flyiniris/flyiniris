@@ -19,6 +19,7 @@ const DEFAULT_WORKER_BASE = 'https://video.flyiniris.com';
 const SLUG_RE = /^[a-z0-9-]+$/;
 const CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
 const DEPRECATED_FIELDS = ['names', 'date', 'date_short', 'photos', 'customMessage', 'venueDisplay', 'filmSlug'];
+const HERO_MAX = 5;
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -114,7 +115,8 @@ function validateConfig(config, configPath) {
 
   if (videosArray) {
     const seenIds = new Set();
-    let featuredCount = 0;
+    let heroCount = 0;
+    let legacyFeaturedCount = 0;
     videosArray.forEach((v, i) => {
       if (!v || typeof v !== 'object') {
         errors.push(`videos[${i}] must be an object`);
@@ -135,12 +137,14 @@ function validateConfig(config, configPath) {
       if (v.order == null || typeof v.order !== 'number') {
         errors.push(`videos[${i}].order is required and must be a number`);
       }
-      if (v.featured === true) featuredCount++;
+      if (v.hero === true) heroCount++;
+      if (v.featured === true) legacyFeaturedCount++;
     });
-    if (featuredCount === 0) {
-      errors.push('exactly one video must have featured: true (got 0)');
-    } else if (featuredCount > 1) {
-      errors.push(`exactly one video must have featured: true (got ${featuredCount})`);
+    if (heroCount > HERO_MAX) {
+      errors.push(`at most ${HERO_MAX} videos may have hero: true (got ${heroCount}). Hero deliverables are the cinematic top-of-page cluster (teaser, highlight, story session). Day-of cuts and bonus content belong in the Collection grid below.`);
+    }
+    if (legacyFeaturedCount > 0) {
+      console.warn(`  warning: ${legacyFeaturedCount} video(s) still carry the deprecated 'featured: true' field. Migrate to 'hero: true' per delivery-page-standard.md Section 4.5. The field is preserved in the output but no longer drives rendering.`);
     }
   }
 
@@ -188,33 +192,46 @@ function main() {
   let videosArray = validateConfig(config, absConfigPath);
 
   // Normalize: fill default titles, ensure duration is a string.
-  // Preserve playlist: false on entries that opt out of the Watch the Full Day
-  // playlist (see delivery-page-standard.md Section 3.4 + cc91ef2). Without
-  // this preservation the playlistArray filter below sees undefined for every
-  // entry and includes everything, defeating the opt-out.
+  // Preserve hero: true (drives the inline player stack above the Collection grid;
+  // see delivery-page-standard.md Section 4.5). Preserve playlist: false on entries
+  // that opt out of the Watch the Full Day playlist (Section 3.4). The legacy
+  // featured: true is preserved as a passthrough but is no longer wired to any
+  // template behavior; migrate to hero: true.
   videosArray = videosArray.map(v => ({
     id: v.id,
     title: v.title || defaultTitleFromId(v.id),
     category: v.category,
     duration: v.duration || '',
     order: v.order,
-    ...(v.featured ? { featured: true } : {}),
+    ...(v.hero === true ? { hero: true } : {}),
+    ...(v.featured === true ? { featured: true } : {}),
     ...(v.playlist === false ? { playlist: false } : {}),
   }));
 
-  const featuredVideo = videosArray.find(v => v.featured);
-  const featuredId = featuredVideo.id;
+  // Hero row: entries with hero: true, sorted by order. May be empty (page renders
+  // Collection-only). At most HERO_MAX entries (enforced in validateConfig).
+  const heroArray = videosArray
+    .filter(v => v.hero === true)
+    .sort((a, b) => a.order - b.order);
+
+  // OG image source: first hero entry by order, else first video in catalog.
+  // The legacy {{FEATURED_VIDEO_ID}} token name is retained for template
+  // backward-compat; the value now points to the hero/lead thumbnail.
+  const ogVideoId = heroArray.length > 0 ? heroArray[0].id : videosArray[0].id;
+
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
 
-  // Playlist: archival + bonus, exclude featured + explicit playlist: false opt-outs,
-  // chronological order. See delivery-page-standard.md Section 3.4 for ordering convention.
-  // playlist: false is a temporary opt-out for pre-wedding deliverables (story session,
-  // story-session-interview). Spec rewrite post-R+M migrates to partOfDay: false.
+  // Playlist: archival + bonus, exclude explicit playlist: false opt-outs,
+  // chronological order. See delivery-page-standard.md Section 3.4 for ordering.
+  // Hero entries are NOT excluded from the playlist by default; if a hero clip
+  // is also archival/bonus, it appears both in the hero row and (if not opted
+  // out via playlist: false) in the Watch the Full Day sequence. Typical hero
+  // entries (teaser, highlight, story-session) are auto-excluded by category
+  // or by playlist: false on the paired-deliverable pattern.
   const playlistArray = videosArray
     .filter(v =>
       (v.category === 'archival' || v.category === 'bonus') &&
-      v.featured !== true &&
       v.playlist !== false
     )
     .sort((a, b) => a.order - b.order)
@@ -235,7 +252,8 @@ function main() {
     .replace(/\{\{WORKER_BASE\}\}/g, workerBase)
     .replace(/\{\{VIDEOS_JSON\}\}/g, JSON.stringify(videosArray))
     .replace(/\{\{PLAYLIST_JSON\}\}/g, JSON.stringify(playlistArray))
-    .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, featuredId)
+    .replace(/\{\{HERO_JSON\}\}/g, JSON.stringify(heroArray))
+    .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, ogVideoId)
     .replace(/\{\{YEAR\}\}/g, year);
 
   let manifest = manifestTemplate

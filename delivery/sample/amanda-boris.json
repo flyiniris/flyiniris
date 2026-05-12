@@ -10,14 +10,15 @@
       "category": "teaser",
       "duration": "",
       "order": 0,
-      "featured": true
+      "hero": true
     },
     {
       "id": "highlight",
       "title": "Amanda & Boris's Wedding",
       "category": "highlight",
       "duration": "",
-      "order": 1
+      "order": 1,
+      "hero": true
     },
     {
       "id": "first-look-bridesmaids",
