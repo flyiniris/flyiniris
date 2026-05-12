@@ -268,7 +268,6 @@ function main() {
     .replace(/\{\{VIDEOS_JSON\}\}/g, JSON.stringify(videosArray))
     .replace(/\{\{PLAYLIST_JSON\}\}/g, JSON.stringify(playlistArray))
     .replace(/\{\{HERO_JSON\}\}/g, JSON.stringify(heroArray))
-    .replace(/\{\{HERO_COUNT\}\}/g, String(heroArray.length))
     .replace(/\{\{HERO_CTA\}\}/g, heroCta)
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, ogVideoId)
     .replace(/\{\{YEAR\}\}/g, year);
