@@ -187,7 +187,11 @@ function main() {
   const config = { ...raw };
   let videosArray = validateConfig(config, absConfigPath);
 
-  // Normalize: fill default titles, ensure duration is a string
+  // Normalize: fill default titles, ensure duration is a string.
+  // Preserve playlist: false on entries that opt out of the Watch the Full Day
+  // playlist (see delivery-page-standard.md Section 3.4 + cc91ef2). Without
+  // this preservation the playlistArray filter below sees undefined for every
+  // entry and includes everything, defeating the opt-out.
   videosArray = videosArray.map(v => ({
     id: v.id,
     title: v.title || defaultTitleFromId(v.id),
@@ -195,6 +199,7 @@ function main() {
     duration: v.duration || '',
     order: v.order,
     ...(v.featured ? { featured: true } : {}),
+    ...(v.playlist === false ? { playlist: false } : {}),
   }));
 
   const featuredVideo = videosArray.find(v => v.featured);
