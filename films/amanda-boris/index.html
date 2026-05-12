@@ -1056,8 +1056,15 @@
             src: hlsUrl(h.id),
             poster: thumbUrl(h.id),
             autoplay: false,
-            storage: 'fi-hero-' + h.id,
-            load: 'visible'
+            storage: 'fi-hero-' + h.id
+            // Eager load (default). Earlier polish commit 7426460 set
+            // load: 'visible' here to defer HLS provider attach until the
+            // hero card entered the viewport. That caused Vidstack to
+            // render a "click to load" affordance over the poster image
+            // for non-visible heroes, making the thumbnails look broken.
+            // Cost of reverting: each hero pulls its master.m3u8 (~500 bytes)
+            // on page load. With at most 5 hero entries that is under 3KB
+            // of manifest fetches, which is negligible.
           }) +
           '  </div>' +
           '  <div class="hero-info">' +
