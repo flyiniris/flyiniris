@@ -105,7 +105,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 
 ### Thumbnails
 - All 15 upscaled with **Real-ESRGAN** (4x GPU upscale → resize to 1600px → compress)
-- Tool location: `C:\Users\flyin\Tools\realesrgan\`
+- Tool location: `C:\Users\flyin\realesrgan\`
 - Output: JPG, ~130-250KB each, stored in `fi-assets/couples/{slug}/thumbs/thumb.jpg`
 
 ### Film Index
@@ -251,7 +251,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 
 | Tool | Location | Purpose |
 |------|----------|---------|
-| Real-ESRGAN | `C:\Users\flyin\Tools\realesrgan\` | GPU thumbnail upscaling (4x) |
+| Real-ESRGAN | `C:\Users\flyin\realesrgan\` | GPU thumbnail upscaling (4x) |
 | FFmpeg | System PATH | HLS transcoding |
 | rclone | System PATH | R2 uploads (remote: `r2fi:`) |
 | Wrangler | npm global | Cloudflare Worker deployment |
