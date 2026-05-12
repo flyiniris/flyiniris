@@ -804,7 +804,7 @@
   <section class="hero" id="hero">
     <h1 class="hero-names">Rachel & Michael</h1>
     <p class="hero-date">November 29, 2025</p>
-    <button class="hero-cta" id="hero-cta">Watch the Teaser</button>
+    <button class="hero-cta" id="hero-cta">Watch the Films</button>
     <div class="hero-scroll-hint" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -815,7 +815,7 @@
   <!-- ========== Hero Row ========== -->
   <section class="section hero-row" id="hero-row">
     <div class="container reveal">
-      <p class="section-label">Featured</p>
+      <p class="section-label">Your Films</p>
       <div class="hero-stack" id="hero-stack">
         <!-- One inline player + title row per hero entry, injected by JS.
              Hidden entirely if HERO is empty. -->
@@ -976,6 +976,21 @@
           provider.config = HLS_CONFIG;
         }
       });
+
+      // Mutual exclusion: when this player starts playing, pause every other
+      // <media-player> on the page. Prevents audio overlap from a couple
+      // accidentally starting hero #2 while hero #1 is still playing, or from
+      // the modal player playing on top of a hero player. Modal-on-hero is
+      // covered automatically because the modal's autoplay fires a play event
+      // which this handler intercepts.
+      playerEl.addEventListener('play', function() {
+        var all = document.querySelectorAll('media-player');
+        for (var i = 0; i < all.length; i++) {
+          if (all[i] !== playerEl) {
+            try { all[i].pause(); } catch (err) { /* not yet attached, ignore */ }
+          }
+        }
+      });
     }
 
     // --- Player markup helper (shared by hero row, modal, and playlist) ---
@@ -983,11 +998,22 @@
     // buttons, and HLS provider config are identical across all three call sites;
     // this helper keeps them in lockstep so a single template change applies
     // everywhere a player is rendered.
+    //
+    // The `load` opt maps to Vidstack's load-strategy attribute:
+    //   - "eager" (default for modal + playlist): provider attaches and pulls
+    //     master.m3u8 on element insert. Right for a player that opens on click
+    //     and immediately autoplays.
+    //   - "visible" (used for hero stack): provider waits until the player
+    //     enters the viewport before pulling source. Prevents 3 simultaneous
+    //     HLS manifest requests on page load when 3 hero players exist, only
+    //     one of which is above the fold on mobile.
     function createPlayerHtml(opts) {
-      // opts: { title, src, poster, autoplay (bool), storage (string) }
+      // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
+      var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
       return (
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
         (opts.autoplay ? ' autoplay' : '') +
+        loadAttr +
         ' storage="' + escapeAttr(opts.storage) + '">' +
         '  <media-provider>' +
         '    <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
@@ -1030,7 +1056,8 @@
             src: hlsUrl(h.id),
             poster: thumbUrl(h.id),
             autoplay: false,
-            storage: 'fi-hero-' + h.id
+            storage: 'fi-hero-' + h.id,
+            load: 'visible'
           }) +
           '  </div>' +
           '  <div class="hero-info">' +
@@ -1047,27 +1074,16 @@
     })();
 
     // --- Collection Grid ---
+    // Order: Watch the Full Day playlist card FIRST (full-width, eye-catching),
+    // then individual film cards. Putting the playlist promo above the thumbnails
+    // surfaces the "play everything chronologically" experience that couples
+    // would otherwise scroll past. Renders only when 2+ playlist-eligible cuts
+    // exist; below that threshold the playlist card is suppressed and only
+    // film thumbnails render.
     (function initCollection() {
       var grid = document.getElementById('collection-grid');
       var html = '';
-      for (var i = 0; i < collection.length; i++) {
-        var v = collection[i];
-        html +=
-          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
-          '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
-          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
-          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
-          '    <div class="film-card-play">' +
-          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
-          '    </div>' +
-          '  </div>' +
-          '  <div class="film-card-body">' +
-          '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
-          '  </div>' +
-          '</div>';
-      }
 
-      // "Watch the Full Day" playlist card (renders only if 2+ archival/bonus cuts exist)
       if (PLAYLIST.length >= 2) {
         var totalLabel = computePlaylistDurationLabel();
         var subtitle = PLAYLIST.length + ' films in chronological order';
@@ -1085,6 +1101,23 @@
           '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
           '      <polyline points="9 18 15 12 9 6"></polyline>' +
           '    </svg>' +
+          '  </div>' +
+          '</div>';
+      }
+
+      for (var i = 0; i < collection.length; i++) {
+        var v = collection[i];
+        html +=
+          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
+          '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
+          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
+          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
+          '    <div class="film-card-play">' +
+          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '    </div>' +
+          '  </div>' +
+          '  <div class="film-card-body">' +
+          '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
           '  </div>' +
           '</div>';
       }
@@ -1391,12 +1424,25 @@
         triggerDownload(btn.dataset.videoId, btn);
       });
 
-      // Download All (sequential to avoid overwhelming memory)
+      // Download All (sequential to avoid overwhelming memory). Couples on
+      // mobile or shaky connections need a heads-up that this is a heavy
+      // operation. 4K hero deliverables can be 1+ GB each; a full catalog
+      // is often 5 to 10 GB total. The native confirm() dialog is enough
+      // to catch the "I tapped it by accident" case without adding modal UI.
       document.getElementById('download-all-btn').addEventListener('click', async function() {
         var allBtn = this;
+        var btns = downloadList.querySelectorAll('.download-item-btn');
+        var n = btns.length;
+        if (n === 0) return;
+        var ok = window.confirm(
+          'Download all ' + n + ' films?\n\n' +
+          'This may take a while and use significant bandwidth and storage. ' +
+          'Make sure you are on a stable connection and have enough free space on your device.'
+        );
+        if (!ok) return;
+
         allBtn.disabled = true;
         allBtn.textContent = 'Downloading...';
-        var btns = downloadList.querySelectorAll('.download-item-btn');
         for (var i = 0; i < btns.length; i++) {
           await triggerDownload(btns[i].dataset.videoId, btns[i]);
         }
@@ -1463,8 +1509,8 @@
       return (
         '<media-menu class="vds-menu" slot="settings-menu-items-end">' +
         '  <media-menu-button class="vds-menu-button">' +
-        '    <svg class="vds-icon" viewBox="0 0 32 32" aria-hidden="true">' +
-        '      <path d="M21.928 9.072l-2.121 2.121A6.5 6.5 0 0 1 22.5 16a6.5 6.5 0 0 1-2.693 4.807l2.121 2.121A9.5 9.5 0 0 0 25.5 16a9.5 9.5 0 0 0-3.572-6.928zM16 6.5a9.5 9.5 0 0 0-6.928 3.572l2.121 2.121A6.5 6.5 0 0 1 16 9.5a6.5 6.5 0 0 1 4.807 2.693l-2.014 2.014A3.5 3.5 0 0 0 16 13.5 3.5 3.5 0 0 0 12.5 17a3.5 3.5 0 0 0 .793 2.207L11.279 21.22A6.5 6.5 0 0 1 9.5 16a6.5 6.5 0 0 1 .572-2.679L7.951 11.2A9.5 9.5 0 0 0 6.5 16a9.5 9.5 0 0 0 3.572 6.928L7.951 25.05A12.448 12.448 0 0 1 3.5 16 12.5 12.5 0 0 1 16 3.5a12.5 12.5 0 0 1 9.05 3.45z" fill="currentColor"/>' +
+        '    <svg class="vds-icon" viewBox="0 0 24 24" aria-hidden="true">' +
+        '      <path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm2.5 0V9H17c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1h-3.5zm1.5-1.5h2v-3h-2v3z" fill="currentColor"/>' +
         '    </svg>' +
         '    <span class="vds-menu-button-label">Quality</span>' +
         '    <span class="vds-menu-button-hint" data-part="hint"></span>' +

@@ -175,6 +175,20 @@ function defaultTitleFromId(id) {
   return id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ');
 }
 
+// Derives the Hero (intro) CTA copy from the hero catalog. Single-hero couples
+// see a label matching that one deliverable; multi-hero couples and no-hero
+// couples see the generic "Watch the Films" / "View Your Films" copy.
+// Spec doc Section 11 future ticket #3 captures this.
+function deriveHeroCta(heroArray) {
+  if (heroArray.length === 0) return 'View Your Films';
+  if (heroArray.length >= 2) return 'Watch the Films';
+  const only = heroArray[0];
+  if (only.category === 'teaser') return 'Watch the Teaser';
+  if (only.category === 'highlight') return 'Watch the Highlight';
+  if (only.id === 'story-session') return 'Watch the Story Session';
+  return 'Watch the Film';
+}
+
 function main() {
   const { configPath, workerBase, outputRoot } = parseArgs(process.argv);
   if (!configPath) printUsageAndExit();
@@ -221,6 +235,7 @@ function main() {
 
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
+  const heroCta = deriveHeroCta(heroArray);
 
   // Playlist: archival + bonus, exclude explicit playlist: false opt-outs,
   // chronological order. See delivery-page-standard.md Section 3.4 for ordering.
@@ -253,6 +268,7 @@ function main() {
     .replace(/\{\{VIDEOS_JSON\}\}/g, JSON.stringify(videosArray))
     .replace(/\{\{PLAYLIST_JSON\}\}/g, JSON.stringify(playlistArray))
     .replace(/\{\{HERO_JSON\}\}/g, JSON.stringify(heroArray))
+    .replace(/\{\{HERO_CTA\}\}/g, heroCta)
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, ogVideoId)
     .replace(/\{\{YEAR\}\}/g, year);
 
