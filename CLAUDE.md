@@ -43,6 +43,15 @@ Do not duplicate constants. If a constant must be embedded client-side, fetch
 it from `/api/pricing/constants` on the iris-automation Worker. CORS already
 allows flyiniris.com origins.
 
+### Commit hygiene (multi-file scope discipline)
+
+Adopted 2026-05-12 after two silent feature deletions surfaced in this repo's delivery template. Both deletions happened in multi-file commits whose stated scope was one surface but whose diff materially modified another surface. See `iris-automation/docs/incidents/2026-02-23-and-2026-03-16-silent-feature-deletions.md` for the full postmortem. Rules apply to all Claude sessions, all models, all context sizes (not Claude-model-specific; the anti-pattern is multi-file-cleanup without flagging).
+
+1. **Multi-file commits whose stated scope is one surface but whose diffstat materially modifies another surface MUST enumerate byproduct edits in the commit body.** Materially means more than 10 lines changed in a file outside the stated scope.
+2. **Commits deleting 50+ lines from a file outside the stated scope require an explicit callout** in the commit body explaining what was removed and why. The "regenerate from template" framing is the known anti-pattern for silent feature loss.
+3. **Commit body claims must reflect actual diff direction.** If the message says "Add X" but the diff removes X (even partially), that is a misleading commit. Verify both adds-list and removes-list against `git diff --stat` before commit. The 2026-02-23 e0c179b "Add Google Cast SDK" body while the diff REMOVED the cast wiring is the worst-case example in the dataset.
+4. **Before any commit touching 4+ files where one is on a surface different from the stated scope, do an extra review beat.** Read the diff of the off-scope file specifically. If it is substantive (more than whitespace, imports, or regenerate), flag it in the commit body or split the commit.
+
 ---
 
 ## What This Project Is
