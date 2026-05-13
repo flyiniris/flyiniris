@@ -224,6 +224,17 @@
       overflow: hidden;
       border: 1px solid #2A2A28;
       position: relative;
+      /* Lock the wrap shape so it does not inherit the un-upgraded
+         media-player's intrinsic poster dimensions before first play.
+         Without this, hero cards whose thumbnail JPG is taller than 16:9
+         (e.g. R+M Highlights) render the overlay at thumbnail height,
+         then snap to 16:9 the moment Vidstack attaches and starts
+         playing. Container-level only; no !important and no
+         aspect-ratio on media-player itself, per the v14 + v17 lesson
+         (commits 3145385 + fdfe646 broke playback by hardening the
+         player element directly; rolled back in 97bd3c5). */
+      aspect-ratio: 16 / 9;
+      width: 100%;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .hero-card:hover .hero-player-wrap,
