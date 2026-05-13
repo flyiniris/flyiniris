@@ -541,6 +541,17 @@
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid #2A2A28;
+      /* Same hardening pattern that closed the hero rendering issue in
+         commit 3145385. Lock the wrap to 16:9 at the wrap level so the
+         shape is decided BEFORE Vidstack's web-component upgrade resolves.
+         Without this, the wrap briefly takes its size from the un-upgraded
+         media-player's intrinsic content (poster image at native pixels),
+         which manifested as "modal opens at wrong aspect ratio, then snaps
+         to 16:9 after a moment" and as the playlist-mode poster rendering
+         alongside the playing video in fullscreen. */
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
     }
     .modal-player-wrap.has-playlist {
       border-radius: 8px 8px 0 0;
@@ -551,8 +562,27 @@
       --vds-primary-hover: #D99E0A;
       --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
-      width: 100%;
-      aspect-ratio: 16/9;
+      /* !important on width / height guards against any Vidstack CDN-version
+         CSS that injects its own sizing at higher specificity. The wrap above
+         already enforces 16:9; the player fills the wrap. */
+      width: 100% !important;
+      height: 100% !important;
+      aspect-ratio: 16 / 9;
+    }
+    /* Defensive poster-hide. Vidstack's <media-poster> auto-hides via its own
+       state machine when the player transitions to a playable/playing state,
+       but the playlist-mode innerHTML-replace pattern (loadPlaylistVideo() at
+       line ~1271) destroys and recreates the entire <media-player> per video
+       swap. If Vidstack's lifecycle does not cleanly set data-can-play /
+       data-playing on the new player in time, the poster element never hides
+       and renders alongside the playing video in fullscreen. Forcing opacity
+       0 + pointer-events none whenever the player carries either state
+       attribute closes that gap without affecting the pre-play poster display
+       (which is what data-paused covers). */
+    .modal-player-wrap media-player[data-can-play] media-poster,
+    .modal-player-wrap media-player[data-playing] media-poster {
+      opacity: 0;
+      pointer-events: none;
     }
     .modal-title {
       font-family: 'Cormorant Garamond', serif;
