@@ -1274,48 +1274,82 @@
 
     function loadPlaylistVideo(index) {
       var item = PLAYLIST[index];
+      var newSrc = hlsUrl(item.id);
+      var newPoster = thumbUrl(item.id);
+
+      var player = modalPlayerWrap.querySelector('media-player');
+
+      // Reuse path: same <media-player> element across clip transitions.
+      // Recreating via innerHTML would tear the element out of DOM, which
+      // exits browser fullscreen, and the auto-advance 'ended' event is
+      // not a user gesture so requestFullscreen on a fresh element is
+      // rejected by Chrome / Firefox / Safari. Keeping the element alive
+      // and only swapping src + poster preserves element identity, which
+      // preserves fullscreen across "Watch the Full Day" transitions.
+      if (player && player.__playlistWired) {
+        player.__advanceState.hasAdvanced = false;
+        player.__advanceState.startedAt = Date.now();
+        player.__startResetDone = false;
+        var posterEl = player.querySelector('media-poster');
+        if (posterEl) {
+          posterEl.setAttribute('src', newPoster);
+          posterEl.setAttribute('alt', item.title);
+          // configureHls's hidePoster() set display:none on the prior clip's
+          // play. Clear it so the new clip's poster is visible until that
+          // clip's own play event fires hidePoster again.
+          posterEl.style.display = '';
+        }
+        player.setAttribute('title', item.title);
+        player.setAttribute('src', newSrc);
+        modalTitle.textContent = item.title;
+        return;
+      }
+
+      // First clip of this playlist session: create the player.
       modalPlayerWrap.innerHTML = createPlayerHtml({
         title: item.title,
-        src: hlsUrl(item.id),
-        poster: thumbUrl(item.id),
+        src: newSrc,
+        poster: newPoster,
         autoplay: true,
         storage: 'fi-playlist'
       });
 
-      var player = modalPlayerWrap.querySelector('media-player');
+      player = modalPlayerWrap.querySelector('media-player');
       if (player) {
         configureHls(player);
 
+        // Per-clip mutable state stored on the element. The reuse branch
+        // above resets these fields on each src swap so closures below
+        // (which stay attached for the player's lifetime) see fresh values.
+        player.__playlistWired = true;
+        player.__advanceState = { hasAdvanced: false, lastSeekAt: 0, startedAt: Date.now() };
+        player.__startResetDone = false;
+
         // Force playlist videos to start at t=0 regardless of any persisted
-        // playback position from storage="fi-playlist" (set on the <media-player>
-        // attribute). Storage is good for the single-card modal (resume from where
-        // you left off) but breaks the "Watch the Full Day" sequential experience
-        // when a video has been watched previously in standalone modal.
-        // Try multiple Vidstack lifecycle events since the exact emission
-        // ordering may vary by provider; the flag makes the reset idempotent.
-        var startResetDone = false;
+        // position from storage="fi-playlist". Storage is good for the
+        // single-card modal (resume) but breaks the sequential playlist
+        // experience when a clip was watched standalone previously.
+        // Listeners stay attached for the player's lifetime; idempotency
+        // per clip comes from the __startResetDone flag, reset above.
         function resetToStart() {
-          if (startResetDone) return;
-          startResetDone = true;
+          if (player.__startResetDone) return;
+          player.__startResetDone = true;
           try { player.currentTime = 0; } catch (e) { /* ignore if not yet writable */ }
         }
-        player.addEventListener('loaded-metadata', resetToStart, { once: true });
-        player.addEventListener('can-play', resetToStart, { once: true });
-
-        var hasAdvanced = false;
-        var lastSeekAt = 0;
-        var playerStartedAt = Date.now();
+        player.addEventListener('loaded-metadata', resetToStart);
+        player.addEventListener('can-play', resetToStart);
 
         function advance() {
-          if (hasAdvanced) return;
+          var s = player.__advanceState;
+          if (s.hasAdvanced) return;
           if (!playlistMode) return;
           if (playlistIndex >= PLAYLIST.length - 1) return;
           // Ignore spurious 'ended' / near-end signals during the first 2 sec
-          // of player init (HLS load races, stale buffers from the prior player).
+          // of clip init (HLS load races, stale buffers from the prior src).
           // Real wedding-clip durations are far above 2 sec, so this cannot
           // block a legitimate advance.
-          if (Date.now() - playerStartedAt < 2000) return;
-          hasAdvanced = true;
+          if (Date.now() - s.startedAt < 2000) return;
+          s.hasAdvanced = true;
           playlistIndex++;
           loadPlaylistVideo(playlistIndex);
           updatePlaylistBar();
@@ -1326,13 +1360,14 @@
 
         // Track seeks so the time-update fallback below does not yank a user
         // who scrubbed to within 0.4 sec of the end (they want to watch, not advance).
-        player.addEventListener('seeking', function() { lastSeekAt = Date.now(); });
-        player.addEventListener('seeked', function() { lastSeekAt = Date.now(); });
+        player.addEventListener('seeking', function() { player.__advanceState.lastSeekAt = Date.now(); });
+        player.addEventListener('seeked', function() { player.__advanceState.lastSeekAt = Date.now(); });
 
         // Fallback: HLS streams sometimes do not fire 'ended' (hls.js issue #5000).
         // Detect natural end via time-update proximity to duration.
         player.addEventListener('time-update', function(e) {
-          if (Date.now() - lastSeekAt < 1500) return;
+          var s = player.__advanceState;
+          if (Date.now() - s.lastSeekAt < 1500) return;
           var ct, dur;
           if (e.detail) {
             ct = e.detail.currentTime;
