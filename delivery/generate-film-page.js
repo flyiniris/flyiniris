@@ -211,9 +211,17 @@ function main() {
   // that opt out of the Watch the Full Day playlist (Section 3.4). The legacy
   // featured: true is preserved as a passthrough but is no longer wired to any
   // template behavior; migrate to hero: true.
+  //
+  // Title fallback order for highlight entries specifically: a config-set title
+  // wins, then `${coupleNames}'s Wedding` (the canonical highlight title shape
+  // per spec Section 3.6), then the generic defaultTitleFromId. Every other id
+  // skips the highlight-specific shape and uses defaultTitleFromId directly.
+  // Existing pages (Amanda + Boris's Wedding, Rachel + Michael's Wedding) carry
+  // explicit titles so this fallback is a no-op for them; it backstops future
+  // configs where Sierra omits the highlight title.
   videosArray = videosArray.map(v => ({
     id: v.id,
-    title: v.title || defaultTitleFromId(v.id),
+    title: v.title || (v.id === 'highlight' ? `${config.coupleNames}'s Wedding` : defaultTitleFromId(v.id)),
     category: v.category,
     duration: v.duration || '',
     order: v.order,
