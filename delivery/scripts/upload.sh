@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# upload.sh — Flyin' Iris R2 Uploader
+# upload.sh: Flyin' Iris R2 Uploader.
 #
 # Uploads transcoded HLS files, original MP4s, and thumbnails to
 # Cloudflare R2 via rclone (pre-configured remote: r2fi, bucket: fi-films).

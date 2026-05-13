@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Flyin' Iris — R2 File Rename Script (Bash)
+# Flyin' Iris R2 File Rename Script (Bash).
 # Renames messy original filenames to clean URL-friendly slugs on R2.
 #
 # Usage: bash rename-r2.sh

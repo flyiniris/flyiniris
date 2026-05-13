@@ -152,7 +152,8 @@ Real configs live in `delivery/live/<slug>.json` and are gitignored. Copy `deliv
 | `category` | string | yes | One of `highlight`, `teaser`, `archival`, `bonus`. Free-form values rejected. |
 | `duration` | string | optional | Set by the transcode script after measuring source. |
 | `order` | number | yes | Integer, lowest first. |
-| `featured` | boolean | optional | Exactly one video must have `featured: true`. Generator errors on zero or multiple. |
+| `hero` | boolean | optional | Marks a video for the full-width hero row at the top of the page. Up to 5 entries may have `hero: true`. The first hero is the primary CTA target. |
+| `playlist` | boolean | optional | Set `false` to exclude a video from the "Watch the Full Day" sequential playlist (use for non-day-of cuts like story sessions). Defaults to true for archival category, false otherwise. |
 
 ### Step 3: Transcode videos
 
@@ -386,4 +387,4 @@ Common errors:
 - `'coupleNames' is required`. Replace any `names: [...]` array with `coupleNames: "Name1 & Name2"`.
 - `'weddingDate' is required`. Replace any `date: ...` field with `weddingDate: ...`.
 - `videos[i].category "..." must be one of highlight, teaser, archival, bonus`. Pick the correct enum value.
-- `exactly one video must have featured: true`. Set `featured: true` on the teaser (or highlight if no teaser).
+- `legacy 'featured: true' field detected`. The `featured` field was retired in the 2026-05-12 hero migration. Replace with `hero: true` on each entry you want in the hero row (up to 5).

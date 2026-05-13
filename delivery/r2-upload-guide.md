@@ -11,7 +11,7 @@
 
 ## 1. Use rclone (NOT wrangler)
 
-Wrangler has a **300 MB upload limit**. Use rclone instead — it handles multipart uploads for large files automatically.
+Wrangler has a **300 MB upload limit**. Use rclone instead. It handles multipart uploads for large files automatically.
 
 ```bash
 # Upload a single file
@@ -73,10 +73,10 @@ fi-films/rb-teaser.mp4
 **Important:** When using the public bucket URL directly in a Vidstack player, do NOT include the `crossorigin` attribute or the video won't load.
 
 ```html
-<!-- Public R2 bucket — no crossorigin -->
+<!-- Public R2 bucket: no crossorigin -->
 <media-player src="https://pub-...r2.dev/file.mp4" playsinline>
 
-<!-- Worker URL — include crossorigin -->
+<!-- Worker URL: include crossorigin -->
 <media-player src="https://video.flyiniris.com/..." crossorigin playsinline>
 ```
 

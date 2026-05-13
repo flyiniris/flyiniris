@@ -48,8 +48,8 @@ function printUsageAndExit() {
     weddingDate: 'September 25, 2026',
     password: 'optional, real configs go in delivery/live/ (gitignored)',
     videos: [
-      { id: 'teaser', title: 'Teaser', category: 'teaser', duration: '', order: 0, featured: true },
-      { id: 'highlight', title: "Jessica & Tyler's Wedding", category: 'highlight', duration: '', order: 1 },
+      { id: 'teaser', title: 'Teaser', category: 'teaser', duration: '', order: 0, hero: true },
+      { id: 'highlight', title: "Jessica & Tyler's Wedding", category: 'highlight', duration: '', order: 1, hero: true },
     ],
   }, null, 2));
   process.exit(1);

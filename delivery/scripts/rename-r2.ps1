@@ -1,4 +1,4 @@
-# Flyin' Iris — R2 File Rename Script (PowerShell)
+# Flyin' Iris R2 File Rename Script (PowerShell).
 # Renames messy original filenames to clean URL-friendly slugs on R2.
 #
 # Usage: .\rename-r2.ps1

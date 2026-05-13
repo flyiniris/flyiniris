@@ -1,5 +1,5 @@
-// fi-video-serve — Cloudflare Worker
-// Serves HLS video from R2 with JWT-gated downloads
+// fi-video-serve: Cloudflare Worker.
+// Serves HLS video from R2 with JWT-gated downloads.
 
 export default {
   async fetch(request, env) {
@@ -150,7 +150,7 @@ async function handleDownload(request, env, slug, videoId) {
 }
 
 // ---------------------------------------------------------------------------
-// JWT helpers — HMAC-SHA256 via Web Crypto API
+// JWT helpers. HMAC-SHA256 via Web Crypto API.
 // ---------------------------------------------------------------------------
 
 function base64urlEncode(data) {

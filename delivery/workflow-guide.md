@@ -87,7 +87,7 @@ Edit:
       "category": "teaser",
       "duration": "0:00",
       "order": 0,
-      "featured": true
+      "hero": true
     },
     {
       "id": "highlight",
@@ -111,7 +111,7 @@ Edit:
 - `slug` is the URL path: `flyiniris.com/films/rachel-brandon`.
 - `id` must match the MP4 filename without `.mp4`.
 - `duration` set to "0:00" initially. The transcoder fills it.
-- Exactly one video must have `featured: true`. Convention: teaser if delivered, otherwise highlight.
+- Up to 5 videos may have `hero: true`. Convention: teaser plus highlight at minimum; add story-session if delivered.
 - `password` is what the couple enters to unlock downloads.
 - `category` must be one of: `highlight`, `teaser`, `archival`, `bonus`.
 
@@ -307,4 +307,4 @@ Every couple page includes:
 | Page not updating after push | Hard refresh (`Ctrl+Shift+R`). Cloudflare Pages can take 1 to 2 min. |
 | Transcode is very slow | Confirm NVENC is actually being used. ffmpeg should print `h264_nvenc` in stream encoder lines. If it's falling back to libx264 the GPU isn't reachable. Check `nvidia-smi`. |
 | rclone upload fails | Check remote: `rclone lsd r2fi:fi-films/`. If auth error, re-run `rclone config`. |
-| Generator rejects config | Read every error printed. Common: deprecated `names`/`date`/`photos` fields, missing `featured: true`, invalid category. See spec Section 5.2. |
+| Generator rejects config | Read every error printed. Common: deprecated `names`/`date`/`photos`/`featured` fields, invalid category, slug not lowercase-hyphen. See spec Section 5. |
