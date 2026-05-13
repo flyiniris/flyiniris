@@ -1011,6 +1011,23 @@
           }
         }
       });
+
+      // Force-hide <media-poster> once playback actually starts. Vidstack's
+      // own auto-hide races on the playlist innerHTML-replace pattern
+      // (loadPlaylistVideo) and on fullscreen transitions, leaving the poster
+      // image rendering on top of the playing video. The CSS-only attempt in
+      // commit fdfe646 was reverted in 97bd3c5 because the bundled
+      // !important + aspect-ratio sizing broke video element rendering.
+      // Hiding via JS sidesteps both the lifecycle race and the sizing trap.
+      function hidePoster() {
+        var poster = playerEl.querySelector('media-poster');
+        if (poster) poster.style.display = 'none';
+      }
+      playerEl.addEventListener('play', hidePoster);
+      playerEl.addEventListener('playing', hidePoster);
+      playerEl.addEventListener('can-play', function() {
+        if (!playerEl.paused) hidePoster();
+      });
     }
 
     // --- Player markup helper (shared by hero row, modal, and playlist) ---
