@@ -175,6 +175,18 @@ function defaultTitleFromId(id) {
   return id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ');
 }
 
+// Hero-entry title defaults. Sean's product brand uses "Film" suffix language
+// across hero deliverables for cinematic consistency ("A Film By Flyin' Iris").
+// These three ids carry intentional brand-language defaults that take
+// precedence over defaultTitleFromId. A config-set title still wins; the
+// map only fires when title is missing or empty. See spec doc
+// delivery-page-standard.md Section 3.6 for the convention.
+const HERO_TITLE_DEFAULTS = {
+  'teaser': 'Teaser Film',
+  'highlight': 'Highlight Film',
+  'story-session': 'Story Session Film',
+};
+
 // Derives the Hero (intro) CTA copy from the hero catalog. Single-hero couples
 // see a label matching that one deliverable; multi-hero couples and no-hero
 // couples see the generic "Watch the Films" / "View Your Films" copy.
@@ -212,16 +224,18 @@ function main() {
   // featured: true is preserved as a passthrough but is no longer wired to any
   // template behavior; migrate to hero: true.
   //
-  // Title fallback order for highlight entries specifically: a config-set title
-  // wins, then `${coupleNames}'s Wedding` (the canonical highlight title shape
-  // per spec Section 3.6), then the generic defaultTitleFromId. Every other id
-  // skips the highlight-specific shape and uses defaultTitleFromId directly.
-  // Existing pages (Amanda + Boris's Wedding, Rachel + Michael's Wedding) carry
-  // explicit titles so this fallback is a no-op for them; it backstops future
-  // configs where Sierra omits the highlight title.
+  // Title fallback order: a config-set title always wins. Otherwise:
+  //   1. HERO_TITLE_DEFAULTS map (teaser / highlight / story-session get the
+  //      "X Film" brand-language defaults per spec Section 3.6).
+  //   2. defaultTitleFromId for any other id (capitalize first letter, replace
+  //      hyphens with spaces).
+  // The HERO_TITLE_DEFAULTS map is the single source of truth for hero title
+  // defaults. To rename "Highlight Film" -> something else later, edit the map
+  // here; all couple configs that omit explicit titles pick up the change on
+  // their next regen.
   videosArray = videosArray.map(v => ({
     id: v.id,
-    title: v.title || (v.id === 'highlight' ? `${config.coupleNames}'s Wedding` : defaultTitleFromId(v.id)),
+    title: v.title || HERO_TITLE_DEFAULTS[v.id] || defaultTitleFromId(v.id),
     category: v.category,
     duration: v.duration || '',
     order: v.order,
