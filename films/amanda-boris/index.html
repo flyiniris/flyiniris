@@ -927,7 +927,7 @@
   </footer>
 
   <!-- ========== Video Modal ========== -->
-  <div class="modal-overlay" id="modal-overlay">
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-content">
       <button class="modal-close" id="modal-close" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1238,9 +1238,14 @@
 
     var playlistMode = false;
     var playlistIndex = 0;
+    // Element that had focus before the modal opened. Restored on close so
+    // keyboard / screen reader users return to where they were on the page
+    // (the film card or playlist button they activated).
+    var previousFocus = null;
 
     function openModal(videoId, title) {
       playlistMode = false;
+      previousFocus = document.activeElement;
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
 
@@ -1258,10 +1263,14 @@
       modalTitle.textContent = title;
       modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      // Move focus into the modal so screen readers announce it and
+      // keyboard users can immediately Esc out or Tab through controls.
+      document.getElementById('modal-close').focus();
     }
 
     function openPlaylist() {
       if (PLAYLIST.length === 0) return;
+      previousFocus = document.activeElement;
       playlistMode = true;
       playlistIndex = 0;
       modalPlayerWrap.classList.add('has-playlist');
@@ -1399,6 +1408,12 @@
       modalOverlay.classList.remove('active');
       document.body.style.overflow = '';
       playlistMode = false;
+      // Restore focus to the element that opened the modal so keyboard
+      // and screen reader users land back where they were in the page.
+      if (previousFocus && typeof previousFocus.focus === 'function' && document.contains(previousFocus)) {
+        try { previousFocus.focus(); } catch (e) { /* element may have been replaced */ }
+      }
+      previousFocus = null;
       // Give transition time to finish before clearing
       setTimeout(function() {
         modalPlayerWrap.innerHTML = '';
@@ -1413,7 +1428,10 @@
       if (e.target === modalOverlay) closeModal();
     });
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeModal();
+      // Only act on Escape when the modal is actually open. Without this
+      // guard, every Escape press anywhere on the page invoked closeModal
+      // as a no-op, including the document.body.style.overflow reset.
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
     });
 
     // Card click delegation
@@ -1533,6 +1551,13 @@
           return res.json();
         })
         .then(function(data) {
+          // Guard against malformed server responses ({}, null, missing
+          // token field). Without this, subsequent download requests would
+          // send 'Authorization: Bearer undefined' and fail with cryptic
+          // 401s instead of surfacing the auth failure here.
+          if (!data || typeof data.token !== 'string' || !data.token) {
+            throw new Error('invalid_auth_response');
+          }
           authToken = data.token;
           gate.style.display = 'none';
           renderDownloadList();
