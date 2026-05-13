@@ -2421,12 +2421,38 @@
   }
 
   /* ============================================================
-   * localStorage save/load
+   * Autosave (localStorage + cross-device server draft)
+   *
+   * Two parallel save layers fire on every field change:
+   *   1. localStorage (400ms debounce). Survives tab close on the same
+   *      device. Instant restore, no network. Backs the form up even if
+   *      the user is offline.
+   *   2. Server draft (2s debounce, token-based URLs only). Hits
+   *      POST /api/questionnaire/:token/draft on the iris-automation
+   *      Worker. Persists into the questionnaires.responses column so the
+   *      couple can resume on a different device, and so Sean is never
+   *      missing responses just because the couple closed the tab before
+   *      hitting Submit. Fire-and-forget; failures are silent because
+   *      localStorage already covers the same-device case.
+   *
+   * Contact-id-based URLs (no token) skip the server save and rely on
+   * localStorage only, because the /draft endpoint requires a token to
+   * resolve the D1 row.
    * ============================================================ */
   var saveTimer = null;
+  var serverSaveTimer = null;
   function maybeSave() {
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(saveLocal, 400);
+  }
+  // Schedule the server draft save. Pulled out so saveLocal can trigger it
+  // on every write, which captures the explicit saveLocal callers
+  // (timeline analyzer auto-fill, step transitions) for free, not just
+  // the typing path that flows through maybeSave.
+  function scheduleServerSave() {
+    if (!token) return;
+    if (serverSaveTimer) clearTimeout(serverSaveTimer);
+    serverSaveTimer = setTimeout(saveDraftToServer, 2000);
   }
   function saveLocal() {
     try {
@@ -2441,6 +2467,7 @@
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch (e) {}
+    scheduleServerSave();
   }
 
   function loadLocal() {
@@ -2448,29 +2475,84 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       var snap = JSON.parse(raw);
-      if (snap._yn) {
-        Object.keys(snap._yn).forEach(function (g) {
-          setYn(g, snap._yn[g]);
-        });
-      }
-      if (snap.fields) {
-        Object.keys(snap.fields).forEach(function (n) {
-          if (FIELD_NAMES.indexOf(n) < 0) return;
-          var s = snap.fields[n];
-          if (!s) return;
-          fieldStates[n] = {
-            value: s.value || '',
-            prefilled_value: s.prefilled_value == null ? null : s.prefilled_value,
-            state: s.state || 'user_entered'
-          };
-          if (s.value) writeFieldValue(n, s.value);
-          applyStateToField(n);
-        });
-      }
-      if (typeof snap._step === 'number' && snap._step >= 0 && snap._step <= 6) {
-        goToStep(snap._step);
-      }
+      applySnapshot(snap);
     } catch (e) {}
+  }
+
+  // Shared restore logic used by both loadLocal and loadDraftFromServer.
+  // Pulled out so the same snapshot shape works for either source.
+  function applySnapshot(snap) {
+    if (!snap) return;
+    if (snap._yn) {
+      Object.keys(snap._yn).forEach(function (g) {
+        setYn(g, snap._yn[g]);
+      });
+    }
+    if (snap.fields) {
+      Object.keys(snap.fields).forEach(function (n) {
+        if (FIELD_NAMES.indexOf(n) < 0) return;
+        var s = snap.fields[n];
+        if (!s) return;
+        fieldStates[n] = {
+          value: s.value || '',
+          prefilled_value: s.prefilled_value == null ? null : s.prefilled_value,
+          state: s.state || 'user_entered'
+        };
+        if (s.value) writeFieldValue(n, s.value);
+        applyStateToField(n);
+      });
+    }
+    if (typeof snap._step === 'number' && snap._step >= 0 && snap._step <= 6) {
+      goToStep(snap._step);
+    }
+  }
+
+  /* ============================================================
+   * Server draft autosave (cross-device)
+   *
+   * Mirrors saveLocal's snapshot up to the Worker via
+   * POST /api/questionnaire/:token/draft. Snapshot shape is identical to
+   * localStorage so the same applySnapshot restore logic works for
+   * either source. Fire-and-forget on failure; localStorage covers the
+   * same-device fallback.
+   * ============================================================ */
+  function saveDraftToServer() {
+    if (!token) return;
+    try {
+      FIELD_NAMES.forEach(function (n) {
+        fieldStates[n].value = readFieldValue(n);
+      });
+      var snapshot = {
+        _step: currentStep,
+        _yn: ynState,
+        fields: fieldStates
+      };
+      fetch(API_BASE + '/api/questionnaire/' + encodeURIComponent(token) + '/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snapshot),
+        keepalive: true
+      }).catch(function () { /* fire-and-forget, localStorage backs us up */ });
+    } catch (e) {}
+  }
+
+  // GET counterpart for cross-device restore. Resolves to true if a draft
+  // was loaded and applied, false otherwise (no token, no row, network
+  // error, or empty responses). Caller can fall back to localStorage on
+  // false.
+  function loadDraftFromServer() {
+    if (!token) return Promise.resolve(false);
+    return fetch(API_BASE + '/api/questionnaire/' + encodeURIComponent(token) + '/draft')
+      .then(function (r) {
+        if (!r.ok) return null;
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data || !data.ok || !data.responses) return false;
+        applySnapshot(data.responses);
+        return true;
+      })
+      .catch(function () { return false; });
   }
 
   function countPopulated() {
@@ -2649,11 +2731,30 @@
 
   /* ============================================================
    * Boot
+   *
+   * Restore order (highest precedence wins):
+   *   1. Server draft (cross-device, source of truth) via
+   *      GET /api/questionnaire/:token/draft. Runs async so initial paint
+   *      is not blocked on network.
+   *   2. localStorage (same-device fallback, instant) if server returns
+   *      nothing.
+   *
+   * Paint immediately with localStorage so the form is usable even on
+   * slow connections, then upgrade with the server draft once the GET
+   * resolves. Hash anchor and progress UI re-run after the upgrade.
    * ============================================================ */
   loadLocal();
   if (hashStepOverride !== null) goToStep(hashStepOverride);
   updateProgress();
   updateSubmitGate();
+
+  loadDraftFromServer().then(function (loaded) {
+    if (loaded) {
+      if (hashStepOverride !== null) goToStep(hashStepOverride);
+      updateProgress();
+      updateSubmitGate();
+    }
+  });
   loadContactPrefill();
 
 })();
