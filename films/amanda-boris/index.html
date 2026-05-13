@@ -215,28 +215,15 @@
       display: flex;
       flex-direction: column;
       gap: 56px;
-      /* Explicit (was implicit stretch). Prevents the cross-axis-stretch
-         default from propagating a tall sibling's height to other cards
-         if any descendant temporarily overflows. */
-      align-items: flex-start;
     }
     .hero-card {
       position: relative;
-      /* With .hero-stack align-items: flex-start, items no longer stretch
-         to fill cross-axis. Force full container width here. */
-      width: 100%;
     }
     .hero-player-wrap {
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid #2A2A28;
       position: relative;
-      /* Lock the wrap's intrinsic ratio. Belt-and-suspenders with the
-         media-player rule below; if any descendant momentarily reports a
-         different intrinsic size during Vidstack init, the wrap holds the
-         16:9 shape so the layout cannot shift per-card. */
-      aspect-ratio: 16 / 9;
-      width: 100%;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .hero-card:hover .hero-player-wrap,
@@ -253,12 +240,8 @@
       --vds-primary-hover: #D99E0A;
       --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
-      /* !important guards against Vidstack's CDN bundle injecting its own
-         width/height in a higher-specificity selector. The wrap above
-         already enforces 16:9 via aspect-ratio, so the player follows. */
-      width: 100% !important;
-      height: 100% !important;
-      aspect-ratio: 16 / 9;
+      width: 100%;
+      aspect-ratio: 16/9;
     }
     /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
        treatment Featured era (commit 7621991) and re-styled to match the
@@ -271,13 +254,6 @@
     .hero-overlay {
       position: absolute;
       inset: 0;
-      /* Explicit width/height pin. inset: 0 alone resolves to all four
-         offsets at 0 which equals 100% width/height of the containing
-         block, but stating both removes any ambiguity if the wrap's
-         intrinsic size ever resolves before the overlay's containing
-         block does. */
-      width: 100%;
-      height: 100%;
       z-index: 10;
       background-size: cover;
       background-position: center;
@@ -541,17 +517,6 @@
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid #2A2A28;
-      /* Same hardening pattern that closed the hero rendering issue in
-         commit 3145385. Lock the wrap to 16:9 at the wrap level so the
-         shape is decided BEFORE Vidstack's web-component upgrade resolves.
-         Without this, the wrap briefly takes its size from the un-upgraded
-         media-player's intrinsic content (poster image at native pixels),
-         which manifested as "modal opens at wrong aspect ratio, then snaps
-         to 16:9 after a moment" and as the playlist-mode poster rendering
-         alongside the playing video in fullscreen. */
-      position: relative;
-      aspect-ratio: 16 / 9;
-      width: 100%;
     }
     .modal-player-wrap.has-playlist {
       border-radius: 8px 8px 0 0;
@@ -562,27 +527,8 @@
       --vds-primary-hover: #D99E0A;
       --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
-      /* !important on width / height guards against any Vidstack CDN-version
-         CSS that injects its own sizing at higher specificity. The wrap above
-         already enforces 16:9; the player fills the wrap. */
-      width: 100% !important;
-      height: 100% !important;
-      aspect-ratio: 16 / 9;
-    }
-    /* Defensive poster-hide. Vidstack's <media-poster> auto-hides via its own
-       state machine when the player transitions to a playable/playing state,
-       but the playlist-mode innerHTML-replace pattern (loadPlaylistVideo() at
-       line ~1271) destroys and recreates the entire <media-player> per video
-       swap. If Vidstack's lifecycle does not cleanly set data-can-play /
-       data-playing on the new player in time, the poster element never hides
-       and renders alongside the playing video in fullscreen. Forcing opacity
-       0 + pointer-events none whenever the player carries either state
-       attribute closes that gap without affecting the pre-play poster display
-       (which is what data-paused covers). */
-    .modal-player-wrap media-player[data-can-play] media-poster,
-    .modal-player-wrap media-player[data-playing] media-poster {
-      opacity: 0;
-      pointer-events: none;
+      width: 100%;
+      aspect-ratio: 16/9;
     }
     .modal-title {
       font-family: 'Cormorant Garamond', serif;
