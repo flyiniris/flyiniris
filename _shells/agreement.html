@@ -1188,7 +1188,14 @@
   // =========================================================================
   // /agreement Page Frontend
   // - Reads window.__AGREEMENT_DATA__ injected by Worker
-  // - All state is server-truth. No localStorage / sessionStorage.
+  // - AgreementPageData (plan_chosen, agreement_state, totals, schedule) is
+  //   server-truth, never written locally.
+  // - Sign-step draft state (typed names + canvas blobs) is autosaved server-
+  //   side via /api/agreement/:token/draft (2s debounce typed inputs, 5s
+  //   debounce inside SignaturePad endStroke for canvases) AND mirrored to
+  //   localStorage at fi_agreement_draft_${TOKEN} as instant same-device
+  //   fallback. handleAgreementSign DELETEs the server draft row on a
+  //   successful UPDATE; this script clears localStorage on the 200 response.
   // - Stream A (Backend) owns the API endpoints under /api/agreement/:token/*
   // =========================================================================
 
@@ -1214,6 +1221,117 @@
   let sigPad2 = null;
   let sig1Mode = 'type';
   let sig2Mode = 'type';
+
+  // ===== SIGN-STEP DRAFT AUTOSAVE =====
+  // localStorage for instant same-device recovery, server for cross-device +
+  // tab-recovery. Both cleared on successful submit. Mirrors questionnaire.html
+  // pattern (lines 2452-2556) at a smaller scope (just the sign step).
+  const DRAFT_STORAGE_KEY = TOKEN ? ('fi_agreement_draft_' + TOKEN) : null;
+  let nameSaveTimer = null;
+  let canvasSaveTimer = null;
+  // Canvas snapshots arrive before initSigPad runs (draw panel is lazy-init'd
+  // on first switch-to-draw). Stash dataURLs here so initSigPad can repaint
+  // when the pad finally exists.
+  const pendingCanvasRestore = { sig1: null, sig2: null };
+
+  function snapshotSignState() {
+    const name1El = document.getElementById('sig-type-1');
+    const name2El = document.getElementById('sig-type-2');
+    const sig1Drawn = (sigPad1 && !sigPad1.isEmpty()) ? sigPad1.toDataURL('image/png') : null;
+    const sig2Drawn = (sigPad2 && !sigPad2.isEmpty()) ? sigPad2.toDataURL('image/png') : null;
+    return {
+      signer1_name: name1El ? name1El.value : '',
+      signer1_mode: sig1Mode,
+      signer1_canvas: sig1Drawn,
+      signer2_name: name2El ? name2El.value : '',
+      signer2_mode: sig2Mode,
+      signer2_canvas: sig2Drawn,
+    };
+  }
+
+  function saveLocal() {
+    if (!DRAFT_STORAGE_KEY) return;
+    try {
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(snapshotSignState()));
+    } catch (e) { /* quota or disabled storage */ }
+  }
+
+  function loadLocal() {
+    if (!DRAFT_STORAGE_KEY) return null;
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function clearLocalDraft() {
+    if (!DRAFT_STORAGE_KEY) return;
+    try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch (e) {}
+  }
+
+  function applySnapshot(snap) {
+    if (!snap) return;
+    if (snap.signer1_name) {
+      const el = document.getElementById('sig-type-1');
+      if (el) el.value = snap.signer1_name;
+    }
+    if (snap.signer2_name) {
+      const el = document.getElementById('sig-type-2');
+      if (el) el.value = snap.signer2_name;
+    }
+    pendingCanvasRestore.sig1 = snap.signer1_canvas || null;
+    pendingCanvasRestore.sig2 = snap.signer2_canvas || null;
+    // If pads already exist (user toggled to draw before restore arrived), paint now.
+    if (sigPad1 && pendingCanvasRestore.sig1) {
+      try { sigPad1.fromDataURL(pendingCanvasRestore.sig1); pendingCanvasRestore.sig1 = null; } catch (e) {}
+    }
+    if (sigPad2 && pendingCanvasRestore.sig2) {
+      try { sigPad2.fromDataURL(pendingCanvasRestore.sig2); pendingCanvasRestore.sig2 = null; } catch (e) {}
+    }
+    // Restore mode if snapshot indicates draw and we have canvas data.
+    if (snap.signer1_mode === 'draw' && snap.signer1_canvas) {
+      try { switchTab(1, 'draw'); } catch (e) {}
+    }
+    if (snap.signer2_mode === 'draw' && snap.signer2_canvas) {
+      try { switchTab(2, 'draw'); } catch (e) {}
+    }
+    updateSignButton();
+  }
+
+  function saveDraftToServer() {
+    if (!TOKEN) return;
+    try {
+      fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snapshotSignState()),
+        keepalive: true,
+      }).catch(function () { /* fire-and-forget; localStorage covers same-device */ });
+    } catch (e) { /* swallow */ }
+  }
+
+  function loadDraftFromServer() {
+    if (!TOKEN) return Promise.resolve(null);
+    return fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/draft')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.ok || !data.draft) return null;
+        return data.draft;
+      })
+      .catch(function () { return null; });
+  }
+
+  function scheduleNameSave() {
+    saveLocal();
+    if (nameSaveTimer) clearTimeout(nameSaveTimer);
+    nameSaveTimer = setTimeout(saveDraftToServer, 2000);
+  }
+
+  function scheduleCanvasSave() {
+    saveLocal();
+    if (canvasSaveTimer) clearTimeout(canvasSaveTimer);
+    canvasSaveTimer = setTimeout(saveDraftToServer, 5000);
+  }
 
   // ===== INIT =====
   document.addEventListener('DOMContentLoaded', async () => {
@@ -1275,9 +1393,15 @@
       startPage = 4;
     }
 
-    // Wire signature inputs
-    document.getElementById('sig-type-1').addEventListener('input', updateSignButton);
-    document.getElementById('sig-type-2').addEventListener('input', updateSignButton);
+    // Wire signature inputs. Each input fires updateSignButton (button enable
+    // state) and scheduleNameSave (Tier A autosave: localStorage instant +
+    // server POST 2s debounced).
+    function onSignerNameInput() {
+      updateSignButton();
+      scheduleNameSave();
+    }
+    document.getElementById('sig-type-1').addEventListener('input', onSignerNameInput);
+    document.getElementById('sig-type-2').addEventListener('input', onSignerNameInput);
     if (DATA.signer1_name) document.getElementById('sig-type-1').value = DATA.signer1_name;
     if (DATA.signer2_name) document.getElementById('sig-type-2').value = DATA.signer2_name;
     // Programmatic .value assignment does not fire the 'input' event, so the
@@ -1285,6 +1409,25 @@
     // once on load so a pre-filled signature (resume from client-signed-no-payment)
     // enables the Continue button without forcing the user to edit the field.
     updateSignButton();
+
+    // Sign-step draft restore. Server first (cross-device), localStorage
+    // fallback (same-device). Either source feeds applySnapshot, which is
+    // idempotent against the DATA pre-fill above so user-typed values win.
+    // Fire-and-forget on the server path: a network failure leaves us with the
+    // localStorage fallback. Skip entirely if the agreement is already past
+    // the sign step (state machine handles that downstream).
+    try {
+      const liveSignStates = ['pristine', 'plan-selected', 'client-signed-no-payment'];
+      if (liveSignStates.includes(DATA.agreement_state)) {
+        const serverDraft = await loadDraftFromServer();
+        if (serverDraft) {
+          applySnapshot(serverDraft);
+        } else {
+          const localDraft = loadLocal();
+          if (localDraft) applySnapshot(localDraft);
+        }
+      }
+    } catch (_e) { /* draft restore is best-effort */ }
 
     // Lock interactive elements in preview mode
     if (DATA.preview_mode) {
@@ -1692,8 +1835,24 @@
       maxWidth: 2.5,
     });
     pad.addEventListener('endStroke', updateSignButton);
+    // Tier A autosave: scheduleCanvasSave debounces 5s inside the endStroke
+    // handler so a fast scribbler doesn't fire N POSTs/sec. saveLocal mirror
+    // is also instant inside the debouncer.
+    pad.addEventListener('endStroke', scheduleCanvasSave);
     if (num === 1) sigPad1 = pad;
     else sigPad2 = pad;
+    // If a draft restore happened before this pad existed, paint its canvas
+    // snapshot now. fromDataURL is forgiving about empty input but we guard
+    // anyway. After repaint, fire updateSignButton so the Continue button
+    // reflects the restored sig.
+    const stash = pendingCanvasRestore['sig' + num];
+    if (stash) {
+      try {
+        pad.fromDataURL(stash);
+        pendingCanvasRestore['sig' + num] = null;
+        updateSignButton();
+      } catch (_e) { /* ignore malformed dataURL */ }
+    }
   }
 
   function resizeSigPad(num) {
@@ -1763,6 +1922,10 @@
         throw new Error(err.error || 'Signing failed');
       }
       const result = await resp.json();
+
+      // Sign succeeded (or partner already signed). Clear the local draft mirror;
+      // the server draft row has already been DELETEd by handleAgreementSign.
+      clearLocalDraft();
 
       // Partner already signed — skip directly to checkout flow
       if (result.partner_already_signed) {
