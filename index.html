@@ -2834,6 +2834,47 @@
         };
         var quizApp = document.getElementById("quizApp");
 
+        // ===== TIER B DRAFT AUTOSAVE (localStorage only) =====
+        // The inquiry form has no token and no server draft endpoint. Tier B
+        // per the 2026-05-13 decision: same-device tab-close protection only,
+        // deliberately conservative (no server-side partial capture on a
+        // marketing page, which would feel invasive on a half-typed email).
+        // state.contactForm + state.referralName persist here. render() calls
+        // restoreFormValues(), which repaints inputs from state, so restoring
+        // state before the first render is enough to repopulate the form.
+        var INQUIRY_DRAFT_KEY = 'fi_inquiry_draft';
+
+        function saveInquiryDraft() {
+          try {
+            localStorage.setItem(INQUIRY_DRAFT_KEY, JSON.stringify({
+              contactForm: state.contactForm,
+              referralName: state.referralName
+            }));
+          } catch (e) { /* quota or disabled storage */ }
+        }
+
+        function loadInquiryDraft() {
+          try {
+            var raw = localStorage.getItem(INQUIRY_DRAFT_KEY);
+            if (!raw) return;
+            var snap = JSON.parse(raw);
+            if (snap && snap.contactForm) {
+              // Merge onto the existing shape so a future field addition is
+              // not clobbered by an older saved snapshot missing that key.
+              for (var k in state.contactForm) {
+                if (snap.contactForm[k] !== undefined) state.contactForm[k] = snap.contactForm[k];
+              }
+            }
+            if (snap && typeof snap.referralName === 'string') state.referralName = snap.referralName;
+          } catch (e) { /* malformed draft, ignore */ }
+        }
+
+        function clearInquiryDraft() {
+          try { localStorage.removeItem(INQUIRY_DRAFT_KEY); } catch (e) {}
+        }
+
+        loadInquiryDraft();
+
         // --- PRICE TAG HELPER ---
         function getCalcPriceTag(step, opt) {
           return "";
@@ -2884,6 +2925,7 @@
             dateInput._avBound = true;
             dateInput.addEventListener('change', function() {
               state.contactForm.weddingDate = this.value;
+              saveInquiryDraft();
             });
           }
         }
@@ -3443,6 +3485,7 @@
             else if (k === "phone") state.contactForm.phone = fmtPhone(f.value);
             else if (state.contactForm[k] !== undefined) state.contactForm[k] = f.value;
           }
+          saveInquiryDraft();
         }
 
         quizApp.addEventListener("input", function(e) {
@@ -3451,6 +3494,7 @@
           if (f === "referralName") { state.referralName = e.target.value; }
           else if (f === "phone") { state.contactForm.phone = fmtPhone(e.target.value); e.target.value = state.contactForm.phone; }
           else if (state.contactForm[f] !== undefined) { state.contactForm[f] = e.target.value; }
+          saveInquiryDraft();
         });
 
         // Enter key advances to next form field (mobile return key + desktop Enter)
@@ -3461,13 +3505,13 @@
             var act = el.getAttribute("data-action");
             if (act === "toggle-sms-nonmarketing") {
               e.preventDefault();
-              saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render();
+              saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render();
               var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus();
               return;
             }
             if (act === "toggle-sms-marketing") {
               e.preventDefault();
-              saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render();
+              saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render();
               var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus();
               return;
             }
@@ -3543,8 +3587,8 @@
             return;
           }
           if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); return; }
-          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
-          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
           if (action === "submit-contact") {
             saveFormFields();
             state.contactFormTried = true;
@@ -3597,6 +3641,11 @@
             }).then(function(resp) {
               return resp.json();
             }).then(function(result) {
+              // Inquiry POST succeeded. Clear the local draft so a later visit
+              // starts clean instead of restoring already-submitted data. The
+              // .catch path below intentionally does NOT clear: on a failed
+              // submit the typed data should survive for a retry.
+              clearInquiryDraft();
               // Store session token for redirect
               var sessionToken = (result && result.session_token) || '';
               // Wait 2.5s on loading screen, then redirect to experience page
@@ -3628,6 +3677,9 @@
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
             state.contactFormTried = false;
             state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
+            // Explicit discard: clear the persisted draft too, otherwise the
+            // next page load would restore the data the user just wiped.
+            clearInquiryDraft();
             render(); scrollToQuiz(); return;
           }
         });
