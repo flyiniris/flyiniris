@@ -409,6 +409,11 @@
       background: var(--red-dim);
       color: var(--red);
     }
+    .invoice-status.upcoming {
+      background: rgba(42, 42, 40, 0.5);
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
     .pay-now-btn {
       display: inline-block;
       margin-top: 4px;
@@ -421,11 +426,24 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
       text-decoration: none;
+      border: none;
+      cursor: pointer;
       border-radius: 6px;
       transition: background 0.25s ease;
     }
     .pay-now-btn:hover {
       background: var(--accent-light);
+    }
+    .pay-now-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    /* Armed state: shown after the first click, before the couple confirms
+       and gets sent to Stripe's hosted checkout. */
+    .pay-now-btn-armed {
+      background: var(--accent-light);
+      text-transform: none;
+      letter-spacing: 0;
     }
 
     /* Mobile invoice layout */
@@ -726,6 +744,9 @@
       </div>
 
       <!-- Questionnaire Card -->
+      <!-- Questionnaire card. The day-of timeline upload is step 0 of the
+           questionnaire flow, so questionnaire + timeline are one combined
+           card, not two. -->
       <div class="status-card" id="card-questionnaire">
         <div class="status-card-header">
           <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
@@ -741,21 +762,6 @@
         <div id="questionnaire-badge"></div>
         <div class="status-card-detail" id="questionnaire-detail"></div>
         <a id="questionnaire-link" class="status-card-link" href="#" style="display: none;"></a>
-      </div>
-
-      <!-- Timeline Card -->
-      <div class="status-card" id="card-timeline">
-        <div class="status-card-header">
-          <div class="status-card-icon" style="background: rgba(255, 189, 29, 0.1);">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <div class="status-card-title">Day-of Timeline</div>
-        </div>
-        <div id="timeline-badge"></div>
-        <div class="status-card-detail" id="timeline-detail"></div>
       </div>
 
     </div>
@@ -791,7 +797,7 @@
       <div class="footer-brand">
         &copy; 2026 Flyin' Iris Media Productions LLC<br>
         <a href="https://flyiniris.com">flyiniris.com</a> &middot;
-        <a href="https://www.instagram.com/flyinirismedia/">@flyinirismedia</a>
+        <a href="https://www.instagram.com/flyin.iris/">@flyin.iris</a>
       </div>
     </div>
 
@@ -852,11 +858,8 @@
     // Payments card
     renderPaymentsCard(invoices, contract.total);
 
-    // Questionnaire card
-    renderQuestionnaireCard(questionnaire_completed, contact);
-
-    // Timeline card
-    renderTimelineCard(timeline_uploaded);
+    // Questionnaire card (includes day-of timeline status)
+    renderQuestionnaireCard(questionnaire_completed, timeline_uploaded, contact);
 
     // Payment details section
     renderInvoices(invoices, token);
@@ -994,40 +997,37 @@
   }
 
   // ===== QUESTIONNAIRE CARD =====
-  function renderQuestionnaireCard(completed, contact) {
+  // Combined card: the day-of timeline upload is step 0 of the questionnaire
+  // flow, so questionnaire + timeline are one process, not two. Green
+  // "Completed" requires BOTH questionnaire_completed AND timeline_uploaded.
+  function renderQuestionnaireCard(completed, timelineUploaded, contact) {
     const badge = document.getElementById('questionnaire-badge');
     const detail = document.getElementById('questionnaire-detail');
     const link = document.getElementById('questionnaire-link');
 
-    if (completed) {
-      badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>';
-      detail.textContent = 'Thank you for filling this out!';
-    } else {
+    const qParams = new URLSearchParams();
+    if (contact.first_name) qParams.set('fn', contact.first_name);
+    if (contact.email) qParams.set('email', contact.email);
+    const qUrl = 'https://flyiniris.com/questionnaire' + (qParams.toString() ? '?' + qParams.toString() : '');
+    const checkSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    if (completed && timelineUploaded) {
+      badge.innerHTML = '<span class="status-badge green">' + checkSvg + ' Completed</span>';
+      detail.textContent = 'We have your questionnaire and your day-of timeline. You\'re all set!';
+      link.style.display = 'none';
+    } else if (!completed) {
       badge.innerHTML = '<span class="status-badge amber">Not Started</span>';
-      detail.textContent = 'Help us plan the perfect film for your day.';
-
-      const qParams = new URLSearchParams();
-      if (contact.first_name) qParams.set('fn', contact.first_name);
-      if (contact.email) qParams.set('email', contact.email);
-      const qUrl = 'https://flyiniris.com/questionnaire' + (qParams.toString() ? '?' + qParams.toString() : '');
-
+      detail.textContent = 'Help us plan the perfect film for your day. When your wedding timeline is ready, upload it at the start of the questionnaire and we\'ll pre-fill some answers for you.';
       link.textContent = 'Fill Out Questionnaire';
       link.href = qUrl;
       link.style.display = 'inline-block';
-    }
-  }
-
-  // ===== TIMELINE CARD =====
-  function renderTimelineCard(uploaded) {
-    const badge = document.getElementById('timeline-badge');
-    const detail = document.getElementById('timeline-detail');
-
-    if (uploaded) {
-      badge.innerHTML = '<span class="status-badge green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Uploaded</span>';
-      detail.textContent = 'We have your day-of timeline on file.';
     } else {
-      badge.innerHTML = '<span class="status-badge amber">Not Yet Uploaded</span>';
-      detail.textContent = 'Once your planner or venue sends you the day-of timeline, forward it to us so we can plan our coverage.';
+      // Questionnaire done, day-of timeline not uploaded yet.
+      badge.innerHTML = '<span class="status-badge amber">Timeline Needed</span>';
+      detail.textContent = 'Thanks for filling out the questionnaire! When your wedding timeline is ready, upload it at the start of the questionnaire and we\'ll add it to your file.';
+      link.textContent = 'Upload Timeline';
+      link.href = qUrl;
+      link.style.display = 'inline-block';
     }
   }
 
@@ -1060,12 +1060,36 @@
       </div>
     `;
 
+    // Only the earliest unpaid invoice gets a Pay Now button. Payment plans
+    // are billed in order and the checkout endpoint always charges the
+    // earliest unpaid invoice, so later invoices show "Upcoming" with no
+    // button. Invoices arrive from the API ordered by due_date ascending.
+    const firstUnpaid = invoices.find((i) => i.status !== 'paid');
+    const firstUnpaidId = firstUnpaid ? firstUnpaid.id : null;
+
     for (const inv of invoices) {
-      const statusClass = getInvoiceStatusClass(inv);
-      const statusLabel = getInvoiceStatusLabel(inv);
+      const isPaid = inv.status === 'paid';
+      const isFirstUnpaid = !isPaid && inv.id === firstUnpaidId;
+
+      let statusClass, statusLabel;
+      if (isPaid) {
+        statusClass = 'paid';
+        statusLabel = 'Paid';
+      } else if (isFirstUnpaid) {
+        statusClass = getInvoiceStatusClass(inv);
+        statusLabel = getInvoiceStatusLabel(inv);
+      } else {
+        statusClass = 'upcoming';
+        statusLabel = 'Upcoming';
+      }
+
       const dueFormatted = inv.due_date
         ? new Date(inv.due_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '--';
+
+      const payBtn = isFirstUnpaid
+        ? `<br><button class="pay-now-btn" type="button" onclick="payNow('${token}', this)">Pay Now</button>`
+        : '';
 
       html += `
         <div class="invoice-row">
@@ -1074,7 +1098,7 @@
           <div class="invoice-due">${dueFormatted}</div>
           <div>
             <span class="invoice-status ${statusClass}">${statusLabel}</span>
-            ${statusClass !== 'paid' ? `<br><a class="pay-now-btn" href="https://flyiniris.com/payment?token=${token}">Pay Now</a>` : ''}
+            ${payBtn}
           </div>
         </div>
       `;
@@ -1099,6 +1123,43 @@
     if (cls === 'paid') return 'Paid';
     if (cls === 'overdue') return 'Overdue';
     return 'Pending';
+  }
+
+  // Pay Now: two deliberate steps, never a one-click charge. The first click
+  // arms the button (shows the couple they are about to be sent to checkout).
+  // The second click POSTs to the Worker, which creates a Stripe Checkout
+  // Session for the earliest unpaid invoice and returns its hosted-checkout
+  // URL. No money moves here — the couple enters their card and confirms on
+  // Stripe's own page.
+  function payNow(token, btn) {
+    if (btn.dataset.armed !== '1') {
+      btn.dataset.armed = '1';
+      btn.textContent = 'Confirm: continue to secure checkout';
+      btn.classList.add('pay-now-btn-armed');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Opening secure checkout...';
+    fetch(`${API_BASE}/api/payment/${token}/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (data && data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          throw new Error((data && data.error) || 'No checkout URL returned');
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.dataset.armed = '';
+        btn.textContent = 'Pay Now';
+        btn.classList.remove('pay-now-btn-armed');
+        alert('Sorry, we could not open checkout just now. Please try again, or email us at sean@flyiniris.com.');
+      });
   }
 
   // ===== MILESTONES =====

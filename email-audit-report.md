@@ -78,7 +78,7 @@ All 4 email templates were pulled from GoHighLevel, audited against the checklis
 **All other URLs verified clean:**
 - Film thumbnail: `https://www.flyiniris.com/?utm_source=ghl_email&...#films` -- OK
 - Calculator P.S. link: `https://www.flyiniris.com/?utm_source=ghl_email&...#calculator` -- OK
-- Instagram: `https://www.instagram.com/flyinirismedia/` -- OK
+- Instagram: `https://www.instagram.com/flyin.iris/` -- OK
 
 ---
 
@@ -95,7 +95,7 @@ All 4 email templates were pulled from GoHighLevel, audited against the checklis
 
 **All other URLs verified clean:**
 - Calculator text link: `https://www.flyiniris.com/?utm_source=ghl_email&...#calculator` -- OK
-- Instagram: `https://www.instagram.com/flyinirismedia/` -- OK
+- Instagram: `https://www.instagram.com/flyin.iris/` -- OK
 
 ---
 
@@ -113,7 +113,7 @@ All 4 email templates were pulled from GoHighLevel, audited against the checklis
 **All other URLs verified clean:**
 - Film thumbnail: `https://www.flyiniris.com/?utm_source=ghl_email&...#films` -- OK
 - Primary CTA ("WATCH THEIR FILM"): `https://www.flyiniris.com/?utm_source=ghl_email&...#films` -- OK
-- Instagram: `https://www.instagram.com/flyinirismedia/` -- OK
+- Instagram: `https://www.instagram.com/flyin.iris/` -- OK
 
 ---
 
@@ -129,7 +129,7 @@ All 4 email templates were pulled from GoHighLevel, audited against the checklis
 **Context:** "LET'S TALK ABOUT YOUR PACKAGE" gold CTA button. Note this correctly uses the **calculator-specific** booking widget (`V3H7cSaX3iSNqMlRA8O8`) rather than the inquiry booking widget. UTM parameters preserved.
 
 **All other URLs verified clean:**
-- Instagram: `https://www.instagram.com/flyinirismedia/` -- OK
+- Instagram: `https://www.instagram.com/flyin.iris/` -- OK
 
 ---
 

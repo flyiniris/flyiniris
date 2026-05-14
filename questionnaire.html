@@ -2502,9 +2502,13 @@
         applyStateToField(n);
       });
     }
-    if (typeof snap._step === 'number' && snap._step >= 0 && snap._step <= 6) {
-      goToStep(snap._step);
-    }
+    // Intentionally NOT restoring snap._step. The welcome page (step 0) is
+    // always the entry point — it carries the timeline-upload prompt the
+    // couple should see every visit. Form data above is still restored, so
+    // nothing they typed is lost; they just re-enter through the front door
+    // and click "Start the Questionnaire". Explicit deep-links still work:
+    // hashStepOverride (set from a URL #anchor in email CTAs) is applied in
+    // the boot sequence after this.
   }
 
   /* ============================================================
