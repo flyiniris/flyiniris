@@ -684,6 +684,63 @@
       document.getElementById(id).classList.toggle('checked', checkbox.checked);
     }
 
+    // ===== TIER B DRAFT AUTOSAVE (localStorage only) =====
+    // 17 inputs, no token, no server draft endpoint. Same-device tab-close
+    // protection only: snapshot every field on input/change, restore on
+    // load, clear on successful submit. The existing POST to
+    // /webhook/contractor-onboarding stays the sole server-side persistence.
+    var DRAFT_KEY = 'fi_contractor_onboarding_draft';
+    var TEXT_FIELD_IDS = ['legalName','businessName','ein','address','phone','email','emergencyContact','faa','gear','portfolio','paypal','w9sent','notes'];
+    var CHECK_FIELD_IDS = ['confirm_delivery','confirm_nodeletions','confirm_backup','confirm_ic'];
+    // Checkbox id → its visual-toggle element id. Not a clean string
+    // transform (confirm_nodeletions maps to check-deletions), so it is
+    // spelled out explicitly to match the inline onchange handlers.
+    var CHECK_VISUAL_MAP = {
+      confirm_delivery: 'check-delivery',
+      confirm_nodeletions: 'check-deletions',
+      confirm_backup: 'check-backup',
+      confirm_ic: 'check-ic'
+    };
+
+    function saveLocalDraft() {
+      try {
+        var snap = {};
+        TEXT_FIELD_IDS.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) snap[id] = el.value;
+        });
+        CHECK_FIELD_IDS.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) snap[id] = el.checked;
+        });
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(snap));
+      } catch (e) { /* quota or disabled storage */ }
+    }
+
+    function loadLocalDraft() {
+      try {
+        var raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        var snap = JSON.parse(raw);
+        TEXT_FIELD_IDS.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && typeof snap[id] === 'string') el.value = snap[id];
+        });
+        CHECK_FIELD_IDS.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && typeof snap[id] === 'boolean') {
+            el.checked = snap[id];
+            var visualEl = document.getElementById(CHECK_VISUAL_MAP[id]);
+            if (visualEl) visualEl.classList.toggle('checked', el.checked);
+          }
+        });
+      } catch (e) { /* malformed draft, ignore */ }
+    }
+
+    function clearLocalDraft() {
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    }
+
     function validateStep(step) {
       if (step === 1) {
         const fields = [
@@ -800,12 +857,29 @@
         document.getElementById('successScreen').classList.add('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
+        // Submitted to the server. Clear the local draft so a later visit
+        // starts clean instead of restoring stale, already-submitted data.
+        clearLocalDraft();
+
       } catch (err) {
         btn.disabled = false;
         btn.textContent = 'Submit Onboarding →';
         alert('Something went wrong submitting your form. Please try again or email sean@flyiniris.com directly.');
         console.error(err);
       }
+    });
+
+    // Wire Tier B autosave. Script runs at end of body, so the DOM is ready:
+    // restore any saved draft, then save on every edit. Checkboxes keep their
+    // inline onchange (visual toggle) and stack this change listener on top.
+    loadLocalDraft();
+    TEXT_FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', saveLocalDraft);
+    });
+    CHECK_FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', saveLocalDraft);
     });
   </script>
 
