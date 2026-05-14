@@ -20,5 +20,10 @@
 /agreement/*               https://agreement.flyiniris.com/agreement/:splat       301
 /contract                  https://agreement.flyiniris.com/agreement  301
 /contract/*                https://agreement.flyiniris.com/agreement  301
+# contract.html deprecated 2026-05-14. The clean-URL /contract rule above does
+# not catch the literal .html path once the file is deleted, so this explicit
+# rule keeps legacy email links alive. Query string (?token=...) is preserved
+# by Cloudflare Pages since the destination has no ? clause.
+/contract.html             https://agreement.flyiniris.com/agreement  301
 /payment                   https://agreement.flyiniris.com/agreement  301
 /payment/*                 https://agreement.flyiniris.com/agreement  301
