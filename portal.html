@@ -931,10 +931,15 @@
       link.style.display = 'inline-block';
     }
 
-    // Always show "View Contract" if signed
-    if (contract.status === 'signed' || contract.signed_at) {
+    // Show "View Contract" only when the signed agreement is actually
+    // viewable. /agreement/signed 404s unless agreement_state is one of these
+    // 6, so gating here keeps the portal from linking couples to a 404. (Going
+    // through the old /contract path 301s to the /agreement SPA, which serves
+    // the post-sign "You did it" screen for signed contracts, not the contract.)
+    const SIGNED_VIEWABLE_STATES = ['fully-executed', 'in-flight', 'completed', 'charge-failed', 'charge-recovered', 'charge-abandoned'];
+    if (SIGNED_VIEWABLE_STATES.includes(contract.agreement_state)) {
       link.textContent = 'View Contract';
-      link.href = `https://flyiniris.com/contract?token=${token}`;
+      link.href = `https://agreement.flyiniris.com/agreement/signed?token=${token}`;
       link.style.display = 'inline-block';
     }
 
