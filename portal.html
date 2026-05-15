@@ -458,6 +458,127 @@
       .invoice-status { justify-self: start; }
     }
 
+    /* ========== PAYMENT METHOD / AUTOPAY ========== */
+    .autopay-status {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+    }
+    .autopay-status .autopay-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .autopay-status.on .autopay-dot { background: var(--green); }
+    .autopay-status.off .autopay-dot { background: var(--text-muted); }
+    .autopay-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .autopay-btn {
+      display: inline-block;
+      padding: 9px 18px;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+    .autopay-btn:hover {
+      border-color: var(--accent);
+      background: rgba(255, 189, 29, 0.06);
+    }
+    .autopay-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .autopay-disable-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 9px 4px;
+    }
+    .autopay-disable-link:hover { color: var(--text-secondary); }
+
+    /* Confirmation modal (disable autopay) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.78);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal-dialog {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      max-width: 420px;
+      width: 100%;
+      padding: 28px 26px;
+      animation: fadeUp 0.3s ease both;
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .modal-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .modal-btn {
+      padding: 10px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: opacity 0.2s ease, background 0.2s ease;
+    }
+    .modal-btn:disabled { opacity: 0.6; cursor: default; }
+    .modal-btn-cancel {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+    .modal-btn-cancel:hover { border-color: var(--text-secondary); }
+    .modal-btn-confirm {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(248, 113, 113, 0.4);
+    }
+    .modal-btn-confirm:hover { background: rgba(248, 113, 113, 0.22); }
+
     /* ========== MILESTONES TIMELINE ========== */
     .milestones-section {
       margin-bottom: 48px;
@@ -776,6 +897,14 @@
       </div>
     </div>
 
+    <!-- Payment Method / Autopay Section -->
+    <div class="payments-section" id="payment-method-section" style="display: none;">
+      <div class="section-title">Payment Method</div>
+      <h3 class="section-heading">Autopay</h3>
+      <div class="autopay-status" id="autopay-status"></div>
+      <div class="autopay-actions" id="autopay-actions"></div>
+    </div>
+
     <!-- Milestones Timeline -->
     <div class="milestones-section" id="milestones-section" style="display: none;">
       <div class="milestones-header">
@@ -801,6 +930,18 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Disable-autopay confirmation modal (P3). Copy is locked, do not edit. -->
+<div class="modal-overlay" id="autopay-modal">
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="autopay-modal-title">
+    <div class="modal-title" id="autopay-modal-title">Turn off autopay?</div>
+    <div class="modal-body">Your remaining payments will switch to manual. We'll email you a reminder with a payment link before each one. If you want to turn autopay back on later, just reach out to us and we'll get it set up.</div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="closeAutopayModal()">Keep autopay on</button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="autopay-modal-confirm">Turn off autopay</button>
+    </div>
   </div>
 </div>
 
@@ -840,7 +981,7 @@
 
   // ===== RENDER =====
   function renderPortal(data, token) {
-    const { contact, contract, invoices, questionnaire_completed, timeline_uploaded, milestones } = data;
+    const { contact, contract, invoices, questionnaire_completed, timeline_uploaded, milestones, autopay } = data;
 
     // Welcome heading. Defensive title-case on partner_name because upstream
     // GHL data sometimes lands lowercase (DM-bot capture). Display only; the
@@ -863,6 +1004,9 @@
 
     // Payment details section
     renderInvoices(invoices, token);
+
+    // Payment method / autopay section
+    renderPaymentMethod(autopay, token);
 
     // Milestones
     renderMilestones(milestones);
@@ -1159,6 +1303,100 @@
         btn.textContent = 'Pay Now';
         btn.classList.remove('pay-now-btn-armed');
         alert('Sorry, we could not open checkout just now. Please try again, or email us at sean@flyiniris.com.');
+      });
+  }
+
+  // ===== PAYMENT METHOD / AUTOPAY (P1-P3) =====
+  // Graceful degradation: an older cached Worker response may omit the
+  // `autopay` object entirely. Treat a missing object as autopay-off so the
+  // section still renders cleanly with no JavaScript errors.
+  function renderPaymentMethod(autopay, token) {
+    const ap = autopay || { enabled: false, has_saved_card: false, card_last4: null };
+    const section = document.getElementById('payment-method-section');
+    const statusEl = document.getElementById('autopay-status');
+    const actionsEl = document.getElementById('autopay-actions');
+
+    // P1 — status display.
+    if (ap.enabled) {
+      const cardLine = ap.card_last4 ? ': card ending ' + escapeHtml(String(ap.card_last4)) : '';
+      statusEl.className = 'autopay-status on';
+      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay enabled' + cardLine;
+    } else {
+      statusEl.className = 'autopay-status off';
+      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is off';
+    }
+
+    // P2 — update payment method button (always available). P3 — turn-off
+    // control, only shown when autopay is currently on.
+    let actions = '<button type="button" class="autopay-btn" onclick="updatePaymentMethod(\'' + token + '\', this)">Update payment method</button>';
+    if (ap.enabled) {
+      actions += '<button type="button" class="autopay-disable-link" onclick="openAutopayModal(\'' + token + '\')">Turn off autopay</button>';
+    }
+    actionsEl.innerHTML = actions;
+
+    section.style.display = 'block';
+  }
+
+  // P2 — open the Stripe-hosted Customer Portal to update the saved card.
+  // No card fields ever render here; the browser is redirected to Stripe.
+  function updatePaymentMethod(token, btn) {
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Opening...';
+    fetch(`${API_BASE}/api/portal/${token}/card-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    })
+      .then((resp) => resp.json().then((data) => ({ ok: resp.ok, data })))
+      .then(({ ok, data }) => {
+        if (ok && data && data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error((data && data.error) || 'No URL returned');
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.textContent = original;
+        alert('Unable to open the update page right now. Please contact us at sean@flyiniris.com.');
+      });
+  }
+
+  // P3 — disable autopay. Two steps: open the confirmation modal, then on
+  // confirm POST the one-way disable. v1 has no re-enable control.
+  function openAutopayModal(token) {
+    const confirmBtn = document.getElementById('autopay-modal-confirm');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = 'Turn off autopay';
+    confirmBtn.onclick = () => confirmDisableAutopay(token);
+    document.getElementById('autopay-modal').classList.add('visible');
+  }
+
+  function closeAutopayModal() {
+    document.getElementById('autopay-modal').classList.remove('visible');
+  }
+
+  function confirmDisableAutopay(token) {
+    const confirmBtn = document.getElementById('autopay-modal-confirm');
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Turning off...';
+    fetch(`${API_BASE}/api/portal/${token}/autopay`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled: false }),
+    })
+      .then((resp) => resp.json().then((data) => ({ ok: resp.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error((data && data.error) || 'Request failed');
+        closeAutopayModal();
+        // Re-render to "Autopay is off". No re-enable toggle in v1.
+        renderPaymentMethod({ enabled: false, has_saved_card: false, card_last4: null }, token);
+      })
+      .catch(() => {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Turn off autopay';
+        alert('Something went wrong turning off autopay. Please try again, or email us at sean@flyiniris.com.');
       });
   }
 

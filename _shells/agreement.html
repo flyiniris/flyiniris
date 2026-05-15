@@ -545,6 +545,41 @@
       text-align: center;
     }
 
+    /* Autopay opt-in (B3) — multi-payment plans only, defaulted checked */
+    .autopay-optin {
+      display: none;
+      margin: 4px 0 18px;
+      padding: 18px 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .autopay-optin-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .autopay-optin input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .autopay-optin-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    .autopay-optin-auth {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+
     /* Primary CTA button */
     .cta-btn {
       width: 100%;
@@ -1027,7 +1062,8 @@
         </p>
         <h4>Payment Terms</h4>
         <p>Payments accepted via Credit/Debit Card or ACH Bank Transfer (via Stripe). The first payment (the retainer) is due immediately upon signing this agreement. Subsequent payments follow the schedule selected above.</p>
-        <p>If Client fails to remit any scheduled payment by the due date, Videographer reserves the right to terminate this agreement with no obligation to attend the event or refund prior payments. Recurring payments on a multi-payment plan are charged automatically to the payment method on file.</p>
+        <p>If Client fails to remit any scheduled payment by the due date, Videographer reserves the right to terminate this agreement with no obligation to attend the event or refund prior payments.</p>
+        <p>When you select a multi-payment plan, you authorize Flyin' Iris to automatically charge your saved card for each scheduled installment, in the amounts and on the dates shown in your payment schedule. We'll send a receipt every time. You're always free to update your card or turn off automatic payments from your client portal.</p>
         <h4>Non-Refundable</h4>
         <p>All payments under this agreement are non-refundable. The retainer secures Client's wedding date and removes that date from general availability.</p>
       </div>
@@ -1127,6 +1163,18 @@
         <p class="sig-footer-note">
           Sierra countersigns once the retainer clears.
         </p>
+
+        <!-- Autopay opt-in (B3). Multi-payment plans only; hidden for pay-in-full.
+             Defaulted checked. Copy is locked, do not edit. -->
+        <div class="autopay-optin" id="autopay-optin">
+          <div class="autopay-optin-row">
+            <input type="checkbox" id="autopay-checkbox" checked>
+            <div>
+              <label class="autopay-optin-label" for="autopay-checkbox">Turn on autopay for my payment plan</label>
+              <p class="autopay-optin-auth">When you select a multi-payment plan, you authorize Flyin' Iris to automatically charge your saved card for each scheduled installment, in the amounts and on the dates shown in your payment schedule. We'll send a receipt every time. You're always free to update your card or turn off automatic payments from your client portal.</p>
+            </div>
+          </div>
+        </div>
 
         <button class="cta-btn" id="sign-btn" disabled onclick="submitSignature()">
           Continue to payment &rarr;
@@ -1456,6 +1504,9 @@
     // Lazy-init signature pads when arriving on page 3
     if (n === 3) {
       // Pads init only on draw-tab switch (canvas needs visible dimensions)
+      // Re-evaluate autopay opt-in visibility — the couple may have changed
+      // their plan on page 2 before navigating here.
+      renderAutopayOptin();
     }
   }
 
@@ -1760,8 +1811,27 @@
     recap.innerHTML = recapText;
   }
 
+  // ===== AUTOPAY OPT-IN (B3) =====
+  // Multi-payment plans only — hidden entirely for pay-in-full. Defaults
+  // checked; the initial state is taken once from the Worker-provided
+  // AgreementPageData.autopay_enabled (which itself defaults to true). After
+  // that the couple's own toggle is preserved across page navigation.
+  let autopayOptinInitialized = false;
+  function renderAutopayOptin() {
+    const block = document.getElementById('autopay-optin');
+    if (!block) return;
+    if (!autopayOptinInitialized) {
+      const checkbox = document.getElementById('autopay-checkbox');
+      // Default ON: checked unless the Worker explicitly sent false.
+      if (checkbox) checkbox.checked = !DATA || DATA.autopay_enabled !== false;
+      autopayOptinInitialized = true;
+    }
+    block.style.display = (selectedPlan && selectedPlan !== 'full') ? 'block' : 'none';
+  }
+
   function renderPage3(data) {
     refreshRecapCard();
+    renderAutopayOptin();
 
     // Section 1 plain summary (event-specific)
     const wedding = data.wedding_date ? formatDate(data.wedding_date) : 'your wedding date';
@@ -1934,10 +2004,16 @@
         alert(result.message || 'Your partner already signed. Continuing to payment.');
       }
 
-      // Now create checkout session
+      // Now create checkout session. Pass the autopay opt-in state (B3) — the
+      // Worker reads autopay_enabled off this POST body and persists it to
+      // contracts.autopay_enabled. Pay-in-full plans never opt in (the
+      // checkbox is hidden), so they always send false.
+      const autopayCheckbox = document.getElementById('autopay-checkbox');
+      const autopayOptIn = selectedPlan !== 'full' && !!(autopayCheckbox && autopayCheckbox.checked);
       const csResp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ autopay_enabled: autopayOptIn }),
       });
       if (!csResp.ok) {
         const csErr = await csResp.json().catch(() => ({}));
