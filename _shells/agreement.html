@@ -1022,6 +1022,22 @@
 
       <div class="recap-card" id="recap-card"></div>
 
+      <!-- Autopay opt-in (B3). Multi-payment plans only; hidden for pay-in-full.
+           Defaulted checked. Copy is locked, do not edit. Phase 2 Finding 3:
+           moved here (immediately under the schedule recap) from the signature
+           section below. The autopay decision is payment-mechanic, not consent-
+           to-terms — clustering it with the recap keeps both payment-mechanic
+           decisions in one place, before the legal text + signatures. -->
+      <div class="autopay-optin" id="autopay-optin">
+        <div class="autopay-optin-row">
+          <input type="checkbox" id="autopay-checkbox" checked>
+          <div>
+            <label class="autopay-optin-label" for="autopay-checkbox">Turn on autopay for my payment plan</label>
+            <p class="autopay-optin-auth">When you select a multi-payment plan, you authorize Flyin' Iris to automatically charge your saved card for each scheduled installment, in the amounts and on the dates shown in your payment schedule. We'll send a receipt every time. You're always free to update your card or turn off automatic payments from your client portal.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Section 1: What we agree to -->
       <div class="legal-block">
         <div class="plain-header">What we agree to.</div>
@@ -1163,18 +1179,6 @@
         <p class="sig-footer-note">
           Sierra countersigns once the retainer clears.
         </p>
-
-        <!-- Autopay opt-in (B3). Multi-payment plans only; hidden for pay-in-full.
-             Defaulted checked. Copy is locked, do not edit. -->
-        <div class="autopay-optin" id="autopay-optin">
-          <div class="autopay-optin-row">
-            <input type="checkbox" id="autopay-checkbox" checked>
-            <div>
-              <label class="autopay-optin-label" for="autopay-checkbox">Turn on autopay for my payment plan</label>
-              <p class="autopay-optin-auth">When you select a multi-payment plan, you authorize Flyin' Iris to automatically charge your saved card for each scheduled installment, in the amounts and on the dates shown in your payment schedule. We'll send a receipt every time. You're always free to update your card or turn off automatic payments from your client portal.</p>
-            </div>
-          </div>
-        </div>
 
         <button class="cta-btn" id="sign-btn" disabled onclick="submitSignature()">
           Continue to payment &rarr;
