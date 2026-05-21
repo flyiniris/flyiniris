@@ -545,6 +545,84 @@
       text-align: center;
     }
 
+    /* Read-only banner shown when the agreement is already signed (any state
+       past pristine/plan-selected). Cream background with gold accent matches
+       the brand. The signature inputs below stay visible but locked so the
+       couple can see what they signed. */
+    .signed-banner {
+      display: none;
+      background: #FFF0C9;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 0 0 24px;
+      text-align: center;
+    }
+    .signed-banner.visible { display: block; }
+    .signed-banner .signed-eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #8a6a00;
+      margin: 0 0 10px;
+    }
+    .signed-banner .signed-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 6px;
+      line-height: 1.3;
+    }
+    .signed-banner .signed-meta {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: #4a4a4a;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* When the signature step is locked, fade the inputs, hide the tab toggle
+       and the draw pad. The typed name stays visible in Great Vibes so the
+       couple can see the signature they already gave. */
+    .signature-section.locked .section-title,
+    .signature-section.locked .sig-help,
+    .signature-section.locked .sig-tabs,
+    .signature-section.locked .sig-panel.draw-panel,
+    .signature-section.locked .sig-type-legal {
+      display: none;
+    }
+    .signature-section.locked .sig-pad-wrapper.partner-empty { display: none; }
+    .signature-section.locked .sig-type-input {
+      pointer-events: none;
+      cursor: default;
+    }
+    .signature-section.locked .sig-type-container {
+      opacity: 0.85;
+      border-bottom-color: #FFBD1D;
+    }
+    .signature-section.locked .sig-pad-label {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    /* Plan cards on Page 2 are not editable once signed. We keep them visible
+       so the couple can see what they picked, but pointer events are off. */
+    .plan-grid.locked .plan-card,
+    #plan-six-card.locked .plan-card {
+      cursor: default;
+      pointer-events: none;
+    }
+    .plan-grid.locked .plan-card:not(.selected),
+    #plan-six-card.locked .plan-card:not(.selected) {
+      opacity: 0.45;
+    }
+
     /* Autopay opt-in (B3) — multi-payment plans only, defaulted checked */
     .autopay-optin {
       display: none;
@@ -1128,24 +1206,32 @@
       </div>
 
       <!-- Signature section -->
-      <div class="signature-section">
+      <div class="signature-section" id="signature-section">
+        <!-- Read-only banner: rendered when the agreement is already signed.
+             Populated by applySignedState() on load. Hidden by default. -->
+        <div class="signed-banner" id="signed-banner" role="status" aria-live="polite">
+          <p class="signed-eyebrow">Agreement signed</p>
+          <h3 class="signed-title">You signed this.</h3>
+          <p class="signed-meta" id="signed-banner-meta"></p>
+        </div>
+
         <div class="section-title">Sign Below</div>
         <p class="sig-help">Either of you can sign for both. Just one signature is needed.</p>
 
         <!-- Signer 1 -->
-        <div class="sig-pad-wrapper">
+        <div class="sig-pad-wrapper" id="sig1-wrapper">
           <div class="sig-pad-label" id="sig1-label">Your signature <span style="color: #e74c3c;">*</span></div>
           <div class="sig-tabs">
             <button class="sig-tab active" type="button" onclick="switchTab(1, 'type')">Type</button>
             <button class="sig-tab" type="button" onclick="switchTab(1, 'draw')">Draw</button>
           </div>
-          <div class="sig-panel active" id="sig1-type-panel">
+          <div class="sig-panel active type-panel" id="sig1-type-panel">
             <div class="sig-type-container">
               <input type="text" class="sig-type-input" id="sig-type-1" placeholder="Type your full name" autocomplete="name">
             </div>
             <p class="sig-type-legal">By typing your name, you agree this constitutes your legal signature.</p>
           </div>
-          <div class="sig-panel" id="sig1-draw-panel">
+          <div class="sig-panel draw-panel" id="sig1-draw-panel">
             <div class="sig-pad-container">
               <canvas id="sig-pad-1"></canvas>
               <button type="button" class="sig-clear" onclick="sigPad1 && sigPad1.clear(); updateSignButton();">Clear</button>
@@ -1155,19 +1241,19 @@
         </div>
 
         <!-- Signer 2 (optional) -->
-        <div class="sig-pad-wrapper">
+        <div class="sig-pad-wrapper" id="sig2-wrapper">
           <div class="sig-pad-label" id="sig2-label">Partner signature <span class="optional-badge">optional</span></div>
           <div class="sig-tabs">
             <button class="sig-tab active" type="button" onclick="switchTab(2, 'type')">Type</button>
             <button class="sig-tab" type="button" onclick="switchTab(2, 'draw')">Draw</button>
           </div>
-          <div class="sig-panel active" id="sig2-type-panel">
+          <div class="sig-panel active type-panel" id="sig2-type-panel">
             <div class="sig-type-container">
               <input type="text" class="sig-type-input" id="sig-type-2" placeholder="Type partner's full name (optional)">
             </div>
             <p class="sig-type-legal">By typing your name, you agree this constitutes your legal signature.</p>
           </div>
-          <div class="sig-panel" id="sig2-draw-panel">
+          <div class="sig-panel draw-panel" id="sig2-draw-panel">
             <div class="sig-pad-container">
               <canvas id="sig-pad-2"></canvas>
               <button type="button" class="sig-clear" onclick="sigPad2 && sigPad2.clear(); updateSignButton();">Clear</button>
@@ -1462,14 +1548,20 @@
     // enables the Continue button without forcing the user to edit the field.
     updateSignButton();
 
+    // If the agreement is already signed, lock Page 2's plan cards and Page 3's
+    // signature inputs, and reveal the read-only banner.
+    applySignedState();
+
     // Sign-step draft restore. Server first (cross-device), localStorage
     // fallback (same-device). Either source feeds applySnapshot, which is
     // idempotent against the DATA pre-fill above so user-typed values win.
     // Fire-and-forget on the server path: a network failure leaves us with the
-    // localStorage fallback. Skip entirely if the agreement is already past
-    // the sign step (state machine handles that downstream).
+    // localStorage fallback. Only restore during the live sign step. Once the
+    // agreement is signed, DATA.signer1_name on the contracts row is the
+    // source of truth; restoring a stale localStorage typed name would clobber
+    // it under the read-only banner.
     try {
-      const liveSignStates = ['pristine', 'plan-selected', 'client-signed-no-payment'];
+      const liveSignStates = ['pristine', 'plan-selected'];
       if (liveSignStates.includes(DATA.agreement_state)) {
         const serverDraft = await loadDraftFromServer();
         if (serverDraft) {
@@ -1955,6 +2047,104 @@
     if (btn && !DATA.preview_mode) btn.disabled = !hasSig1;
   }
 
+  // States where the couple has already signed. We expose a read-only banner,
+  // lock the signature inputs, and (for client-signed-no-payment) skip the
+  // re-sign POST when the Continue-to-payment button is clicked.
+  const SIGNED_STATES = [
+    'client-signed-no-payment',
+    'fully-executed', 'in-flight', 'completed',
+    'charge-failed', 'charge-recovered', 'charge-abandoned',
+  ];
+  function isAgreementSigned() {
+    return !!(DATA && SIGNED_STATES.indexOf(DATA.agreement_state) !== -1);
+  }
+
+  function formatSignedDate(ms) {
+    if (!ms) return '';
+    try {
+      return new Date(Number(ms)).toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric',
+        timeZone: 'America/Chicago',
+      });
+    } catch (_e) { return ''; }
+  }
+
+  function applySignedState() {
+    if (!isAgreementSigned() || DATA.preview_mode) return;
+
+    // Lock Page 2 plan cards so the chosen plan stays visible but the others
+    // are visually deprioritized and not clickable (the Worker also rejects
+    // /select-plan in this state, so this is purely a UX guard).
+    const planGrid = document.getElementById('plan-grid-top');
+    if (planGrid) planGrid.classList.add('locked');
+    const planSix = document.getElementById('plan-six-card');
+    if (planSix) planSix.classList.add('locked');
+
+    // Reveal the banner with signed-by + date copy.
+    const banner = document.getElementById('signed-banner');
+    const meta = document.getElementById('signed-banner-meta');
+    if (banner && meta) {
+      const signedDate = formatSignedDate(DATA.client_signed_at);
+      const names = [DATA.signer1_name, DATA.signer2_name].filter(Boolean);
+      const namePart = names.length === 2
+        ? names[0] + ' & ' + names[1]
+        : (names[0] || 'you');
+      meta.textContent = signedDate
+        ? 'Signed by ' + namePart + ' on ' + signedDate + '.'
+        : 'Signed by ' + namePart + '.';
+      banner.classList.add('visible');
+    }
+
+    // Lock the signature section: hide the original "Sign Below" header, the
+    // type/draw toggle, and the draw panels. The typed name stays visible in
+    // Great Vibes so the couple can see the signature they already gave.
+    const sigSection = document.getElementById('signature-section');
+    if (sigSection) sigSection.classList.add('locked');
+    const sig1 = document.getElementById('sig-type-1');
+    const sig2 = document.getElementById('sig-type-2');
+    if (sig1) {
+      sig1.setAttribute('readonly', 'readonly');
+      sig1.setAttribute('aria-readonly', 'true');
+      sig1.setAttribute('tabindex', '-1');
+    }
+    if (sig2) {
+      sig2.setAttribute('readonly', 'readonly');
+      sig2.setAttribute('aria-readonly', 'true');
+      sig2.setAttribute('tabindex', '-1');
+    }
+    // Relabel the static "Your signature *" header now that it is read-only.
+    const sig1Label = document.getElementById('sig1-label');
+    if (sig1Label) sig1Label.textContent = 'Your signature';
+    const sig2Label = document.getElementById('sig2-label');
+    if (sig2Label) sig2Label.textContent = 'Partner signature';
+
+    // Collapse the partner row entirely when the partner did not sign so we
+    // do not show an empty input under a banner that says only one person
+    // signed.
+    if (!DATA.signer2_name) {
+      const sig2Wrapper = document.getElementById('sig2-wrapper');
+      if (sig2Wrapper) sig2Wrapper.classList.add('partner-empty');
+    }
+
+    // Wire the Continue button. For client-signed-no-payment we still need the
+    // couple to drop the retainer, so the button stays enabled and routes to
+    // checkout (short-circuit in submitSignature). For finished states the
+    // payment is already settled, so we hide the button and the footer note
+    // entirely. The state machine routes those couples to Page 4 by default,
+    // but a manual /agreement URL visit lands them on Page 3.
+    const signBtn = document.getElementById('sign-btn');
+    const footerNote = document.querySelector('#page-3 .sig-footer-note');
+    if (DATA.agreement_state === 'client-signed-no-payment') {
+      if (signBtn) {
+        signBtn.disabled = false;
+        signBtn.innerHTML = 'Continue to payment &rarr;';
+      }
+    } else {
+      if (signBtn) signBtn.style.display = 'none';
+      if (footerNote) footerNote.style.display = 'none';
+    }
+  }
+
   // ===== SUBMIT SIGNATURE =====
   async function submitSignature() {
     if (DATA.preview_mode) return;
@@ -1963,6 +2153,40 @@
     btn.disabled = true;
     btn.textContent = 'Signing...';
     document.getElementById('submitting-overlay').classList.add('visible');
+
+    // Already-signed short-circuit. When state is client-signed-no-payment the
+    // couple has revisited mid-flow to drop the retainer. Posting /sign in
+    // that state would 200 with partner_already_signed:true and fire a stale
+    // "Your partner already signed" alert before checkout. Skip the re-sign
+    // POST entirely and create the Stripe Checkout Session directly.
+    if (isAgreementSigned()) {
+      try {
+        clearLocalDraft();
+        const autopayCheckbox = document.getElementById('autopay-checkbox');
+        const autopayOptIn = DATA.plan_chosen !== 'full' && !!(autopayCheckbox && autopayCheckbox.checked);
+        const csResp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ autopay_enabled: autopayOptIn }),
+        });
+        if (!csResp.ok) {
+          const csErr = await csResp.json().catch(() => ({}));
+          throw new Error(csErr.error || 'Could not start payment session');
+        }
+        const cs = await csResp.json();
+        if (cs.checkout_url) {
+          window.location.href = cs.checkout_url;
+          return;
+        }
+        throw new Error('No checkout URL returned');
+      } catch (err) {
+        document.getElementById('submitting-overlay').classList.remove('visible');
+        btn.disabled = false;
+        btn.innerHTML = 'Continue to payment &rarr;';
+        alert('There was an error: ' + err.message + '. Please try again or contact us at sean@flyiniris.com.');
+        return;
+      }
+    }
 
     try {
       const name1 = document.getElementById('sig-type-1').value.trim();

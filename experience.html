@@ -1671,6 +1671,25 @@
       return '$' + n.toLocaleString();
     }
 
+    // Build a discovery-booking widget URL prefilled with the couple's contact
+    // info from the inquiry. GHL booking widgets honor first_name/last_name/
+    // email/phone query params natively. Mirrors the inline quiz confirmation
+    // iframe in index.html. Falls back to the bare BOOKING_BASE if any of the
+    // four standard params are missing so the URL is always usable.
+    function buildBookingUrl() {
+      if (!sessionData) return BOOKING_BASE;
+      var first = sessionData.name || '';
+      var last = sessionData.lastName || '';
+      var email = sessionData.email || '';
+      var phone = (sessionData.phone || '').replace(/\D/g, '');
+      var qs = [];
+      if (first) qs.push('first_name=' + encodeURIComponent(first));
+      if (last) qs.push('last_name=' + encodeURIComponent(last));
+      if (email) qs.push('email=' + encodeURIComponent(email));
+      if (phone) qs.push('phone=' + encodeURIComponent(phone));
+      return qs.length ? BOOKING_BASE + '?' + qs.join('&') : BOOKING_BASE;
+    }
+
     function showToast(msg) {
       var toast = document.getElementById('toast');
       toast.textContent = msg;
@@ -1781,8 +1800,9 @@
         document.getElementById('act-testimonial').style.display = 'none';
       }
 
-      // Closing CTA
-      document.getElementById('cta-closing').href = BOOKING_BASE;
+      // Closing CTA — prefill from session so the booking widget lands with
+      // first name, last name, email, and phone already filled.
+      document.getElementById('cta-closing').href = buildBookingUrl();
 
       // Act 7: Share
       if (d.partnerName) {
@@ -2177,7 +2197,7 @@
 
       h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatPrice(calc.total) + '</span></div>';
 
-      h += '<a href="' + BOOKING_BASE + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
+      h += '<a href="' + buildBookingUrl() + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
       h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
 
       // Availability reminder
