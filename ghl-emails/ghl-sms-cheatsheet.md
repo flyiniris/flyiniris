@@ -2,7 +2,7 @@
 
 > All messages: From **(262) 384-5079**
 > Voice: Texts from a friend. Warm, genuine, specific. Light emoji (💛 🎉 only). Short.
-> Sign-off: Always "— Sean & Sierra" or "— Sean & Sierra, Flyin' Iris"
+> Sign-off: Always "— Sierra & Sean" or "— Sierra & Sean, Flyin' Iris"
 
 ---
 
@@ -31,7 +31,7 @@
 ```
 Hey {{contact.first_name}}! We just got your inquiry and we're so excited — {{contact.venue_name}} on {{contact.wedding_date}} sounds absolutely beautiful. We'd love to hop on a quick 15-min call to hear about your day. No pitch, just a real conversation: {{calendar_link}}
 
-— Sean & Sierra, Flyin' Iris 💛
+— Sierra & Sean, Flyin' Iris 💛
 ```
 
 ---
@@ -45,7 +45,7 @@ Hey {{contact.first_name}}! We just got your inquiry and we're so excited — {{
 ```
 Hey {{contact.first_name}}! Loved seeing your custom package come together 💛 We'd love to walk you through it on a quick call — {{calendar_link}}
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -59,7 +59,7 @@ Hey {{contact.first_name}}! Loved seeing your custom package come together 💛 
 ```
 Hey {{contact.first_name}}! Random thought — has {{contact.venue_name}} always been the dream or did you two just walk in and know? Either way we love it 💛 Whenever you're ready to chat: {{calendar_link}}
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -72,7 +72,7 @@ Hey {{contact.first_name}}! Random thought — has {{contact.venue_name}} always
 ```
 {{contact.first_name}}! Your call is booked for {{appointment.start_time}} — can't wait to hear about your day! 💛
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -85,7 +85,7 @@ Hey {{contact.first_name}}! Random thought — has {{contact.venue_name}} always
 ```
 Hey {{contact.first_name}}, just a heads up — we're chatting tomorrow at {{appointment.start_time}}! Looking forward to it 💛
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -98,7 +98,7 @@ Hey {{contact.first_name}}, just a heads up — we're chatting tomorrow at {{app
 ```
 See you in an hour, {{contact.first_name}}! Here's your Zoom link: [ZOOM LINK]
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -122,7 +122,7 @@ See you in an hour, {{contact.first_name}}! Here's your Zoom link: [ZOOM LINK]
 ```
 Hey {{contact.first_name}}, no rush at all — just wanted you to know your date is still available. Let us know if any questions came up! 💛
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -136,7 +136,7 @@ Hey {{contact.first_name}}, no rush at all — just wanted you to know your date
 ```
 Hey {{contact.first_name}}, just a heads up — we've had a couple other inquiries for {{contact.wedding_date}}. We wanted to give you first dibs before we open it up. No pressure at all 🤍
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -149,7 +149,7 @@ Hey {{contact.first_name}}, just a heads up — we've had a couple other inquiri
 ```
 Hey {{contact.first_name}}, just checking in — did you get a chance to look over the proposal? Happy to answer any questions at all 💛
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -162,7 +162,7 @@ Hey {{contact.first_name}}, just checking in — did you get a chance to look ov
 ```
 Hey {{contact.first_name}}, quick heads up — we're holding {{contact.wedding_date}} for you but had another inquiry come in for that weekend. Just want to make sure you get first dibs 🤍
 
-— Sean & Sierra
+— Sierra & Sean
 ```
 
 ---
@@ -175,7 +175,7 @@ Hey {{contact.first_name}}, quick heads up — we're holding {{contact.wedding_d
 ```
 IT'S OFFICIAL 🎉 {{contact.first_name}}, we are SO excited to be part of your day. Check your email for what's next — this is going to be amazing.
 
-— Sean & Sierra, Flyin' Iris 💛
+— Sierra & Sean, Flyin' Iris 💛
 ```
 
 ---

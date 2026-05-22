@@ -2145,14 +2145,14 @@
     </section>
 
     <!-- ========== ABOUT ========== -->
-    <section id="about" class="section about" aria-label="About Sean and Sierra">
+    <section id="about" class="section about" aria-label="About Sierra and Sean">
       <div class="section-inner">
         <div class="reveal">
           <p class="section-label reveal-child">Your Filmmakers</p>
-          <h2 class="section-heading reveal-child">We're Sean &amp; Sierra.</h2>
+          <h2 class="section-heading reveal-child">We're Sierra &amp; Sean.</h2>
         </div>
         <div class="about-grid reveal">
-          <img src="sean-sierra.webp" alt="Sean and Sierra Herkenrath - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy" width="1000" height="1500">
+          <img src="sean-sierra.webp" alt="Sierra Hernitz and Sean Adamec - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy" width="1000" height="1500">
           <div class="about-content reveal-child">
             <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean is the reason your entire experience is dialed in, from the first time you reach out to the moment your film lands in your inbox. He&rsquo;s obsessing over every detail so nothing falls through the cracks.</p>
             <p>Our couples don&rsquo;t call us their videographers &mdash; they call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
@@ -2561,7 +2561,7 @@
           "9-12 min":{price:600,cost:300}, "13-15 min":{price:1000,cost:450}, "15-20 min":{price:1300,cost:600}
         };
         var TEAM_ADDONS = { teaser:{price:500,cost:250}, storySession:{price:1000,cost:400} };
-        // S&S pricing (We want Sean & Sierra creating with us)
+        // S&S pricing (We want Sierra & Sean creating with us)
         var SS_BASE_PRICE = 3800;
         var SS_HOURLY = 225;
         var SS_HOURS = { 6:0, 7:225, 8:450, 9:675, 10:900, 11:1125, 12:1350 };
@@ -2581,7 +2581,7 @@
 
         function calcPrice(a) {
           var isTeam = a.quality === "We want an incredible wedding film";
-          var isSS = a.quality === "We want Sean & Sierra creating with us";
+          var isSS = a.quality === "We want Sierra & Sean creating with us";
           if (!isTeam && !isSS) return { price:0, savings:0, rawPrice:0, breakdown:[] };
           var hours = getHoursNum(a.hours);
           var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
@@ -2783,8 +2783,8 @@
             ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows \u2014 every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious \u2014 even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
             { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment \u2014 and there\u2019s no wrong answer.", type:"single", options:[
               {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits your footage into a cinematic story, and Sean reviews every cut before it reaches you."},
-              {emoji:"\u2728",label:"We want Sean & Sierra creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
-            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sean & Sierra creating with us":"When Sean and Sierra are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
+              {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
+            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra and Sean are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
             isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", type:"single", showPriceImpact:true, options:[
               {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances \u2014 included in your package"},
               {emoji:"\u23f0",label:"7 hours",desc:"A little extra buffer before or after"},
@@ -2794,7 +2794,7 @@
               {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day \u2014 almost everything"},
               {emoji:"\ud83c\udf1f",label:"12 hours",desc:"The whole thing \u2014 first moment to last song"}
             ], valueMessage:{"6 hours":"Great starting point \u2014 ceremony, toasts, first dances.","7 hours":"A little extra room to breathe.","8 hours":"Getting ready through the reception highlights.","9 hours":"Full prep through the party.","10 hours":"The full story \u2014 pre-ceremony through the party.","11 hours":"Extended coverage \u2014 almost everything.","12 hours":"Every chapter, first moment to last song."}}
-            : { id:"hours", question:"How long is your wedding day?", subtext:"Sean & Sierra will be there for every moment you choose.", type:"single", showPriceImpact:true, options:[
+            : { id:"hours", question:"How long is your wedding day?", subtext:"Sierra & Sean will be there for every moment you choose.", type:"single", showPriceImpact:true, options:[
               {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day \u2014 ceremony through first dances"},
               {emoji:"\u23f0",label:"7 hours",desc:"A little more room"},
               {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day \u2014 getting ready through reception"},
@@ -3228,7 +3228,7 @@
           var a = state.calcAnswers;
           var ci = state.contactInfo;
           var est = calcPrice(a);
-          var isTop = a.quality === "We want Sean & Sierra creating with us";
+          var isTop = a.quality === "We want Sierra & Sean creating with us";
           var isTeam = a.quality === "We want an incredible wedding film";
           var hours = getHoursNum(a.hours);
 
@@ -3247,7 +3247,7 @@
           // Tier badge
           h += '<div class="quiz-gold-box" style="margin-bottom:20px">';
           h += '<span class="calc-tier-badge">' + esc(isTeam ? "Team Package" : "S&S Experience") + '</span>';
-          h += '<p class="calc-tier-desc">' + (isTeam ? "Our expert team captures your day with the same Flyin' Iris cinematic style. Edited in-house, reviewed by Sean, polished by Sierra." : "Sean & Sierra personally film and edit your story. Founder-level storytelling from start to finish.") + '</p>';
+          h += '<p class="calc-tier-desc">' + (isTeam ? "Our expert team captures your day with the same Flyin' Iris cinematic style. Edited in-house, reviewed by Sean, polished by Sierra." : "Sierra & Sean personally film and edit your story. Founder-level storytelling from start to finish.") + '</p>';
           h += '</div>';
 
           // Price breakdown

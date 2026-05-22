@@ -1516,7 +1516,7 @@
     <footer class="experience-footer">
       <div class="footer-line"></div>
       <p style="font-family:'Outfit',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--accent);margin-bottom:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</p>
-      <p class="footer-brand">Sean & Sierra, Flyin' Iris</p>
+      <p class="footer-brand">Sierra & Sean, Flyin' Iris</p>
       <ul class="footer-links">
         <li><a href="https://www.flyiniris.com/#films">Films</a></li>
         <li><a href="https://www.flyiniris.com/#why">About</a></li>
@@ -1589,7 +1589,7 @@
         name: "Taylor"
       },
       'olivia-austin': {
-        text: "I didn't realize how much of our day I had already started to forget until we watched the film. Sean and Sierra captured the way Austin looked at me during the ceremony, the way my dad's voice broke during his toast. Things I would have lost forever without them.",
+        text: "I didn't realize how much of our day I had already started to forget until we watched the film. Sierra and Sean captured the way Austin looked at me during the ceremony, the way my dad's voice broke during his toast. Things I would have lost forever without them.",
         name: "Olivia"
       }
     };
@@ -1622,15 +1622,15 @@
         ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows, every single word":"Vows are the one thing you'll want to hear again and again.","The speeches that wreck us":"In 10 years, you'll want to hear your dad's voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious, even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
         { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single biggest factor in your investment, and there's no wrong answer.", options:[
           {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits your footage into a cinematic story, and Sean reviews every cut before it reaches you."},
-          {emoji:"\u2728",label:"We want Sean & Sierra creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
-        ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sean & Sierra creating with us":"When Sean and Sierra are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
+          {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
+        ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra and Sean are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
         isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", options:[
           {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances, our most popular starting point"},
           {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
           {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage. Pre-ceremony through the party"},
           {emoji:"\ud83c\udf1f",label:"Up to 12 hours",desc:"The whole thing. First moment to last song"}
         ], valueMessage:{"6 hours":"Great starting point. Ceremony, toasts, first dances.","8 hours":"Getting ready through the reception highlights.","10 hours":"The full story. Pre-ceremony through the party.","Up to 12 hours":"Every chapter, first moment to last song."}}
-        : { id:"hours", question:"How long is your wedding day?", subtext:"Sean & Sierra will be there for every moment you choose.", options:[
+        : { id:"hours", question:"How long is your wedding day?", subtext:"Sierra & Sean will be there for every moment you choose.", options:[
           {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day. Ceremony through first dances"},
           {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day. Getting ready through reception"},
           {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day. We'll be there for everything"},
@@ -1756,11 +1756,11 @@
             dateStr = wd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
           }
         } catch(e) {}
-        availEl.textContent = displayName + ', good news! Sean & Sierra are available on ' + dateStr + '.';
+        availEl.textContent = displayName + ', good news! Sierra & Sean are available on ' + dateStr + '.';
       } else if (d.available && d.availabilityMessage) {
         availEl.textContent = displayName + ', ' + d.availabilityMessage;
       } else if (d.available) {
-        availEl.textContent = displayName + ', good news! Sean & Sierra are available for your wedding.';
+        availEl.textContent = displayName + ', good news! Sierra & Sean are available for your wedding.';
       } else {
         availEl.textContent = displayName + ', let\'s talk about your day.';
       }
@@ -2096,7 +2096,7 @@
       h += '<div class="builder-section-title">Experience</div>';
       h += '<div class="b-tier-cards">';
       h += '<div class="b-tier-card' + (bs.tier === 'team' ? ' selected' : '') + '" data-btier="team"><div class="b-tier-name">Team</div><div class="b-tier-sub">Starting at $2,800</div></div>';
-      h += '<div class="b-tier-card' + (bs.tier === 'ss' ? ' selected' : '') + '" data-btier="ss"><div class="b-tier-name">Sean & Sierra</div><div class="b-tier-sub">Starting at $3,800</div></div>';
+      h += '<div class="b-tier-card' + (bs.tier === 'ss' ? ' selected' : '') + '" data-btier="ss"><div class="b-tier-name">Sierra & Sean</div><div class="b-tier-sub">Starting at $3,800</div></div>';
       h += '</div></div>';
 
       // Hours
@@ -2168,7 +2168,7 @@
 
       h += '<div class="price-summary-title">Your Package</div>';
 
-      h += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sean & Sierra' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
+      h += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sierra & Sean' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
 
       var hoursPrice = tier.hours[bs.hours] || 0;
       if (hoursPrice > 0) {

@@ -85,7 +85,7 @@ just making sure this didn't get buried — your custom package is still waiting
 **Confirmation SMS**
 
 ```
-you're on the calendar! 🎉 so excited to hear about your day. talk soon — Sean & Sierra
+you're on the calendar! 🎉 so excited to hear about your day. talk soon — Sierra & Sean
 ```
 
 ---

@@ -53,10 +53,10 @@ All 4 email templates were pulled from GoHighLevel, audited against the checklis
 - **CALC-01:** Fixed (see diff below)
 
 ### 6. Sign-off Branding ("Media Productions" check)
-- **INQ-01:** CORRECT - Sign-off reads "Sean & Sierra" / "Flyin' Iris" (no "Media Productions")
-- **INQ-02:** CORRECT - Sign-off reads "Sean & Sierra" / "Flyin' Iris"
-- **INQ-03:** CORRECT - Sign-off reads "Sean & Sierra" / "Flyin' Iris"
-- **CALC-01:** CORRECT - Sign-off reads "Sean & Sierra" / "Flyin' Iris"
+- **INQ-01:** CORRECT - Sign-off reads "Sierra & Sean" / "Flyin' Iris" (no "Media Productions")
+- **INQ-02:** CORRECT - Sign-off reads "Sierra & Sean" / "Flyin' Iris"
+- **INQ-03:** CORRECT - Sign-off reads "Sierra & Sean" / "Flyin' Iris"
+- **CALC-01:** CORRECT - Sign-off reads "Sierra & Sean" / "Flyin' Iris"
 
 > **Note:** The copyright footer in all templates reads "Flyin' Iris Media Productions LLC" which is the legal entity name and is correct/expected.
 
