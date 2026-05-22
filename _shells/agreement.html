@@ -2068,15 +2068,25 @@
   });
 
   function updateSignButton() {
-    let hasSig1 = false;
+    // signer1 is the required signer. Both a typed name AND a signature
+    // (typed OR drawn) must be present for the button to enable. The Worker
+    // requires signer1_name + signer1_signature_data + signer1_signature_type
+    // (agreement.ts:443) regardless of signature mode. Previously the draw
+    // mode branch only checked the canvas, so a user who drew without typing
+    // their name could click submit and get a generic 400 from the server.
+    const name1El = document.getElementById('sig-type-1');
+    const name1 = name1El ? name1El.value.trim() : '';
+    let hasSig1Data = false;
     if (sig1Mode === 'type') {
-      const v = document.getElementById('sig-type-1');
-      hasSig1 = v && v.value.trim().length > 0;
+      // In type mode the typed name IS the signature, so name length alone
+      // tells us both fields are populated.
+      hasSig1Data = name1.length > 0;
     } else {
-      hasSig1 = sigPad1 && !sigPad1.isEmpty();
+      hasSig1Data = !!(sigPad1 && !sigPad1.isEmpty());
     }
+    const sig1Complete = hasSig1Data && name1.length > 0;
     const btn = document.getElementById('sign-btn');
-    if (btn && !DATA.preview_mode) btn.disabled = !hasSig1;
+    if (btn && !DATA.preview_mode) btn.disabled = !sig1Complete;
   }
 
   // States where the couple has already signed. We expose a read-only banner,
@@ -2230,15 +2240,24 @@
           : (sigPad1 ? sigPad1.toDataURL('image/png') : ''),
       };
 
+      // Partner (signer2) is optional, but if we send any signer2 field the
+      // Worker requires all three to be truthy (agreement.ts:456) or it
+      // silently drops the partner signature entirely. Mirror the signer1
+      // rule client-side: only send signer2 fields when BOTH a typed name
+      // AND a signature (typed or drawn) are present. A partner who drew
+      // without typing their name previously had their drawn blob silently
+      // discarded server-side; now we never send incomplete signer2 fields.
       const name2 = document.getElementById('sig-type-2').value.trim();
-      if (sig2Mode === 'draw' && sigPad2 && !sigPad2.isEmpty()) {
-        payload.signer2_name = name2;
-        payload.signer2_signature_type = 'drawn';
-        payload.signer2_signature_data = sigPad2.toDataURL('image/png');
-      } else if (name2) {
-        payload.signer2_name = name2;
-        payload.signer2_signature_type = 'typed';
-        payload.signer2_signature_data = name2;
+      if (name2) {
+        if (sig2Mode === 'draw' && sigPad2 && !sigPad2.isEmpty()) {
+          payload.signer2_name = name2;
+          payload.signer2_signature_type = 'drawn';
+          payload.signer2_signature_data = sigPad2.toDataURL('image/png');
+        } else {
+          payload.signer2_name = name2;
+          payload.signer2_signature_type = 'typed';
+          payload.signer2_signature_data = name2;
+        }
       }
 
       const resp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/sign', {
