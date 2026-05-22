@@ -1009,8 +1009,6 @@
   <!-- ============================================================ -->
   <section id="page-1" class="page-section">
     <div class="container">
-      <button type="button" class="back-btn" onclick="goBackFromPage(1)">&larr; Back</button>
-
       <h1 class="page-title">Let's lock this in.</h1>
 
       <div class="hero-wrap" id="hero-wrap">
@@ -1607,18 +1605,10 @@
   }
 
   // Back button handler. Pages 2 and 3 step back one page in the SPA flow.
-  // Page 1 has no prior SPA page; defer to browser history (the couple
-  // typically arrived from an email link or another tab).
+  // Page 1 (welcome) intentionally has no back button: the entry of a contract
+  // signing flow should not offer an exit hatch.
   function goBackFromPage(n) {
     if (DATA && DATA.preview_mode) return;
-    if (n === 1) {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.close();
-      }
-      return;
-    }
     if (n === 2) { goToPage(1); return; }
     if (n === 3) { goToPage(2); return; }
   }
@@ -1683,7 +1673,10 @@
   // tax, total) above the payment plan grid. Reads from data.itemization, which
   // is the canonical shape produced by toItemization() on the Worker side. The
   // tax line is already stripped from itemization.lineItems so it doesn't
-  // render twice; data.itemization.tax holds the tax amount separately.
+  // render twice; data.itemization.tax holds the tax amount separately. The
+  // operator-applied custom S&S discount (when present) lives on top-level
+  // AgreementPageData fields (custom_discount, custom_discount_type,
+  // custom_discount_value), not on itemization.
   function renderPackageDetails(data) {
     const wrap = document.getElementById('package-details');
     if (!wrap) return;
@@ -1715,6 +1708,30 @@
       '</div>';
     }
 
+    // Custom S&S discount: operator-applied, hidden entirely at zero or null.
+    // Qualifier carries up to two pieces inside one parenthetical:
+    //   percent flavor with expiry: "(10% off, expires May 28, 2026)"
+    //   percent flavor, no expiry:  "(10% off)"
+    //   dollar flavor with expiry:  "(expires May 28, 2026)"
+    //   dollar flavor, no expiry:   no parenthetical at all
+    // Matches the Bundle savings .discount styling for visual consistency.
+    const customDiscount = Number(data.custom_discount) || 0;
+    if (customDiscount > 0) {
+      const parts = [];
+      if (data.custom_discount_type === 'percent' && data.custom_discount_value != null) {
+        parts.push(escapeHtml(String(data.custom_discount_value)) + '% off');
+      }
+      const expiryStr = formatDiscountExpiry(data.custom_discount_expires_at);
+      if (expiryStr) {
+        parts.push('expires ' + escapeHtml(expiryStr));
+      }
+      const qualifier = parts.length ? ' (' + parts.join(', ') + ')' : '';
+      html += '<div class="pd-summary-row discount">' +
+        '<span class="pd-label">Custom S&amp;S discount' + qualifier + '</span>' +
+        '<span class="pd-amount">-$' + fmtMoney(customDiscount) + '</span>' +
+      '</div>';
+    }
+
     html += '<div class="pd-summary-row">' +
       '<span class="pd-label">Sales tax (5.5%)</span>' +
       '<span class="pd-amount">$' + fmtMoney(it.tax || 0) + '</span>' +
@@ -1733,6 +1750,21 @@
   function fmtMoney(n) {
     if (n == null || isNaN(n)) return '0.00';
     return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Format a Custom S&S discount expiry date as "May 28, 2026". Parse ISO by
+  // regex so the wall date renders verbatim. Using new Date(iso) on a bare
+  // "YYYY-MM-DD" treats it as UTC midnight, which can roll the day back one
+  // in Central time. Worker stores the expiry as a wall date in operator-
+  // local time; we render the same wall date here.
+  function formatDiscountExpiry(iso) {
+    if (!iso) return '';
+    const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return '';
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const mon = months[parseInt(m[2], 10) - 1];
+    if (!mon) return '';
+    return mon + ' ' + parseInt(m[3], 10) + ', ' + m[1];
   }
 
   function buildPlanCard(plan, total, data, lowerTier) {
