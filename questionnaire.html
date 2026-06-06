@@ -860,50 +860,33 @@
     <p class="step-intro">All optional. Around 10 minutes if you fill it manually, or 30 seconds if you uploaded a timeline above.</p>
     <div class="step-helper">If you've got these answers nailed down, share them. If not, we'll work through them on our consultation call. If you have a timeline document already, upload it at the top of this page and we'll pre-fill this section for you.</div>
 
-    <!-- Q6 bride_dress_time -->
+    <!-- Q6 bride_dress_time (backend key unchanged; label now uses partner 1's name) -->
     <div class="field" data-field="bride_dress_time" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="bride_dress_time">What time is bride putting on the dress? (or upload your timeline above and we'll pre-fill this section for you)</label>
+      <label class="field-label" id="gr-label-dress-1" for="bride_dress_time">What time does your partner start getting ready? (or upload your timeline above and we'll pre-fill this section for you)</label>
       <input type="text" id="bride_dress_time" placeholder="e.g. 1:30pm" />
     </div>
 
-    <!-- Q7 groom_tux_time -->
+    <!-- Q7 groom_tux_time (backend key unchanged; label now uses partner 2's name) -->
     <div class="field" data-field="groom_tux_time" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="groom_tux_time">What time is groom putting on the tux?</label>
+      <label class="field-label" id="gr-label-dress-2" for="groom_tux_time">What time does your partner start getting ready?</label>
       <input type="text" id="groom_tux_time" placeholder="e.g. 1:30pm" />
     </div>
 
-    <!-- Q8 compound: getting ready locations -->
+    <!-- Q8 getting_ready_bride (backend key unchanged; single location box, label uses partner 1's name) -->
     <div class="field" data-field="getting_ready_bride" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label">Getting ready locations (bride and groom separately, including hotel/room number if applicable)</label>
-      <div class="compound-row">
-        <div class="compound-cell">
-          <span class="compound-cell-label">Bride: location</span>
-          <input type="text" id="getting_ready_bride_loc" placeholder="e.g. Lakeside Manor" />
-        </div>
-        <div class="compound-cell">
-          <span class="compound-cell-label">Bride: room (optional)</span>
-          <input type="text" id="getting_ready_bride_room" placeholder="e.g. Bridal Suite" />
-        </div>
-      </div>
+      <label class="field-label" id="gr-label-loc-1" for="getting_ready_bride_loc">Where is your partner getting ready? (include hotel and room number if applicable)</label>
+      <input type="text" id="getting_ready_bride_loc" placeholder="e.g. Lakeside Manor, Suite 204" />
       <input type="hidden" id="getting_ready_bride" />
     </div>
 
+    <!-- Q9 getting_ready_groom (backend key unchanged; single location box, label uses partner 2's name) -->
     <div class="field" data-field="getting_ready_groom" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label">&nbsp;</label>
-      <div class="compound-row">
-        <div class="compound-cell">
-          <span class="compound-cell-label">Groom: location</span>
-          <input type="text" id="getting_ready_groom_loc" placeholder="e.g. Lakeside Manor" />
-        </div>
-        <div class="compound-cell">
-          <span class="compound-cell-label">Groom: room (optional)</span>
-          <input type="text" id="getting_ready_groom_room" placeholder="e.g. Groom's Lounge" />
-        </div>
-      </div>
+      <label class="field-label" id="gr-label-loc-2" for="getting_ready_groom_loc">Where is your partner getting ready? (include hotel and room number if applicable)</label>
+      <input type="text" id="getting_ready_groom_loc" placeholder="e.g. Lakeside Manor, Suite 206" />
       <input type="hidden" id="getting_ready_groom" />
     </div>
 
@@ -917,7 +900,7 @@
       </div>
       <div class="yn-followup" data-followup-for="first_look_yn">
         <span class="compound-cell-label" style="margin-top: 4px;">With who and when?</span>
-        <textarea id="first_look_detail" rows="3" placeholder="e.g. bride and groom in the garden at 1pm"></textarea>
+        <textarea id="first_look_detail" rows="3" placeholder="e.g. the two of you in the garden at 1pm"></textarea>
       </div>
       <input type="hidden" id="first_look" />
     </div>
@@ -1074,7 +1057,7 @@
     <!-- Q27-28 couple_welcome_speech -->
     <div class="field" data-field="couple_welcome_speech_yn" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label">Are bride and groom giving a welcome or thank-you speech? (yes/no)</label>
+      <label class="field-label">Are the two of you giving a welcome or thank-you speech? (yes/no)</label>
       <div class="yn-row" data-yn-group="couple_welcome_speech_yn">
         <button type="button" class="yn-btn" data-val="yes">Yes</button>
         <button type="button" class="yn-btn" data-val="no">No</button>
@@ -1539,6 +1522,18 @@
   var prefillVenue = params.get('venue') || '';
   var prefillDate = params.get('date') || '';
 
+  // Couple names for the de-gendered getting-ready labels.
+  //   name 1 = primary contact first name (from URL ?firstName, or the prefill
+  //            fetch's firstName).
+  //   name 2 = partner first name (fiancs_first_name custom field, returned by
+  //            /api/contact/:id as customFields.fiancs_first_name, or by the
+  //            token endpoint as contact.partner_name).
+  // Both may arrive async from the prefill fetch; the four labels re-render via
+  // applyCoupleNamesToLabels() whenever a name resolves. Fallback wording is
+  // "your partner" so a label never renders blank.
+  var coupleName1 = (prefillFirstName || '').trim();
+  var coupleName2 = '';
+
   // Hash anchor routing. Email CTAs include #fragment to land couples on a
   // specific step. Without this override, loadLocal silently restores the
   // last-visited step from localStorage and ignores the explicit anchor,
@@ -1641,14 +1636,12 @@
   function readFieldValue(name) {
     // Special compound and radio cases
     if (name === 'getting_ready_bride') {
-      var loc = (val('getting_ready_bride_loc') || '').trim();
-      var room = (val('getting_ready_bride_room') || '').trim();
-      return room ? (loc + (loc && room ? ', ' : '') + room) : loc;
+      // Single location box (room sub-input removed). Couples can still type the
+      // room into this one box; the value writes the getting_ready_bride key as-is.
+      return (val('getting_ready_bride_loc') || '').trim();
     }
     if (name === 'getting_ready_groom') {
-      var glo = (val('getting_ready_groom_loc') || '').trim();
-      var grm = (val('getting_ready_groom_room') || '').trim();
-      return grm ? (glo + (glo && grm ? ', ' : '') + grm) : glo;
+      return (val('getting_ready_groom_loc') || '').trim();
     }
     if (name === 'first_look') {
       var ynVal = ynState['first_look_yn'];
@@ -1704,16 +1697,13 @@
   function writeFieldValue(name, value) {
     if (value == null) value = '';
     if (name === 'getting_ready_bride') {
-      // Try to split: if value contains comma, parts[0]=loc, parts[1]=room
-      var parts = value.split(/,\s*/);
-      setVal('getting_ready_bride_loc', parts[0] || '');
-      setVal('getting_ready_bride_room', parts.slice(1).join(', ') || '');
+      // Single location box now. Whole stored value goes in as-is, so older
+      // couples whose data was saved as "location, room" still round-trip intact.
+      setVal('getting_ready_bride_loc', value);
       return;
     }
     if (name === 'getting_ready_groom') {
-      var pp = value.split(/,\s*/);
-      setVal('getting_ready_groom_loc', pp[0] || '');
-      setVal('getting_ready_groom_room', pp.slice(1).join(', ') || '');
+      setVal('getting_ready_groom_loc', value);
       return;
     }
     if (name === 'first_look') {
@@ -1976,11 +1966,11 @@
   });
 
   // Compound inputs that map onto getting_ready_bride / getting_ready_groom / first_look
-  ['getting_ready_bride_loc', 'getting_ready_bride_room'].forEach(function (id) {
+  ['getting_ready_bride_loc'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.addEventListener('input', function () { handleFieldChange('getting_ready_bride'); maybeSave(); });
   });
-  ['getting_ready_groom_loc', 'getting_ready_groom_room'].forEach(function (id) {
+  ['getting_ready_groom_loc'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.addEventListener('input', function () { handleFieldChange('getting_ready_groom'); maybeSave(); });
   });
@@ -2659,6 +2649,14 @@
         return r.json();
       })
       .then(function (data) {
+        // The token endpoint returns a contact block with first_name and
+        // partner_name (= fiancs_first_name). Capture for the getting-ready
+        // labels even before the rich /api/contact chain resolves.
+        if (data && data.contact) {
+          if (data.contact.first_name && !coupleName1) coupleName1 = String(data.contact.first_name).trim();
+          if (data.contact.partner_name && !coupleName2) coupleName2 = String(data.contact.partner_name).trim();
+          applyCoupleNamesToLabels();
+        }
         var resolvedId = data && data.contact_id;
         if (resolvedId) {
           contactId = resolvedId;
@@ -2684,7 +2682,15 @@
         return r.json();
       })
       .then(function (data) {
-        if (!data || !data.customFields) return;
+        if (!data) return;
+        // Capture both names for the de-gendered getting-ready labels before
+        // applying field prefill. firstName = name 1, fiancs_first_name = name 2.
+        if (data.firstName && !coupleName1) coupleName1 = String(data.firstName).trim();
+        if (data.customFields && data.customFields.fiancs_first_name && !coupleName2) {
+          coupleName2 = String(data.customFields.fiancs_first_name).trim();
+        }
+        applyCoupleNamesToLabels();
+        if (!data.customFields) return;
         applyPrefillFields(data.customFields, source);
       })
       .catch(function (err) {
@@ -2696,6 +2702,9 @@
   }
 
   function applyContactBlockFallback(contactBlock) {
+    if (contactBlock.first_name && !coupleName1) coupleName1 = String(contactBlock.first_name).trim();
+    if (contactBlock.partner_name && !coupleName2) coupleName2 = String(contactBlock.partner_name).trim();
+    applyCoupleNamesToLabels();
     var cf = {};
     if (contactBlock.wedding_date) cf.wedding_date = contactBlock.wedding_date;
     if (contactBlock.venue_name) cf.venue_name = contactBlock.venue_name;
@@ -2734,6 +2743,34 @@
   }
 
   /* ============================================================
+   * De-gendered getting-ready labels
+   *
+   * Replaces the four "bride"/"groom" getting-ready labels with the couple's
+   * actual names. name 1 = primary contact, name 2 = partner. Missing names
+   * fall back to "your partner" so a label is never blank. Safe to call
+   * repeatedly; runs at boot (name 1 from the URL) and again as the prefill
+   * fetch resolves name 2.
+   * ============================================================ */
+  function gettingReadyName(slot) {
+    var n = (slot === 1 ? coupleName1 : coupleName2) || '';
+    n = n.trim();
+    return n || 'your partner';
+  }
+
+  function applyCoupleNamesToLabels() {
+    var n1 = gettingReadyName(1);
+    var n2 = gettingReadyName(2);
+    var l1 = document.getElementById('gr-label-dress-1');
+    if (l1) l1.textContent = 'What time does ' + n1 + ' start getting ready? (or upload your timeline above and we\'ll pre-fill this section for you)';
+    var l2 = document.getElementById('gr-label-dress-2');
+    if (l2) l2.textContent = 'What time does ' + n2 + ' start getting ready?';
+    var l3 = document.getElementById('gr-label-loc-1');
+    if (l3) l3.textContent = 'Where is ' + n1 + ' getting ready? (include hotel and room number if applicable)';
+    var l4 = document.getElementById('gr-label-loc-2');
+    if (l4) l4.textContent = 'Where is ' + n2 + ' getting ready? (include hotel and room number if applicable)';
+  }
+
+  /* ============================================================
    * Boot
    *
    * Restore order (highest precedence wins):
@@ -2751,6 +2788,10 @@
   if (hashStepOverride !== null) goToStep(hashStepOverride);
   updateProgress();
   updateSubmitGate();
+  // Paint the getting-ready labels with name 1 (from the URL ?firstName) right
+  // away; name 2 fills in when loadContactPrefill resolves. Until then the
+  // missing name shows the "your partner" fallback, never a blank.
+  applyCoupleNamesToLabels();
 
   loadDraftFromServer().then(function (loaded) {
     if (loaded) {
