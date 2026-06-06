@@ -410,6 +410,46 @@
       border-color: var(--gold);
     }
 
+    /* First-look multi-select options */
+    .yn-followup[data-followup-for="first_look_yn"].open { max-height: 1200px; }
+    .fl-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .fl-opt-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Outfit', Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+    .fl-opt-btn:hover { border-color: var(--gold); }
+    .fl-opt-btn.active {
+      border-color: var(--gold);
+      background: rgba(255,189,29,0.06);
+    }
+    .fl-opt-time {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
+    }
+    .fl-opt-time.open {
+      max-height: 80px;
+      opacity: 1;
+      margin-top: 6px;
+    }
+    .fl-time-input { width: 100%; }
+
     /* 3-option Y/N/maybe */
     .three-opt-row {
       display: flex;
@@ -825,7 +865,7 @@
     <!-- Q3 + Q4 traveling_other_locations_yn + detail -->
     <div class="field" data-field="traveling_other_locations_yn" data-state="user_entered" data-required="true">
       <span class="field-badge"></span>
-      <label class="field-label field-required">Will we (Flyin' Iris) be traveling to any other locations, other than your venue, on your wedding day? (getting ready, first look, ceremony, bridal pictures, reception, speeches, first dances, etc.)</label>
+      <label class="field-label field-required">Will we (Flyin' Iris) be traveling to any other locations, other than your venue, on your wedding day? (getting ready, first look, ceremony, couple portraits, reception, speeches, first dances, etc.)</label>
       <div class="yn-row" data-yn-group="traveling_other_locations_yn">
         <button type="button" class="yn-btn" data-val="yes">Yes</button>
         <button type="button" class="yn-btn" data-val="no">No</button>
@@ -899,8 +939,37 @@
         <button type="button" class="yn-btn" data-val="no">No</button>
       </div>
       <div class="yn-followup" data-followup-for="first_look_yn">
-        <span class="compound-cell-label" style="margin-top: 4px;">With who and when?</span>
-        <textarea id="first_look_detail" rows="3" placeholder="e.g. the two of you in the garden at 1pm"></textarea>
+        <span class="compound-cell-label" style="margin-top: 4px;">Who's in the first look, and when? Pick any that apply, then add a time.</span>
+        <div class="fl-options" id="fl-options">
+          <div class="fl-opt" data-fl-key="together">
+            <button type="button" class="fl-opt-btn" id="fl-btn-together">The two of you together</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-together" class="fl-time-input" placeholder="Time, e.g. 1:00pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="p1_party">
+            <button type="button" class="fl-opt-btn" id="fl-btn-p1_party">your partner with their wedding party</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-p1_party" class="fl-time-input" placeholder="Time, e.g. 12:30pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="p2_party">
+            <button type="button" class="fl-opt-btn" id="fl-btn-p2_party">your partner with their wedding party</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-p2_party" class="fl-time-input" placeholder="Time, e.g. 12:45pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="p1_parents">
+            <button type="button" class="fl-opt-btn" id="fl-btn-p1_parents">your partner with their parent(s)</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-p1_parents" class="fl-time-input" placeholder="Time, e.g. 12:15pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="p2_parents">
+            <button type="button" class="fl-opt-btn" id="fl-btn-p2_parents">your partner with their parent(s)</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-p2_parents" class="fl-time-input" placeholder="Time, e.g. 12:20pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="parties_together">
+            <button type="button" class="fl-opt-btn" id="fl-btn-parties_together">Wedding parties together</button>
+            <div class="fl-opt-time"><input type="text" id="fl-time-parties_together" class="fl-time-input" placeholder="Time, e.g. 1:15pm" /></div>
+          </div>
+          <div class="fl-opt" data-fl-key="other">
+            <button type="button" class="fl-opt-btn" id="fl-btn-other">Other</button>
+            <div class="fl-opt-time"><input type="text" id="fl-other-text" class="fl-time-input" placeholder="Describe (who and when)" /></div>
+          </div>
+        </div>
       </div>
       <input type="hidden" id="first_look" />
     </div>
@@ -937,8 +1006,8 @@
       <div class="yn-followup" data-followup-for="letter_reading_yn">
         <div class="field" data-field="letter_reading_detail" data-state="user_entered" style="margin-bottom: 0;">
           <span class="field-badge"></span>
-          <label class="field-label" for="letter_reading_detail">When and where?</label>
-          <textarea id="letter_reading_detail" rows="2"></textarea>
+          <label class="field-label" for="letter_reading_detail">When and where? (a rough time is perfect)</label>
+          <textarea id="letter_reading_detail" rows="2" placeholder="e.g. during the ceremony, around 4:15pm, at the altar"></textarea>
         </div>
       </div>
     </div>
@@ -949,7 +1018,7 @@
       <label class="field-label">Wedding party photos: when and where?</label>
       <div class="compound-row">
         <div class="compound-cell">
-          <span class="compound-cell-label">When</span>
+          <span class="compound-cell-label">When (a rough time is perfect)</span>
           <input type="text" id="wedding_party_photos_time" placeholder="e.g. 2:30pm" />
         </div>
         <div class="compound-cell">
@@ -1046,7 +1115,7 @@
         </div>
         <div class="compound-cell" style="flex: 0 0 100%;">
           <span class="compound-cell-label">Who (and relationship)</span>
-          <textarea id="speeches_givers" data-field-key="speeches_givers" rows="3" placeholder="e.g. Maid of honor (sister), best man (brother), father of bride"></textarea>
+          <textarea id="speeches_givers" data-field-key="speeches_givers" rows="3" placeholder="e.g. maid of honor (sister), best man (brother), parent of the couple"></textarea>
         </div>
       </div>
     </div>
@@ -1158,7 +1227,7 @@
 
     <div class="field" data-field="couple_parents_names" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="couple_parents_names">Bride and groom's parents/guardians (first and last names; please list step-parents if we'll be filming them)</label>
+      <label class="field-label" for="couple_parents_names">Parents or guardians for both of you (first and last names; please list step-parents if we'll be filming them)</label>
       <textarea id="couple_parents_names" rows="4"></textarea>
     </div>
 
@@ -1505,6 +1574,17 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="timeline-nudge-modal">
+  <div class="modal">
+    <h3>Save yourself a lot of typing?</h3>
+    <p>If you upload or paste your wedding timeline, we'll autofill a big chunk of this for you. Want to add it before you keep going?</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-back" id="timeline-nudge-skip">I'll fill it in myself</button>
+      <button type="button" class="btn-next" id="timeline-nudge-upload" style="flex: 0 0 auto;">Upload my timeline</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -1533,6 +1613,18 @@
   // "your partner" so a label never renders blank.
   var coupleName1 = (prefillFirstName || '').trim();
   var coupleName2 = '';
+
+  // First-look multi-select state. Persisted separately in the snapshot as
+  // _firstLook so it round-trips robustly (the option labels depend on the
+  // couple names, which load async, so we never reparse the sentence on
+  // restore). readFieldValue('first_look') derives the human-readable string
+  // written to the existing first_look backend key for submit.
+  var FL_OPTION_KEYS = ['together', 'p1_party', 'p2_party', 'p1_parents', 'p2_parents', 'parties_together', 'other'];
+  var firstLookState = { sel: {}, times: {}, other: '' };
+
+  // Timeline-nudge state. timelineProvided flips true once the analyzer runs.
+  // The nudge shows at most once per session (sessionStorage), never blocks.
+  var timelineProvided = false;
 
   // Hash anchor routing. Email CTAs include #fragment to land couples on a
   // specific step. Without this override, loadLocal silently restores the
@@ -1645,10 +1737,11 @@
     }
     if (name === 'first_look') {
       var ynVal = ynState['first_look_yn'];
-      if (!ynVal) return '';
       if (ynVal === 'no') return 'no';
-      var detail = (val('first_look_detail') || '').trim();
-      return detail ? ('yes - ' + detail) : 'yes';
+      var detail = buildFirstLookDetail();
+      if (detail) return 'yes - ' + detail;
+      if (ynVal === 'yes') return 'yes';
+      return '';
     }
     if (name === 'wedding_party_photos_location') {
       return (val('wedding_party_photos_location') || '').trim();
@@ -1707,14 +1800,18 @@
       return;
     }
     if (name === 'first_look') {
-      var lv = value.toLowerCase();
-      if (lv.indexOf('yes') === 0) {
-        setYn('first_look_yn', 'yes');
-        var d = value.replace(/^yes\s*-\s*/i, '');
-        setVal('first_look_detail', d === value ? '' : d);
-      } else if (lv.indexOf('no') === 0) {
-        setYn('first_look_yn', 'no');
+      // Legacy/analyzer fallback: a plain string with no structured _firstLook
+      // blob (older drafts, or the timeline analyzer's free-text extraction).
+      // applySnapshot skips this path when a _firstLook blob is present.
+      var lv = (value || '').toLowerCase();
+      if (lv.indexOf('no') === 0) { setYn('first_look_yn', 'no'); renderFirstLookUI(); return; }
+      setYn('first_look_yn', 'yes');
+      var d = value.replace(/^yes\s*[-:]\s*/i, '').trim();
+      if (d && d.toLowerCase() !== 'yes') {
+        firstLookState.sel['other'] = true;
+        firstLookState.other = d;
       }
+      renderFirstLookUI();
       return;
     }
     if (name === 'end_of_night') {
@@ -1771,6 +1868,94 @@
 
   function cssEscape(s) {
     return (s || '').replace(/"/g, '\\"');
+  }
+
+  /* ============================================================
+   * First-look multi-select
+   *
+   * Options use coupleName1/coupleName2 (name 1 = primary, name 2 = partner),
+   * with the same "your partner" fallback as the getting-ready labels. On
+   * submit, selected options + their times concatenate into a single
+   * human-readable string written to the existing first_look key, e.g.
+   * "yes - The two of you together at 1:00pm; Tara with their wedding party
+   * at 12:30pm". The "yes - " prefix is the existing first_look convention
+   * (preserved so day-of-briefing and the AI brief keep reading it the same
+   * way). It is free text; nothing downstream parses it structurally.
+   * ============================================================ */
+  function flOptionLabel(key) {
+    var n1 = gettingReadyName(1), n2 = gettingReadyName(2);
+    switch (key) {
+      case 'together': return 'The two of you together';
+      case 'p1_party': return n1 + ' with their wedding party';
+      case 'p2_party': return n2 + ' with their wedding party';
+      case 'p1_parents': return n1 + ' with their parent(s)';
+      case 'p2_parents': return n2 + ' with their parent(s)';
+      case 'parties_together': return 'Wedding parties together';
+      case 'other': return 'Other';
+    }
+    return key;
+  }
+
+  function renderFirstLookLabels() {
+    FL_OPTION_KEYS.forEach(function (key) {
+      if (key === 'other' || key === 'together' || key === 'parties_together') return;
+      var btn = document.getElementById('fl-btn-' + key);
+      if (btn) btn.textContent = flOptionLabel(key);
+    });
+  }
+
+  function renderFirstLookUI() {
+    FL_OPTION_KEYS.forEach(function (key) {
+      var opt = document.querySelector('.fl-opt[data-fl-key="' + key + '"]');
+      if (!opt) return;
+      var on = !!firstLookState.sel[key];
+      var btn = document.getElementById('fl-btn-' + key);
+      if (btn) btn.classList.toggle('active', on);
+      var timeWrap = opt.querySelector('.fl-opt-time');
+      if (timeWrap) timeWrap.classList.toggle('open', on);
+      if (key === 'other') {
+        var ot = document.getElementById('fl-other-text');
+        if (ot) ot.value = firstLookState.other || '';
+      } else {
+        var ti = document.getElementById('fl-time-' + key);
+        if (ti) ti.value = firstLookState.times[key] || '';
+      }
+    });
+    renderFirstLookLabels();
+  }
+
+  function toggleFirstLookOption(key) {
+    firstLookState.sel[key] = !firstLookState.sel[key];
+    if (!firstLookState.sel[key]) {
+      if (key === 'other') firstLookState.other = '';
+      else delete firstLookState.times[key];
+    } else if (ynState['first_look_yn'] !== 'yes') {
+      // Picking an option means a first look is happening.
+      setYn('first_look_yn', 'yes');
+    }
+    renderFirstLookUI();
+    handleFieldChange('first_look');
+    maybeSave();
+    if (firstLookState.sel[key]) {
+      var f = document.getElementById(key === 'other' ? 'fl-other-text' : 'fl-time-' + key);
+      if (f) f.focus();
+    }
+  }
+
+  function buildFirstLookDetail() {
+    var segs = [];
+    FL_OPTION_KEYS.forEach(function (key) {
+      if (!firstLookState.sel[key]) return;
+      if (key === 'other') {
+        var o = (firstLookState.other || '').trim();
+        if (o) segs.push(o);
+      } else {
+        var label = flOptionLabel(key);
+        var t = (firstLookState.times[key] || '').trim();
+        segs.push(t ? (label + ' at ' + t) : label);
+      }
+    });
+    return segs.join('; ');
   }
 
   /* ============================================================
@@ -1974,8 +2159,24 @@
     var el = document.getElementById(id);
     if (el) el.addEventListener('input', function () { handleFieldChange('getting_ready_groom'); maybeSave(); });
   });
-  var firstLookDetail = document.getElementById('first_look_detail');
-  if (firstLookDetail) firstLookDetail.addEventListener('input', function () { handleFieldChange('first_look'); maybeSave(); });
+  // First-look multi-select wiring
+  FL_OPTION_KEYS.forEach(function (key) {
+    var btn = document.getElementById('fl-btn-' + key);
+    if (btn) btn.addEventListener('click', function () { toggleFirstLookOption(key); });
+    if (key !== 'other') {
+      var ti = document.getElementById('fl-time-' + key);
+      if (ti) ti.addEventListener('input', function () {
+        firstLookState.times[key] = ti.value;
+        handleFieldChange('first_look'); maybeSave();
+      });
+    }
+  });
+  var flOther = document.getElementById('fl-other-text');
+  if (flOther) flOther.addEventListener('input', function () {
+    firstLookState.other = flOther.value;
+    if (flOther.value && !firstLookState.sel['other']) firstLookState.sel['other'] = true;
+    handleFieldChange('first_look'); maybeSave();
+  });
 
   /* ============================================================
    * State machine for field states
@@ -2061,6 +2262,7 @@
     document.getElementById('step-' + currentStep).classList.add('active');
     updateProgress();
     if (currentStep === 6) updateSubmitGate();
+    if (currentStep === 2) maybeShowTimelineNudge();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Section-completed beacon
@@ -2127,6 +2329,40 @@
 
   document.getElementById('btn-start').addEventListener('click', function () {
     goToStep(1);
+  });
+
+  /* ============================================================
+   * Timeline nudge
+   *
+   * Prompts once per session if a couple reaches the timeline-heavy section
+   * (Section 2) without having provided a timeline. Dismissible, never blocks.
+   * ============================================================ */
+  function section2PopulatedCount() {
+    var c = 0;
+    SECTION_2_FIELDS.forEach(function (n) { if (readFieldValue(n)) c++; });
+    return c;
+  }
+  function maybeShowTimelineNudge() {
+    if (timelineProvided) return;
+    var pasted = pastedTextEl && pastedTextEl.value.trim();
+    var staged = (fileInput && fileInput.files && fileInput.files[0]) || pasted;
+    if (staged) return;                       // a timeline is ready, just not analyzed yet
+    if (section2PopulatedCount() >= 3) return; // resuming an already-filled draft
+    try { if (sessionStorage.getItem('iris_q_timeline_nudge_v1') === '1') return; } catch (e) {}
+    try { sessionStorage.setItem('iris_q_timeline_nudge_v1', '1'); } catch (e) {}
+    var m = document.getElementById('timeline-nudge-modal');
+    if (m) m.classList.add('show');
+  }
+  document.getElementById('timeline-nudge-skip').addEventListener('click', function () {
+    document.getElementById('timeline-nudge-modal').classList.remove('show');
+  });
+  document.getElementById('timeline-nudge-upload').addEventListener('click', function () {
+    document.getElementById('timeline-nudge-modal').classList.remove('show');
+    goToStep(0);
+    setTimeout(function () {
+      var box = document.querySelector('.timeline-box');
+      if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 250);
   });
 
   /* ============================================================
@@ -2247,6 +2483,7 @@
       filledCount++;
     });
 
+    timelineProvided = true;
     saveLocal();
 
     sendBeacon('timeline_analyzed', {
@@ -2453,6 +2690,7 @@
       var snapshot = {
         _step: currentStep,
         _yn: ynState,
+        _firstLook: firstLookState,
         fields: fieldStates
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
@@ -2478,6 +2716,16 @@
         setYn(g, snap._yn[g]);
       });
     }
+    // Restore the structured first-look state directly (do not reparse the
+    // combined sentence). Guards the writeFieldValue('first_look') call below.
+    if (snap._firstLook) {
+      firstLookState = {
+        sel: snap._firstLook.sel || {},
+        times: snap._firstLook.times || {},
+        other: snap._firstLook.other || ''
+      };
+      renderFirstLookUI();
+    }
     if (snap.fields) {
       Object.keys(snap.fields).forEach(function (n) {
         if (FIELD_NAMES.indexOf(n) < 0) return;
@@ -2488,7 +2736,9 @@
           prefilled_value: s.prefilled_value == null ? null : s.prefilled_value,
           state: s.state || 'user_entered'
         };
-        if (s.value) writeFieldValue(n, s.value);
+        // first_look's UI is restored from _firstLook above when present;
+        // only fall back to the string parser for older blob-less drafts.
+        if (s.value && !(n === 'first_look' && snap._firstLook)) writeFieldValue(n, s.value);
         applyStateToField(n);
       });
     }
@@ -2519,6 +2769,7 @@
       var snapshot = {
         _step: currentStep,
         _yn: ynState,
+        _firstLook: firstLookState,
         fields: fieldStates
       };
       fetch(API_BASE + '/api/questionnaire/' + encodeURIComponent(token) + '/draft', {
@@ -2768,6 +3019,8 @@
     if (l3) l3.textContent = 'Where is ' + n1 + ' getting ready? (include hotel and room number if applicable)';
     var l4 = document.getElementById('gr-label-loc-2');
     if (l4) l4.textContent = 'Where is ' + n2 + ' getting ready? (include hotel and room number if applicable)';
+    // Keep the first-look option labels in sync with the couple names.
+    renderFirstLookLabels();
   }
 
   /* ============================================================
