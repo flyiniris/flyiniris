@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Film Vibe | Flyin' Iris</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0A0A;
+      --card: #161615;
+      --elevated: #1A1A19;
+      --gold: #FFBD1D;
+      --gold-soft: rgba(255,189,29,0.10);
+      --gold-line: rgba(255,189,29,0.45);
+      --text: #F5F0EB;
+      --dim: #C8C3B9;
+      --muted: #8A857B;
+      --border: rgba(255,189,29,0.18);
+      --border-rest: #2A2A28;
+      --radius: 8px;
+      --error: #ff7a7a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', Arial, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 40px 18px 90px;
+    }
+
+    .wrap { max-width: 620px; margin: 0 auto; }
+
+    /* ---- Logo header ---- */
+    .logo-header { text-align: center; margin-bottom: 30px; }
+    .logo-header .wordmark {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text);
+    }
+    .logo-header .wordmark span { color: var(--gold); }
+
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600; font-size: 1.7rem; line-height: 1.25;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .intro { color: var(--dim); font-size: 1.02rem; margin-bottom: 28px; }
+
+    .section { margin-bottom: 26px; }
+    .section h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600; font-size: 1.3rem; color: var(--text); margin-bottom: 4px;
+    }
+    .hint { color: var(--muted); font-size: 0.82rem; margin-bottom: 12px; }
+
+    /* ---- Basics (confirm-only) ---- */
+    .basics {
+      background: var(--card); border: 1px solid var(--border-rest);
+      border-radius: var(--radius); padding: 14px 16px;
+    }
+    .basics .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
+    .basics .row + .row { border-top: 1px solid rgba(255,255,255,0.05); }
+    .basics .k { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .basics .v { color: var(--text); font-size: 0.98rem; text-align: right; }
+
+    /* ---- Chips ---- */
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    .chip {
+      font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 0.95rem;
+      color: var(--dim); background: var(--card);
+      border: 1px solid var(--border-rest); border-radius: 999px;
+      padding: 11px 17px; cursor: pointer; transition: all 0.18s ease;
+      min-height: 44px; -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .chip:hover { border-color: var(--gold-line); color: var(--text); }
+    .chip.selected {
+      color: var(--gold); background: var(--gold-soft);
+      border-color: var(--gold-line); font-weight: 500;
+    }
+    .chip.bump { animation: bump 0.25s ease; }
+    @keyframes bump { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
+
+    /* ---- Free text + input ---- */
+    textarea, input[type="text"] {
+      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 0.98rem;
+      color: var(--text); background: var(--elevated);
+      border: 1px solid var(--border-rest); border-radius: var(--radius);
+      padding: 12px 14px; margin-top: 12px; resize: vertical; line-height: 1.5;
+    }
+    textarea::placeholder, input::placeholder { color: var(--muted); }
+    textarea:focus, input:focus { outline: none; border-color: var(--gold-line); }
+
+    /* ---- Film thumbnails ---- */
+    .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .film {
+      cursor: pointer; border-radius: var(--radius); overflow: hidden;
+      border: 2px solid transparent; transition: border-color 0.18s ease; position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .film.selectable.selected { border-color: var(--gold); }
+    .film .thumb {
+      position: relative; width: 100%; aspect-ratio: 16 / 10;
+      background: linear-gradient(135deg, #1A1A19, #0F0F0E);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .film .thumb::after {
+      content: "\2726"; color: rgba(255,189,29,0.35); font-size: 22px; position: absolute;
+    }
+    .film .thumb img { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; }
+    .film .cap {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic;
+      font-size: 0.8rem; color: var(--dim); text-align: center; padding: 6px 4px 8px;
+      background: var(--card);
+    }
+    .film .check {
+      position: absolute; top: 6px; right: 6px; z-index: 2; width: 22px; height: 22px;
+      border-radius: 50%; background: var(--gold); color: #0A0A0A; font-size: 13px; font-weight: 700;
+      display: none; align-items: center; justify-content: center;
+    }
+    .film.selected .check { display: flex; }
+
+    /* ---- Divider ---- */
+    .divider { display: flex; align-items: center; gap: 14px; margin: 34px 0 24px; color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.12em; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border-rest); }
+
+    /* ---- Submit ---- */
+    .submit-wrap { margin-top: 34px; }
+    .btn-primary {
+      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem;
+      letter-spacing: 0.5px; color: #0A0A0A; background: var(--gold);
+      border: none; border-radius: var(--radius); padding: 16px; cursor: pointer;
+      transition: opacity 0.18s ease; min-height: 52px;
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-primary:disabled { opacity: 0.55; cursor: default; }
+    .optional-note { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 12px; }
+
+    /* ---- States ---- */
+    .center-state { text-align: center; padding: 60px 10px; }
+    .center-state h1 { margin-bottom: 14px; }
+    .center-state p { color: var(--dim); margin-bottom: 10px; }
+    .spinner {
+      width: 30px; height: 30px; border: 3px solid var(--border-rest); border-top-color: var(--gold);
+      border-radius: 50%; margin: 0 auto 18px; animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Confirmation ---- */
+    .confirm-films { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0 28px; }
+    .expect {
+      background: var(--card); border: 1px solid var(--border-rest); border-left: 2px solid var(--gold);
+      border-radius: var(--radius); padding: 16px 18px; text-align: left; margin: 8px 0 22px;
+    }
+    .expect p { color: var(--dim); font-size: 0.96rem; margin-bottom: 10px; }
+    .expect p:last-child { margin-bottom: 0; }
+    .signoff { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; color: var(--gold); margin-top: 8px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 420px) {
+      h1 { font-size: 1.5rem; }
+      .chip { font-size: 0.92rem; padding: 11px 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo-header"><div class="wordmark">Flyin'<span> Iris</span></div></div>
+
+    <!-- Loading -->
+    <div id="loading" class="center-state">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Error / bad token -->
+    <div id="error" class="center-state hidden">
+      <h1>Hmm, this link looks incomplete</h1>
+      <p>Double check the link Sierra &amp; Sean sent you, or no stress at all, we'll cover everything on your call.</p>
+    </div>
+
+    <!-- Already submitted -->
+    <div id="done-early" class="center-state hidden">
+      <h1>You're all set!</h1>
+      <p>Thanks for sharing your vibe with Sierra &amp; Sean. Nothing else to do before your call.</p>
+      <div class="signoff">Sierra &amp; Sean</div>
+    </div>
+
+    <!-- Form -->
+    <div id="form" class="hidden">
+      <h1 id="intro-title"></h1>
+
+      <div class="section" id="sec-basics">
+        <h2>First, the basics.</h2>
+        <div class="hint">Just confirm these are right.</div>
+        <div class="basics" id="basics-box"></div>
+      </div>
+
+      <div class="section">
+        <h2>What's the vibe of your day?</h2>
+        <div class="hint">Pick up to 3.</div>
+        <div class="chips" id="chips-vibe"></div>
+      </div>
+
+      <div class="section">
+        <h2>When you watch your film back, what do you want to feel?</h2>
+        <div class="hint">Pick up to 2.</div>
+        <div class="chips" id="chips-film_feel"></div>
+      </div>
+
+      <div class="section">
+        <h2>Which of these speaks to you?</h2>
+        <div class="hint">Tap any that catch your eye.</div>
+        <div class="films" id="style-films"></div>
+      </div>
+
+      <div class="divider">A few more, if you've got a sec</div>
+
+      <div class="section">
+        <h2>What matters most for your wedding film?</h2>
+        <div class="hint">Pick up to 3.</div>
+        <div class="chips" id="chips-priorities"></div>
+      </div>
+
+      <div class="section">
+        <h2>What matters most when choosing who films your day?</h2>
+        <div class="hint">Pick up to 2.</div>
+        <div class="chips" id="chips-videographer_criteria"></div>
+        <textarea id="concern" rows="2" placeholder="Anything you're nervous about, or a moment you don't want us to miss?"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>How'd you find us?</h2>
+        <div class="chips" id="chips-source"></div>
+        <input type="text" id="ig" placeholder="Your Instagram handle (optional)" autocapitalize="none" autocorrect="off" spellcheck="false" />
+      </div>
+
+      <div class="submit-wrap">
+        <button class="btn-primary" id="submit-btn" type="button">Send it over</button>
+        <div class="optional-note">No rush. Whatever you share helps us make your call all about you.</div>
+      </div>
+    </div>
+
+    <!-- Post-submit confirmation -->
+    <div id="confirm" class="center-state hidden">
+      <h1>Thank you!</h1>
+      <p>We can already picture your day. Here are a few of our films we think you'll love.</p>
+      <div class="confirm-films" id="confirm-films"></div>
+      <div class="expect">
+        <p>On your call, we'll walk through your day together. No pressure, no hard sell, just Sierra &amp; Sean getting to know you so your film feels like you.</p>
+        <p>We're Sierra &amp; Sean, the wife-and-husband team behind your film. We cannot wait to meet you.</p>
+      </div>
+      <p>You're all set. Nothing else to do before we talk.</p>
+      <div class="signoff">Sierra &amp; Sean</div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    // API_BASE pinned to the Worker because this page is served from
+    // flyiniris.com (Pages) but the pre-call API lives on the automation
+    // Worker. CORS for /api/precall/* is already allow-listed there.
+    var API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var token = new URLSearchParams(location.search).get('token');
+
+    var data = null;
+    var state = {
+      guest_bucket: '',
+      precall_vibe: [],
+      precall_film_feel: [],
+      precall_priorities: [],
+      precall_videographer_criteria: [],
+      precall_concern: '',
+      precall_source: '',
+      precall_instagram_handle: '',
+      precall_style_picks: []
+    };
+    var CAPS = { precall_vibe: 3, precall_film_feel: 2, precall_priorities: 3, precall_videographer_criteria: 2 };
+
+    function show(id) {
+      ['loading', 'error', 'done-early', 'form', 'confirm'].forEach(function (s) {
+        document.getElementById(s).classList.toggle('hidden', s !== id);
+      });
+    }
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+    function fmtDate(s) {
+      if (!s) return '';
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+      if (!m) return s;
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return months[(+m[2]) - 1] + ' ' + (+m[3]) + ', ' + m[1];
+    }
+
+    // ----- Load -----
+    if (!token) { show('error'); return; }
+
+    fetch(API_BASE + '/api/precall/' + encodeURIComponent(token))
+      .then(function (r) { if (!r.ok) throw new Error('load'); return r.json(); })
+      .then(function (d) {
+        data = d;
+        if (d.status === 'submitted') { show('done-early'); return; }
+        applyDraft(d.draft);
+        render();
+        show('form');
+      })
+      .catch(function () { show('error'); });
+
+    function applyDraft(draft) {
+      if (!draft || typeof draft !== 'object') return;
+      Object.keys(state).forEach(function (k) {
+        if (draft[k] == null) return;
+        if (Array.isArray(state[k])) { if (Array.isArray(draft[k])) state[k] = draft[k].slice(); }
+        else state[k] = String(draft[k]);
+      });
+    }
+
+    // ----- Autosave (debounced, best-effort) -----
+    var saveTimer = null;
+    function autosave() {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(function () {
+        fetch(API_BASE + '/api/precall/' + encodeURIComponent(token) + '/draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ responses: collect() })
+        }).catch(function () { /* best-effort */ });
+      }, 600);
+    }
+
+    function collect() {
+      return {
+        guest_bucket: state.guest_bucket,
+        precall_vibe: state.precall_vibe,
+        precall_film_feel: state.precall_film_feel,
+        precall_priorities: state.precall_priorities,
+        precall_videographer_criteria: state.precall_videographer_criteria,
+        precall_concern: state.precall_concern,
+        precall_source: state.precall_source,
+        precall_instagram_handle: state.precall_instagram_handle,
+        precall_style_picks: state.precall_style_picks
+      };
+    }
+
+    // ----- Render -----
+    function render() {
+      var p = data.prefill || {};
+      document.getElementById('intro-title').textContent =
+        "Hey " + (p.first_name || 'there') + "! You're booked with Sierra & Sean. Tell us a little about your day so your call is all about you, and we can show you films like yours. Two minutes, mostly taps.";
+
+      renderBasics(p);
+      renderChipGroup('vibe', 'precall_vibe', true);
+      renderChipGroup('film_feel', 'precall_film_feel', true);
+      renderStyleFilms();
+      renderChipGroup('priorities', 'precall_priorities', true);
+      renderChipGroup('videographer_criteria', 'precall_videographer_criteria', true);
+      renderChipGroup('source', 'precall_source', false);
+
+      var concern = document.getElementById('concern');
+      concern.value = state.precall_concern || '';
+      concern.addEventListener('input', function () { state.precall_concern = concern.value; autosave(); });
+
+      var ig = document.getElementById('ig');
+      ig.value = state.precall_instagram_handle || '';
+      ig.addEventListener('input', function () { state.precall_instagram_handle = ig.value; autosave(); });
+
+      document.getElementById('submit-btn').addEventListener('click', submit);
+    }
+
+    function renderBasics(p) {
+      var box = document.getElementById('basics-box');
+      box.innerHTML = '';
+      var rows = [];
+      var d = fmtDate(p.wedding_date);
+      if (d) rows.push(['Wedding date', d]);
+      if (p.venue_name) rows.push(['Venue', p.venue_name]);
+
+      // Guest count: confirm-only if prefilled, else pick from chips.
+      if (p.guest_bucket) {
+        state.guest_bucket = p.guest_bucket;
+        rows.push(['Guests', p.guest_bucket]);
+      }
+
+      rows.forEach(function (r) {
+        var row = document.createElement('div'); row.className = 'row';
+        row.innerHTML = '<span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span>';
+        box.appendChild(row);
+      });
+
+      if (!p.guest_bucket) {
+        // Render an editable guest-count chip group inside the basics card.
+        var wrapEl = document.createElement('div'); wrapEl.style.paddingTop = rows.length ? '12px' : '0';
+        var lab = document.createElement('div'); lab.className = 'k'; lab.style.marginBottom = '10px';
+        lab.textContent = 'Rough guest count';
+        var chips = document.createElement('div'); chips.className = 'chips';
+        (data.chips.guest_bucket || []).forEach(function (label) {
+          var el = makeChip(label, function () {
+            state.guest_bucket = (state.guest_bucket === label) ? '' : label;
+            Array.prototype.forEach.call(chips.children, function (c) { c.classList.toggle('selected', c.textContent === state.guest_bucket); });
+            autosave();
+          });
+          if (state.guest_bucket === label) el.classList.add('selected');
+          chips.appendChild(el);
+        });
+        wrapEl.appendChild(lab); wrapEl.appendChild(chips);
+        box.appendChild(wrapEl);
+      }
+
+      // If no basics at all came back, hide the section header noise gracefully.
+      if (!rows.length && p.guest_bucket) document.getElementById('sec-basics').classList.add('hidden');
+    }
+
+    function makeChip(label, onClick) {
+      var el = document.createElement('button');
+      el.type = 'button'; el.className = 'chip'; el.textContent = label;
+      el.addEventListener('click', onClick);
+      return el;
+    }
+
+    function renderChipGroup(groupKey, stateKey, multi) {
+      var container = document.getElementById('chips-' + groupKey);
+      container.innerHTML = '';
+      var cap = CAPS[stateKey] || 99;
+      (data.chips[groupKey] || []).forEach(function (label) {
+        var el = makeChip(label, function () {
+          if (multi) {
+            var idx = state[stateKey].indexOf(label);
+            if (idx >= 0) { state[stateKey].splice(idx, 1); }
+            else if (state[stateKey].length < cap) { state[stateKey].push(label); }
+            else { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); return; }
+          } else {
+            state[stateKey] = (state[stateKey] === label) ? '' : label;
+          }
+          refreshGroup(groupKey, stateKey, multi);
+          autosave();
+        });
+        container.appendChild(el);
+      });
+      refreshGroup(groupKey, stateKey, multi);
+    }
+
+    function refreshGroup(groupKey, stateKey, multi) {
+      var container = document.getElementById('chips-' + groupKey);
+      Array.prototype.forEach.call(container.children, function (el) {
+        var on = multi ? (state[stateKey].indexOf(el.textContent) >= 0) : (state[stateKey] === el.textContent);
+        el.classList.toggle('selected', on);
+      });
+    }
+
+    function renderStyleFilms() {
+      var box = document.getElementById('style-films');
+      box.innerHTML = '';
+      (data.style_films || []).forEach(function (f) {
+        var card = document.createElement('div'); card.className = 'film selectable';
+        if (state.precall_style_picks.indexOf(f.slug) >= 0) card.classList.add('selected');
+        card.innerHTML =
+          '<div class="thumb"><span class="check">✓</span>' +
+          '<img alt="' + esc(f.couple) + '" src="' + esc(f.thumb_url) + '" onerror="this.style.display=\'none\'" /></div>' +
+          '<div class="cap">' + esc(f.couple) + '</div>';
+        card.addEventListener('click', function () {
+          var idx = state.precall_style_picks.indexOf(f.slug);
+          if (idx >= 0) state.precall_style_picks.splice(idx, 1);
+          else state.precall_style_picks.push(f.slug);
+          card.classList.toggle('selected', state.precall_style_picks.indexOf(f.slug) >= 0);
+          autosave();
+        });
+        box.appendChild(card);
+      });
+    }
+
+    // ----- Submit -----
+    function submit() {
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Sending...';
+      if (saveTimer) clearTimeout(saveTimer);
+
+      var body = collect(); // already exactly the 8 contract keys + precall_style_picks
+      fetch(API_BASE + '/api/precall/' + encodeURIComponent(token) + '/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { if (!r.ok) throw new Error('submit'); return r.json(); })
+        .then(function (res) { showConfirm(res && res.matched_films); })
+        .catch(function () {
+          btn.disabled = false; btn.textContent = 'Send it over';
+          alert("Something hiccuped on our end. Give it another tap, or no worries, we'll cover it all on your call.");
+        });
+    }
+
+    function showConfirm(films) {
+      var grid = document.getElementById('confirm-films');
+      grid.innerHTML = '';
+      (films || []).forEach(function (f) {
+        var card = document.createElement('div'); card.className = 'film';
+        card.innerHTML =
+          '<div class="thumb"><img alt="' + esc(f.couple) + '" src="' + esc(f.thumb_url) + '" onerror="this.style.display=\'none\'" /></div>' +
+          '<div class="cap">' + esc(f.couple) + '</div>';
+        grid.appendChild(card);
+      });
+      if (!films || !films.length) grid.classList.add('hidden');
+      show('confirm');
+      window.scrollTo(0, 0);
+    }
+  })();
+  </script>
+</body>
+</html>
