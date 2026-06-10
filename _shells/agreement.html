@@ -1492,6 +1492,28 @@
       return;
     }
 
+    // R12 durable fix: post-payment states have a permanent read-only view at
+    // /agreement/signed (Worker-routed on every host that serves this shell).
+    // Redirect there instead of rendering the editable shell at all.
+    // step=done keeps the post-checkout confirmation page, step=plans keeps
+    // the locked plans view, preview_mode keeps Studio CRM preview working.
+    // applySignedState() below stays as the lock for those escape hatches.
+    const signedPageStates = ['fully-executed', 'in-flight', 'completed', 'charge-failed', 'charge-recovered', 'charge-abandoned'];
+    const stepQS = QS.get('step');
+    if (signedPageStates.includes(DATA.agreement_state) && stepQS !== 'done' && stepQS !== 'plans' && !DATA.preview_mode) {
+      window.location.replace('/agreement/signed?token=' + encodeURIComponent(TOKEN));
+      return;
+    }
+
+    // abandoned-no-retainer: the agreement expired before the retainer
+    // cleared and the date was released. /agreement/signed 404s for this
+    // state and page 4 would falsely claim the booking succeeded, so show
+    // an honest expired screen instead of any form.
+    if (DATA.agreement_state === 'abandoned-no-retainer' && !DATA.preview_mode) {
+      showError('This agreement has expired', 'We never received the retainer, so this agreement expired and your date was released. Reach out at sean@flyiniris.com and we\'ll get a fresh one set up.');
+      return;
+    }
+
     // Now that DATA is resolved, populate UI state from it.
     selectedPlan = DATA.plan_chosen || null;
     currentSchedule = DATA.schedule || null;
@@ -2092,10 +2114,14 @@
   // States where the couple has already signed. We expose a read-only banner,
   // lock the signature inputs, and (for client-signed-no-payment) skip the
   // re-sign POST when the Continue-to-payment button is clicked.
+  // abandoned-no-retainer normally hits the expired screen in init and never
+  // renders; it is listed here as belt and suspenders so the form stays
+  // locked if that path ever changes.
   const SIGNED_STATES = [
     'client-signed-no-payment',
     'fully-executed', 'in-flight', 'completed',
     'charge-failed', 'charge-recovered', 'charge-abandoned',
+    'abandoned-no-retainer',
   ];
   function isAgreementSigned() {
     return !!(DATA && SIGNED_STATES.indexOf(DATA.agreement_state) !== -1);
