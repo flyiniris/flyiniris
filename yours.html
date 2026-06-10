@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>We Put Something Together For You | Flyin' Iris</title>
-  <meta name="description" content="Your personalized wedding film experience from Flyin' Iris — Milwaukee's premier cinematic wedding videographers.">
+  <meta name="description" content="Your personalized wedding film experience from Flyin' Iris: Milwaukee's premier cinematic wedding videographers.">
+  <link rel="canonical" href="https://www.flyiniris.com/yours">
   <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph -->
@@ -20,7 +21,7 @@
   <meta name="twitter:description" content="Your personalized wedding film experience from Flyin' Iris">
   <meta name="twitter:image" content="https://www.flyiniris.com/og-yours.png">
 
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -494,7 +495,7 @@
       <p class="hero-sub" id="heroSub"></p>
     </section>
 
-    <!-- Featured Film (dynamic — reads ?film=slug from URL) -->
+    <!-- Featured Film (dynamic: reads ?film=slug from URL) -->
     <section class="featured-film" id="filmSection">
       <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
       <div class="film-player-wrap" id="filmPlayer" style="display:none;">
@@ -525,12 +526,12 @@
 
       <div class="thinking-card">
         <h3 class="thinking-card-title">Your Story</h3>
-        <p class="thinking-card-body">We'll learn everything about your day — the moments that matter most, the people you love, the feeling you want to remember forever.</p>
+        <p class="thinking-card-body">We'll learn everything about your day: the moments that matter most, the people you love, the feeling you want to remember forever.</p>
       </div>
 
       <div class="thinking-card">
         <h3 class="thinking-card-title">Your Film</h3>
-        <p class="thinking-card-body">Shot cinematically by Sierra &amp; Sean (or our handpicked team), edited with intention, delivered within weeks — not months.</p>
+        <p class="thinking-card-body">Shot cinematically by Sierra &amp; Sean (or our handpicked team), edited with intention, delivered Netflix-style so you can relive it anytime.</p>
       </div>
 
       <div class="thinking-card">
@@ -615,7 +616,7 @@
         sub.textContent = subParts.join(' \u00B7 ');
       }
 
-      // Film section — dynamic based on ?film= param
+      // Film section: dynamic based on ?film= param
       var filmTitle = document.getElementById('filmTitle');
       var filmPlayer = document.getElementById('filmPlayer');
       var filmFallback = document.getElementById('filmFallback');
@@ -652,7 +653,7 @@
           hls.attachMedia(filmVideo);
           hls.on(Hls.Events.ERROR, function(event, data) {
             if (data.fatal) {
-              // HLS failed — fall back to thumbnail
+              // HLS failed: fall back to thumbnail
               filmPlayer.style.display = 'none';
               filmFallback.style.display = 'block';
               filmThumbImg.src = thumbUrl;
@@ -667,7 +668,7 @@
           filmVideo.poster = thumbUrl;
           filmVideo.src = hlsUrl;
         } else {
-          // No HLS support — show thumbnail
+          // No HLS support: show thumbnail
           filmFallback.style.display = 'block';
           filmPlayer.style.display = 'none';
           filmThumbImg.src = thumbUrl;
@@ -675,7 +676,7 @@
           filmThumbLink.href = 'https://www.flyiniris.com/#films';
         }
       } else {
-        // No film param — hide the whole section or show generic
+        // No film param: hide the whole section or show generic
         document.getElementById('filmSection').style.display = 'none';
       }
     })();

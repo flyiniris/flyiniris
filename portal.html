@@ -7,12 +7,12 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0A0A0A">
 
-  <meta property="og:title" content="Your Wedding Portal — Flyin' Iris">
+  <meta property="og:title" content="Your Wedding Portal | Flyin' Iris">
   <meta property="og:description" content="Track your wedding film project status, payments, and milestones.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/portal">
 
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1307,7 +1307,7 @@
   // arms the button (shows the couple they are about to be sent to checkout).
   // The second click POSTs to the Worker, which creates a Stripe Checkout
   // Session for the earliest unpaid invoice and returns its hosted-checkout
-  // URL. No money moves here — the couple enters their card and confirms on
+  // URL. No money moves here: the couple enters their card and confirms on
   // Stripe's own page.
   function payNow(token, btn) {
     if (btn.dataset.armed !== '1') {
@@ -1350,7 +1350,7 @@
     const statusEl = document.getElementById('autopay-status');
     const actionsEl = document.getElementById('autopay-actions');
 
-    // P1 — status display.
+    // P1: status display.
     if (ap.enabled) {
       const cardLine = ap.card_last4 ? ': card ending ' + escapeHtml(String(ap.card_last4)) : '';
       statusEl.className = 'autopay-status on';
@@ -1360,7 +1360,7 @@
       statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is off';
     }
 
-    // P2 — update payment method button (always available). P3 — turn-off
+    // P2: update payment method button (always available). P3: turn-off
     // control, only shown when autopay is currently on.
     let actions = '<button type="button" class="autopay-btn" onclick="updatePaymentMethod(\'' + token + '\', this)">Update payment method</button>';
     if (ap.enabled) {
@@ -1371,7 +1371,7 @@
     section.style.display = 'block';
   }
 
-  // P2 — open the Stripe-hosted Customer Portal to update the saved card.
+  // P2: open the Stripe-hosted Customer Portal to update the saved card.
   // No card fields ever render here; the browser is redirected to Stripe.
   function updatePaymentMethod(token, btn) {
     btn.disabled = true;
@@ -1397,7 +1397,7 @@
       });
   }
 
-  // P3 — disable autopay. Two steps: open the confirmation modal, then on
+  // P3: disable autopay. Two steps: open the confirmation modal, then on
   // confirm POST the one-way disable. v1 has no re-enable control.
   function openAutopayModal(token) {
     const confirmBtn = document.getElementById('autopay-modal-confirm');

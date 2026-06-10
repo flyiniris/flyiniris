@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Custom Package | Flyin' Iris</title>
-  <meta name="description" content="Your personalized wedding film package from Flyin' Iris — everything we talked about, your tier, your pricing, your day.">
+  <meta name="description" content="Your personalized wedding film package from Flyin' Iris: everything we talked about, your tier, your pricing, your day.">
+  <link rel="canonical" href="https://www.flyiniris.com/package">
   <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Your Custom Film Package">
-  <meta property="og:description" content="Here's everything we talked about — your tier, your pricing, your day.">
+  <meta property="og:description" content="Here's everything we talked about: your tier, your pricing, your day.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/package">
   <meta property="og:image" content="https://www.flyiniris.com/og-package.png">
@@ -17,10 +18,10 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Your Custom Film Package">
-  <meta name="twitter:description" content="Here's everything we talked about — your tier, your pricing, your day.">
+  <meta name="twitter:description" content="Here's everything we talked about: your tier, your pricing, your day.">
   <meta name="twitter:image" content="https://www.flyiniris.com/og-package.png">
 
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -501,13 +502,13 @@
         <hr class="package-divider">
         <h3 class="package-includes-heading">What's Included</h3>
         <ul class="package-list" id="packageList">
-          <li><span class="dash">&mdash;</span>6 hours of coverage</li>
-          <li><span class="dash">&mdash;</span>5-minute cinematic highlight film</li>
-          <li><span class="dash">&mdash;</span>FOMO documentary edit (free for the first 3 couples each month, otherwise $1,000)</li>
-          <li><span class="dash">&mdash;</span>Drone coverage</li>
-          <li><span class="dash">&mdash;</span>Professional audio capture</li>
-          <li><span class="dash">&mdash;</span>Free travel within 120 miles</li>
-          <li><span class="dash">&mdash;</span>Netflix-style delivery</li>
+          <li><span class="dash">&bull;</span>6 hours of coverage</li>
+          <li><span class="dash">&bull;</span>5-minute cinematic highlight film</li>
+          <li><span class="dash">&bull;</span>FOMO documentary edit (free for the first 3 couples each month, otherwise $1,000)</li>
+          <li><span class="dash">&bull;</span>Drone coverage</li>
+          <li><span class="dash">&bull;</span>Professional audio capture</li>
+          <li><span class="dash">&bull;</span>Free travel within 120 miles</li>
+          <li><span class="dash">&bull;</span>Netflix-style delivery</li>
         </ul>
       </div>
     </section>
@@ -516,7 +517,7 @@
     <section class="featured-film">
       <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
       <a href="https://www.flyiniris.com/#films" class="film-thumb-link">
-        <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.jpg" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+        <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.webp" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
         <div class="video-play-btn">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -530,7 +531,7 @@
     <section class="cta-section">
       <h2 class="cta-heading">Love what you see?</h2>
       <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="cta-button">BOOK A DISCOVERY CALL</a>
-      <p class="cta-sub">15 minutes to talk through everything — your day, your vision, your package.</p>
+      <p class="cta-sub">15 minutes to talk through everything: your day, your vision, your package.</p>
     </section>
 
     <!-- Sign-off -->
@@ -616,18 +617,18 @@
       var list = document.getElementById('packageList');
       if (hours || highlight || teaser || story) {
         var items = [];
-        items.push('<li><span class="dash">&mdash;</span>' + esc(hours || '6') + ' hours of coverage</li>');
-        items.push('<li><span class="dash">&mdash;</span>' + esc(highlight || '5 min') + ' cinematic highlight film</li>');
-        items.push('<li><span class="dash">&mdash;</span>FOMO documentary edit (free for the first 3 couples each month, otherwise $1,000)</li>');
-        items.push('<li><span class="dash">&mdash;</span>Drone coverage</li>');
+        items.push('<li><span class="dash">&bull;</span>' + esc(hours || '6') + ' hours of coverage</li>');
+        items.push('<li><span class="dash">&bull;</span>' + esc(highlight || '5 min') + ' cinematic highlight film</li>');
+        items.push('<li><span class="dash">&bull;</span>FOMO documentary edit (free for the first 3 couples each month, otherwise $1,000)</li>');
+        items.push('<li><span class="dash">&bull;</span>Drone coverage</li>');
         if (teaser === '1') {
-          items.push('<li><span class="dash">&mdash;</span>Social media teaser film</li>');
+          items.push('<li><span class="dash">&bull;</span>Social media teaser film</li>');
         }
         if (story === '1') {
-          items.push('<li><span class="dash">&mdash;</span>Story Session (engagement film + interviews)</li>');
+          items.push('<li><span class="dash">&bull;</span>Story Session (engagement film + interviews)</li>');
         }
-        items.push('<li><span class="dash">&mdash;</span>Free travel within 120 miles</li>');
-        items.push('<li><span class="dash">&mdash;</span>Netflix-style delivery</li>');
+        items.push('<li><span class="dash">&bull;</span>Free travel within 120 miles</li>');
+        items.push('<li><span class="dash">&bull;</span>Netflix-style delivery</li>');
         list.innerHTML = items.join('');
       }
     })();

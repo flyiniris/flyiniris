@@ -396,7 +396,7 @@
       });
     }
 
-    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
     function fmtDate(s) {
       if (!s) return '';
@@ -674,7 +674,7 @@
         .then(function (res) { showConfirm(res && res.matched_films); })
         .catch(function () {
           btn.disabled = false; btn.textContent = 'Send it over';
-          alert("Something hiccuped on our end. Give it another tap, or no worries, we'll cover it all on your call.");
+          alert("That didn't go through. Give it another tap, or no worries, we'll cover it all on your call.");
         });
     }
 

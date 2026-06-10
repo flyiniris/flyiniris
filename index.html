@@ -107,6 +107,87 @@
   }
   </script>
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does a wedding videographer cost in Milwaukee?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our film packages start at $2,800 for the Team experience and $3,800 for the Sierra & Sean experience, plus Wisconsin sales tax. Build your exact price in about 2 minutes with our package calculator at flyiniris.com/calculator."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you travel outside Milwaukee?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Travel within 120 miles of Milwaukee is free, and we film weddings across Wisconsin: Madison, Green Bay, Door County, Lake Geneva, and beyond. Farther out, we add a small per-mile travel charge."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long until we get our wedding film?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your teaser lands within a week of the wedding. The full film is typically delivered within 12 to 16 weeks, streaming Netflix-style so you can relive it anytime, on any device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do we get the whole day or just a highlight film?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Both. Every package includes your cinematic highlight film plus the FOMO Documentary Edit: the raw, uncut film of your entire day. Every toast, every dance, everything you missed while you were getting married."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How far in advance should we book?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As soon as you have your date and venue. We cap our calendar each year on purpose, and popular Saturdays go first. Check your date at flyiniris.com for a real-time answer."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "VideoObject",
+        "name": "A Wisconsin Love Story: Taylor & Austin at The Fields Reserve",
+        "description": "Cinematic wedding film teaser by Flyin' Iris at The Fields Reserve in Stoughton, Wisconsin.",
+        "thumbnailUrl": "https://www.flyiniris.com/thumbs/Taylor-Austin_thumb.webp",
+        "contentUrl": "https://media.flyiniris.com/videos/teasers/taylor-austin/master.m3u8",
+        "uploadDate": "2024-01-01"
+      },
+      {
+        "@type": "VideoObject",
+        "name": "Main Characters at The Green Bay Country Club: Taylor & Kane",
+        "description": "Cinematic wedding film teaser by Flyin' Iris at the Green Bay Country Club in Green Bay, Wisconsin.",
+        "thumbnailUrl": "https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.webp",
+        "contentUrl": "https://media.flyiniris.com/videos/teasers/taylor-kane/master.m3u8",
+        "uploadDate": "2024-01-01"
+      },
+      {
+        "@type": "VideoObject",
+        "name": "A Marine Marries His Duchess: Olivia & Austin",
+        "description": "Cinematic wedding film teaser by Flyin' Iris at Oakbrook Church in Milwaukee, Wisconsin.",
+        "thumbnailUrl": "https://www.flyiniris.com/thumbs/Olivia-Austin_thumb.webp",
+        "contentUrl": "https://media.flyiniris.com/videos/teasers/olivia-austin/master.m3u8",
+        "uploadDate": "2024-01-01"
+      }
+    ]
+  }
+  </script>
+
   <style>
     :root {
       --bg-primary: #0A0A0A;
@@ -182,6 +263,17 @@
       70% { transform: translate(0%, 15%); }
       80% { transform: translate(3%, 35%); }
       90% { transform: translate(-10%, 10%); }
+    }
+
+    /* Respect reduced-motion preferences: stop the grain, shimmer, and
+       scroll animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     @keyframes slideUp {
@@ -819,7 +911,7 @@
       }
     }
 
-    /* ========== WHY SECTION &mdash; CINEMATIC SCROLL ========== */
+    /* ========== WHY SECTION: CINEMATIC SCROLL ========== */
     .why-section {
       background-color: var(--bg-primary);
       padding: 0;
@@ -1317,6 +1409,38 @@
       opacity: 0.8;
     }
 
+    /* ========== FAQ ========== */
+
+    .faq-list { max-width: 640px; margin: 0 auto; text-align: left; }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background-color: var(--bg-card);
+    }
+    .faq-item summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 18px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; float: right; color: var(--accent); font-weight: 400; }
+    .faq-item[open] summary::after { content: '\2212'; }
+    .faq-item summary:hover { color: var(--accent); }
+    .faq-item p {
+      padding: 0 20px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .faq-item p a { color: var(--accent); }
+
     /* ========== FOOTER ========== */
 
     .site-footer {
@@ -1479,7 +1603,7 @@
     .quiz-intro-chip span { font-size: 0.875rem; }
     .quiz-start-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-size: 0.9375rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif; transition: background-color 0.3s ease, filter 0.3s ease; }
     .quiz-start-btn:hover { background-color: var(--accent-dark); }
-    .quiz-intro-note { font-size: 0.625rem; color: #6B6B6B; margin-top: 16px; font-family: 'Outfit', sans-serif; }
+    .quiz-intro-note { font-size: 0.625rem; color: #8E8E8E; margin-top: 16px; font-family: 'Outfit', sans-serif; }
     .quiz-header { text-align: center; margin-bottom: 4px; }
     .quiz-brand { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; }
     .quiz-calc-greeting { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; font-family: 'Outfit', sans-serif; }
@@ -1519,7 +1643,7 @@
     .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
     .quiz-nav-back { background: transparent; border: none; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; padding: 8px 0; }
     .quiz-nav-back.hidden { color: transparent; cursor: default; }
-    .quiz-nav-step { font-size: 0.625rem; color: #5A5A5A; font-family: 'Outfit', sans-serif; }
+    .quiz-nav-step { font-size: 0.625rem; color: #8E8E8E; font-family: 'Outfit', sans-serif; }
     .quiz-nav-next { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: background-color 0.3s ease; }
     .quiz-nav-next.disabled { background-color: #1a1a1a; color: #6B6B6B; cursor: not-allowed; }
     .quiz-form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
@@ -1974,7 +2098,7 @@
       <div class="hero-content">
         <p class="hero-label">Milwaukee &amp; Wisconsin Wedding Videographer</p>
         <h1>Wedding Films That <span class="hit">Hit</span> Different.</h1>
-        <p class="hero-sub">The nerves before the walk. The crack in the vows. The moment the dance floor lost its mind. You lived it once &mdash; we make sure you feel it forever.</p>
+        <p class="hero-sub">The nerves before the walk. The crack in the vows. The moment the dance floor lost its mind. You lived it once. We make sure you feel it forever.</p>
         <div class="hero-cta">
           <a href="#quiz" class="btn">Check Availability</a>
         </div>
@@ -2086,7 +2210,7 @@
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
             </div>
             <h3 class="diff-title">The FOMO Documentary Edit</h3>
-            <p class="diff-body">Your cinematic highlight film captures the magic. But what about the moments happening while you were taking photos? Your nephew's dance moves? Grandma's toast? The documentary edit is the raw, uncut footage of everything you missed. Every couple gets BOTH: the polished cinematic film AND the full documentary of their entire day.</p>
+            <p class="diff-body">Your cinematic highlight film captures the magic. But what about the moments happening while you were taking photos? Your nephew's dance moves? Grandma's toast? The documentary edit is the raw, uncut film of everything you missed. Every couple gets BOTH: the polished cinematic film AND the full documentary of their entire day.</p>
             <p class="diff-tagline">Because you shouldn't miss a single moment.</p>
           </div>
 
@@ -2113,35 +2237,35 @@
         <div class="why-block" data-why-reveal id="why-01">
           <h3 class="why-headline">One editor. <span class="accent">Every film.</span></h3>
           <p class="why-body">Sierra edits every single Flyin' Iris film. The music. The pacing. The half-second glance between you and your mom that nobody else caught. Your film doesn't go through an assembly line. It goes through her. That's why every film has a heartbeat.</p>
-          <p class="why-quote">&ldquo;They didn&rsquo;t just document our wedding; they told our story in a way that we&rsquo;ll cherish for the rest of our lives.&rdquo;<br>&mdash; Kane K.</p>
+          <p class="why-quote">&ldquo;They didn&rsquo;t just document our wedding; they told our story in a way that we&rsquo;ll cherish for the rest of our lives.&rdquo;<br>Kane K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-02">
           <h3 class="why-headline">We don't do <span class="accent">templates.</span></h3>
-          <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you &mdash; not like everyone else's.</p>
-          <p class="why-quote">&ldquo;They captured our wedding in a way that felt so us. Nothing felt rehearsed or forced. It was raw, real, and full of personality.&rdquo;<br>&mdash; Sally K.</p>
+          <p class="why-body">We've filmed the same venue back-to-back weekends. The films? Completely different. Because your people aren't the same, your energy isn't the same, and your story sure as hell isn't the same. Your film will look like you, not like everyone else's.</p>
+          <p class="why-quote">&ldquo;They captured our wedding in a way that felt so us. Nothing felt rehearsed or forced. It was raw, real, and full of personality.&rdquo;<br>Sally K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-03">
           <h3 class="why-headline">You'll forget <span class="accent">we're filming.</span></h3>
           <p class="why-body">Your camera-shy partner? They'll be fine. We're hyping up the bridal party, making grandma laugh, catching the moments that only happen when people stop performing. The best stuff in your film? You won't even know we caught it.</p>
-          <p class="why-quote">&ldquo;It felt like we had two close friends with us rather than vendors.&rdquo;<br>&mdash; Rachel R.</p>
+          <p class="why-quote">&ldquo;It felt like we had two close friends with us rather than vendors.&rdquo;<br>Rachel R.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-04">
           <h3 class="why-headline">You'll watch it and <span class="accent">feel it all again.</span></h3>
           <p class="why-body">The teaser lands within a week. The full film? You'll ugly-cry. You'll hear his voice crack during the vows again. You'll watch your dad's face when he sees you for the first time. Your kids will watch this one day. Their kids, too.</p>
-          <p class="why-quote">&ldquo;I can&rsquo;t stop watching it. Happy tears, so much joy, laughter and love. I&rsquo;ve watched it at least 3 times a day since getting it.&rdquo;<br>&mdash; Mariah K.</p>
+          <p class="why-quote">&ldquo;I can&rsquo;t stop watching it. Happy tears, so much joy, laughter and love. I&rsquo;ve watched it at least 3 times a day since getting it.&rdquo;<br>Mariah K.</p>
           <div class="why-divider"></div>
         </div>
 
         <div class="why-block" data-why-reveal id="why-05">
           <h3 class="why-headline">The #1 regret? <span class="accent">Not hiring a videographer.</span></h3>
-          <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments &mdash; we'll make you live them again. Don't be the couple who wishes they had.</p>
-          <p class="why-quote">&ldquo;We debated on even having a videographer. I&rsquo;m telling you right now &mdash; DO IT. I&rsquo;ve watched it every day and I cry every time.&rdquo;<br>&mdash; Danielle J.</p>
+          <p class="why-body">Ask any married couple what they'd do differently. This is the answer that comes up every single time. Your photographer will freeze the moments. We'll make you live them again. Don't be the couple who wishes they had.</p>
+          <p class="why-quote">&ldquo;We debated on even having a videographer. I&rsquo;m telling you right now: DO IT. I&rsquo;ve watched it every day and I cry every time.&rdquo;<br>Danielle J.</p>
           <div class="why-divider"></div>
         </div>
 
@@ -2170,8 +2294,8 @@
         <div class="about-grid reveal">
           <img src="sean-sierra.webp" alt="Sierra Hernitz and Sean Adamec - Milwaukee wedding videographers at Flyin' Iris Media" class="about-photo reveal-child" loading="lazy" width="1000" height="1500">
           <div class="about-content reveal-child">
-            <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate &mdash; she doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean is the reason your entire experience is dialed in, from the first time you reach out to the moment your film lands in your inbox. He&rsquo;s obsessing over every detail so nothing falls through the cracks.</p>
-            <p>Our couples don&rsquo;t call us their videographers &mdash; they call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
+            <p>Husband and wife. Milwaukee-based. Obsessed with what we do. Sierra spent four years as a photojournalist at Milwaukee&rsquo;s CBS affiliate. She doesn&rsquo;t just make things look pretty, she makes you feel something you can&rsquo;t put into words. Sean is the reason your entire experience is dialed in, from the first time you reach out to the moment your film lands in your inbox. He&rsquo;s obsessing over every detail so nothing falls through the cracks.</p>
+            <p>Our couples don&rsquo;t call us their videographers. They call us friends they happened to hire. We cap our calendar every year on purpose. Fewer weddings. Better films. No exceptions.</p>
           </div>
         </div>
       </div>
@@ -2209,7 +2333,7 @@
         <p class="section-label reveal-child">Investment</p>
         <h2 class="section-heading reveal-child">Your film. Your way. No cookie cutters.</h2>
         <div class="investment-text">
-          <p class="reveal-child">Every couple is different - so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish - we'll build it around you.</p>
+          <p class="reveal-child">Every couple is different, so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish, we'll build it around you.</p>
           <p class="investment-price reveal-child">Film Packages Starting at $2,800</p>
           <p class="reveal-child investment-desc">6 hours of coverage, a cinematic highlight film, drone coverage, professional audio, and free travel within 120 miles of Milwaukee all come standard. The FOMO Documentary Edit ($1,000 value) is free for the first 3 couples who book each month, otherwise a $1,000 add-on. Netflix-style delivery so you can relive it anytime.</p>
           <div class="reveal-child cta-center">
@@ -2230,6 +2354,36 @@
     <section id="quiz" class="section quiz-section" aria-label="Wedding film quiz">
       <div class="section-inner reveal">
         <div id="quizApp"></div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section id="faq" class="section faq-section" aria-label="Frequently asked questions">
+      <div class="section-inner reveal">
+        <p class="section-label reveal-child">Questions Couples Ask</p>
+        <h2 class="section-heading reveal-child">The quick answers.</h2>
+        <div class="faq-list reveal-child">
+          <details class="faq-item">
+            <summary>How much does a wedding videographer cost in Milwaukee?</summary>
+            <p>Our film packages start at $2,800 for the Team experience and $3,800 for the Sierra &amp; Sean experience, plus Wisconsin sales tax. Build your exact price in about 2 minutes with our <a href="/calculator/">package calculator</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do you travel outside Milwaukee?</summary>
+            <p>Yes. Travel within 120 miles of Milwaukee is free, and we film weddings across Wisconsin: Madison, Green Bay, Door County, Lake Geneva, and beyond. Farther out, we add a small per-mile travel charge.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How long until we get our wedding film?</summary>
+            <p>Your teaser lands within a week of the wedding. The full film is typically delivered within 12 to 16 weeks, streaming Netflix-style so you can relive it anytime, on any device.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do we get the whole day or just a highlight film?</summary>
+            <p>Both. Every package includes your cinematic highlight film plus the FOMO Documentary Edit: the raw, uncut film of your entire day. Every toast, every dance, everything you missed while you were getting married.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How far in advance should we book?</summary>
+            <p>As soon as you have your date and venue. We cap our calendar each year on purpose, and popular Saturdays go first. Check your date with the quiz above for a real-time answer.</p>
+          </details>
+        </div>
       </div>
     </section>
   </main>
@@ -2524,11 +2678,11 @@
               } else if (data.status === 'booked') {
                 color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message;
               } else if (data.status === 'weekday') {
-                color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability - let\'s chat about your vision!';
+                color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability. Let\'s chat about your vision!';
               } else if (data.status === 'too_soon') {
                 color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'That\'s coming up fast! Let\'s chat about your timeline on a call.';
               } else if (data.status === 'too_far') {
-                color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead - love it! Reach out and we\'ll get you on the calendar.';
+                color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead? Love it! Reach out and we\'ll get you on the calendar.';
               } else {
                 color = 'var(--text-secondary)'; icon = ''; msg = '';
               }
@@ -2616,7 +2770,10 @@
             var hld = TEAM_HIGHLIGHT[a.highlight] || {price:0,cost:0};
             var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0, tc = hasTeas ? TEAM_ADDONS.teaser.cost : 0;
             var sp = hasStory ? TEAM_ADDONS.storySession.price : 0, sc = hasStory ? TEAM_ADDONS.storySession.cost : 0;
-            var rawPrice = TEAM_BASE_PRICE + hd.price + hld.price + tp + sp;
+            // FOMO is always in the package: +$1,000 in the subtotal, netted back
+            // out by the -$1,000 credit only when a free spot remains. Mirrors
+            // pricing.ts buildLineItems so the breakdown lines sum to the total.
+            var rawPrice = TEAM_BASE_PRICE + hd.price + hld.price + tp + sp + (fomoFreeSpot ? 0 : 1000);
             // Bundle: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
             var addOnCount = 0;
             if (hasTeas) addOnCount++;
@@ -2684,7 +2841,8 @@
           var hlp = SS_HIGHLIGHT[a.highlight] || 0;
           var tp2 = hasTeas ? SS_ADDONS.teaser : 0;
           var sp2 = hasStory ? SS_ADDONS.storySession : 0;
-          var rawPrice = SS_BASE_PRICE + hp + hlp + tp2 + sp2;
+          // Same FOMO handling as the Team path above (mirrors pricing.ts).
+          var rawPrice = SS_BASE_PRICE + hp + hlp + tp2 + sp2 + (fomoFreeSpot ? 0 : 1000);
           // Bundle: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
           var addOnCount = 0;
           if (hasTeas) addOnCount++;
@@ -2758,26 +2916,26 @@
 
         // --- QUIZ DATA ---
         var quizSteps = [
-          { id:"excited", label:"The Fun Part", question:"What part of your wedding day are you most excited about?", subtext:"Be honest \u2014 there\u2019s no wrong answer here.", type:"single", options:[
+          { id:"excited", label:"The Fun Part", question:"What part of your wedding day are you most excited about?", subtext:"Be honest, there\u2019s no wrong answer here.", type:"single", options:[
             {emoji:"\ud83e\udd70",label:"Marrying my best friend",desc:"The whole reason we\u2019re doing this"},
             {emoji:"\ud83d\ude2d",label:"The ceremony",desc:"Vows, first look, the moment it becomes real"},
             {emoji:"\ud83d\udc83",label:"The party",desc:"Dancing, drinks, and chaos with your people"},
             {emoji:"\ud83c\udf8a",label:"Being with all my favorite people",desc:"Everyone you love, one place, one night"},
-            {emoji:"\ud83e\udd29",label:"Honestly everything!",desc:"All of it \u2014 every single second"}
-          ], valueMessage:{"Marrying my best friend":"Okay stop, we\u2019re already emotional. This energy is exactly what makes a wedding film hit different \u2014 when the love is that real, the camera can feel it.","The ceremony":"That\u2019s where the real magic lives. We\u2019re trained to catch every micro-expression, every tear, every squeeze of the hand you\u2019ll miss in the moment.","The party":"Us too. There\u2019s nothing better on film than a dance floor that\u2019s completely lost it. Those are the moments you\u2019ll watch on repeat.","Being with all my favorite people":"That\u2019s the magic of a wedding film \u2014 you\u2019ll see moments between your favorite people that you completely missed because you were busy getting married.","Honestly everything!":"Same. That\u2019s exactly why wedding films exist \u2014 so you don\u2019t have to choose what to remember. You get ALL of it back."}},
-          { id:"vibe", label:"Your Vibe", question:"How would you describe your wedding vibe?", subtext:"Close your eyes for a sec \u2014 what does your day FEEL like?", type:"single", options:[
+            {emoji:"\ud83e\udd29",label:"Honestly everything!",desc:"All of it. Every single second"}
+          ], valueMessage:{"Marrying my best friend":"Okay stop, we\u2019re already emotional. This energy is exactly what makes a wedding film hit different: when the love is that real, the camera can feel it.","The ceremony":"That\u2019s where the real magic lives. We\u2019re trained to catch every micro-expression, every tear, every squeeze of the hand you\u2019ll miss in the moment.","The party":"Us too. There\u2019s nothing better on film than a dance floor that\u2019s completely lost it. Those are the moments you\u2019ll watch on repeat.","Being with all my favorite people":"That\u2019s the magic of a wedding film: you\u2019ll see moments between your favorite people that you completely missed because you were busy getting married.","Honestly everything!":"Same. That\u2019s exactly why wedding films exist: so you don\u2019t have to choose what to remember. You get ALL of it back."}},
+          { id:"vibe", label:"Your Vibe", question:"How would you describe your wedding vibe?", subtext:"Close your eyes for a sec. What does your day FEEL like?", type:"single", options:[
             {emoji:"\ud83c\udf7e",label:"Elegant & Timeless",desc:"Black tie energy, slow dances, the kind of night that feels like a movie"},
             {emoji:"\ud83c\udf89",label:"Big Energy & Fun",desc:"Shoes off by 9pm, the DJ won\u2019t stop, your grandma\u2019s on the dance floor"},
             {emoji:"\ud83c\udf3f",label:"Warm & Intimate",desc:"Small guest list, big feelings, the kind of day where every hug lasts longer"},
-            {emoji:"\u2728",label:"A little bit of everything",desc:"Ugly crying at the altar, then closing down the bar \u2014 because why not both?"}
-          ], valueMessage:{"Elegant & Timeless":"We love this. Think slow-motion details, soft light, and the kind of film that feels like a love letter you\u2019ll open every anniversary.","Big Energy & Fun":"Oh we\u2019re going to have FUN. Our films match your energy \u2014 if the dance floor is wild, the film is wild. No sleepy highlight reels here.","Warm & Intimate":"Intimate weddings are honestly our favorite to film. Every glance means more, every laugh hits harder, and the footage is always incredible.","A little bit of everything":"The best weddings have range. Ugly cry during vows \u2192 absolute mayhem at the reception. We live for that contrast and edit to match every shift in energy."}},
-          { id:"priority", label:"Your Film", question:"What matters most to you in a wedding film?", subtext:"Pick as many as you want \u2014 or just go with \u2018all of the above\u2019 (we won\u2019t judge).", type:"multi", options:[
+            {emoji:"\u2728",label:"A little bit of everything",desc:"Ugly crying at the altar, then closing down the bar, because why not both?"}
+          ], valueMessage:{"Elegant & Timeless":"We love this. Think slow-motion details, soft light, and the kind of film that feels like a love letter you\u2019ll open every anniversary.","Big Energy & Fun":"Oh we\u2019re going to have FUN. Our films match your energy: if the dance floor is wild, the film is wild. No sleepy highlight reels here.","Warm & Intimate":"Intimate weddings are honestly our favorite to film. Every glance means more, every laugh hits harder, and the films are always incredible.","A little bit of everything":"The best weddings have range. Ugly cry during vows \u2192 absolute mayhem at the reception. We live for that contrast and edit to match every shift in energy."}},
+          { id:"priority", label:"Your Film", question:"What matters most to you in a wedding film?", subtext:"Pick as many as you want, or just go with \u2018all of the above\u2019 (we won\u2019t judge).", type:"multi", options:[
             {emoji:"\ud83d\ude2d",label:"Raw emotion & real moments",desc:"The tears, the laughter, the moments nobody saw coming"},
             {emoji:"\ud83c\udfac",label:"Cinematic & beautiful",desc:"Stunning shots, color grading, movie-quality visuals"},
             {emoji:"\u26a1",label:"Energy & vibeeee",desc:"YOUR vibe woven into every second of the film"},
-            {emoji:"\ud83d\udcd6",label:"Our story, not just the day",desc:"Who we are as a couple \u2014 the real stuff"},
-            {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all \u2014 is that too much to ask?"}
-          ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story \u2014 the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt \u2014 your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all \u2014 that\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
+            {emoji:"\ud83d\udcd6",label:"Our story, not just the day",desc:"Who we are as a couple. The real stuff"},
+            {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all. Is that too much to ask?"}
+          ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story: the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt: your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all. That\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
           { id:"budget", label:"Budget", question:"What are you thinking for video investment?", subtext:"Just helps us understand what to put together for you.", type:"single", options:[
             {emoji:"\ud83c\udfac",label:"The essentials",desc:"Great coverage + a beautiful highlight film. Most couples land between $2,800 to $4,500"},
             {emoji:"\u2728",label:"The whole experience",desc:"Longer films, teasers, story sessions, the works. $4,500+"}
@@ -2790,52 +2948,52 @@
           var ca = state.calcAnswers;
           var isTeam = ca.quality === "We want an incredible wedding film";
           return [
-            { id:"hook", question:"If you could relive one moment from your wedding day forever \u2014 what would it be?", subtext:"Not a trick question. This is how we think about wedding films.", type:"single", options:[
+            { id:"hook", question:"If you could relive one moment from your wedding day forever, what would it be?", subtext:"Not a trick question. This is how we think about wedding films.", type:"single", options:[
               {emoji:"\ud83d\ude2d",label:"The first time we see each other",desc:"That look. That reaction. The one you can\u2019t fake."},
-              {emoji:"\ud83d\udc8d",label:"The vows \u2014 every single word",desc:"The promises nobody else will ever hear the same way"},
+              {emoji:"\ud83d\udc8d",label:"The vows: every single word",desc:"The promises nobody else will ever hear the same way"},
               {emoji:"\ud83c\udfa4",label:"The speeches that wreck us",desc:"Dad\u2019s voice cracking. The best friend who nails it."},
               {emoji:"\ud83d\udc83",label:"The moment the dance floor erupts",desc:"When the song hits and everyone just GOES"},
               {emoji:"\ud83c\udf05",label:"The quiet moments nobody else saw",desc:"A stolen glance, a whisper, a hand squeeze"},
               {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
-            ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows \u2014 every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious \u2014 even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
-            { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment \u2014 and there\u2019s no wrong answer.", type:"single", options:[
-              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits your footage into a cinematic story, and Sean reviews every cut before it reaches you."},
+            ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows: every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious, even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
+            { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment, and there\u2019s no wrong answer.", type:"single", options:[
+              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits every moment into a cinematic story, and Sean reviews every cut before it reaches you."},
               {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
             ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra and Sean are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
             isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances \u2014 included in your package"},
+              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances, included in your package"},
               {emoji:"\u23f0",label:"7 hours",desc:"A little extra buffer before or after"},
               {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
               {emoji:"\ud83c\udf1e",label:"9 hours",desc:"Full prep through reception party"},
-              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage \u2014 pre-ceremony through the party"},
-              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day \u2014 almost everything"},
-              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"The whole thing \u2014 first moment to last song"}
-            ], valueMessage:{"6 hours":"Great starting point \u2014 ceremony, toasts, first dances.","7 hours":"A little extra room to breathe.","8 hours":"Getting ready through the reception highlights.","9 hours":"Full prep through the party.","10 hours":"The full story \u2014 pre-ceremony through the party.","11 hours":"Extended coverage \u2014 almost everything.","12 hours":"Every chapter, first moment to last song."}}
+              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage: pre-ceremony through the party"},
+              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day: almost everything"},
+              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"The whole thing: first moment to last song"}
+            ], valueMessage:{"6 hours":"Great starting point: ceremony, toasts, first dances.","7 hours":"A little extra room to breathe.","8 hours":"Getting ready through the reception highlights.","9 hours":"Full prep through the party.","10 hours":"The full story: pre-ceremony through the party.","11 hours":"Extended coverage: almost everything.","12 hours":"Every chapter, first moment to last song."}}
             : { id:"hours", question:"How long is your wedding day?", subtext:"Sierra & Sean will be there for every moment you choose.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day \u2014 ceremony through first dances"},
+              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day: ceremony through first dances"},
               {emoji:"\u23f0",label:"7 hours",desc:"A little more room"},
-              {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day \u2014 getting ready through reception"},
+              {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day: getting ready through reception"},
               {emoji:"\ud83c\udf1e",label:"9 hours",desc:"Full prep through reception"},
-              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day \u2014 we\u2019ll be there for everything"},
-              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day \u2014 almost everything"},
-              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"Epic day \u2014 first moment to last song"}
-            ], valueMessage:{"6 hours":"Intimate and intentional.","7 hours":"A little more room.","8 hours":"Classic day \u2014 getting ready through reception.","9 hours":"Full prep through reception.","10 hours":"Full day \u2014 we\u2019ll be there for everything.","11 hours":"Extended day \u2014 almost everything.","12 hours":"Epic day \u2014 first moment to last song."}},
-            { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every package. The cinematic, music-driven film you\u2019ll share and rewatch forever. Most couples choose between 5\u201312 minutes.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\u26a1",label:"5 min",desc:"Punchy, powerful, perfect for sharing \u2014 included in your package"},
+              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day: we\u2019ll be there for everything"},
+              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day: almost everything"},
+              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"Epic day: first moment to last song"}
+            ], valueMessage:{"6 hours":"Intimate and intentional.","7 hours":"A little more room.","8 hours":"Classic day: getting ready through reception.","9 hours":"Full prep through reception.","10 hours":"Full day: we\u2019ll be there for everything.","11 hours":"Extended day: almost everything.","12 hours":"Epic day: first moment to last song."}},
+            { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every package. The cinematic, music-driven film you\u2019ll share and rewatch forever. Most couples choose between 5-12 minutes.", type:"single", showPriceImpact:true, options:[
+              {emoji:"\u26a1",label:"5 min",desc:"Punchy, powerful, perfect for sharing, included in your package"},
               {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
-              {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film \u2014 the full emotional arc"},
-              {emoji:"\ud83d\udcd6",label:"13-15 min",desc:"Extended story \u2014 every chapter, nothing rushed"},
-              {emoji:"\ud83c\udfc6",label:"15-20 min",desc:"The ultimate \u2014 every detail, nothing left out"}
-            ], valueMessage:{"5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story \u2014 every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}},
-            { id:"teaser", question:"Do you want a social media teaser?", subtext:"A 60\u201390 second cinematic sneak peek to share while your full film is being edited. Something to post while everyone\u2019s still talking about your wedding.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udd25",label:"Yes \u2014 give me something to post!",desc:"A cinematic preview to share while the full film is in the works"},
-              {emoji:"\ud83d\ude45",label:"No \u2014 I\u2019ll wait for the full film",desc:"All focus goes into the main film"}
-            ], valueMessage:{"Yes \u2014 give me something to post!":"Post a cinematic preview while everyone\u2019s still talking about the wedding. Instant hype.","No \u2014 I\u2019ll wait for the full film":"Everything goes into making your main film incredible."}},
-            { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"Our most immersive film experience. Think of it like an engagement shoot \u2014 but for video. We meet up with you both in a place that feels like yours, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film. It takes your film from \u2018great wedding video\u2019 to \u2018this is our actual love story.\u2019", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83c\udfac",label:"Yes \u2014 make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
+              {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film: the full emotional arc"},
+              {emoji:"\ud83d\udcd6",label:"13-15 min",desc:"Extended story: every chapter, nothing rushed"},
+              {emoji:"\ud83c\udfc6",label:"15-20 min",desc:"The ultimate: every detail, nothing left out"}
+            ], valueMessage:{"5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story: every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}},
+            { id:"teaser", question:"Do you want a social media teaser?", subtext:"A 60-90 second cinematic sneak peek to share while your full film is being edited. Something to post while everyone\u2019s still talking about your wedding.", type:"single", showPriceImpact:true, options:[
+              {emoji:"\ud83d\udd25",label:"Yes, give me something to post!",desc:"A cinematic preview to share while the full film is in the works"},
+              {emoji:"\ud83d\ude45",label:"No, I\u2019ll wait for the full film",desc:"All focus goes into the main film"}
+            ], valueMessage:{"Yes, give me something to post!":"Post a cinematic preview while everyone\u2019s still talking about the wedding. Instant hype.","No, I\u2019ll wait for the full film":"Everything goes into making your main film incredible."}},
+            { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"Our most immersive film experience. Think of it like an engagement shoot, but for video. We meet up with you both in a place that feels like yours, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film. It takes your film from \u2018great wedding video\u2019 to \u2018this is our actual love story.\u2019", type:"single", showPriceImpact:true, options:[
+              {emoji:"\ud83c\udfac",label:"Yes, make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
               {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds amazing but I\u2019d want to talk about it first"},
-              {emoji:"\ud83d\udc92",label:"No \u2014 just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
-            ], valueMessage:{"Yes \u2014 make it a Love Story":"This is the difference between a wedding video and a Love Story. When we know you before the day, your film has a depth that\u2019s impossible to fake. Couples consistently say it\u2019s the thing they didn\u2019t know they needed.","No \u2014 just the wedding day":"The wedding day gives us plenty to work with. All the energy and investment goes into making that one day as cinematic as possible.","Tell me more on the call":"We\u2019d love to walk you through it. The Love Story Session is one of our favorite things \u2014 and once you hear how it works, it usually sells itself."}}
+              {emoji:"\ud83d\udc92",label:"No, just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
+            ], valueMessage:{"Yes, make it a Love Story":"This is the difference between a wedding video and a Love Story. When we know you before the day, your film has a depth that\u2019s impossible to fake. Couples consistently say it\u2019s the thing they didn\u2019t know they needed.","No, just the wedding day":"The wedding day gives us plenty to work with. All the energy and investment goes into making that one day as cinematic as possible.","Tell me more on the call":"We\u2019d love to walk you through it. The Love Story Session is one of our favorite things, and once you hear how it works, it usually sells itself."}}
           ];
         }
 
@@ -2915,6 +3073,18 @@
           }
         }
 
+        // Keyboard a11y: each re-render replaces the quiz DOM, which drops
+        // focus to <body>. Move it to the new step's heading so keyboard and
+        // screen reader users land at the start of the step, not the page top.
+        function focusQuizHeading() {
+          var qh = quizApp.querySelector('.quiz-question');
+          if (qh) {
+            if (!qh.hasAttribute('tabindex')) qh.setAttribute('tabindex', '-1');
+            qh.style.outline = 'none';
+            try { qh.focus({ preventScroll: true }); } catch (e) { qh.focus(); }
+          }
+        }
+
         // --- RENDER ---
         function render() {
           var html = '<div class="quiz-container">';
@@ -2936,13 +3106,15 @@
             else if (k === "phone") f.value = state.contactForm.phone;
             else if (state.contactForm[k] !== undefined) f.value = state.contactForm[k];
           }
-          // Attach date availability checker
+          // Attach date availability checker (renders into #availability-msg
+          // under the date field, the inline check the intro promises)
           var dateInput = document.getElementById('quiz-date');
           if (dateInput && !dateInput._avBound) {
             dateInput._avBound = true;
             dateInput.addEventListener('change', function() {
               state.contactForm.weddingDate = this.value;
               saveInquiryDraft();
+              checkAvailability(this.value);
             });
           }
         }
@@ -2959,7 +3131,7 @@
             '</ul>' +
             '<p class="quiz-value-sub">No sales pitch. No obligation. Just a fun preview of your day.</p>' +
             '<button class="quiz-start-btn" data-action="start-quiz">Show Me My Film Match \u2192</button>' +
-            '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel within 200 mi</p>' +
+            '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel within 120 mi</p>' +
           '</div>';
         }
 
@@ -3026,27 +3198,28 @@
           var f = state.contactForm, t = state.contactFormTried;
           var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = f.found && f.found.length > 0, vOk = f.venue.trim().length >= 2;
           var h = '<div class="quiz-step">';
-          h += '<h2 class="quiz-question" style="font-size:1.625rem">' + step.question + '</h2>';
+          h += '<h2 class="quiz-question" tabindex="-1" style="font-size:1.625rem;outline:none">' + step.question + '</h2>';
           h += '<p class="quiz-subtext">' + step.subtext + '</p>';
+          if (state.submitError) h += '<p class="quiz-form-submit-error" role="alert">That didn\u2019t go through. Your answers are saved, just tap submit again. Still stuck? Text us at (262) 384-5079.</p>';
           h += '<div class="quiz-form">';
           // Name row
           h += '<div class="quiz-form-row">';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label">Your Full Name <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="First & Last Name">';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-name">Your Full Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-name" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="First & Last Name">';
           if (t && !nOk) h += '<p class="quiz-form-error">We need your first & last name!</p>';
           h += '</div>';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label">Your Partner\u2019s Full Name <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Partner\'s First & Last Name">';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-partner">Your Partner\u2019s Full Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-partner" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Partner\'s First & Last Name">';
           if (t && !paOk) h += '<p class="quiz-form-error">We need your partner\'s name too!</p>';
           h += '</div></div>';
           // Email
-          h += '<div><label class="quiz-form-label">Email <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com">';
-          if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn\u2019t look right \u2014 double check?' : 'We need your email to reach out!') + '</p>';
+          h += '<div><label class="quiz-form-label" for="qf-email">Email <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="email" id="qf-email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com">';
+          if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn\u2019t look right. Double check?' : 'We need your email to reach out!') + '</p>';
           h += '</div>';
           // Phone
-          h += '<div><label class="quiz-form-label">Phone <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="tel" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234">';
+          h += '<div><label class="quiz-form-label" for="qf-phone">Phone <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="tel" id="qf-phone" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234">';
           if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
           h += '<div style="margin-top:8px">';
           h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing" role="checkbox" aria-checked="' + (f.smsNonMarketing ? 'true' : 'false') + '">';
@@ -3059,20 +3232,21 @@
           h += '</button>';
           h += '</div></div>';
           // Venue
-          h += '<div><label class="quiz-form-label">Venue <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" class="quiz-form-input' + (t && !vOk ? ' error' : '') + '" data-field="venue" placeholder="Venue Name \u00b7 City, WI (or TBD)">';
+          h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-venue" class="quiz-form-input' + (t && !vOk ? ' error' : '') + '" data-field="venue" placeholder="Venue Name \u00b7 City, WI (or TBD)">';
           if (t && !vOk) h += '<p class="quiz-form-error">We need to know your venue (or \'TBD\' if undecided)!</p>';
           h += '</div>';
           // Wedding Date
           var minDate = new Date().toISOString().split('T')[0];
           var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
-          h += '<div><label class="quiz-form-label">Anticipated Wedding Date <span style="color:var(--accent)">*</span></label>';
+          h += '<div><label class="quiz-form-label" for="quiz-date">Anticipated Wedding Date <span style="color:var(--accent)">*</span></label>';
           h += '<input type="date" id="quiz-date" class="quiz-form-input" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
+          h += '<div id="availability-msg" style="min-height:0;margin-top:6px" aria-live="polite"></div>';
           if (t && !dOk) h += '<p class="quiz-form-error">We need your anticipated wedding date to check availability!</p>';
           h += '</div>';
           // How'd you hear about us (required)
-          h += '<div><label class="quiz-form-label">How\u2019d you hear about us? <span style="color:var(--accent)">*</span></label>';
-          h += '<select class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
+          h += '<div><label class="quiz-form-label" for="qf-found">How\u2019d you hear about us? <span style="color:var(--accent)">*</span></label>';
+          h += '<select id="qf-found" class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
           h += '<option value="">Select one</option>';
           h += '<option value="Google"' + (f.found === "Google" ? ' selected' : '') + '>Google</option>';
           h += '<option value="Instagram"' + (f.found === "Instagram" ? ' selected' : '') + '>Instagram</option>';
@@ -3084,14 +3258,14 @@
           h += '</select>';
           if (t && !fOk) h += '<p class="quiz-form-error">Please let us know how you heard about us!</p>';
           if (f.found === "Referral" || f.found === "Wedding Planner") {
-            h += '<div style="margin-top:8px"><label class="quiz-form-label">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
-            h += '<input type="text" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
+            h += '<div style="margin-top:8px"><label class="quiz-form-label" for="qf-referral">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
+            h += '<input type="text" id="qf-referral" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
             h += '</div>';
           }
           h += '</div>';
           // Notes
-          h += '<div><label class="quiz-form-label">Anything else?</label>';
-          h += '<textarea class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
+          h += '<div><label class="quiz-form-label" for="qf-note">Anything else?</label>';
+          h += '<textarea id="qf-note" class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
           // Submit
           h += '<button class="quiz-submit-btn" data-action="submit-contact">Reveal My Film Match \u2192</button>';
           if (t && !(nOk && paOk && eOk && pOk && dOk && fOk && vOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
@@ -3130,7 +3304,7 @@
           // Section B - Discovery Call CTA
           h += '<div style="text-align:center;margin-bottom:20px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Your next step: Book a discovery call.</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. Just a real conversation about your day.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15-20 minutes. No pitch. Just a real conversation about your day.</p>';
           h += '</div>';
 
           // Here's what we'll cover (moved above calendar)
@@ -3148,13 +3322,13 @@
 
           // Calendar iframe (pre-populated with contact info)
           h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
-          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
+          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" title="Book your discovery call" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
 
           // Calculator CTA
           h += '<div class="quiz-gold-box" style="border-color:rgba(255,189,29,0.2);margin-top:16px;margin-bottom:24px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.375rem;color:var(--text-primary);margin-bottom:8px">Still hesitant about booking a call?</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);line-height:1.6;margin-bottom:16px">See what your dream package looks like first. Build a custom estimate in 60 seconds \u2014 then decide if you\u2019re ready to chat.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);line-height:1.6;margin-bottom:16px">See what your dream package looks like first. Build a custom estimate in 60 seconds, then decide if you\u2019re ready to chat.</p>';
           h += '<button class="quiz-start-btn" data-action="start-calc" style="padding:12px 32px;font-size:0.875rem">Build My Package \u2726</button>';
           h += '</div>';
 
@@ -3195,9 +3369,9 @@
                 if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
                 else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
                 else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
-                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability \u2014 let\u2019s chat!'; }
-                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast \u2014 let\u2019s chat about your timeline!'; }
-                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead \u2014 we love it!'; }
+                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability. Let\u2019s chat!'; }
+                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast! Let\u2019s chat about your timeline.'; }
+                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead? We love it!'; }
                 else { msg = ''; }
                 var elapsed = Date.now() - startTime;
                 var delay = Math.max(0, 2000 - elapsed);
@@ -3258,7 +3432,7 @@
           h += '<p class="calc-estimate-label">Your estimated investment</p>';
           h += '<p class="calc-estimate-amount">' + fp(est.price) + '*</p>';
           if (est.savings > 0) h += '<p class="calc-estimate-note" style="color:var(--accent)">Includes ' + fp(est.savings) + ' in estimated bundle savings*</p>';
-          h += '<p class="calc-estimate-note">* This is an estimate \u2014 your final investment may vary. Schedule a discovery call with us to get your final, custom package pricing.</p>';
+          h += '<p class="calc-estimate-note">* This is an estimate. Your final investment may vary. Schedule a discovery call with us to get your final, custom package pricing.</p>';
           h += '</div>';
 
           // Tier badge
@@ -3307,7 +3481,7 @@
           // Post-calculator copy
           h += '<div style="text-align:center;margin-bottom:20px">';
           h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Love what you see? Let\u2019s make it real.</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15\u201320 minutes. No pitch. We\u2019ll walk through your custom estimate, answer every question, and make sure we\u2019re the right fit.</p>';
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15-20 minutes. No pitch. We\u2019ll walk through your custom estimate, answer every question, and make sure we\u2019re the right fit.</p>';
           h += '</div>';
 
           // Here's what we'll cover
@@ -3325,7 +3499,7 @@
 
           // Calendar iframe (Discovery Call - Post Inquiry; consolidated from the duplicate Post Calculator calendar 2026-06-08)
           h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
-          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-calc-cal"></iframe>';
+          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" title="Book your discovery call" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-calc-cal"></iframe>';
           h += '</div>';
 
           // Meta Pixel + dataLayer tracking
@@ -3348,9 +3522,9 @@
                 if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
                 else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
                 else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
-                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability \u2014 let\u2019s chat!'; }
-                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast \u2014 let\u2019s chat about your timeline!'; }
-                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead \u2014 we love it!'; }
+                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability. Let\u2019s chat!'; }
+                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast! Let\u2019s chat about your timeline.'; }
+                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead? We love it!'; }
                 else { msg = ''; }
                 var elapsed = Date.now() - startTime;
                 var delay = Math.max(0, 2000 - elapsed);
@@ -3413,7 +3587,7 @@
             var allLabels = [], noLabels = [];
             for (var i = 0; i < step.options.length; i++) {
               if (step.options[i].label.indexOf("All of") >= 0) allLabels.push(step.options[i].label);
-              if (step.options[i].label.indexOf("No \u2014") >= 0) noLabels.push(step.options[i].label);
+              if (step.options[i].label.indexOf("No,") >= 0) noLabels.push(step.options[i].label);
             }
             if (allLabels.indexOf(label) >= 0) { state[answersKey][step.id] = [label]; }
             else if (noLabels.indexOf(label) >= 0) { state[answersKey][step.id] = [label]; }
@@ -3542,7 +3716,7 @@
             if (idx >= 0 && idx < inputs.length - 1) {
               inputs[idx + 1].focus();
             } else if (idx === inputs.length - 1) {
-              // Last field — blur to dismiss keyboard on mobile
+              // Last field: blur to dismiss keyboard on mobile
               el.blur();
             }
           }
@@ -3563,7 +3737,7 @@
           if (!btn) return;
           var action = btn.getAttribute("data-action");
 
-          if (action === "start-quiz") { if (window.dataLayer) { dataLayer.push({ event: 'quiz_started' }); } state.mode = "quiz"; state.quizStep = 0; render(); scrollToQuiz(); return; }
+          if (action === "start-quiz") { if (window.dataLayer) { dataLayer.push({ event: 'quiz_started' }); } state.mode = "quiz"; state.quizStep = 0; render(); scrollToQuiz(); focusQuizHeading(); return; }
           if (action === "select") {
             saveFormFields();
             var selectedValue = btn.getAttribute("data-value");
@@ -3587,7 +3761,14 @@
                 });
               }
             }
-            render(); return;
+            render();
+            // Restore focus to the re-rendered copy of the option the keyboard
+            // user just activated (render() destroyed the original button).
+            var opts = quizApp.querySelectorAll('[data-action="select"]');
+            for (var oi = 0; oi < opts.length; oi++) {
+              if (opts[oi].getAttribute('data-value') === selectedValue) { opts[oi].focus(); break; }
+            }
+            return;
           }
           if (action === "next") {
             var isCalc = state.mode === "calculator";
@@ -3600,10 +3781,10 @@
             if (!canProceed) return;
             saveFormFields();
 
-            goNext(); render(); scrollToQuiz();
+            goNext(); render(); scrollToQuiz(); focusQuizHeading();
             return;
           }
-          if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); return; }
+          if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); focusQuizHeading(); return; }
           if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
           if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
           if (action === "submit-contact") {
@@ -3615,10 +3796,11 @@
             var dateVal = document.getElementById('quiz-date');
             if (dateVal) state.contactForm.weddingDate = dateVal.value;
             state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
-            // Analytics — shared event_id for pixel + CAPI deduplication
+            state.submitError = false;
+            // Analytics: shared event_id for pixel + CAPI deduplication. The
+            // pixel fires only after a confirmed 2xx below, so failed submits
+            // do not report phantom Leads to Meta.
             var leadEventId = generateEventId();
-            if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
-            if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: leadEventId }); }
             // Send to Worker (iris-automation)
             var nameParts = (state.contactInfo.name || '').trim().split(' ');
             var partnerParts = (state.contactInfo.partner || '').trim().split(' ');
@@ -3656,12 +3838,18 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(inquiryData)
             }).then(function(resp) {
+              // A non-2xx means no contact was created. Throw into the catch
+              // so the couple is asked to retry instead of being told success.
+              if (!resp.ok) throw new Error('inquiry HTTP ' + resp.status);
               return resp.json();
             }).then(function(result) {
-              // Inquiry POST succeeded. Clear the local draft so a later visit
-              // starts clean instead of restoring already-submitted data. The
-              // .catch path below intentionally does NOT clear: on a failed
-              // submit the typed data should survive for a retry.
+              // Inquiry POST succeeded. Fire analytics now that the lead is real.
+              if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
+              if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: leadEventId }); }
+              // Clear the local draft so a later visit starts clean instead of
+              // restoring already-submitted data. The .catch path below
+              // intentionally does NOT clear: on a failed submit the typed
+              // data should survive for a retry.
               clearInquiryDraft();
               // Store session token for redirect
               var sessionToken = (result && result.session_token) || '';
@@ -3670,7 +3858,7 @@
                 if (sessionToken) {
                   window.location.href = '/experience?session=' + sessionToken;
                 } else {
-                  // No session token — go to confirmation instead
+                  // No session token: go to confirmation instead
                   state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
                   state.mode = "confirmation";
                   render();
@@ -3679,12 +3867,16 @@
               }, 2500);
             }).catch(function(err) {
               console.log('Inquiry submission error:', err);
-              // On error, redirect to confirmation page after delay
+              // The inquiry never reached the Worker: no contact, no emails.
+              // Return the couple to the form (the draft kept their answers)
+              // with a clear retry message instead of a false success screen.
               setTimeout(function() {
-                state.mode = "confirmation";
+                state.submitError = true;
+                state.mode = "quiz";
+                state.quizStep = quizSteps.length - 1;
                 render();
                 scrollToQuiz();
-              }, 2500);
+              }, 800);
             });
             return;
           }
