@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pre-push secret scan. This repo is PUBLIC on GitHub: anything pushed is world readable.
+# Enable once per clone: git config core.hooksPath .githooks
+# Scans added lines in the outgoing diff for credential patterns and blocks the push.
+# Patterns use [b]racket tricks so this file never matches itself.
+
+EMPTY_TREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+Z40=0000000000000000000000000000000000000000
+status=0
+
+while read local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$Z40" ] && continue
+  if [ "$remote_sha" = "$Z40" ]; then base="$EMPTY_TREE"; else base="$remote_sha"; fi
+  hits=$(git diff "$base" "$local_sha" 2>/dev/null | grep -E '^\+' | grep -E \
+    -e '[p]it-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' \
+    -e '[E]AA[A-Za-z0-9]{30,}' \
+    -e '[s]k_live_[A-Za-z0-9]{10,}' \
+    -e '[r]k_live_[A-Za-z0-9]{10,}' \
+    -e '[w]hsec_[A-Za-z0-9]{10,}' \
+    -e '[Bb]earer [0-9a-fA-F]{24,}' \
+    -e '\b[0-9a-f]{32}\b' \
+    -e 'BEGIN [A-Z ]*PRIVATE KEY')
+  if [ -n "$hits" ]; then
+    echo "PUSH BLOCKED: possible secret in outgoing diff for $local_ref" >&2
+    echo "$hits" | head -10 >&2
+    echo "This repo is public. Replace the value with a redacted fingerprint or move it to the private repo, then push again." >&2
+    status=1
+  fi
+done
+
+exit $status
