@@ -37,7 +37,7 @@ export default {
 
       return jsonResponse({ error: 'Not found' }, 404, request);
     } catch (err) {
-      return jsonResponse({ error: 'Internal server error' }, 500);
+      return jsonResponse({ error: 'Internal server error' }, 500, request);
     }
   },
 };
@@ -61,11 +61,14 @@ async function handleHLS(request, env, matchedPath) {
     ext === 'ts'   ? 'video/MP2T' :
     'application/octet-stream';
 
-  // Playlists get short cache (quality switching); segments get long cache
+  // Playlists get short cache (quality switching). Segments keep the same
+  // filenames across re-encodes, so a year-long cache can serve a returning
+  // viewer a scrambled mix of old and new video after a re-delivery. Keep
+  // segment cache at one day until upload paths are versioned (e.g. v2/).
   const cacheControl =
     ext === 'm3u8'
       ? 'public, max-age=3600'
-      : 'public, max-age=31536000';
+      : 'public, max-age=86400';
 
   return new Response(object.body, {
     headers: {
@@ -106,8 +109,19 @@ async function handleAuth(request, env, slug) {
     return jsonResponse({ error: 'Password required' }, 400, request);
   }
 
+  // Brute-force backoff: max 10 failed attempts per slug+IP per 15 minutes.
+  // Counter lives in the PASSWORDS namespace under an "rl:" prefix so it can
+  // never collide with a slug key.
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const rlKey = `rl:${slug}:${ip}`;
+  const attempts = parseInt((await env.PASSWORDS.get(rlKey)) || '0', 10);
+  if (attempts >= 10) {
+    return jsonResponse({ error: 'Too many attempts. Try again in a few minutes.' }, 429, request);
+  }
+
   const stored = await env.PASSWORDS.get(slug);
   if (!stored || stored !== password) {
+    await env.PASSWORDS.put(rlKey, String(attempts + 1), { expirationTtl: 900 });
     return jsonResponse({ error: 'Invalid password' }, 401, request);
   }
 
@@ -204,35 +218,41 @@ async function signJWT(payload, secret) {
 }
 
 async function verifyJWT(token, secret) {
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
+  // Malformed tokens (bad base64, bad JSON) must read as invalid (null),
+  // not throw up to the catch-all as a 500.
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
 
-  const [encodedHeader, encodedPayload, encodedSignature] = parts;
-  const signingInput = `${encodedHeader}.${encodedPayload}`;
+    const [encodedHeader, encodedPayload, encodedSignature] = parts;
+    const signingInput = `${encodedHeader}.${encodedPayload}`;
 
-  const key = await getSigningKey(secret);
-  // Decode the signature from base64url to ArrayBuffer
-  const sigStr = base64urlDecode(encodedSignature);
-  const sigBytes = new Uint8Array(sigStr.length);
-  for (let i = 0; i < sigStr.length; i++) {
-    sigBytes[i] = sigStr.charCodeAt(i);
-  }
+    const key = await getSigningKey(secret);
+    // Decode the signature from base64url to ArrayBuffer
+    const sigStr = base64urlDecode(encodedSignature);
+    const sigBytes = new Uint8Array(sigStr.length);
+    for (let i = 0; i < sigStr.length; i++) {
+      sigBytes[i] = sigStr.charCodeAt(i);
+    }
 
-  const valid = await crypto.subtle.verify(
-    'HMAC',
-    key,
-    sigBytes,
-    new TextEncoder().encode(signingInput)
-  );
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      sigBytes,
+      new TextEncoder().encode(signingInput)
+    );
 
-  if (!valid) return null;
+    if (!valid) return null;
 
-  const payload = JSON.parse(base64urlDecode(encodedPayload));
-  if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+    const payload = JSON.parse(base64urlDecode(encodedPayload));
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+
+    return payload;
+  } catch {
     return null;
   }
-
-  return payload;
 }
 
 // ---------------------------------------------------------------------------
