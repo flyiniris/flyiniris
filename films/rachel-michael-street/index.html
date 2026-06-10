@@ -18,15 +18,20 @@
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <!-- favicon-32 is 1.2KB; /favicon.png is 631KB and stays reserved for
+       the PWA manifest icon which needs the large size. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Google Cast SDK (for Chromecast support) -->
-  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+  <!-- Google Cast SDK (for Chromecast support). async: the sender library
+       is built for async load (it announces readiness via the
+       __onGCastApiAvailable callback that Vidstack's cast support listens
+       for), and loading it synchronously blocked first paint. -->
+  <script async src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
   <!-- Vidstack Player -->
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css@1.15.5" />
@@ -1211,9 +1216,13 @@
       for (var i = 0; i < collection.length; i++) {
         var v = collection[i];
         html +=
-          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '">' +
-          '  <div class="film-card-thumb" style="background-image: url(\'' + thumbUrl(v.id) + '\')">' +
-          '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' +
+          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '" tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '">' +
+          // Thumb loads lazily: data-thumb is applied as a background-image
+          // by the IntersectionObserver below, so 1920px thumbnails for
+          // sub-fold cards stop competing with the hero players on load
+          // (audit 2026-06-09, fi-delivery ux low #5).
+          '  <div class="film-card-thumb" data-thumb="' + escapeAttr(thumbUrl(v.id)) + '">' +
+          (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '') +
           '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
@@ -1226,6 +1235,28 @@
       }
 
       grid.innerHTML = html;
+
+      // Lazy-apply card thumbnails as they approach the viewport. 200px
+      // rootMargin starts the fetch just before the card scrolls in, so
+      // the swap is invisible in practice. No-IO fallback loads eagerly.
+      var thumbs = grid.querySelectorAll('.film-card-thumb[data-thumb]');
+      function applyThumb(el) {
+        el.style.backgroundImage = "url('" + el.getAttribute('data-thumb') + "')";
+        el.removeAttribute('data-thumb');
+      }
+      if ('IntersectionObserver' in window) {
+        var thumbObserver = new IntersectionObserver(function(entries) {
+          for (var t = 0; t < entries.length; t++) {
+            if (entries[t].isIntersecting) {
+              applyThumb(entries[t].target);
+              thumbObserver.unobserve(entries[t].target);
+            }
+          }
+        }, { rootMargin: '200px' });
+        for (var t = 0; t < thumbs.length; t++) thumbObserver.observe(thumbs[t]);
+      } else {
+        for (var t = 0; t < thumbs.length; t++) applyThumb(thumbs[t]);
+      }
     })();
 
     // --- Modal ---
@@ -1280,6 +1311,9 @@
       updatePlaylistBar();
       modalOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      // Same focus handoff as openModal: screen readers announce the
+      // dialog and keyboard users can Esc out immediately.
+      document.getElementById('modal-close').focus();
     }
 
     function loadPlaylistVideo(index) {
@@ -1446,13 +1480,19 @@
       if (!card) return;
       openModal(card.dataset.videoId, card.dataset.videoTitle);
     });
-    // Keyboard activation for playlist card (TV / remote-friendly)
+    // Keyboard activation for playlist card and film cards (TV / remote-friendly)
     document.getElementById('collection-grid').addEventListener('keydown', function(e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var playlistCard = e.target.closest('#playlist-card');
       if (playlistCard) {
         e.preventDefault();
         openPlaylist();
+        return;
+      }
+      var card = e.target.closest('.film-card');
+      if (card) {
+        e.preventDefault();
+        openModal(card.dataset.videoId, card.dataset.videoTitle);
       }
     });
 
@@ -1525,7 +1565,7 @@
             '<div class="download-item">' +
             '  <div class="download-item-info">' +
             '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
-            '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' +
+            (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
             '  </div>' +
             '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
             '</div>';
@@ -1613,18 +1653,49 @@
         allBtn.textContent = 'Download All Films';
       });
 
+      // The download route is POST-only with a Bearer header (video-serve
+      // Worker), so a plain tokened-URL anchor is not possible yet; the
+      // browser's native download manager would need a GET route accepting
+      // the JWT as a query param. Until that route ships, stream the
+      // response body and show real percent progress instead of an
+      // indeterminate "Downloading..." label, and only reset the password
+      // gate on actual auth failures (401/403). Wifi blips and missing
+      // files were previously mislabeled "Session expired" (audit
+      // 2026-06-09, fi-delivery ux #2).
       async function triggerDownload(videoId, btn) {
         var origText = btn.textContent;
-        btn.textContent = 'Downloading...';
         btn.disabled = true;
+        btn.textContent = 'Starting...';
 
         try {
           var res = await fetch(WORKER_BASE + '/couples/' + SLUG + '/download/' + videoId, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + authToken }
           });
-          if (!res.ok) throw new Error('download_failed');
-          var blob = await res.blob();
+          if (res.status === 401 || res.status === 403) throw new Error('auth');
+          if (!res.ok) throw new Error('failed');
+
+          var blob;
+          var total = parseInt(res.headers.get('Content-Length') || '0', 10);
+          if (res.body && typeof res.body.getReader === 'function') {
+            var reader = res.body.getReader();
+            var chunks = [];
+            var received = 0;
+            for (;;) {
+              var step = await reader.read();
+              if (step.done) break;
+              chunks.push(step.value);
+              received += step.value.length;
+              btn.textContent = total > 0
+                ? 'Downloading ' + Math.min(99, Math.floor(received / total * 100)) + '%'
+                : 'Downloading ' + Math.round(received / 1048576) + ' MB';
+            }
+            blob = new Blob(chunks, { type: 'video/mp4' });
+          } else {
+            // Old browsers without ReadableStream support.
+            blob = await res.blob();
+          }
+
           var url = URL.createObjectURL(blob);
           var a = document.createElement('a');
           a.href = url;
@@ -1632,16 +1703,26 @@
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          URL.revokeObjectURL(url);
+          // Delayed revoke: revoking synchronously can abort the save on
+          // iOS Safari before the file lands in Downloads.
+          setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
+          btn.textContent = 'Saved';
+          setTimeout(function() { btn.textContent = origText; }, 4000);
         } catch (e) {
-          // If token expired, reset to password gate
-          linksWrap.classList.remove('visible');
-          gate.style.display = '';
-          errorMsg.textContent = 'Session expired. Please re-enter your password.';
-          errorMsg.classList.add('visible');
-          authToken = null;
+          if (e && e.message === 'auth') {
+            // Token genuinely expired or invalid: back to the password gate.
+            linksWrap.classList.remove('visible');
+            gate.style.display = '';
+            errorMsg.textContent = 'Session expired. Please re-enter your password.';
+            errorMsg.classList.add('visible');
+            authToken = null;
+            btn.textContent = origText;
+          } else {
+            // Network blip, missing file, or server error: invite a retry
+            // without nuking the session.
+            btn.textContent = 'Try Again';
+          }
         } finally {
-          btn.textContent = origText;
           btn.disabled = false;
         }
       }

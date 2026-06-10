@@ -1,9 +1,15 @@
-const CACHE_NAME = 'fi-shell-v22';
+// Cache name is stamped per couple by generate-film-page.js. The cache
+// storage is origin-wide while each SW is scoped to /films/<slug>/, so a
+// shared name let couples at different template versions delete each
+// other's caches during staggered rollouts (audit 2026-06-09).
+const CACHE_NAME = 'fi-shell-rachel-michael-street-v23';
 const SHELL_ASSETS = [
   './',
-  'https://cdn.vidstack.io/player/theme.css',
-  'https://cdn.vidstack.io/player/video.css',
-  'https://cdn.vidstack.io/player'
+  // Pinned to match the couple-page.html Vidstack pin. Precaching the
+  // unversioned URLs cached assets the page never requests.
+  'https://cdn.vidstack.io/player/theme.css@1.15.5',
+  'https://cdn.vidstack.io/player/video.css@1.15.5',
+  'https://cdn.vidstack.io/player@1.15.5'
 ];
 
 self.addEventListener('install', (event) => {
@@ -18,7 +24,12 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          // Only clean up this couple's stale caches plus the legacy shared
+          // fi-shell-vNN names. Never touch other couples' caches.
+          .filter((key) =>
+            key !== CACHE_NAME &&
+            (key.indexOf('fi-shell-rachel-michael-street-') === 0 || /^fi-shell-v\d+$/.test(key))
+          )
           .map((key) => caches.delete(key))
       )
     )

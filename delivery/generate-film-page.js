@@ -100,12 +100,17 @@ function validateConfig(config, configPath) {
     if (entries.length === 0) {
       errors.push("'videos' object must have at least one entry");
     } else {
+      // Pass hero and playlist through. Earlier versions dropped both flags
+      // here, so legacy-form configs rendered pages with zero hero players
+      // (audit 2026-06-09, fi-delivery corr-eff #3).
       videosArray = entries.map(([id, v], i) => ({
         id,
         title: v && v.title,
         category: v && v.category,
         duration: v && v.duration,
         order: v && v.order != null ? v.order : i,
+        ...(v && v.hero === true ? { hero: true } : {}),
+        ...(v && v.playlist === false ? { playlist: false } : {}),
         ...(v && v.featured ? { featured: true } : {}),
       }));
     }
@@ -162,11 +167,20 @@ function dateToShort(dateStr) {
     january: '01', february: '02', march: '03', april: '04',
     may: '05', june: '06', july: '07', august: '08',
     september: '09', october: '10', november: '11', december: '12',
+    // 3-letter abbreviations plus the common 4-letter sept.
+    jan: '01', feb: '02', mar: '03', apr: '04', jun: '06', jul: '07',
+    aug: '08', sep: '09', sept: '09', oct: '10', nov: '11', dec: '12',
   };
-  const match = dateStr.match(/(\w+)\s+(\d{1,2}),?\s*(\d{4})/);
+  const match = dateStr.match(/(\w+)\.?\s+(\d{1,2}),?\s*(\d{4})/);
   if (!match) return dateStr;
   const [, monthName, day, year] = match;
-  const mm = months[monthName.toLowerCase()] || '01';
+  const mm = months[monthName.toLowerCase()];
+  // Hard fail on unknown month names. The old || '01' fallback silently
+  // rendered typos as January in the navbar (audit 2026-06-09, corr-eff #4).
+  if (!mm) {
+    console.error(`Unrecognized month "${monthName}" in weddingDate "${dateStr}". Use a full month name or 3-letter abbreviation.`);
+    process.exit(1);
+  }
   const dd = day.padStart(2, '0');
   return `${mm}.${dd}.${year}`;
 }
@@ -244,6 +258,18 @@ function main() {
     ...(v.playlist === false ? { playlist: false } : {}),
   }));
 
+  // Loud warning when durations are missing. Both live configs shipped with
+  // empty durations on all videos, producing blank badge pills everywhere
+  // (audit 2026-06-09, fi-delivery #1). Backfill via ffprobe, see
+  // delivery/scripts/transcode.ps1 duration backfill block.
+  const noDuration = videosArray.filter(v => !v.duration);
+  if (noDuration.length > 0) {
+    console.warn('');
+    console.warn(`  WARNING: ${noDuration.length} of ${videosArray.length} videos have an empty 'duration' (${noDuration.map(v => v.id).join(', ')}).`);
+    console.warn('  Duration badges will be omitted on the page. Backfill the config with ffprobe and regenerate.');
+    console.warn('');
+  }
+
   // Hero row: entries with hero: true, sorted by order. May be empty (page renders
   // Collection-only). At most HERO_MAX entries (enforced in validateConfig).
   const heroArray = videosArray
@@ -280,23 +306,31 @@ function main() {
   const manifestTemplate = fs.readFileSync(path.join(templateDir, 'manifest.json'), 'utf-8');
   const swContent = fs.readFileSync(path.join(templateDir, 'sw.js'), 'utf-8');
 
-  // Token replacement
+  // Token replacement. Function-form replacements throughout: a plain string
+  // second argument lets $-sequences ($&, $', $1...) in couple names, titles,
+  // or JSON corrupt the output silently (audit 2026-06-09, corr-eff low #6).
+  const stamp = (value) => () => value;
   let html = htmlTemplate
-    .replace(/\{\{COUPLE_NAMES\}\}/g, config.coupleNames)
-    .replace(/\{\{DATE_LONG\}\}/g, config.weddingDate)
-    .replace(/\{\{DATE_SHORT\}\}/g, dateShort)
-    .replace(/\{\{SLUG\}\}/g, config.slug)
-    .replace(/\{\{WORKER_BASE\}\}/g, workerBase)
-    .replace(/\{\{VIDEOS_JSON\}\}/g, JSON.stringify(videosArray))
-    .replace(/\{\{PLAYLIST_JSON\}\}/g, JSON.stringify(playlistArray))
-    .replace(/\{\{HERO_JSON\}\}/g, JSON.stringify(heroArray))
-    .replace(/\{\{HERO_CTA\}\}/g, heroCta)
-    .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, ogVideoId)
-    .replace(/\{\{YEAR\}\}/g, year);
+    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(config.coupleNames))
+    .replace(/\{\{DATE_LONG\}\}/g, stamp(config.weddingDate))
+    .replace(/\{\{DATE_SHORT\}\}/g, stamp(dateShort))
+    .replace(/\{\{SLUG\}\}/g, stamp(config.slug))
+    .replace(/\{\{WORKER_BASE\}\}/g, stamp(workerBase))
+    .replace(/\{\{VIDEOS_JSON\}\}/g, stamp(JSON.stringify(videosArray)))
+    .replace(/\{\{PLAYLIST_JSON\}\}/g, stamp(JSON.stringify(playlistArray)))
+    .replace(/\{\{HERO_JSON\}\}/g, stamp(JSON.stringify(heroArray)))
+    .replace(/\{\{HERO_CTA\}\}/g, stamp(heroCta))
+    .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, stamp(ogVideoId))
+    .replace(/\{\{YEAR\}\}/g, stamp(year));
 
   let manifest = manifestTemplate
-    .replace(/\{\{COUPLE_NAMES\}\}/g, config.coupleNames)
-    .replace(/\{\{SLUG\}\}/g, config.slug);
+    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(config.coupleNames))
+    .replace(/\{\{SLUG\}\}/g, stamp(config.slug));
+
+  // Per-slug service worker cache name (audit 2026-06-09, corr-eff low #7:
+  // all couples shared one origin-wide cache name and deleted each other's
+  // caches during staggered template rollouts).
+  const sw = swContent.replace(/\{\{SLUG\}\}/g, stamp(config.slug));
 
   // Write outputs
   const outputBase = outputRoot
@@ -306,7 +340,7 @@ function main() {
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(path.join(outputDir, 'index.html'), html, 'utf-8');
   fs.writeFileSync(path.join(outputDir, 'manifest.json'), manifest, 'utf-8');
-  fs.writeFileSync(path.join(outputDir, 'sw.js'), swContent, 'utf-8');
+  fs.writeFileSync(path.join(outputDir, 'sw.js'), sw, 'utf-8');
 
   console.log(`Film page generated at ${outputDir}/`);
   console.log(`  index.html (${(html.length / 1024).toFixed(1)} KB)`);
