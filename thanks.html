@@ -391,7 +391,7 @@
     <div class="gold-divider"></div>
 
     <p class="skip-ahead">Want to skip ahead? Book a call and let's chat!</p>
-    <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn">
+    <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn" id="book-call-cta">
       Book a Discovery Call &#10038;
     </a>
   </section>
@@ -431,6 +431,16 @@
       var heading = document.getElementById('reveal-heading');
       if (fn) {
         heading.textContent = 'Hey ' + decodeURIComponent(fn) + '!';
+      }
+
+      // R10 booking prefill: the GHL widget honors first_name as a query
+      // param. This page only ever receives fn (no email/phone), so partial
+      // prefill is the ceiling here.
+      if (fn) {
+        var bookCta = document.getElementById('book-call-cta');
+        if (bookCta) {
+          bookCta.href += (bookCta.href.indexOf('?') === -1 ? '?' : '&') + 'first_name=' + encodeURIComponent(decodeURIComponent(fn));
+        }
       }
 
       // Film data

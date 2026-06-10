@@ -1,8 +1,8 @@
-# Flyin' Iris — GHL SMS Copy-Paste Cheat Sheet
+# Flyin' Iris: GHL SMS Copy-Paste Cheat Sheet
 
 > All messages: From **(262) 384-5079**
 > Voice: Texts from a friend. Warm, genuine, specific. Light emoji (💛 🎉 only). Short.
-> Sign-off: Always "— Sierra & Sean" or "— Sierra & Sean, Flyin' Iris"
+> Sign-off: Always "- Sierra & Sean" or "- Sierra & Sean, Flyin' Iris"
 
 ---
 
@@ -22,75 +22,75 @@
 
 ---
 
-## Workflow 1 — New Inquiry Auto-Response
+## Workflow 1: New Inquiry Auto-Response
 
 **When:** Within 1-2 min of new inquiry
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** None
 
 ```
-Hey {{contact.first_name}}! We just got your inquiry and we're so excited — {{contact.venue_name}} on {{contact.wedding_date}} sounds absolutely beautiful. We'd love to hop on a quick 15-min call to hear about your day. No pitch, just a real conversation: {{calendar_link}}
+Hey {{contact.first_name}}! We just got your inquiry and we're so excited, {{contact.venue_name}} on {{contact.wedding_date}} sounds absolutely beautiful. We'd love to hop on a quick 15-min call to hear about your day. No pitch, just a real conversation: {{calendar_link}}
 
-— Sierra & Sean, Flyin' Iris 💛
+- Sierra & Sean, Flyin' Iris 💛
 ```
 
 ---
 
-## Workflow 2 — Calculator Completed
+## Workflow 2: Calculator Completed
 
 **When:** Within 1-2 min of calculator submission
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** None
 
 ```
-Hey {{contact.first_name}}! Loved seeing your custom package come together 💛 We'd love to walk you through it on a quick call — {{calendar_link}}
+Hey {{contact.first_name}}! Loved seeing your custom package come together 💛 We'd love to walk you through it on a quick call: {{calendar_link}}
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Workflow 3 — 24hr Follow-Up
+## Workflow 3: 24hr Follow-Up
 
 **When:** 24 hours after inquiry
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** Contact NOT in Stage 3+ AND Calculator Tier is empty
 
 ```
-Hey {{contact.first_name}}! Random thought — has {{contact.venue_name}} always been the dream or did you two just walk in and know? Either way we love it 💛 Whenever you're ready to chat: {{calendar_link}}
+Hey {{contact.first_name}}! Random thought: has {{contact.venue_name}} always been the dream or did you two just walk in and know? Either way we love it 💛 Whenever you're ready to chat: {{calendar_link}}
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 3 — Discovery Call Booked (Immediate)
+## Stage 3: Discovery Call Booked (Immediate)
 
 **When:** Immediately after call is booked
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 
 ```
-{{contact.first_name}}! Your call is booked for {{appointment.start_time}} — can't wait to hear about your day! 💛
+{{contact.first_name}}! Your call is booked for {{appointment.start_time}}. Can't wait to hear about your day! 💛
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 3 — 24hr Before Call Reminder
+## Stage 3: 24hr Before Call Reminder
 
 **When:** 24 hours before appointment
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 
 ```
-Hey {{contact.first_name}}, just a heads up — we're chatting tomorrow at {{appointment.start_time}}! Looking forward to it 💛
+Hey {{contact.first_name}}, just a heads up, we're chatting tomorrow at {{appointment.start_time}}! Looking forward to it 💛
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 3 — 1hr Before Call Reminder
+## Stage 3: 1hr Before Call Reminder
 
 **When:** 1 hour before appointment
 **Consent check:** SMS Non-Marketing Consent = "Yes"
@@ -98,84 +98,84 @@ Hey {{contact.first_name}}, just a heads up — we're chatting tomorrow at {{app
 ```
 See you in an hour, {{contact.first_name}}! Here's your Zoom link: [ZOOM LINK]
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 4B — Day 3 Thinking Nudge
+## Stage 4B: Day 3 Thinking Nudge
 
 **When:** 3 days after discovery call
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** Contact tagged "call-outcome-thinking"
 
-*(No text at Day 3 — email only)*
+*(No text at Day 3, email only)*
 
 ---
 
-## Stage 4B — Day 5 Thinking Follow-Up
+## Stage 4B: Day 5 Thinking Follow-Up
 
 **When:** 5 days after discovery call
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** Contact tagged "call-outcome-thinking"
 
 ```
-Hey {{contact.first_name}}, no rush at all — just wanted you to know your date is still available. Let us know if any questions came up! 💛
+Hey {{contact.first_name}}, no rush at all, just wanted you to know your date is still available. Let us know if any questions came up! 💛
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 4B — Day 10 Urgency (Final)
+## Stage 4B: Day 10 Urgency (Final)
 
 **When:** 10 days after discovery call
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 **Conditions:** Contact tagged "call-outcome-thinking"
 
 ```
-Hey {{contact.first_name}}, just a heads up — we've had a couple other inquiries for {{contact.wedding_date}}. We wanted to give you first dibs before we open it up. No pressure at all 🤍
+Hey {{contact.first_name}}, just a heads up, we've had a couple other inquiries for {{contact.wedding_date}}. We wanted to give you first dibs before we open it up. No pressure at all 🤍
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 5 — Proposal 48hr Follow-Up
+## Stage 5: Proposal 48hr Follow-Up
 
 **When:** 48 hours after proposal sent
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 
 ```
-Hey {{contact.first_name}}, just checking in — did you get a chance to look over the proposal? Happy to answer any questions at all 💛
+Hey {{contact.first_name}}, just checking in, did you get a chance to look over the proposal? Happy to answer any questions at all 💛
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 5 — Proposal Day 10 Urgency
+## Stage 5: Proposal Day 10 Urgency
 
 **When:** 10 days after proposal sent
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 
 ```
-Hey {{contact.first_name}}, quick heads up — we're holding {{contact.wedding_date}} for you but had another inquiry come in for that weekend. Just want to make sure you get first dibs 🤍
+Hey {{contact.first_name}}, quick heads up, we're holding {{contact.wedding_date}} for you but had another inquiry come in for that weekend. Just want to make sure you get first dibs 🤍
 
-— Sierra & Sean
+- Sierra & Sean
 ```
 
 ---
 
-## Stage 6 — Contract Signed
+## Stage 6: Contract Signed
 
 **When:** Immediately after contract is signed
 **Consent check:** SMS Non-Marketing Consent = "Yes"
 
 ```
-IT'S OFFICIAL 🎉 {{contact.first_name}}, we are SO excited to be part of your day. Check your email for what's next — this is going to be amazing.
+IT'S OFFICIAL 🎉 {{contact.first_name}}, we are SO excited to be part of your day. Check your email for what's next. This is going to be amazing.
 
-— Sierra & Sean, Flyin' Iris 💛
+- Sierra & Sean, Flyin' Iris 💛
 ```
 
 ---
@@ -189,12 +189,3 @@ IT'S OFFICIAL 🎉 {{contact.first_name}}, we are SO excited to be part of your 
 - **Max 2 texts per 24hr** per contact (excluding appointment reminders)
 - GHL should auto-append STOP language if configured in phone settings
 - If consent = No or empty → **email only, never text**
-
-## GHL Workflow IF/ELSE Pattern
-
-For every SMS step:
-
-```
-IF → Contact Field → SMS Non-Marketing Consent → is → Yes → Send SMS
-ELSE → Do nothing (email step handles it)
-```

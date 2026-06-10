@@ -1340,6 +1340,10 @@
     var PRICING_VERSION = '2026-04-26';
     var SUBMIT_ENDPOINT = 'https://iris-automation.flyin-iris-mp.workers.dev/api/yours/taylor-neil/submit';
     var SLUG = 'taylor-neil';
+    // Per-couple page token. The Worker requires it on /submit and /viewed so
+    // the guessable slug alone can no longer fire Pushovers or stage moves.
+    // Pairs with YOURS_SLUG_TO_CONTACT in iris-automation src/index.ts.
+    var YOURS_TOKEN = 'f5da76ba7192da55015f5bd0abf6a6f2a76c775908f2ce8d';
 
     var PRICING = {
       team: { base: 2800, hourlyRate: 150, name: 'Team Package', tierLabel: 'TEAM PACKAGE' },
@@ -1506,6 +1510,7 @@
       var cfg = window.__currentConfig;
       var body = {
         slug: SLUG,
+        token: YOURS_TOKEN,
         config: {
           tier: cfg.tier,
           hours: cfg.hours,
@@ -1575,7 +1580,7 @@
         fetch('https://iris-automation.flyin-iris-mp.workers.dev/api/yours/' + SLUG + '/viewed', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug: SLUG }),
+          body: JSON.stringify({ slug: SLUG, token: YOURS_TOKEN }),
           keepalive: true
         }).catch(function() {});
       }
