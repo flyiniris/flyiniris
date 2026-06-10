@@ -6,19 +6,19 @@
   <title>What's Your Wedding Film Style? | Free Quiz | Flyin' Iris</title>
   <meta name="description" content="Take our 60-second quiz to discover your wedding film style. Cinematic Romance? Electric Energy? Intimate Poetry? Find out and see real films that match.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://www.flyiniris.com/quiz">
+  <link rel="canonical" href="https://www.flyiniris.com/quiz/">
   <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph -->
   <meta property="og:title" content="What's Your Wedding Film Style? | Free Quiz | Flyin' Iris">
   <meta property="og:description" content="Take our 60-second quiz to discover your wedding film style. Cinematic Romance? Electric Energy? Intimate Poetry? Find out!">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.flyiniris.com/quiz">
-  <meta property="og:image" content="https://www.flyiniris.com/quiz-og.jpg">
+  <meta property="og:url" content="https://www.flyiniris.com/quiz/">
+  <meta property="og:image" content="https://www.flyiniris.com/og-films.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="What's Your Wedding Film Style? | Flyin' Iris">
   <meta name="twitter:description" content="60 seconds. 5 questions. Find your wedding film style.">
-  <meta name="twitter:image" content="https://www.flyiniris.com/quiz-og.jpg">
+  <meta name="twitter:image" content="https://www.flyiniris.com/og-films.png">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 
@@ -759,6 +759,49 @@
       transform: translateY(-1px);
     }
 
+    /* ========== FOOTER ========== */
+    .site-footer {
+      padding: 40px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .footer-location {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .footer-copy {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .footer-legal {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+    }
+    .footer-legal a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .footer-legal a:hover {
+      color: var(--accent);
+    }
+
     /* ========== SHARE CARD (Instagram Stories screenshot target) ========== */
     #share-card {
       position: fixed;
@@ -935,13 +978,13 @@
     </div>
 
     <div class="email-section">
-      <h3 class="email-section-title">Want your personalized style guide?</h3>
-      <p class="email-section-desc">Drop your email and we'll send you curated film recommendations, tips for capturing YOUR vibe, and everything you need to know before booking.</p>
+      <h3 class="email-section-title">Want more films in your style?</h3>
+      <p class="email-section-desc">Drop your name and email and over the next week we'll send you real wedding films and a few things worth knowing before you book a videographer.</p>
 
       <div id="email-form">
         <div class="form-row">
           <div class="form-group">
-            <input type="text" class="form-input" id="input-name" placeholder="First name" autocomplete="given-name">
+            <input type="text" class="form-input" id="input-name" placeholder="First name *" required autocomplete="given-name">
           </div>
           <div class="form-group">
             <input type="date" class="form-input" id="input-date" placeholder="Wedding date">
@@ -951,15 +994,15 @@
           <input type="email" class="form-input" id="input-email" placeholder="Your email address *" required autocomplete="email">
         </div>
         <button class="btn-submit" id="submit-btn" onclick="submitEmail()">
-          Send My Style Guide &rarr;
+          Send Me Films &rarr;
         </button>
         <p class="form-fine-print">No spam, ever. Unsubscribe anytime.</p>
       </div>
 
       <div id="email-success" class="hidden" style="text-align:center; padding: 16px 0;">
         <div style="font-size: 2rem; margin-bottom: 12px;">🎬</div>
-        <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); margin-bottom: 8px;">On its way to your inbox!</p>
-        <p style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--text-secondary);">Check your email for your personalized style guide. Can't wait to show you what's possible.</p>
+        <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); margin-bottom: 8px;">You're on the list!</p>
+        <p style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--text-secondary);">Keep an eye on your inbox over the next few days. Can't wait to show you what's possible.</p>
       </div>
     </div>
 
@@ -1005,6 +1048,14 @@
   </div>
 
 </div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <p class="footer-brand">FLYIN' IRIS</p>
+  <p class="footer-location">Milwaukee, Wisconsin</p>
+  <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+  <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
+</footer>
 
 <!-- Share Card (off-screen, for screenshot) -->
 <div id="share-card">
@@ -1220,10 +1271,14 @@ function showResult() {
   document.getElementById('result-desc').textContent = style.description;
 
   // Films
+  // Thumbnails come from the video Worker; olivia-austin has no R2 thumb yet, so use the site-hosted image.
+  const thumbOverrides = {
+    'olivia-austin': 'https://www.flyiniris.com/olivia-austin.jpg'
+  };
   const filmsGrid = document.getElementById('films-grid');
   filmsGrid.innerHTML = style.films.map(film => `
-    <a href="https://flyiniris.com/venues" class="film-card" target="_blank" rel="noopener">
-      <img src="https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/${film.slug}/thumbs/thumb.jpg"
+    <a href="https://www.flyiniris.com/yours?film=${film.slug}&fc=${encodeURIComponent(film.label)}" class="film-card" target="_blank" rel="noopener">
+      <img src="${thumbOverrides[film.slug] || `https://video.flyiniris.com/couples/${film.slug}/thumbs/thumb.jpg`}"
            alt="${film.label} wedding film"
            loading="lazy"
            onerror="this.style.display='none'">
@@ -1246,6 +1301,12 @@ async function submitEmail() {
   const email = document.getElementById('input-email').value.trim();
   const name = document.getElementById('input-name').value.trim();
   const date = document.getElementById('input-date').value;
+
+  if (!name) {
+    showToast('Please enter your first name.');
+    document.getElementById('input-name').focus();
+    return;
+  }
 
   if (!email || !email.includes('@')) {
     showToast('Please enter a valid email address.');

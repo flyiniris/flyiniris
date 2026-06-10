@@ -1764,6 +1764,22 @@
     }
 
     /* Footer legal links */
+    .footer-explore {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      margin-top: 12px;
+      letter-spacing: 0.05em;
+    }
+    .footer-explore a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .footer-explore a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
     .footer-legal {
       font-family: 'Outfit', sans-serif;
       font-size: 0.625rem;
@@ -2236,6 +2252,7 @@
     <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
     <p class="footer-contact">758 Hillside Ct, Cedarburg, WI 53012 &middot; <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a> &middot; <a href="tel:+12623845079">(262) 384-5079</a></p>
     <p class="footer-services">Cinematic Wedding Films &middot; Wedding Highlight Videos &middot; Elopement Videography &middot; Drone Wedding Coverage &middot; Destination Wedding Videographer</p>
+    <p class="footer-explore"><a href="/films">Wedding Films</a> &middot; <a href="/venues/">Wisconsin Venue Films</a> &middot; <a href="/quiz/">Film Style Quiz</a> &middot; <a href="/calculator/">Build Your Package</a></p>
     <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
   </footer>
 
@@ -2501,17 +2518,17 @@
             .then(function(data) {
               var color, icon, msg;
               if (data.status === 'available') {
-                color = '#4CAF50'; icon = 'âœ…'; msg = data.message;
+                color = '#4CAF50'; icon = '\u2705'; msg = data.message;
               } else if (data.status === 'limited') {
-                color = '#FF9800'; icon = 'âš¡'; msg = data.message;
+                color = '#FF9800'; icon = '\u26a1'; msg = data.message;
               } else if (data.status === 'booked') {
-                color = '#f44336'; icon = 'ðŸ“…'; msg = data.message;
+                color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message;
               } else if (data.status === 'weekday') {
-                color = 'var(--accent)'; icon = 'ðŸ’›'; msg = 'Weekday weddings have flexible availability - let\'s chat about your vision!';
+                color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability - let\'s chat about your vision!';
               } else if (data.status === 'too_soon') {
-                color = 'var(--text-secondary)'; icon = 'â°'; msg = 'That\'s coming up fast! Let\'s chat about your timeline on a call.';
+                color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'That\'s coming up fast! Let\'s chat about your timeline on a call.';
               } else if (data.status === 'too_far') {
-                color = 'var(--text-secondary)'; icon = 'ðŸ”®'; msg = 'Planning ahead - love it! Reach out and we\'ll get you on the calendar.';
+                color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead - love it! Reach out and we\'ll get you on the calendar.';
               } else {
                 color = 'var(--text-secondary)'; icon = ''; msg = '';
               }
@@ -2729,7 +2746,7 @@
         function isValidPhone(p) { return p.replace(/\D/g, "").length >= 10; }
         function fmtPhone(v) { var d = v.replace(/\D/g, "").slice(0, 10); if (!d.length) return ""; if (d.length <= 3) return "(" + d; if (d.length <= 6) return "(" + d.slice(0,3) + ") " + d.slice(3); return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6); }
         function buildCalendarUrl(widgetId) {
-          var base = 'https://link.lo-ai.co/widget/booking/' + widgetId;
+          var base = 'https://book.flyiniris.com/widget/booking/' + widgetId;
           if (!state.contactInfo) return base;
           var ci = state.contactInfo;
           var parts = (ci.name || '').split(' ');
@@ -3212,7 +3229,7 @@
             if (!document.getElementById('ghl-embed-script')) {
               var s = document.createElement('script');
               s.id = 'ghl-embed-script';
-              s.src = 'https://link.lo-ai.co/js/form_embed.js';
+              s.src = 'https://book.flyiniris.com/js/form_embed.js';
               document.body.appendChild(s);
             }
           }, 50);
@@ -3365,7 +3382,7 @@
             if (!document.getElementById('ghl-embed-script')) {
               var s = document.createElement('script');
               s.id = 'ghl-embed-script';
-              s.src = 'https://link.lo-ai.co/js/form_embed.js';
+              s.src = 'https://book.flyiniris.com/js/form_embed.js';
               document.body.appendChild(s);
             }
           }, 50);

@@ -27,3 +27,6 @@
 /contract.html             https://agreement.flyiniris.com/agreement  301
 /payment                   https://agreement.flyiniris.com/agreement  301
 /payment/*                 https://agreement.flyiniris.com/agreement  301
+
+# Stale duplicate of the canonical delivery page (old root copy deleted 2026-06-10)
+/amanda-boris              /films/amanda-boris/  301
