@@ -45,8 +45,7 @@
     warning. The script does not modify the config.
 
 .PARAMETER VimeoToken
-    Vimeo API bearer token. Defaults to the long-lived team token currently
-    in process-video.ps1.
+    Vimeo API bearer token. Defaults to the VIMEO_TOKEN environment variable.
 
 .EXAMPLE
     # Inline map mode (one-off catalog)
@@ -81,10 +80,12 @@ param(
     [Parameter(Mandatory=$true, ParameterSetName="Config")]
     [string]$ConfigFile,
 
-    [string]$VimeoToken = "60da9fb557043177a683cb20188859fb"
+    [string]$VimeoToken = $env:VIMEO_TOKEN
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $VimeoToken) { throw "VIMEO_TOKEN environment variable not set. Run: setx VIMEO_TOKEN <token> and open a new terminal." }
 
 # --- Preflight checks ---
 

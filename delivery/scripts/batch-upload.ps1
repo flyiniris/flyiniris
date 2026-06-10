@@ -1,4 +1,5 @@
-$token = "60da9fb557043177a683cb20188859fb"
+$token = $env:VIMEO_TOKEN
+if (-not $token) { throw "VIMEO_TOKEN environment variable not set. Run: setx VIMEO_TOKEN <token> and open a new terminal." }
 $headers = @{Authorization="bearer $token"}
 $dlDir = "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\downloads"
 $baseOut = "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\output"

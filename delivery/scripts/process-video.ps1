@@ -5,7 +5,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$token = "60da9fb557043177a683cb20188859fb"
+$token = $env:VIMEO_TOKEN
+if (-not $token) { throw "VIMEO_TOKEN environment variable not set. Run: setx VIMEO_TOKEN <token> and open a new terminal." }
 $basePath = "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery"
 $downloadDir = "$basePath\downloads"
 $outputDir = "$basePath\output\$Slug\$VideoId"
