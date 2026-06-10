@@ -844,7 +844,9 @@
       <div class="summary-header">
         <div>
           <div class="summary-tier" id="summaryTier">TEAM PACKAGE</div>
-          <div class="summary-price" id="summaryPrice">$2,954.00</div>
+          <!-- Placeholder matches the safe-default PAID breakdown below
+               (base $2,800 + FOMO $1,000 + 5.5% tax = $4,009.00). -->
+          <div class="summary-price" id="summaryPrice">$4,009.00</div>
         </div>
         <div class="summary-savings" id="summarySavings"></div>
       </div>
@@ -921,16 +923,15 @@
       story: 1000
     };
 
-    // Mirror of iris-automation/src/pricing.ts TEAM_COSTS. Used for the Team
-    // profit floor: if (total - cost) < $1,000, bump total to cost + $1,000.
-    // Update this when pricing.ts changes.
-    var TEAM_COSTS = {
-      hours: { '6': 0, '7': 25, '8': 50, '9': 75, '10': 100, '11': 125, '12': 150 },
-      highlight: { '5': 0, '6-8': 150, '9-12': 300, '13-15': 450, '15-20': 600 },
-      teaser: 250,
-      storySession: 400,
-      fomo: 200
-    };
+    // Audit entry 11 (2026-06-10): the TEAM_COSTS table (internal labor and
+    // production cost data behind the Team profit floor) was hand-copied here,
+    // publishing the studio's margins to anyone who views source. Removed
+    // along with the client-side floor. Numerically a no-op: with the current
+    // canonical constants (src/pricing.ts), the Team base price alone keeps
+    // every discounted config thousands of dollars above cost + $1,000, so the
+    // floor can never trigger. The Worker engine still carries the floor as
+    // the server-side guard; if pricing constants ever change enough for it to
+    // matter, ship a precomputed minimum-price table here, never the costs.
 
     var SALES_TAX_RATE = 0.055;
 
@@ -1001,27 +1002,25 @@
       if (hasStory) qualifyingCount++;
       if (extraHours >= 3) qualifyingCount++;  // +3hrs or more
 
-      var rawTotal = tier.base + hoursCost + highlightCost + teaserCost + storyCost;
+      // Audit entry 44 (2026-06-10): FOMO is in EVERY package per the
+      // canonical engine (src/pricing.ts emits +$1,000 always, paired with a
+      // -$1,000 credit only when a monthly free spot remains). The old
+      // rawTotal omitted the $1,000 entirely, so when the free spots were
+      // gone the breakdown showed a +$1,000 row the total never included:
+      // the quote understated the proposal by about $1,055 with tax. The
+      // discount and tax now apply to the same FOMO-inclusive base as the
+      // engine. (FOMO never counts toward the bundle qualifying count.)
+      var rawTotal = tier.base + hoursCost + highlightCost + teaserCost + storyCost
+        + 1000 - (fomoFreeSpot ? 1000 : 0);
       var discountRate = getBundleDiscount(qualifyingCount);
       // Discount applies to entire package total (matches canonical pricing.ts)
       var discountAmount = Math.round(rawTotal * discountRate);
       var preTaxTotal = rawTotal - discountAmount;
 
-      // Team profit floor (mirrors canonical pricing.ts): if discount applies
-      // and (total - cost) drops below $1,000, bump total to cost + $1,000.
-      // Cost includes only incremental upgrade costs plus FOMO production cost.
-      if (currentTier === 'team' && discountAmount > 0) {
-        var hoursKey = String(hours);
-        var totalCost = (TEAM_COSTS.hours[hoursKey] || 0)
-          + (TEAM_COSTS.highlight[highlight] || 0)
-          + (hasTeaser ? TEAM_COSTS.teaser : 0)
-          + (hasStory ? TEAM_COSTS.storySession : 0)
-          + TEAM_COSTS.fomo;
-        if (preTaxTotal - totalCost < 1000) {
-          preTaxTotal = totalCost + 1000;
-          discountAmount = rawTotal - preTaxTotal;
-        }
-      }
+      // Team profit floor intentionally NOT mirrored here (audit entry 11):
+      // it requires internal cost data that must never ship in page source,
+      // and it is unreachable with the current canonical constants. The
+      // Worker engine remains the server-side guard.
 
       var taxAmount = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
       var finalTotal = preTaxTotal + taxAmount;

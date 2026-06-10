@@ -1535,13 +1535,25 @@
   (function() {
     // ========== CONSTANTS ==========
     var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
-    var BOOKING_BASE = 'https://link.lo-ai.co/widget/booking/Kd7zWqsXzAswGHR1HuDR';
+    // 2026-06-10: repointed from the dead link.lo-ai.co host to the live
+    // booking widget (book.flyiniris.com, same widget id the nurture emails
+    // and saved.html use).
+    var BOOKING_BASE = 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
     var R2_THUMB = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/';
     var ADDON_IMGS = {
       teaser: R2_THUMB + 'emily-bobby/thumbs/thumb.jpg',
       storySession: R2_THUMB + 'kate-thomas/thumbs/thumb.jpg'
     };
 
+    // Mirrors iris-automation/src/pricing.ts (the canonical engine); update
+    // both together. Audit entry 43 (2026-06-10): this page's math now matches
+    // the engine: 5.5% Wisconsin sales tax, FOMO included in the base with the
+    // free credit gated on the LIVE monthly spot count, and the full bundle
+    // qualifying count (highlight upgrade, teaser, story session, and +3hr or
+    // more coverage). The old local math had no tax, always showed FOMO free,
+    // and counted only teaser + story toward the bundle, so quotes understated
+    // the proposal by hundreds to over a thousand dollars.
+    var SALES_TAX_RATE = 0.055;
     var PRICING = {
       team: {
         base: 2800,
@@ -1558,6 +1570,26 @@
         bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
       },
     };
+
+    // Live FOMO free-spot state, fetched from /api/pricing/constants on init.
+    // Default false (PAID) is the revenue-safe fail-closed state: a fetch
+    // failure renders the paid single line, never an accidental free pair.
+    var fomoFreeSpot = false;
+    function loadFomoState() {
+      fetch(WORKER_URL + '/api/pricing/constants')
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (data && typeof data.fomoFreeSpot === 'boolean' && data.fomoFreeSpot !== fomoFreeSpot) {
+            fomoFreeSpot = data.fomoFreeSpot;
+            // Re-render the summary if the builder is already on screen.
+            if (document.getElementById('price-summary') && document.getElementById('price-summary').innerHTML) {
+              renderPriceSummary();
+            }
+          }
+        })
+        .catch(function() { /* keep paid default */ });
+    }
+    loadFomoState();
 
     // ========== EXCITED ABOUT MESSAGES ==========
     var EXCITED_MESSAGES = {
@@ -1621,7 +1653,7 @@
           {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
         ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows, every single word":"Vows are the one thing you'll want to hear again and again.","The speeches that wreck us":"In 10 years, you'll want to hear your dad's voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious, even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
         { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single biggest factor in your investment, and there's no wrong answer.", options:[
-          {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits your footage into a cinematic story, and Sean reviews every cut before it reaches you."},
+          {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra shapes everything we capture into a cinematic story, and Sean reviews every cut before it reaches you."},
           {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
         ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra and Sean are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
         isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", options:[
@@ -1669,6 +1701,11 @@
     // ========== HELPERS ==========
     function formatPrice(n) {
       return '$' + n.toLocaleString();
+    }
+
+    // Always-2-decimal formatter for tax + grand total (fractional cents).
+    function formatMoney(n) {
+      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // Build a discovery-booking widget URL prefilled with the couple's contact
@@ -2062,27 +2099,46 @@
       initDreamCalc();
     }
 
+    // Mirrors src/pricing.ts calculateFromBuilderConfig (audit entry 43):
+    // FOMO-inclusive subtotal, full bundle qualifying count, Math.round
+    // discount, 5.5% tax on the post-discount total. The Team profit floor is
+    // intentionally NOT mirrored: it needs internal cost data that must never
+    // ship in page source (audit entry 11), and it is unreachable with the
+    // current canonical constants. The Worker recomputes on save regardless.
     function calculateTotal() {
       var tier = PRICING[builderState.tier];
-      var total = tier.base;
-      total += tier.hours[builderState.hours] || 0;
-      total += tier.highlight[builderState.highlight] || 0;
+      var subtotal = tier.base;
+      var bundleCount = 0;
 
-      var addonTotal = 0;
-      var addonCount = 0;
-      if (builderState.addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
-      if (builderState.addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
+      var hoursPrice = tier.hours[builderState.hours] || 0;
+      subtotal += hoursPrice;
+      if (parseInt(builderState.hours, 10) >= 9) bundleCount++; // +3hrs or more qualifies
 
-      total += addonTotal;
-      var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
-      var discount = Math.round(total * discountPct);
+      var hlPrice = tier.highlight[builderState.highlight] || 0;
+      subtotal += hlPrice;
+      if (hlPrice > 0) bundleCount++;
 
-      if (builderState.tier === 'team' && discount > 0) {
-        var floor = tier.base + (tier.hours[builderState.hours] || 0) + (tier.highlight[builderState.highlight] || 0);
-        if (total - discount < floor) discount = total - floor;
-      }
+      if (builderState.addons.teaser) { subtotal += tier.addons.teaser; bundleCount++; }
+      if (builderState.addons.storySession) { subtotal += tier.addons.storySession; bundleCount++; }
 
-      return { total: total - discount, discount: discount, discountPct: discountPct, subtotal: total };
+      // FOMO is in every package: +$1,000 always, -$1,000 credit only while a
+      // monthly free spot remains. Never counts toward the bundle.
+      subtotal += 1000;
+      if (fomoFreeSpot) subtotal -= 1000;
+
+      var discountPct = tier.bundleDiscounts[Math.min(bundleCount, tier.bundleDiscounts.length - 1)];
+      var discount = Math.round(subtotal * discountPct);
+      var preTax = subtotal - discount;
+      var tax = Math.round(preTax * SALES_TAX_RATE * 100) / 100;
+
+      return {
+        total: preTax,                          // pre-tax, matches engine result.total
+        tax: tax,
+        totalWithTax: Math.round((preTax + tax) * 100) / 100,
+        discount: discount,
+        discountPct: discountPct,
+        subtotal: subtotal,
+      };
     }
 
     function renderBuilder() {
@@ -2185,7 +2241,12 @@
       }
 
       h += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
-      h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+      // Audit entry 43 (2026-06-10): the free credit line only renders while a
+      // monthly free spot remains (live count from /api/pricing/constants).
+      // The old page hardcoded the pair, so FOMO always looked free.
+      if (fomoFreeSpot) {
+        h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+      }
       if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
       if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 
@@ -2195,7 +2256,9 @@
         h += '<div class="price-discount"><span>Bundle Discount (' + Math.round(calc.discountPct * 100) + '%)</span><span>-' + formatPrice(calc.discount) + '</span></div>';
       }
 
-      h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatPrice(calc.total) + '</span></div>';
+      h += '<div class="price-line"><span>Sales Tax (5.5% Wisconsin)</span><span class="price-line-value">+' + formatMoney(calc.tax) + '</span></div>';
+
+      h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatMoney(calc.totalWithTax) + '</span></div>';
 
       h += '<a href="' + buildBookingUrl() + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
       h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';

@@ -325,26 +325,28 @@
     var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
     var BOOKING_URL = 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
 
-    var PRICING = {
-      version: '2026-05-04',
-      team: {
-        base: 2800,
-        hours: { '6': 0, '7': 150, '8': 300, '9': 450, '10': 600, '11': 750, '12': 900 },
-        highlight: { '5 min': 0, '6-8 min': 300, '9-12 min': 600, '13-15 min': 1000, '15-20 min': 1300 },
-        addons: { teaser: 500, storySession: 1000, fomo: 1000 },
-        bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
-      },
-      ss: {
-        base: 3800,
-        hours: { '6': 0, '7': 225, '8': 450, '9': 675, '10': 900, '11': 1125, '12': 1350 },
-        highlight: { '5 min': 0, '6-8 min': 300, '9-12 min': 600, '13-15 min': 1000, '15-20 min': 1300 },
-        addons: { teaser: 500, storySession: 1000, fomo: 1000 },
-        bundleDiscounts: [0, 0, 0.05, 0.08, 0.12],
-      },
-    };
+    // Audit entry 43 (2026-06-10): the local PRICING block (stale version
+    // 2026-05-04, no tax, undercounted bundle, hand-rolled Team floor) is
+    // gone. The /api/saved/:token response already carries the canonical
+    // engine's line_items, price (pre-tax), and savings, computed by
+    // src/pricing.ts with the live FOMO spot state. This page now renders
+    // that data verbatim and computes nothing.
 
     function formatPrice(n) {
-      return '$' + n.toLocaleString();
+      return '$' + Number(n).toLocaleString('en-US');
+    }
+
+    // Always-2-decimal formatter for tax + grand total (fractional cents).
+    function formatMoney(n) {
+      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Mirrors the package.html esc() fix (audit, public-site XSS): every
+    // server-supplied string rendered into innerHTML goes through this.
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
     }
 
     var params = new URLSearchParams(window.location.search);
@@ -361,7 +363,7 @@
         return resp.json();
       })
       .then(function(data) {
-        if (!data || !data.config) {
+        if (!data || !data.config || !Array.isArray(data.line_items) || data.line_items.length === 0) {
           showExpired();
           return;
         }
@@ -377,76 +379,54 @@
     }
 
     function showSavedPackage(data) {
-      var config = data.config;
-      var tierKey = config.tier || 'team';
-      var tier = PRICING[tierKey];
-      if (!tier) { showExpired(); return; }
+      var config = data.config || {};
+      var tierLabel = config.tier === 'ss' ? 'Sierra & Sean Experience' : 'Team Package';
 
-      var tierLabel = tierKey === 'ss' ? 'Sierra & Sean Experience' : 'Team Package';
-      var hours = config.hours || '6';
-      var highlight = config.highlight || '5 min';
-      var addons = {
-        teaser: config.teaser || false,
-        storySession: config.storySession || false
-      };
-
-      // Calculate total
-      var total = tier.base;
-      total += tier.hours[hours] || 0;
-      total += tier.highlight[highlight] || 0;
-      var addonTotal = 0;
-      var addonCount = 0;
-      if (addons.teaser) { addonTotal += tier.addons.teaser; addonCount++; }
-      if (addons.storySession) { addonTotal += tier.addons.storySession; addonCount++; }
-      total += addonTotal;
-      // FOMO Documentary Edit: paired ±$1,000 (net $0) when a free spot is available
-      // this month, single +$1,000 when spots are filled. Mirrors the server engine in
-      // src/pricing.ts. FOMO does not affect addonCount (never counts toward bundle).
-      if (!data.fomo_free_spot) total += 1000;
-      var discountPct = tier.bundleDiscounts[Math.min(addonCount, tier.bundleDiscounts.length - 1)];
-      var discount = Math.round(total * discountPct);
-
-      if (tierKey === 'team' && discount > 0) {
-        var floor = tier.base + (tier.hours[hours] || 0) + (tier.highlight[highlight] || 0);
-        if (total - discount < floor) discount = total - floor;
+      // Set heading. The API returns the name at contact.name (the old code
+      // read data.contact_name, which never existed, so the greeting never
+      // rendered). textContent keeps this injection-safe.
+      var contactName = (data.contact && data.contact.name) || '';
+      if (contactName) {
+        document.getElementById('saved-heading').textContent = 'Hey ' + contactName + '!';
       }
 
-      var finalTotal = total - discount;
-
-      // Set heading
-      if (data.contact_name) {
-        document.getElementById('saved-heading').textContent = 'Hey ' + data.contact_name + '!';
-      }
-
-      // Build card
+      // Render the engine's line items verbatim (audit entry 43). line_items
+      // carries every row in canonical order: base, included $0 lines, hours,
+      // highlight, add-ons, the FOMO pair (credit line only when the live
+      // monthly free spot remains), and the Sales Tax line. The bundle
+      // discount is not a line item; it arrives as data.savings. Grand total
+      // = sum of line item prices minus savings, all engine-computed inputs.
       var card = document.getElementById('saved-card');
       var h = '';
-      h += '<div class="sc-tier">' + tierLabel + '</div>';
-      h += '<div class="sc-line"><span>Base Package</span><span class="sc-line-val">' + formatPrice(tier.base) + '</span></div>';
+      h += '<div class="sc-tier">' + esc(tierLabel) + '</div>';
 
-      var hoursPrice = tier.hours[hours] || 0;
-      h += '<div class="sc-line"><span>' + hours + ' Hours Coverage</span><span class="sc-line-val">' + (hoursPrice > 0 ? '+' + formatPrice(hoursPrice) : 'Included') + '</span></div>';
-
-      var hlPrice = tier.highlight[highlight] || 0;
-      h += '<div class="sc-line"><span>' + highlight + ' Highlight Film</span><span class="sc-line-val">' + (hlPrice > 0 ? '+' + formatPrice(hlPrice) : 'Included') + '</span></div>';
-
-      if (addons.teaser) h += '<div class="sc-line"><span>60-Second Teaser</span><span class="sc-line-val">+' + formatPrice(tier.addons.teaser) + '</span></div>';
-      if (addons.storySession) h += '<div class="sc-line"><span>Story Session</span><span class="sc-line-val">+' + formatPrice(tier.addons.storySession) + '</span></div>';
-      h += '<div class="sc-line"><span>FOMO Documentary Edit</span><span class="sc-line-val">+' + formatPrice(1000) + '</span></div>';
-      // fomo_free_spot is set by the Worker /api/saved/:token endpoint based on the
-      // live monthly spot count. When true, the credit line renders and net is $0.
-      // When false, the spots are filled this month and FOMO is a paid +$1,000.
-      if (data.fomo_free_spot) {
-        h += '<div class="sc-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="sc-line-val" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
-      }
+      var grandTotal = 0;
+      data.line_items.forEach(function(li) {
+        var name = li && li.name != null ? String(li.name) : '';
+        var price = li && typeof li.price === 'number' ? li.price : 0;
+        grandTotal += price;
+        var valHtml;
+        var lineStyle = '';
+        if (price > 0) {
+          valHtml = '+' + (price === Math.round(price) ? formatPrice(price) : formatMoney(price));
+        } else if (price < 0) {
+          valHtml = '-' + formatPrice(Math.abs(price));
+          lineStyle = ' style="color:#4CAF50;font-weight:500"';
+        } else {
+          valHtml = 'Included';
+        }
+        h += '<div class="sc-line"' + lineStyle + '><span>' + esc(name) + '</span><span class="sc-line-val"' + (lineStyle ? ' style="color:#4CAF50"' : '') + '>' + valHtml + '</span></div>';
+      });
 
       h += '<div class="sc-divider"></div>';
 
-      if (discount > 0) {
-        h += '<div class="sc-discount"><span>Bundle Discount (' + Math.round(discountPct * 100) + '%)</span><span>-' + formatPrice(discount) + '</span></div>';
+      var savings = typeof data.savings === 'number' ? data.savings : 0;
+      if (savings > 0) {
+        grandTotal -= savings;
+        h += '<div class="sc-discount"><span>Bundle Discount</span><span>-' + formatPrice(savings) + '</span></div>';
       }
 
-      h += '<div class="sc-total"><span class="sc-total-label">Your Total</span><span class="sc-total-value">' + formatPrice(finalTotal) + '</span></div>';
+      h += '<div class="sc-total"><span class="sc-total-label">Your Total</span><span class="sc-total-value">' + formatMoney(grandTotal) + '</span></div>';
 
       card.innerHTML = h;
 

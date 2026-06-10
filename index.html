@@ -2722,16 +2722,18 @@
 
         // --- PRICING (mirrors iris-automation/src/pricing.ts; update both together) ---
         var SALES_TAX_RATE = 0.055;
-        var FOMO_COST = 200;
-        // Team pricing (We want an incredible wedding film)
+        // Team pricing (We want an incredible wedding film). Prices only:
+        // internal cost data and the profit floor live server side in
+        // pricing.ts (the floor is non binding across this page's whole
+        // config space, verified by the 140 config engine sweep).
         var TEAM_BASE_PRICE = 2800;
         var TEAM_HOURLY = 150;
-        var TEAM_HOURS = { 6:{price:0,cost:0}, 7:{price:150,cost:25}, 8:{price:300,cost:50}, 9:{price:450,cost:75}, 10:{price:600,cost:100}, 11:{price:750,cost:125}, 12:{price:900,cost:150} };
+        var TEAM_HOURS = { 6:{price:0}, 7:{price:150}, 8:{price:300}, 9:{price:450}, 10:{price:600}, 11:{price:750}, 12:{price:900} };
         var TEAM_HIGHLIGHT = {
-          "5 min":{price:0,cost:0}, "6-8 min":{price:300,cost:150},
-          "9-12 min":{price:600,cost:300}, "13-15 min":{price:1000,cost:450}, "15-20 min":{price:1300,cost:600}
+          "5 min":{price:0}, "6-8 min":{price:300},
+          "9-12 min":{price:600}, "13-15 min":{price:1000}, "15-20 min":{price:1300}
         };
-        var TEAM_ADDONS = { teaser:{price:500,cost:250}, storySession:{price:1000,cost:400} };
+        var TEAM_ADDONS = { teaser:{price:500}, storySession:{price:1000} };
         // S&S pricing (We want Sierra & Sean creating with us)
         var SS_BASE_PRICE = 3800;
         var SS_HOURLY = 225;
@@ -2767,9 +2769,9 @@
 
           if (isTeam) {
             var hd = TEAM_HOURS[hours] || TEAM_HOURS[6];
-            var hld = TEAM_HIGHLIGHT[a.highlight] || {price:0,cost:0};
-            var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0, tc = hasTeas ? TEAM_ADDONS.teaser.cost : 0;
-            var sp = hasStory ? TEAM_ADDONS.storySession.price : 0, sc = hasStory ? TEAM_ADDONS.storySession.cost : 0;
+            var hld = TEAM_HIGHLIGHT[a.highlight] || {price:0};
+            var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0;
+            var sp = hasStory ? TEAM_ADDONS.storySession.price : 0;
             // FOMO is always in the package: +$1,000 in the subtotal, netted back
             // out by the -$1,000 credit only when a free spot remains. Mirrors
             // pricing.ts buildLineItems so the breakdown lines sum to the total.
@@ -2787,15 +2789,9 @@
             // Canonical rounding: Math.round on discount, subtract from raw.
             var discountAmount = Math.round(rawPrice * discount);
             var preTaxTotal = rawPrice - discountAmount;
-            // Team profit floor (canonical pricing.ts): incremental upgrade costs +
-            // FOMO production cost. No base-package cost. Only applies when discounted.
-            if (discount > 0) {
-              var totalCost = hd.cost + hld.cost + tc + sc + FOMO_COST;
-              if (preTaxTotal - totalCost < 1000) {
-                preTaxTotal = totalCost + 1000;
-                discountAmount = rawPrice - preTaxTotal;
-              }
-            }
+            // The canonical Team profit floor is enforced server side at
+            // proposal time. It cannot bind for any combination this page
+            // can produce, so no cost data ships to the client.
             var savings = discountAmount;
             var tax = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
             var finalPrice = preTaxTotal + tax;

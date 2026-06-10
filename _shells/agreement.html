@@ -1853,14 +1853,16 @@
       const btn = document.getElementById('page2-continue');
       if (btn) btn.disabled = false;
     } catch (err) {
-      // Soft fail: we still show summary using local computation guess so user
-      // isn't blocked. Backend is authoritative; this is just optimistic UI.
-      currentSchedule = localSchedule(plan, totalDollars, DATA.wedding_date);
-      retainerAmountDollars = currentSchedule[0] ? currentSchedule[0].amount : 0;
-      renderScheduleSummary();
-      refreshRecapCard();
+      // Audit entry 13 (2026-06-10): a failed select-plan must NOT enable
+      // Continue. The old catch enabled it anyway, so the couple could sign
+      // with plan_chosen NULL and land in a dead end (the Worker now also
+      // rejects signing from pristine server-side). Keep Continue disabled,
+      // clear the selection highlight, and ask for a retry.
+      selectedPlan = null;
+      highlightSelectedPlan();
       const btn = document.getElementById('page2-continue');
-      if (btn) btn.disabled = false;
+      if (btn) btn.disabled = true;
+      alert('We could not save your plan choice. Please tap your plan again. If this keeps happening, text us and we will sort it out.');
     }
   }
 
