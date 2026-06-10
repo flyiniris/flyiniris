@@ -130,7 +130,7 @@ The filenames (without `.mp4`) must match the `id` values in the config JSON.
 
 ### Step 2: Create the couple config JSON
 
-Real configs live in `delivery/live/<slug>.json` and are gitignored. Copy `delivery/sample/amanda-boris.json` to `delivery/live/<slug>.json` and edit.
+Real configs live in `delivery/live/<slug>.json` and are gitignored. Copy `delivery/sample/avery-jordan.json` (fictional couple, fake password) to `delivery/live/<slug>.json` and edit. Never commit a real couple's config or password to this public repo.
 
 **Schema (Node generator, per spec Section 5):**
 

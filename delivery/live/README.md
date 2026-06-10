@@ -6,7 +6,7 @@ Sample configs without real credentials live at `delivery/sample/` and remain tr
 
 Per the delivery page standard (`iris-automation/docs/project-knowledge-2026-05/delivery-page-standard.md` Section 6 + 7), generate a new couple's page by:
 
-1. Copy `delivery/sample/amanda-boris.json` to `delivery/live/<slug>.json`.
+1. Copy `delivery/sample/avery-jordan.json` to `delivery/live/<slug>.json`.
 2. Edit `slug`, `coupleNames`, `weddingDate`, `password`, and the `videos` array.
 3. Run `node delivery/generate-film-page.js delivery/live/<slug>.json`.
 

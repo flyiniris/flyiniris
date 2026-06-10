@@ -1,0 +1,52 @@
+{
+  "slug": "avery-jordan",
+  "coupleNames": "Avery & Jordan",
+  "weddingDate": "June 14, 2025",
+  "password": "sample-not-real",
+  "videos": [
+    {
+      "id": "teaser",
+      "title": "Teaser",
+      "category": "teaser",
+      "duration": "",
+      "order": 0,
+      "hero": true
+    },
+    {
+      "id": "highlight",
+      "title": "Avery & Jordan's Wedding",
+      "category": "highlight",
+      "duration": "",
+      "order": 1,
+      "hero": true
+    },
+    {
+      "id": "first-look-vows",
+      "title": "First Look & Vows",
+      "category": "archival",
+      "duration": "",
+      "order": 2
+    },
+    {
+      "id": "ceremony",
+      "title": "Ceremony",
+      "category": "archival",
+      "duration": "",
+      "order": 3
+    },
+    {
+      "id": "speeches",
+      "title": "Speeches",
+      "category": "archival",
+      "duration": "",
+      "order": 4
+    },
+    {
+      "id": "gopro",
+      "title": "GoPro",
+      "category": "bonus",
+      "duration": "",
+      "order": 5
+    }
+  ]
+}
