@@ -17,14 +17,18 @@
       --card: #161615;
       --elevated: #1A1A19;
       --gold: #FFBD1D;
+      --gold-dark: #D99E0A;
+      --gold-light: #FFF0C9;
       --gold-soft: rgba(255,189,29,0.10);
       --gold-line: rgba(255,189,29,0.45);
       --text: #F5F0EB;
       --dim: #C8C3B9;
       --muted: #8A857B;
-      --border: rgba(255,189,29,0.18);
       --border-rest: #2A2A28;
-      --radius: 8px;
+      --field-bg: #0f0f0f;
+      --field-border: #1a1a1a;
+      --sel-bg: #1a1700;
+      --radius: 10px;
       --error: #ff7a7a;
     }
 
@@ -37,13 +41,16 @@
       font-weight: 300;
       line-height: 1.6;
       min-height: 100vh;
-      padding: 40px 18px 90px;
+      padding: 40px 18px 80px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .wrap { max-width: 620px; margin: 0 auto; }
+    /* One centered column, matching the rest of the site. */
+    .wrap { max-width: 580px; margin: 0 auto; text-align: center; }
 
     /* ---- Logo header ---- */
-    .logo-header { text-align: center; margin-bottom: 30px; }
+    .logo-header { text-align: center; margin-bottom: 26px; }
     .logo-header .wordmark {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 22px; font-weight: 600; letter-spacing: 3px;
@@ -51,59 +58,100 @@
     }
     .logo-header .wordmark span { color: var(--gold); }
 
-    h1 {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-weight: 600; font-size: 1.7rem; line-height: 1.25;
-      color: var(--text); margin-bottom: 12px;
-    }
-    .intro { color: var(--dim); font-size: 1.02rem; margin-bottom: 28px; }
+    /* ---- Progress bar ---- */
+    .quiz-progress { height: 3px; background: #1a1a1a; border-radius: 2px; overflow: hidden; }
+    .quiz-progress-fill { height: 100%; width: 0; background: var(--gold); border-radius: 2px; transition: width 0.5s ease; }
 
-    .section { margin-bottom: 26px; }
+    /* ---- Pages ---- */
+    .pages { margin-top: 36px; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---- Intro ---- */
+    .greeting {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600; font-size: 2rem; line-height: 1.2;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .intro { color: var(--dim); font-size: 1rem; margin: 0 auto 40px; max-width: 460px; }
+
+    /* Per-page eyebrow heading */
+    .page-eyebrow {
+      font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold); font-weight: 700; margin-bottom: 32px;
+    }
+
+    /* ---- Sections (one question each, generously separated) ---- */
+    .section { margin-bottom: 48px; }
+    .section:last-child { margin-bottom: 0; }
     .section h2 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-weight: 600; font-size: 1.3rem; color: var(--text); margin-bottom: 4px;
+      font-weight: 600; font-size: 1.5rem; line-height: 1.3;
+      color: var(--text); margin-bottom: 8px;
     }
-    .hint { color: var(--muted); font-size: 0.82rem; margin-bottom: 12px; }
+    .hint { color: var(--dim); font-size: 0.82rem; margin-bottom: 18px; }
+    .hint.count { color: var(--gold); font-weight: 500; }
 
-    /* ---- Basics (confirm-only) ---- */
+    /* ---- Basics (editable logistics card) ---- */
     .basics {
       background: var(--card); border: 1px solid var(--border-rest);
-      border-radius: var(--radius); padding: 14px 16px;
+      border-radius: var(--radius); padding: 18px; margin-top: 18px; text-align: left;
     }
-    .basics .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
+    .basics .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; }
     .basics .row + .row { border-top: 1px solid rgba(255,255,255,0.05); }
-    .basics .k { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
-    .basics .v { color: var(--text); font-size: 0.98rem; text-align: right; }
+    .basics .k { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .basics .v { color: var(--text); font-size: 0.95rem; text-align: right; }
+    /* Editable logistics fields inside the basics card */
+    .basics .fld { margin-bottom: 16px; }
+    .basics .fld:last-child { margin-bottom: 0; }
+    .basics .fld-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .basics .fld-row .fld { flex: 1; margin-bottom: 0; }
+    .basics .fld-label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .basics .fld-input {
+      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 0.9375rem;
+      color: var(--text); background: var(--field-bg); text-align: left;
+      border: 2px solid var(--field-border); border-radius: 8px;
+      padding: 11px 13px; margin: 0; line-height: 1.4; outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .basics .fld-input::placeholder { color: var(--muted); }
+    .basics .fld-input:focus { border-color: var(--gold); }
+    .basics input[type="date"].fld-input { color-scheme: dark; accent-color: var(--gold); }
+    .basics input[type="date"].fld-input::-webkit-calendar-picker-indicator {
+      filter: invert(0.8) sepia(1) saturate(5) hue-rotate(10deg) brightness(1.1); cursor: pointer; opacity: 0.85;
+    }
 
-    /* ---- Chips ---- */
-    .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    /* ---- Chips (centered pills) ---- */
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
     .chip {
-      font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 0.95rem;
-      color: var(--dim); background: var(--card);
-      border: 1px solid var(--border-rest); border-radius: 999px;
-      padding: 11px 17px; cursor: pointer; transition: all 0.18s ease;
+      font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 0.9rem;
+      color: var(--dim); background: var(--field-bg);
+      border: 1.5px solid var(--field-border); border-radius: 999px;
+      padding: 11px 18px; cursor: pointer; transition: all 0.18s ease;
       min-height: 44px; -webkit-tap-highlight-color: transparent; user-select: none;
     }
     .chip:hover { border-color: var(--gold-line); color: var(--text); }
     .chip.selected {
-      color: var(--gold); background: var(--gold-soft);
-      border-color: var(--gold-line); font-weight: 500;
+      color: var(--gold); background: var(--sel-bg);
+      border-color: var(--gold); font-weight: 600;
     }
     .chip.bump { animation: bump 0.25s ease; }
     @keyframes bump { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
 
-    /* ---- Free text + input ---- */
+    /* ---- Free text + input (landing field language) ---- */
     textarea, input[type="text"] {
-      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 0.98rem;
-      color: var(--text); background: var(--elevated);
-      border: 1px solid var(--border-rest); border-radius: var(--radius);
-      padding: 12px 14px; margin-top: 12px; resize: vertical; line-height: 1.5;
+      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 0.9375rem;
+      color: var(--text); background: var(--field-bg);
+      border: 2px solid var(--field-border); border-radius: 8px;
+      padding: 13px 14px; margin-top: 14px; resize: vertical; line-height: 1.5; outline: none;
+      transition: border-color 0.2s ease;
     }
     textarea::placeholder, input::placeholder { color: var(--muted); }
-    textarea:focus, input:focus { outline: none; border-color: var(--gold-line); }
+    textarea:focus, input:focus { border-color: var(--gold); }
 
     /* ---- Film thumbnails ---- */
-    .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .films { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
     .film {
       cursor: pointer; border-radius: var(--radius); overflow: hidden;
       border: 2px solid transparent; transition: border-color 0.18s ease; position: relative;
@@ -131,28 +179,37 @@
     }
     .film.selected .check { display: flex; }
 
-    /* ---- Divider ---- */
-    .divider { display: flex; align-items: center; gap: 14px; margin: 34px 0 24px; color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.12em; }
-    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border-rest); }
-
-    /* ---- Submit ---- */
-    .submit-wrap { margin-top: 34px; }
-    .btn-primary {
-      width: 100%; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem;
-      letter-spacing: 0.5px; color: #0A0A0A; background: var(--gold);
-      border: none; border-radius: var(--radius); padding: 16px; cursor: pointer;
-      transition: opacity 0.18s ease; min-height: 52px;
+    /* ---- Nav (centered stack) ---- */
+    .quiz-nav { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 36px; }
+    .nav-count { font-size: 0.7rem; color: var(--muted); font-family: 'Outfit', sans-serif; letter-spacing: 1.5px; }
+    .nav-next {
+      display: block; width: 100%; max-width: 340px;
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9375rem;
+      letter-spacing: 0.5px; color: var(--bg); background: var(--gold);
+      border: none; border-radius: 8px; padding: 16px; cursor: pointer;
+      transition: background-color 0.2s ease, opacity 0.2s ease; min-height: 52px;
     }
-    .btn-primary:hover { opacity: 0.92; }
-    .btn-primary:disabled { opacity: 0.55; cursor: default; }
-    .optional-note { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 12px; }
+    .nav-next:hover { background: var(--gold-dark); }
+    .nav-next:disabled { opacity: 0.55; cursor: default; }
+    .nav-back {
+      background: transparent; border: none; color: var(--muted);
+      font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; padding: 6px 10px; transition: color 0.2s ease;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-back.hidden { display: none !important; }
+    .optional-note { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 16px; }
 
     /* ---- States ---- */
     .center-state { text-align: center; padding: 60px 10px; }
-    .center-state h1 { margin-bottom: 14px; }
+    .center-state h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600; font-size: 1.8rem; line-height: 1.25;
+      color: var(--text); margin-bottom: 14px;
+    }
     .center-state p { color: var(--dim); margin-bottom: 10px; }
     .spinner {
-      width: 30px; height: 30px; border: 3px solid var(--border-rest); border-top-color: var(--gold);
+      width: 30px; height: 30px; border: 3px solid var(--field-border); border-top-color: var(--gold);
       border-radius: 50%; margin: 0 auto 18px; animation: spin 0.9s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -169,9 +226,12 @@
 
     .hidden { display: none !important; }
 
-    @media (max-width: 420px) {
-      h1 { font-size: 1.5rem; }
-      .chip { font-size: 0.92rem; padding: 11px 15px; }
+    @media (max-width: 480px) {
+      .greeting { font-size: 1.7rem; }
+      .section h2 { font-size: 1.3rem; }
+      .chip { font-size: 0.88rem; padding: 11px 16px; }
+      /* 16px keeps iOS from zooming the viewport on focus. */
+      textarea, input[type="text"], .basics .fld-input { font-size: 16px; }
     }
   </style>
 </head>
@@ -198,72 +258,92 @@
       <div class="signoff">Sierra &amp; Sean</div>
     </div>
 
-    <!-- Form -->
+    <!-- Form (3-page survey) -->
     <div id="form" class="hidden">
-      <h1 id="intro-title"></h1>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="prog-fill"></div></div>
 
-      <div class="section" id="sec-basics">
-        <h2>First, the basics.</h2>
-        <div class="hint">Just confirm these are right.</div>
-        <div class="basics" id="basics-box"></div>
+      <div class="pages" id="pages">
+
+        <!-- Page 1: Your day -->
+        <div class="page">
+          <h1 class="greeting" id="greeting"></h1>
+          <div class="intro" id="intro-sub"></div>
+
+          <div class="section" id="sec-basics">
+            <h2>First, the basics.</h2>
+            <div class="hint">Just confirm these are right.</div>
+            <div class="basics" id="basics-box"></div>
+          </div>
+
+          <div class="section">
+            <h2>What's the vibe of your day?</h2>
+            <div class="hint count">Pick up to 3.</div>
+            <div class="chips" id="chips-vibe"></div>
+          </div>
+
+          <div class="section">
+            <h2>Where are you in deciding?</h2>
+            <div class="hint count">Pick one.</div>
+            <div class="chips" id="chips-decision_stage"></div>
+          </div>
+        </div>
+
+        <!-- Page 2: Your film -->
+        <div class="page">
+          <div class="page-eyebrow">Your film</div>
+
+          <div class="section">
+            <h2>When you watch your film back, what do you want to feel?</h2>
+            <div class="hint count">Pick up to 2.</div>
+            <div class="chips" id="chips-film_feel"></div>
+          </div>
+
+          <div class="section">
+            <h2>Which of these speaks to you?</h2>
+            <div class="hint">Tap any that catch your eye.</div>
+            <div class="films" id="style-films"></div>
+          </div>
+
+          <div class="section">
+            <h2>What matters most for your wedding film?</h2>
+            <div class="hint count">Pick up to 3.</div>
+            <div class="chips" id="chips-priorities"></div>
+          </div>
+        </div>
+
+        <!-- Page 3: A few last things -->
+        <div class="page">
+          <div class="page-eyebrow">A few last things</div>
+
+          <div class="section">
+            <h2>What matters most when choosing who films your day?</h2>
+            <div class="hint count">Pick up to 2.</div>
+            <div class="chips" id="chips-videographer_criteria"></div>
+            <textarea id="concern" rows="2" placeholder="Anything you're nervous about, or a moment you don't want us to miss?"></textarea>
+          </div>
+
+          <div class="section">
+            <h2>What's drawing you to a wedding film?</h2>
+            <div class="hint count">Pick up to 2.</div>
+            <div class="chips" id="chips-motivation"></div>
+            <textarea id="motivation-other" rows="3" placeholder="Anything else drawing you to a wedding film? Tell us in your own words."></textarea>
+          </div>
+
+          <div class="section">
+            <h2>How'd you find us?</h2>
+            <div class="chips" id="chips-source"></div>
+            <input type="text" id="ig" placeholder="Your Instagram handle (optional)" autocapitalize="none" autocorrect="off" spellcheck="false" />
+          </div>
+        </div>
+
       </div>
 
-      <div class="section">
-        <h2>What's the vibe of your day?</h2>
-        <div class="hint">Pick up to 3.</div>
-        <div class="chips" id="chips-vibe"></div>
+      <div class="quiz-nav">
+        <div class="nav-count" id="nav-count"></div>
+        <button class="nav-next" id="nav-next" type="button">Next</button>
+        <button class="nav-back hidden" id="nav-back" type="button">Back</button>
       </div>
-
-      <div class="section">
-        <h2>Where are you in deciding?</h2>
-        <div class="hint">Pick one.</div>
-        <div class="chips" id="chips-decision_stage"></div>
-      </div>
-
-      <div class="section">
-        <h2>When you watch your film back, what do you want to feel?</h2>
-        <div class="hint">Pick up to 2.</div>
-        <div class="chips" id="chips-film_feel"></div>
-      </div>
-
-      <div class="section">
-        <h2>Which of these speaks to you?</h2>
-        <div class="hint">Tap any that catch your eye.</div>
-        <div class="films" id="style-films"></div>
-      </div>
-
-      <div class="divider">A few more, if you've got a sec</div>
-
-      <div class="section">
-        <h2>What matters most for your wedding film?</h2>
-        <div class="hint">Pick up to 3.</div>
-        <div class="chips" id="chips-priorities"></div>
-      </div>
-
-      <div class="section">
-        <h2>What matters most when choosing who films your day?</h2>
-        <div class="hint">Pick up to 2.</div>
-        <div class="chips" id="chips-videographer_criteria"></div>
-        <textarea id="concern" rows="2" placeholder="Anything you're nervous about, or a moment you don't want us to miss?"></textarea>
-      </div>
-
-      <div class="section">
-        <h2>What's drawing you to a wedding film?</h2>
-        <div class="hint">Pick up to 2.</div>
-        <div class="chips" id="chips-motivation"></div>
-        <input type="text" id="motivation-other" placeholder="Something else?" autocomplete="off" />
-      </div>
-
-      <div class="section">
-        <h2>How'd you find us?</h2>
-        <div class="chips" id="chips-source"></div>
-        <input type="text" id="ig" placeholder="Your Instagram handle (optional)" autocapitalize="none" autocorrect="off" spellcheck="false" />
-      </div>
-
-      <div class="submit-wrap">
-        <button class="btn-primary" id="submit-btn" type="button">Send it over</button>
-        <div class="optional-note">No rush. Whatever you share helps us make your call all about you.</div>
-      </div>
+      <div class="optional-note hidden" id="opt-note">No rush. Whatever you share helps us make your call all about you.</div>
     </div>
 
     <!-- Post-submit confirmation -->
@@ -273,7 +353,7 @@
       <div class="confirm-films" id="confirm-films"></div>
       <div class="expect">
         <p>On your call, we'll walk through your day together. No pressure, no hard sell, just Sierra &amp; Sean getting to know you so your film feels like you.</p>
-        <p>We're Sierra &amp; Sean, the wife-and-husband team behind your film. We cannot wait to meet you.</p>
+        <p>We're Sierra &amp; Sean, the husband and wife team behind your film. We cannot wait to meet you.</p>
       </div>
       <p>You're all set. Nothing else to do before we talk.</p>
       <div class="signoff">Sierra &amp; Sean</div>
@@ -290,6 +370,11 @@
 
     var data = null;
     var state = {
+      fiance_first_name: '',
+      fiance_last_name: '',
+      wedding_date: '',
+      venue_name: '',
+      venue_address: '',
       guest_bucket: '',
       precall_vibe: [],
       precall_decision_stage: '',
@@ -332,6 +417,7 @@
         applyDraft(d.draft);
         render();
         show('form');
+        initPages();
       })
       .catch(function () { show('error'); });
 
@@ -359,6 +445,11 @@
 
     function collect() {
       return {
+        fiance_first_name: state.fiance_first_name,
+        fiance_last_name: state.fiance_last_name,
+        wedding_date: state.wedding_date,
+        venue_name: state.venue_name,
+        venue_address: state.venue_address,
         guest_bucket: state.guest_bucket,
         precall_vibe: state.precall_vibe,
         precall_decision_stage: state.precall_decision_stage,
@@ -377,8 +468,17 @@
     // ----- Render -----
     function render() {
       var p = data.prefill || {};
-      document.getElementById('intro-title').textContent =
-        "Hey " + (p.first_name || 'there') + "! You're booked with Sierra & Sean. Tell us a little about your day so your call is all about you, and we can show you films like yours. Two minutes, mostly taps.";
+      document.getElementById('greeting').textContent = "Hey " + (p.first_name || 'there') + "!";
+      document.getElementById('intro-sub').textContent =
+        "You're booked with Sierra & Sean. Tell us a little about your day so your call is all about you, and we can show you films like yours. Two minutes, mostly taps.";
+
+      // Seed the editable logistics from what we already have (a saved draft, via
+      // applyDraft, takes precedence; otherwise the live prefill).
+      state.fiance_first_name = state.fiance_first_name || p.partner_first_name || '';
+      state.fiance_last_name = state.fiance_last_name || p.partner_last_name || '';
+      state.wedding_date = state.wedding_date || p.wedding_date || '';
+      state.venue_name = state.venue_name || p.venue_name || '';
+      state.venue_address = state.venue_address || p.venue_address || '';
 
       renderBasics(p);
       renderChipGroup('vibe', 'precall_vibe', true);
@@ -401,51 +501,66 @@
       var ig = document.getElementById('ig');
       ig.value = state.precall_instagram_handle || '';
       ig.addEventListener('input', function () { state.precall_instagram_handle = ig.value; autosave(); });
-
-      document.getElementById('submit-btn').addEventListener('click', submit);
     }
 
     function renderBasics(p) {
       var box = document.getElementById('basics-box');
       box.innerHTML = '';
-      var rows = [];
-      var d = fmtDate(p.wedding_date);
-      if (d) rows.push(['Wedding date', d]);
-      if (p.venue_name) rows.push(['Venue', p.venue_name]);
 
-      // Guest count: confirm-only if prefilled, else pick from chips.
-      if (p.guest_bucket) {
-        state.guest_bucket = p.guest_bucket;
-        rows.push(['Guests', p.guest_bucket]);
-      }
+      // Editable logistics. Prefilled from what we already have so couples just
+      // confirm, change, or add. Saved back to the contact on submit.
+      var nameRow = document.createElement('div'); nameRow.className = 'fld-row';
+      nameRow.appendChild(fieldBlock("Partner's first name",
+        textField(state.fiance_first_name, 'First name', function (v) { state.fiance_first_name = v; autosave(); })));
+      nameRow.appendChild(fieldBlock("Partner's last name",
+        textField(state.fiance_last_name, 'Last name', function (v) { state.fiance_last_name = v; autosave(); })));
+      box.appendChild(nameRow);
+      box.appendChild(fieldBlock('Wedding date',
+        dateField(state.wedding_date, function (v) { state.wedding_date = v; autosave(); })));
+      box.appendChild(fieldBlock('Venue name',
+        textField(state.venue_name, 'Venue name', function (v) { state.venue_name = v; autosave(); })));
+      box.appendChild(fieldBlock('Venue address',
+        textField(state.venue_address, 'Street, city, state', function (v) { state.venue_address = v; autosave(); })));
 
-      rows.forEach(function (r) {
-        var row = document.createElement('div'); row.className = 'row';
-        row.innerHTML = '<span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span>';
-        box.appendChild(row);
-      });
-
-      if (!p.guest_bucket) {
-        // Render an editable guest-count chip group inside the basics card.
-        var wrapEl = document.createElement('div'); wrapEl.style.paddingTop = rows.length ? '12px' : '0';
-        var lab = document.createElement('div'); lab.className = 'k'; lab.style.marginBottom = '10px';
-        lab.textContent = 'Rough guest count';
-        var chips = document.createElement('div'); chips.className = 'chips';
-        (data.chips.guest_bucket || []).forEach(function (label) {
-          var el = makeChip(label, function () {
-            state.guest_bucket = (state.guest_bucket === label) ? '' : label;
-            Array.prototype.forEach.call(chips.children, function (c) { c.classList.toggle('selected', c.textContent === state.guest_bucket); });
-            autosave();
-          });
-          if (state.guest_bucket === label) el.classList.add('selected');
-          chips.appendChild(el);
+      // Rough guest count chips.
+      var gbWrap = document.createElement('div'); gbWrap.className = 'fld';
+      var gbLab = document.createElement('div'); gbLab.className = 'fld-label'; gbLab.textContent = 'Rough guest count';
+      var chips = document.createElement('div'); chips.className = 'chips'; chips.style.justifyContent = 'flex-start'; chips.style.marginTop = '2px';
+      (data.chips.guest_bucket || []).forEach(function (label) {
+        var el = makeChip(label, function () {
+          state.guest_bucket = (state.guest_bucket === label) ? '' : label;
+          Array.prototype.forEach.call(chips.children, function (c) { c.classList.toggle('selected', c.textContent === state.guest_bucket); });
+          autosave();
         });
-        wrapEl.appendChild(lab); wrapEl.appendChild(chips);
-        box.appendChild(wrapEl);
-      }
+        if (state.guest_bucket === label) el.classList.add('selected');
+        chips.appendChild(el);
+      });
+      gbWrap.appendChild(gbLab); gbWrap.appendChild(chips);
+      box.appendChild(gbWrap);
+    }
 
-      // If no basics at all came back, hide the section header noise gracefully.
-      if (!rows.length && p.guest_bucket) document.getElementById('sec-basics').classList.add('hidden');
+    function fieldBlock(labelText, inputEl) {
+      var wrap = document.createElement('div'); wrap.className = 'fld';
+      var lab = document.createElement('div'); lab.className = 'fld-label'; lab.textContent = labelText;
+      wrap.appendChild(lab); wrap.appendChild(inputEl);
+      return wrap;
+    }
+
+    function textField(value, placeholder, onInput) {
+      var el = document.createElement('input');
+      el.type = 'text'; el.className = 'fld-input';
+      el.value = value || ''; el.placeholder = placeholder || '';
+      el.autocomplete = 'off';
+      el.addEventListener('input', function () { onInput(el.value); });
+      return el;
+    }
+
+    function dateField(value, onInput) {
+      var el = document.createElement('input');
+      el.type = 'date'; el.className = 'fld-input';
+      el.value = value || '';
+      el.addEventListener('input', function () { onInput(el.value); });
+      return el;
     }
 
     function makeChip(label, onClick) {
@@ -506,9 +621,40 @@
       });
     }
 
+    // ----- Paged navigation -----
+    function initPages() {
+      var pages = Array.prototype.slice.call(document.querySelectorAll('#pages > .page'));
+      var cur = 0;
+      var back = document.getElementById('nav-back');
+      var next = document.getElementById('nav-next');
+      var count = document.getElementById('nav-count');
+      var fill = document.getElementById('prog-fill');
+      var note = document.getElementById('opt-note');
+
+      function go(i) {
+        cur = Math.max(0, Math.min(pages.length - 1, i));
+        pages.forEach(function (pg, idx) { pg.classList.toggle('active', idx === cur); });
+        fill.style.width = (((cur + 1) / pages.length) * 100) + '%';
+        back.classList.toggle('hidden', cur === 0);
+        var last = cur === pages.length - 1;
+        next.textContent = last ? 'Send it over' : 'Next';
+        count.textContent = (cur + 1) + ' / ' + pages.length;
+        note.classList.toggle('hidden', !last);
+        window.scrollTo(0, 0);
+      }
+
+      back.addEventListener('click', function () { go(cur - 1); });
+      next.addEventListener('click', function () {
+        if (cur === pages.length - 1) submit();
+        else go(cur + 1);
+      });
+
+      go(0);
+    }
+
     // ----- Submit -----
     function submit() {
-      var btn = document.getElementById('submit-btn');
+      var btn = document.getElementById('nav-next');
       btn.disabled = true; btn.textContent = 'Sending...';
       if (saveTimer) clearTimeout(saveTimer);
 
