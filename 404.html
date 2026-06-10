@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | Flyin' Iris</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9E6;
+      --text-muted: rgba(200, 195, 185, 0.9);
+      --accent: #FFBD1D;
+      --border: #2A2A28;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 480px; }
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+    }
+    .brand:hover { color: var(--accent); }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 36px;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .links a {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 22px;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    .links a:hover { border-color: var(--accent); color: var(--accent); }
+    .links a.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0A0A0A;
+    }
+    .links a.primary:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="brand" href="/">FLYIN' IRIS</a>
+    <h1>This page seems to have <em>wandered off</em>.</h1>
+    <p>The link you followed doesn't exist anymore (or never did). The good stuff is still right here.</p>
+    <div class="links">
+      <a class="primary" href="/">Home</a>
+      <a href="/films">Watch Films</a>
+      <a href="/calculator/">Build Your Package</a>
+    </div>
+  </div>
+</body>
+</html>

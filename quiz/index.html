@@ -1090,17 +1090,17 @@ const questions = [
       { emoji: "🎵", text: "Something classical or orchestral", style: "cinematic" },
       { emoji: "🔥", text: "A hype playlist that's getting everyone going", style: "electric" },
       { emoji: "🎶", text: "Acoustic, soft, singer-songwriter vibes", style: "intimate" },
-      { emoji: "🎧", text: "A mix — depends on the moment", style: "modern" }
+      { emoji: "🎧", text: "A mix: depends on the moment", style: "modern" }
     ]
   },
   {
     id: 3,
     text: "What moment are you MOST excited to relive?",
     options: [
-      { emoji: "💍", text: "The vows — every word, every tear", style: "cinematic" },
+      { emoji: "💍", text: "The vows: every word, every tear", style: "cinematic" },
       { emoji: "💃", text: "The dance floor losing it", style: "electric" },
       { emoji: "👀", text: "The little moments nobody else noticed", style: "intimate" },
-      { emoji: "😭", text: "All of it — I want to feel everything again", style: "modern" }
+      { emoji: "😭", text: "All of it: I want to feel everything again", style: "modern" }
     ]
   },
   {
@@ -1334,7 +1334,7 @@ async function submitEmail() {
       })
     });
   } catch (e) {
-    // Silently fail — don't block the UX
+    // Silently fail, don't block the UX
     console.warn('Webhook error:', e);
   }
 
