@@ -684,12 +684,23 @@
       document.getElementById(id).classList.toggle('checked', checkbox.checked);
     }
 
-    // ===== TIER B DRAFT AUTOSAVE (localStorage only) =====
-    // 17 inputs, no token, no server draft endpoint. Same-device tab-close
-    // protection only: snapshot every field on input/change, restore on
-    // load, clear on successful submit. The existing POST to
-    // /webhook/contractor-onboarding stays the sole server-side persistence.
+    // ===== TIER A DRAFT AUTOSAVE (token-gated server draft + localStorage redundancy) =====
+    // 17 inputs. When the page is opened with a ?t=<token> query param, drafts
+    // persist to the Worker (GET/POST /api/contractor-onboarding/:token/draft)
+    // so a contractor can resume from any device. localStorage stays as instant,
+    // offline redundancy on every edit. On load: localStorage restores first
+    // (instant), then the server draft overwrites any field the server knows
+    // (server wins). On edit: localStorage saves immediately + a debounced
+    // (~1.5s) server POST collapses rapid typing into one request. On submit:
+    // one final server save fires before the webhook POST.
+    // TOKENLESS FALLBACK: with no ?t= token, behavior is identical to the old
+    // localStorage-only path. The webhook POST to /webhook/contractor-onboarding
+    // remains the sole submission endpoint either way.
     var DRAFT_KEY = 'fi_contractor_onboarding_draft';
+    var WORKER_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var TOKEN = new URLSearchParams(location.search).get('t') || null;
+    var serverSaveTimer = null;
+    var SERVER_SAVE_DEBOUNCE_MS = 1500;
     var TEXT_FIELD_IDS = ['legalName','businessName','ein','address','phone','email','emergencyContact','faa','gear','portfolio','paypal','w9sent','notes'];
     var CHECK_FIELD_IDS = ['confirm_delivery','confirm_nodeletions','confirm_backup','confirm_ic'];
     // Checkbox id → its visual-toggle element id. Not a clean string
@@ -702,18 +713,42 @@
       confirm_ic: 'check-ic'
     };
 
+    // Build the {id: value/checked} snapshot of the current form state.
+    // Shared by localStorage save and server save so both send identical shape.
+    function buildSnapshot() {
+      var snap = {};
+      TEXT_FIELD_IDS.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) snap[id] = el.value;
+      });
+      CHECK_FIELD_IDS.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) snap[id] = el.checked;
+      });
+      return snap;
+    }
+
+    // Populate fields from a snapshot map (same shape as buildSnapshot output).
+    // Text fields take strings, checkboxes take booleans + visual toggle.
+    function applySnapshot(snap) {
+      if (!snap || typeof snap !== 'object') return;
+      TEXT_FIELD_IDS.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && typeof snap[id] === 'string') el.value = snap[id];
+      });
+      CHECK_FIELD_IDS.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && typeof snap[id] === 'boolean') {
+          el.checked = snap[id];
+          var visualEl = document.getElementById(CHECK_VISUAL_MAP[id]);
+          if (visualEl) visualEl.classList.toggle('checked', el.checked);
+        }
+      });
+    }
+
     function saveLocalDraft() {
       try {
-        var snap = {};
-        TEXT_FIELD_IDS.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) snap[id] = el.value;
-        });
-        CHECK_FIELD_IDS.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) snap[id] = el.checked;
-        });
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(snap));
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(buildSnapshot()));
       } catch (e) { /* quota or disabled storage */ }
     }
 
@@ -721,24 +756,79 @@
       try {
         var raw = localStorage.getItem(DRAFT_KEY);
         if (!raw) return;
-        var snap = JSON.parse(raw);
-        TEXT_FIELD_IDS.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el && typeof snap[id] === 'string') el.value = snap[id];
-        });
-        CHECK_FIELD_IDS.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el && typeof snap[id] === 'boolean') {
-            el.checked = snap[id];
-            var visualEl = document.getElementById(CHECK_VISUAL_MAP[id]);
-            if (visualEl) visualEl.classList.toggle('checked', el.checked);
-          }
-        });
+        applySnapshot(JSON.parse(raw));
       } catch (e) { /* malformed draft, ignore */ }
     }
 
     function clearLocalDraft() {
       try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    }
+
+    // Tiny, unobtrusive save-status line (created on demand, no markup change).
+    function setSaveStatus(text) {
+      try {
+        var el = document.getElementById('draftSaveStatus');
+        if (!el) {
+          var form = document.getElementById('onboardingForm');
+          if (!form) return;
+          el = document.createElement('div');
+          el.id = 'draftSaveStatus';
+          el.style.cssText = 'text-align:center;font-size:12px;color:rgba(200,195,185,0.5);margin-top:12px;min-height:14px;transition:opacity 0.25s ease;';
+          form.appendChild(el);
+        }
+        el.textContent = text;
+      } catch (e) { /* status is cosmetic, never block */ }
+    }
+
+    // Fetch the server-side draft (token only) and overwrite local fields with
+    // any field the server knows. Defensive: network/parse errors are ignored
+    // because localStorage already covered the offline case.
+    async function loadServerDraft() {
+      if (!TOKEN) return;
+      try {
+        var res = await fetch(WORKER_BASE + '/api/contractor-onboarding/' + encodeURIComponent(TOKEN) + '/draft', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (!res.ok) return; // 404 unknown token, etc.
+        var body = await res.json();
+        if (body && body.ok && body.form_data && typeof body.form_data === 'object'
+            && Object.keys(body.form_data).length) {
+          applySnapshot(body.form_data); // server wins for any field it has
+        }
+      } catch (e) { /* offline / CORS / parse: localStorage already restored */ }
+    }
+
+    // POST the current snapshot to the server draft endpoint (token only).
+    async function saveServerDraft() {
+      if (!TOKEN) return;
+      try {
+        setSaveStatus('Saving…');
+        var res = await fetch(WORKER_BASE + '/api/contractor-onboarding/' + encodeURIComponent(TOKEN) + '/draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ form_data: buildSnapshot() }),
+        });
+        setSaveStatus(res && res.ok ? 'Saved' : '');
+      } catch (e) { setSaveStatus(''); /* localStorage is the redundancy */ }
+    }
+
+    // Debounced server save: collapse rapid typing into one POST ~1.5s after
+    // the last keystroke. localStorage still saves immediately (see wiring).
+    function scheduleServerSave() {
+      if (!TOKEN) return;
+      if (serverSaveTimer) clearTimeout(serverSaveTimer);
+      serverSaveTimer = setTimeout(function () {
+        serverSaveTimer = null;
+        saveServerDraft();
+      }, SERVER_SAVE_DEBOUNCE_MS);
+    }
+
+    // Immediate server save (cancels any pending debounce). Used on submit.
+    function flushServerSave() {
+      if (!TOKEN) return;
+      if (serverSaveTimer) { clearTimeout(serverSaveTimer); serverSaveTimer = null; }
+      saveServerDraft();
     }
 
     function validateStep(step) {
@@ -819,6 +909,9 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>Submitting…';
 
+      // One final server draft save at submit start (token only, fire-and-forget).
+      flushServerSave();
+
       const data = {
         legalName: document.getElementById('legalName').value.trim(),
         businessName: document.getElementById('businessName').value.trim(),
@@ -869,17 +962,25 @@
       }
     });
 
-    // Wire Tier B autosave. Script runs at end of body, so the DOM is ready:
-    // restore any saved draft, then save on every edit. Checkboxes keep their
-    // inline onchange (visual toggle) and stack this change listener on top.
+    // Wire Tier A autosave. Script runs at end of body, so the DOM is ready.
+    // Load: localStorage restores first (instant), then the server draft (if a
+    // ?t= token is present) overwrites any field the server knows. Each edit
+    // saves to localStorage immediately and schedules a debounced server POST.
+    // Checkboxes keep their inline onchange (visual toggle) and stack these
+    // listeners on top.
     loadLocalDraft();
+    loadServerDraft(); // async, token-gated, server wins; no-op without ?t=
+    function onFieldEdit() {
+      saveLocalDraft();     // instant local redundancy
+      scheduleServerSave(); // debounced server save (no-op without ?t=)
+    }
     TEXT_FIELD_IDS.forEach(function (id) {
       var el = document.getElementById(id);
-      if (el) el.addEventListener('input', saveLocalDraft);
+      if (el) el.addEventListener('input', onFieldEdit);
     });
     CHECK_FIELD_IDS.forEach(function (id) {
       var el = document.getElementById(id);
-      if (el) el.addEventListener('change', saveLocalDraft);
+      if (el) el.addEventListener('change', onFieldEdit);
     });
   </script>
 
