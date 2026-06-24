@@ -484,12 +484,6 @@
             <input type="text" id="businessName" name="businessName" placeholder="LLC, DBA, or personal name">
           </div>
 
-          <div class="field" id="field-ein">
-            <label for="ein">EIN / SSN <span class="req">*</span></label>
-            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX or XXX-XX-XXXX">
-            <span class="error-msg">Please enter your EIN or SSN.</span>
-          </div>
-
           <div class="field full" id="field-address">
             <label for="address">Mailing Address <span class="req">*</span></label>
             <input type="text" id="address" name="address" placeholder="Street, City, State, ZIP" autocomplete="street-address">
@@ -623,26 +617,24 @@
       <!-- STEP 5: Tax / W-9 -->
       <div class="step" id="step5">
         <h2 class="step-heading">Tax Information</h2>
-        <p class="step-desc">We're required to collect a W-9 from all contractors before your first payment.</p>
-
-        <div class="info-box">
-          📄 <strong style="color: var(--text-primary);">Email your completed W-9 to:</strong><br><br>
-          <a href="mailto:sean@flyiniris.com" style="font-size: 1.05rem; font-weight: 500;">sean@flyiniris.com</a><br><br>
-          Please use the subject line: <em>"W-9 — [Your Full Name]"</em><br><br>
-          You can download a blank W-9 from the IRS at <a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener">irs.gov/pub/irs-pdf/fw9.pdf</a>.<br><br>
-          Your onboarding will not be considered complete until we receive your W-9. We'll follow up if we don't see it within 5 business days.
-        </div>
+        <p class="step-desc">Upload your completed, signed W-9. We check that it is filled in correctly and store it securely. We never save your tax ID number in our system. It stays inside your uploaded PDF.</p>
 
         <div class="form-grid">
-          <div class="field full" id="field-w9sent">
-            <label for="w9sent">W-9 Status <span class="req">*</span></label>
-            <input type="text" id="w9sent" name="w9_status" placeholder="e.g. Already sent, will send today, need the form, etc.">
-            <span class="error-msg">Please let us know your W-9 status.</span>
+          <div class="field full" id="field-w9file">
+            <label for="w9file">Signed W-9 (PDF) <span class="req">*</span></label>
+            <input type="file" id="w9file" name="w9file" accept="application/pdf,.pdf">
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;">
+              Need a blank form? Download it from the IRS at
+              <a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener">irs.gov/pub/irs-pdf/fw9.pdf</a>,
+              fill it in, sign it, and upload the PDF here.
+            </p>
+            <button type="button" class="btn btn-secondary" id="w9UploadBtn" style="margin-top: 12px;" onclick="uploadW9()">Upload and verify W-9</button>
+            <div id="w9Status" style="margin-top: 14px; font-size: 0.95rem;"></div>
           </div>
 
           <div class="field full" id="field-notes">
             <label for="notes">Anything else you'd like us to know?</label>
-            <textarea id="notes" name="notes" placeholder="Optional — equipment you're still acquiring, availability constraints, questions, etc."></textarea>
+            <textarea id="notes" name="notes" placeholder="Optional: equipment you're still acquiring, availability constraints, questions, etc."></textarea>
           </div>
         </div>
 
@@ -660,8 +652,8 @@
       <div class="success-icon">✦</div>
       <h2 class="success-title">You're <span>In</span>.</h2>
       <p class="success-body">
-        Your onboarding form has been submitted. Sean will review your info and follow up within 2–3 business days.<br><br>
-        Don't forget to email your W-9 to <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a> if you haven't already — it's the last step before you can be paid.<br><br>
+        Your onboarding form has been submitted. Sean will review your info and follow up within 2 to 3 business days.<br><br>
+        One last thing: if you have not already uploaded your signed W-9 on the Tax Information step, head back and do that now. It is the last step before you can be paid. Any trouble, email <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.<br><br>
         We're excited to have you on the team. 🌈
       </p>
     </div>
@@ -701,7 +693,7 @@
     var TOKEN = new URLSearchParams(location.search).get('t') || null;
     var serverSaveTimer = null;
     var SERVER_SAVE_DEBOUNCE_MS = 1500;
-    var TEXT_FIELD_IDS = ['legalName','businessName','ein','address','phone','email','emergencyContact','faa','gear','portfolio','paypal','w9sent','notes'];
+    var TEXT_FIELD_IDS = ['legalName','businessName','address','phone','email','emergencyContact','faa','gear','portfolio','paypal','notes'];
     var CHECK_FIELD_IDS = ['confirm_delivery','confirm_nodeletions','confirm_backup','confirm_ic'];
     // Checkbox id → its visual-toggle element id. Not a clean string
     // transform (confirm_nodeletions maps to check-deletions), so it is
@@ -835,7 +827,6 @@
       if (step === 1) {
         const fields = [
           { id: 'legalName', fieldId: 'field-legalName', test: v => v.trim().length > 1 },
-          { id: 'ein', fieldId: 'field-ein', test: v => v.trim().length > 0 },
           { id: 'address', fieldId: 'field-address', test: v => v.trim().length > 3 },
           { id: 'phone', fieldId: 'field-phone', test: v => v.trim().length > 5 },
           { id: 'email', fieldId: 'field-email', test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
@@ -864,10 +855,11 @@
         return checkFields(fields);
       }
       if (step === 5) {
-        const fields = [
-          { id: 'w9sent', fieldId: 'field-w9sent', test: v => v.trim().length > 0 },
-        ];
-        return checkFields(fields);
+        // The W-9 is uploaded and verified by its own action (uploadW9), tracked
+        // server-side, and can be completed via the same link later. It is not a
+        // gate on submitting the rest of onboarding, so step 5 has no required
+        // text field. The step copy makes clear the W-9 is still needed.
+        return true;
       }
       return true;
     }
@@ -901,6 +893,57 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Signed W-9 upload + verify (2026-06-23). Token-gated: the upload attaches
+    // to the contractor record minted at invite time. Verification is server-side
+    // (Claude verify-present). We never see or store the tax ID number; it stays
+    // inside the uploaded PDF. Decoupled from the main submit so it can be done
+    // here or via the same link later.
+    async function uploadW9() {
+      var statusEl = document.getElementById('w9Status');
+      var btn = document.getElementById('w9UploadBtn');
+      var input = document.getElementById('w9file');
+      var file = input && input.files && input.files[0];
+      if (!TOKEN) {
+        statusEl.innerHTML = '<span style="color: var(--accent-gold);">Please open this form using the link we emailed you so we can attach your W-9 to your file. If you do not have it, email sean@flyiniris.com.</span>';
+        return;
+      }
+      if (!file) {
+        statusEl.innerHTML = '<span style="color: #e07a5f;">Please choose your signed W-9 PDF first.</span>';
+        return;
+      }
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Verifying…';
+      statusEl.innerHTML = '<span style="color: var(--text-secondary);">Checking your W-9. This takes a few seconds.</span>';
+      try {
+        var fd = new FormData();
+        fd.append('file', file);
+        var res = await fetch(WORKER_BASE + '/api/contractor-onboarding/' + encodeURIComponent(TOKEN) + '/w9', {
+          method: 'POST',
+          body: fd,
+        });
+        var json = await res.json().catch(function () { return {}; });
+        if (res.ok && json && json.ok) {
+          btn.style.display = 'none';
+          statusEl.innerHTML = '<span style="color: #5fb87a; font-weight: 500;">Your W-9 is verified and on file. Thank you!</span>';
+          window.__w9Verified = true;
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Upload and verify W-9';
+          var msg = (json && json.message) ? json.message : 'We could not accept that file. Please try again.';
+          var issuesHtml = '';
+          if (json && Array.isArray(json.issues) && json.issues.length) {
+            issuesHtml = '<ul style="margin: 8px 0 0; padding-left: 18px; color: var(--text-secondary);">' +
+              json.issues.map(function (i) { return '<li>' + String(i).replace(/[<>]/g, '') + '</li>'; }).join('') + '</ul>';
+          }
+          statusEl.innerHTML = '<span style="color: #e07a5f;">' + String(msg).replace(/[<>]/g, '') + '</span>' + issuesHtml;
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Upload and verify W-9';
+        statusEl.innerHTML = '<span style="color: #e07a5f;">Something went wrong uploading your W-9. Please try again, or email it to sean@flyiniris.com.</span>';
+      }
+    }
+
     document.getElementById('onboardingForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       if (!validateStep(5)) return;
@@ -915,7 +958,6 @@
       const data = {
         legalName: document.getElementById('legalName').value.trim(),
         businessName: document.getElementById('businessName').value.trim(),
-        ein: document.getElementById('ein').value.trim(),
         address: document.getElementById('address').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
@@ -928,7 +970,6 @@
         confirm_backup: document.getElementById('confirm_backup').checked,
         confirm_ic: document.getElementById('confirm_ic').checked,
         paypal: document.getElementById('paypal').value.trim(),
-        w9_status: document.getElementById('w9sent').value.trim(),
         notes: document.getElementById('notes').value.trim(),
         submitted_at: new Date().toISOString(),
       };
