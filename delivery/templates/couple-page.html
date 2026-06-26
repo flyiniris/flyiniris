@@ -800,6 +800,55 @@
       transform: translateY(0);
     }
 
+    /* ========== Vimeo Embed Mode ========== */
+    /* In vimeo mode hero cards drop the Vidstack player + thumbnail overlay and
+       render a Vimeo iframe directly. The hero-player-wrap is already a 16:9
+       position:relative box, so the iframe fills it absolutely. The .vimeo-frame
+       wrapper (used in the modal, which has no intrinsic aspect ratio) supplies
+       its own 16:9 box. Matches the /yours showcase and index.html iframe CSS. */
+    .hero-player-wrap.vimeo-mode iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .vimeo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .vimeo-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* ========== Empty State (films pending) ========== */
+    .films-pending {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .films-pending-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: #F5F0EB;
+      margin-bottom: 12px;
+    }
+    .films-pending-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: #C8C3B9;
+    }
+
     /* ========== Responsive ========== */
     @media (min-width: 640px) {
       .collection-grid { grid-template-columns: repeat(2, 1fr); }
@@ -958,16 +1007,41 @@
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    const VIDEOS = {{VIDEOS_JSON}};
-    const PLAYLIST = {{PLAYLIST_JSON}};
-    const HERO = {{HERO_JSON}};
-    const WORKER_BASE = '{{WORKER_BASE}}';
-    const SLUG = '{{SLUG}}';
+    // These tokens are baked at generate time but are now only a FALLBACK.
+    // The live source of truth is fetched at load time from the delivery
+    // config API (see bootstrapDelivery below). For batch pre-generated
+    // shells the baked values are the empty defaults ([] / '' ); once a
+    // couple's video is attached in Studio, the load-time fetch fills these.
+    // They are var (mutable) so bootstrap can overwrite them before render.
+    var VIDEOS = {{VIDEOS_JSON}};
+    var PLAYLIST = {{PLAYLIST_JSON}};
+    var HERO = {{HERO_JSON}};
+    var VIDEO_MODE = '{{VIDEO_MODE}}';
+    var CONFIG_API_BASE = '{{CONFIG_API_BASE}}';
+    var WORKER_BASE = '{{WORKER_BASE}}';
+    var SLUG = '{{SLUG}}';
 
-    // Hero entries (sorted server-side by order) play as full-width inline players
-    // above the Collection grid. Collection grid excludes them to avoid duplicate
-    // rendering. See delivery-page-standard.md Section 4.5.
-    const collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
+    // Hero entries (sorted by order) play as full-width inline players above
+    // the Collection grid. Collection grid excludes them to avoid duplicate
+    // rendering. See delivery-page-standard.md Section 4.5. Recomputed inside
+    // bootstrapDelivery() after the live config resolves.
+    var collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
+
+    // True when the resolved config is a Vimeo embed delivery. Vimeo mode is
+    // embed-only: hero + collection items play via Vimeo's own iframe player,
+    // and the Watch the Full Day playlist plus the Downloads section are
+    // suppressed (no HLS auto-advance, no MP4 downloads). hls mode (the
+    // default and the empty-token case) behaves exactly as before.
+    function isVimeoMode() { return VIDEO_MODE === 'vimeo'; }
+
+    // Vimeo iframe markup. Matches the responsive 16:9 pattern used by the
+    // /yours showcase pages and index.html in this repo (title / byline /
+    // portrait suppressed, autoplay + fullscreen + picture-in-picture allowed).
+    function vimeoIframe(vimeoId, title) {
+      return '<iframe src="https://player.vimeo.com/video/' + encodeURIComponent(String(vimeoId)) +
+        '?title=0&byline=0&portrait=0" title="' + escapeAttr(title) +
+        '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+    }
 
     function computePlaylistDurationLabel() {
       var total = 0;
@@ -1093,7 +1167,9 @@
     // --- Hero Row ---
     // Renders one full-width inline player per HERO entry, stacked vertically.
     // Section hides entirely when HERO is empty (page degrades to Collection-only).
-    (function initHeroRow() {
+    // Called from bootstrapDelivery() after the live config resolves, so it
+    // reads the resolved HERO / VIDEO_MODE rather than the baked tokens.
+    function renderHeroRow() {
       var stack = document.getElementById('hero-stack');
       var section = document.getElementById('hero-row');
 
@@ -1101,6 +1177,29 @@
         // No hero entries: hide the section entirely. Page renders Navbar -> Hero
         // (couple names) -> Collection grid -> Downloads -> Footer.
         section.style.display = 'none';
+        return;
+      }
+      section.style.display = '';
+
+      // Vimeo embed mode: each hero card shows the Vimeo iframe directly. No
+      // thumbnail overlay, no play-button wiring, no HLS config. Vimeo's own
+      // controls handle playback.
+      if (isVimeoMode()) {
+        var vhtml = '';
+        for (var vi = 0; vi < HERO.length; vi++) {
+          var vh = HERO[vi];
+          vhtml +=
+            '<div class="hero-card" data-hero-id="' + escapeAttr(vh.id) + '">' +
+            '  <div class="hero-player-wrap vimeo-mode">' +
+            vimeoIframe(vh.vimeoId, vh.title) +
+            '  </div>' +
+            '  <div class="hero-info">' +
+            '    <span class="hero-title">' + escapeHtml(vh.title) + '</span>' +
+            (vh.duration ? '    <span class="hero-duration">' + escapeHtml(vh.duration) + '</span>' : '') +
+            '  </div>' +
+            '</div>';
+        }
+        stack.innerHTML = vhtml;
         return;
       }
 
@@ -1179,7 +1278,7 @@
       // Wire HLS config on every hero player.
       var players = stack.querySelectorAll('media-player');
       for (var p = 0; p < players.length; p++) configureHls(players[p]);
-    })();
+    }
 
     // --- Collection Grid ---
     // Order: Watch the Full Day playlist card FIRST (full-width, eye-catching),
@@ -1188,11 +1287,13 @@
     // would otherwise scroll past. Renders only when 2+ playlist-eligible cuts
     // exist; below that threshold the playlist card is suppressed and only
     // film thumbnails render.
-    (function initCollection() {
+    function renderCollection() {
       var grid = document.getElementById('collection-grid');
       var html = '';
 
-      if (PLAYLIST.length >= 2) {
+      // Watch the Full Day playlist card: HLS mode only. Vimeo mode is
+      // embed-only with no auto-advance playlist, so the card is suppressed.
+      if (!isVimeoMode() && PLAYLIST.length >= 2) {
         var totalLabel = computePlaylistDurationLabel();
         var subtitle = PLAYLIST.length + ' films in chronological order';
         if (totalLabel) subtitle += ' &bull; ' + totalLabel;
@@ -1216,7 +1317,7 @@
       for (var i = 0; i < collection.length; i++) {
         var v = collection[i];
         html +=
-          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '" tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '">' +
+          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '"' + (v.vimeoId != null ? ' data-vimeo-id="' + escapeAttr(String(v.vimeoId)) + '"' : '') + ' tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '">' +
           // Thumb loads lazily: data-thumb is applied as a background-image
           // by the IntersectionObserver below, so 1920px thumbnails for
           // sub-fold cards stop competing with the hero players on load
@@ -1257,7 +1358,31 @@
       } else {
         for (var t = 0; t < thumbs.length; t++) applyThumb(thumbs[t]);
       }
-    })();
+    }
+
+    // --- Empty State ---
+    // Pre-generated shells (no video attached yet) and any config that resolves
+    // to an empty videos array render a single tasteful, on-brand message in the
+    // collection area. Hero and Downloads sections are hidden by bootstrap.
+    function renderEmptyState() {
+      var heroRow = document.getElementById('hero-row');
+      if (heroRow) heroRow.style.display = 'none';
+      var downloads = document.getElementById('downloads');
+      if (downloads) downloads.style.display = 'none';
+      var collectionSection = document.getElementById('collection');
+      if (collectionSection) {
+        var header = collectionSection.querySelector('.reveal');
+        if (header) header.style.display = 'none';
+      }
+      var grid = document.getElementById('collection-grid');
+      if (grid) {
+        grid.innerHTML =
+          '<div class="films-pending">' +
+          '  <p class="films-pending-title">Your films are on the way.</p>' +
+          '  <p class="films-pending-sub">We are putting the finishing touches on your wedding films. Check back soon.</p>' +
+          '</div>';
+      }
+    }
 
     // --- Modal ---
     var modalOverlay = document.getElementById('modal-overlay');
@@ -1275,22 +1400,28 @@
     // (the film card or playlist button they activated).
     var previousFocus = null;
 
-    function openModal(videoId, title) {
+    function openModal(videoId, title, vimeoId) {
       playlistMode = false;
       previousFocus = document.activeElement;
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
 
-      modalPlayerWrap.innerHTML = createPlayerHtml({
-        title: title,
-        src: hlsUrl(videoId),
-        poster: thumbUrl(videoId),
-        autoplay: true,
-        storage: 'fi-modal'
-      });
+      if (isVimeoMode()) {
+        // Vimeo embed: drop the iframe into a 16:9 frame. No Vidstack, no HLS
+        // config, no playlist wiring. Vimeo's own controls handle playback.
+        modalPlayerWrap.innerHTML = '<div class="vimeo-frame">' + vimeoIframe(vimeoId, title) + '</div>';
+      } else {
+        modalPlayerWrap.innerHTML = createPlayerHtml({
+          title: title,
+          src: hlsUrl(videoId),
+          poster: thumbUrl(videoId),
+          autoplay: true,
+          storage: 'fi-modal'
+        });
 
-      var player = modalPlayerWrap.querySelector('media-player');
-      if (player) configureHls(player);
+        var player = modalPlayerWrap.querySelector('media-player');
+        if (player) configureHls(player);
+      }
 
       modalTitle.textContent = title;
       modalOverlay.classList.add('active');
@@ -1478,7 +1609,7 @@
       }
       var card = e.target.closest('.film-card');
       if (!card) return;
-      openModal(card.dataset.videoId, card.dataset.videoTitle);
+      openModal(card.dataset.videoId, card.dataset.videoTitle, card.dataset.vimeoId);
     });
     // Keyboard activation for playlist card and film cards (TV / remote-friendly)
     document.getElementById('collection-grid').addEventListener('keydown', function(e) {
@@ -1492,7 +1623,7 @@
       var card = e.target.closest('.film-card');
       if (card) {
         e.preventDefault();
-        openModal(card.dataset.videoId, card.dataset.videoTitle);
+        openModal(card.dataset.videoId, card.dataset.videoTitle, card.dataset.vimeoId);
       }
     });
 
@@ -1528,7 +1659,10 @@
     });
 
     // --- Scroll Reveal ---
-    (function initReveal() {
+    // Run from bootstrapDelivery() AFTER hero + collection render, so the
+    // observer sees the dynamically injected .reveal cards (playlist card and
+    // film cards). Running it before render would miss them.
+    function runReveal() {
       var reveals = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window)) {
         // Fallback: show everything
@@ -1544,7 +1678,30 @@
         }
       }, { threshold: 0.15 });
       for (var i = 0; i < reveals.length; i++) observer.observe(reveals[i]);
-    })();
+    }
+
+    // --- Download list render ---
+    // Module-scope so bootstrapDelivery() can pre-render the (hidden) list and
+    // the auth handler can re-render after unlock. No-op in vimeo mode, where
+    // the Downloads section is suppressed entirely (embed-only, no MP4s).
+    function renderDownloadList() {
+      if (isVimeoMode()) return;
+      var downloadList = document.getElementById('download-list');
+      if (!downloadList) return;
+      var html = '';
+      for (var i = 0; i < VIDEOS.length; i++) {
+        var v = VIDEOS[i];
+        html +=
+          '<div class="download-item">' +
+          '  <div class="download-item-info">' +
+          '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
+          (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
+          '  </div>' +
+          '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
+          '</div>';
+      }
+      downloadList.innerHTML = html;
+    }
 
     // --- Download Auth ---
     (function initDownloads() {
@@ -1555,23 +1712,6 @@
       var errorMsg = document.getElementById('download-error');
       var downloadList = document.getElementById('download-list');
       var authToken = null;
-
-      // Render download list items
-      function renderDownloadList() {
-        var html = '';
-        for (var i = 0; i < VIDEOS.length; i++) {
-          var v = VIDEOS[i];
-          html +=
-            '<div class="download-item">' +
-            '  <div class="download-item-info">' +
-            '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
-            (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
-            '  </div>' +
-            '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
-            '</div>';
-        }
-        downloadList.innerHTML = html;
-      }
 
       // Auth submit
       function submitPassword() {
@@ -1727,6 +1867,82 @@
         }
       }
     })();
+
+    // --- Load-time config resolution ---
+    // Delivery pages are batch pre-generated as video-empty shells well ahead
+    // of delivery day. On delivery day Studio writes the couple's video source
+    // to a Worker D1 table; the page must pick it up WITHOUT being regenerated.
+    // resolveConfig() fetches that live source and, when present, overwrites the
+    // baked VIDEOS / VIDEO_MODE and DERIVES HERO + PLAYLIST with the same rules
+    // the generator uses. On any failure (network, timeout, non-OK, empty) it
+    // silently leaves the baked fallback in place.
+    function byOrder(a, b) { return a.order - b.order; }
+
+    function deriveFromVideos(videos) {
+      HERO = videos.filter(function(v) { return v.hero === true; }).sort(byOrder);
+      PLAYLIST = videos
+        .filter(function(v) {
+          return (v.category === 'archival' || v.category === 'bonus') && v.playlist !== false;
+        })
+        .sort(byOrder)
+        .map(function(v) { return { id: v.id, title: v.title, duration: v.duration }; });
+    }
+
+    function resolveConfig() {
+      // No API base baked (older generation): rely on the baked data alone.
+      if (!CONFIG_API_BASE) return Promise.resolve();
+      var url = CONFIG_API_BASE + '/api/delivery/' + SLUG + '/videos';
+      var controller = ('AbortController' in window) ? new AbortController() : null;
+      var timer = controller ? setTimeout(function() { controller.abort(); }, 6000) : null;
+      var opts = controller ? { signal: controller.signal } : {};
+      return fetch(url, opts)
+        .then(function(res) {
+          if (timer) clearTimeout(timer);
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function(data) {
+          if (data && Array.isArray(data.videos) && data.videos.length > 0) {
+            VIDEOS = data.videos;
+            // video_mode drives the branch. Null / missing falls back to the
+            // baked token, then to hls (the historical default).
+            VIDEO_MODE = data.video_mode || VIDEO_MODE || 'hls';
+            deriveFromVideos(VIDEOS);
+          }
+        })
+        .catch(function() {
+          if (timer) clearTimeout(timer);
+          // Fall back to baked data; do not surface an error to the couple.
+        });
+    }
+
+    // Single ordered render pipeline. Hero, then Collection (which injects the
+    // .reveal cards), then the hidden Download list, THEN the reveal observer
+    // so it sees those cards. Empty config short-circuits to the on-brand
+    // "films on the way" state.
+    async function bootstrapDelivery() {
+      await resolveConfig();
+
+      collection = VIDEOS.filter(function(v) { return v.hero !== true; }).sort(byOrder);
+
+      if (!VIDEOS || VIDEOS.length === 0) {
+        renderEmptyState();
+        return;
+      }
+
+      // Vimeo is embed-only: suppress the Downloads section wholesale.
+      if (isVimeoMode()) {
+        var downloads = document.getElementById('downloads');
+        if (downloads) downloads.style.display = 'none';
+      }
+
+      renderHeroRow();
+      renderCollection();
+      renderDownloadList();
+      runReveal();
+    }
+
+    bootstrapDelivery();
 
     // --- PWA Service Worker ---
     if ('serviceWorker' in navigator) {

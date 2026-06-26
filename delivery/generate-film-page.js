@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULT_WORKER_BASE = 'https://video.flyiniris.com';
+const DEFAULT_CONFIG_API_BASE = 'https://prep.flyiniris.com';
 const SLUG_RE = /^[a-z0-9-]+$/;
 const CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
 const DEPRECATED_FIELDS = ['names', 'date', 'date_short', 'photos', 'customMessage', 'venueDisplay', 'filmSlug'];
@@ -23,13 +24,21 @@ const HERO_MAX = 5;
 
 function parseArgs(argv) {
   const args = argv.slice(2);
-  const out = { configPath: null, workerBase: DEFAULT_WORKER_BASE, outputRoot: null };
+  const out = {
+    configPath: null,
+    workerBase: DEFAULT_WORKER_BASE,
+    outputRoot: null,
+    configApiBase: DEFAULT_CONFIG_API_BASE,
+  };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--worker-base' && args[i + 1]) {
       out.workerBase = args[i + 1];
       i++;
     } else if (args[i] === '--output-root' && args[i + 1]) {
       out.outputRoot = args[i + 1];
+      i++;
+    } else if (args[i] === '--config-api-base' && args[i + 1]) {
+      out.configApiBase = args[i + 1];
       i++;
     } else if (!out.configPath) {
       out.configPath = args[i];
@@ -39,7 +48,7 @@ function parseArgs(argv) {
 }
 
 function printUsageAndExit() {
-  console.error('Usage: node generate-film-page.js <config.json> [--worker-base <url>] [--output-root <dir>]');
+  console.error('Usage: node generate-film-page.js <config.json> [--worker-base <url>] [--output-root <dir>] [--config-api-base <url>]');
   console.error('');
   console.error('Config schema (see iris-automation/docs/project-knowledge-2026-05/delivery-page-standard.md Section 5):');
   console.error(JSON.stringify({
@@ -85,15 +94,15 @@ function validateConfig(config, configPath) {
   }
 
   // videos
-  let videosArray = null;
-  if (!config.videos) {
-    errors.push("'videos' is required");
+  // A missing or empty videos array is now VALID: it produces a video-empty
+  // shell (the batch pre-generation case). The page resolves its real video
+  // source at load time from the delivery config API. Non-empty configs keep
+  // every existing per-item validation below.
+  let videosArray = [];
+  if (config.videos === undefined || config.videos === null) {
+    videosArray = [];
   } else if (Array.isArray(config.videos)) {
-    if (config.videos.length === 0) {
-      errors.push("'videos' must be a non-empty array");
-    } else {
-      videosArray = config.videos;
-    }
+    videosArray = config.videos;
   } else if (typeof config.videos === 'object') {
     // Object-keyed legacy form (supported but discouraged per spec Section 5)
     const entries = Object.entries(config.videos);
@@ -112,6 +121,7 @@ function validateConfig(config, configPath) {
         ...(v && v.hero === true ? { hero: true } : {}),
         ...(v && v.playlist === false ? { playlist: false } : {}),
         ...(v && v.featured ? { featured: true } : {}),
+        ...(v && v.vimeoId != null ? { vimeoId: v.vimeoId } : {}),
       }));
     }
   } else {
@@ -216,7 +226,7 @@ function deriveHeroCta(heroArray) {
 }
 
 function main() {
-  const { configPath, workerBase, outputRoot } = parseArgs(process.argv);
+  const { configPath, workerBase, outputRoot, configApiBase } = parseArgs(process.argv);
   if (!configPath) printUsageAndExit();
 
   const absConfigPath = path.resolve(configPath);
@@ -256,6 +266,10 @@ function main() {
     ...(v.hero === true ? { hero: true } : {}),
     ...(v.featured === true ? { featured: true } : {}),
     ...(v.playlist === false ? { playlist: false } : {}),
+    // Vimeo embed id passthrough. Preserved for vimeo-mode deliveries; the
+    // template reads it to build the player.vimeo.com iframe. Harmless on
+    // hls-mode configs (absent, so omitted).
+    ...(v.vimeoId != null ? { vimeoId: v.vimeoId } : {}),
   }));
 
   // Loud warning when durations are missing. Both live configs shipped with
@@ -279,11 +293,21 @@ function main() {
   // OG image source: first hero entry by order, else first video in catalog.
   // The legacy {{FEATURED_VIDEO_ID}} token name is retained for template
   // backward-compat; the value now points to the hero/lead thumbnail.
-  const ogVideoId = heroArray.length > 0 ? heroArray[0].id : videosArray[0].id;
+  // Empty-shell safe: with no videos there is no OG thumbnail to point at.
+  const ogVideoId = heroArray.length > 0
+    ? heroArray[0].id
+    : (videosArray.length > 0 ? videosArray[0].id : '');
 
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
   const heroCta = deriveHeroCta(heroArray);
+
+  // Video mode token. '' (the default) lets the page rely on the live fetch and
+  // treat baked videos as hls. Set config.videoMode to 'vimeo' or 'hls' to bake
+  // a specific mode. The live config API's video_mode overrides this at load.
+  const videoMode = config.videoMode === 'vimeo' || config.videoMode === 'hls'
+    ? config.videoMode
+    : '';
 
   // Playlist: archival + bonus, exclude explicit playlist: false opt-outs,
   // chronological order. See delivery-page-standard.md Section 3.4 for ordering.
@@ -321,6 +345,8 @@ function main() {
     .replace(/\{\{HERO_JSON\}\}/g, stamp(JSON.stringify(heroArray)))
     .replace(/\{\{HERO_CTA\}\}/g, stamp(heroCta))
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, stamp(ogVideoId))
+    .replace(/\{\{VIDEO_MODE\}\}/g, stamp(videoMode))
+    .replace(/\{\{CONFIG_API_BASE\}\}/g, stamp(configApiBase))
     .replace(/\{\{YEAR\}\}/g, stamp(year));
 
   let manifest = manifestTemplate
