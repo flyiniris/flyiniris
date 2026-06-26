@@ -11,7 +11,12 @@ status=0
 while read local_ref local_sha remote_ref remote_sha; do
   [ "$local_sha" = "$Z40" ] && continue
   if [ "$remote_sha" = "$Z40" ]; then base="$EMPTY_TREE"; else base="$remote_sha"; fi
-  hits=$(git diff "$base" "$local_sha" 2>/dev/null | grep -E '^\+' | grep -E \
+  # Neutralize the public R2 CDN subdomain (pub-<32hex>.r2.dev) before scanning:
+  # it is a documented PUBLIC bucket URL served to every site visitor and already
+  # appears across this repo (index.html, yours.html, etc.), so it is not a leak.
+  # The substitution only removes that token, so a real secret elsewhere on the
+  # same line is still caught by the patterns below.
+  hits=$(git diff "$base" "$local_sha" 2>/dev/null | grep -E '^\+' | sed -E 's/pub-[0-9a-f]{32}\.r2\.dev/pub-PUBLIC.r2.dev/g' | grep -E \
     -e '[p]it-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' \
     -e '[E]AA[A-Za-z0-9]{30,}' \
     -e '[s]k_live_[A-Za-z0-9]{10,}' \
