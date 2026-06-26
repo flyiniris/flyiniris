@@ -121,7 +121,6 @@ function validateConfig(config, configPath) {
         ...(v && v.hero === true ? { hero: true } : {}),
         ...(v && v.playlist === false ? { playlist: false } : {}),
         ...(v && v.featured ? { featured: true } : {}),
-        ...(v && v.vimeoId != null ? { vimeoId: v.vimeoId } : {}),
       }));
     }
   } else {
@@ -266,10 +265,6 @@ function main() {
     ...(v.hero === true ? { hero: true } : {}),
     ...(v.featured === true ? { featured: true } : {}),
     ...(v.playlist === false ? { playlist: false } : {}),
-    // Vimeo embed id passthrough. Preserved for vimeo-mode deliveries; the
-    // template reads it to build the player.vimeo.com iframe. Harmless on
-    // hls-mode configs (absent, so omitted).
-    ...(v.vimeoId != null ? { vimeoId: v.vimeoId } : {}),
   }));
 
   // Loud warning when durations are missing. Both live configs shipped with
@@ -301,13 +296,6 @@ function main() {
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();
   const heroCta = deriveHeroCta(heroArray);
-
-  // Video mode token. '' (the default) lets the page rely on the live fetch and
-  // treat baked videos as hls. Set config.videoMode to 'vimeo' or 'hls' to bake
-  // a specific mode. The live config API's video_mode overrides this at load.
-  const videoMode = config.videoMode === 'vimeo' || config.videoMode === 'hls'
-    ? config.videoMode
-    : '';
 
   // Playlist: archival + bonus, exclude explicit playlist: false opt-outs,
   // chronological order. See delivery-page-standard.md Section 3.4 for ordering.
@@ -345,7 +333,6 @@ function main() {
     .replace(/\{\{HERO_JSON\}\}/g, stamp(JSON.stringify(heroArray)))
     .replace(/\{\{HERO_CTA\}\}/g, stamp(heroCta))
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, stamp(ogVideoId))
-    .replace(/\{\{VIDEO_MODE\}\}/g, stamp(videoMode))
     .replace(/\{\{CONFIG_API_BASE\}\}/g, stamp(configApiBase))
     .replace(/\{\{YEAR\}\}/g, stamp(year));
 
