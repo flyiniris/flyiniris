@@ -104,9 +104,9 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 - Upload via rclone: remote `r2fi:` configured for R2
 
 ### Thumbnails
-- All 15 upscaled with **Real-ESRGAN** (4x GPU upscale → resize to 1600px → compress)
-- Tool location: `C:\Users\flyin\realesrgan\`
-- Output: JPG, ~130-250KB each, stored in `fi-assets/couples/{slug}/thumbs/thumb.jpg`
+- **Delivery-page thumbnails (current spec, confirmed 2026-06-25): 3840x2160 (4K, 16:9), JPEG, ~250 to 420 KB.** One per video, stored in `fi-films/couples/{slug}/thumbs/{videoId}.jpg` (served by video.flyiniris.com, referenced by the page thumbUrl and og:image). The earlier "1600px, 130 to 250 KB" note was stale; the real delivery thumbs (sarah-cody, marie-matt) are 4K.
+- Produced by **Real-ESRGAN** (`realesrgan-x4plus`, 4x, GPU), then resized/cropped to 3840x2160 and JPEG-compressed. Tool at `C:\Users\flyin\realesrgan\`; the delivery flow is scripted in `delivery/scripts/upscale-thumb.ps1` (two source paths: a 4K-video frame grab, or a Sierra-supplied still staged from Studio). A source-resolution guard refuses sources too small to reach a sharp 4K (min 960 wide).
+- Marketing/portfolio thumbnails (the original 15) predate this and are a mix of 2500x1406 and 3840x2160 in `fi-assets`; new delivery work uses the 4K spec above.
 
 ### Film Index
 - 15 films indexed in `film-index.json` and embedded in the Worker
@@ -130,7 +130,7 @@ Old Squarespace URLs are 301-redirected via `_redirects` file:
 1. Download 4K teaser from Vimeo API
 2. Transcode to HLS (4K + 1080p) using GPU batch script
 3. Upload HLS to R2 (`fi-films/couples/{slug}/hls/teaser/`)
-4. Extract or source thumbnail → upscale with Real-ESRGAN → upload to R2 (`fi-assets/couples/{slug}/thumbs/thumb.jpg`)
+4. Thumbnail: frame-grab the 4K source OR take Sierra's still, then run `delivery/scripts/upscale-thumb.ps1` (Real-ESRGAN `realesrgan-x4plus` 4x, resize/crop to 3840x2160, JPEG ~250 to 420 KB) which uploads to R2 at `fi-films/couples/{slug}/thumbs/{videoId}.jpg`
 5. Add film to `FILMS` array in `iris-automation/src/index.ts`
 6. Update `film-index.json`
 7. Deploy Worker: `npx wrangler deploy`
