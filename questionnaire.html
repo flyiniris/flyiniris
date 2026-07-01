@@ -2908,6 +2908,19 @@
           if (data.contact.partner_name && !coupleName2) coupleName2 = String(data.contact.partner_name).trim();
           applyCoupleNamesToLabels();
         }
+        // Prefer the token-gated full prefill served by /api/questionnaire/:token
+        // itself, so the token path no longer calls the unauthenticated bare-id
+        // /api/contact endpoint. Backfill contactId for the analytics POST, then
+        // apply fields directly. Falls back to the chain only if an older Worker
+        // build did not return customFields.
+        if (data && data.customFields) {
+          if (data.firstName && !coupleName1) coupleName1 = String(data.firstName).trim();
+          if (data.customFields.fiancs_first_name && !coupleName2) coupleName2 = String(data.customFields.fiancs_first_name).trim();
+          applyCoupleNamesToLabels();
+          if (data.contact_id) contactId = data.contact_id;
+          applyPrefillFields(data.customFields, 'token');
+          return;
+        }
         var resolvedId = data && data.contact_id;
         if (resolvedId) {
           contactId = resolvedId;
