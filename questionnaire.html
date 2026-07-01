@@ -315,6 +315,9 @@
       border-color: var(--gold);
       color: var(--gold);
     }
+    /* Attire picker: more than 2-3 options, so allow wrapping into pills. */
+    .attire-row { flex-wrap: wrap; }
+    .attire-row .yn-btn { flex: 1 1 calc(33.333% - 8px); min-width: 110px; }
     .yn-followup {
       max-height: 0;
       overflow: hidden;
@@ -912,6 +915,46 @@
       <span class="field-badge"></span>
       <label class="field-label" id="gr-label-dress-2" for="groom_tux_time">What time does your partner start getting ready?</label>
       <input type="text" id="groom_tux_time" placeholder="e.g. 1:30pm" />
+    </div>
+
+    <!-- Q7a-1 bride_attire_type (attire pick; identity stays the partner's NAME, attire captured directly so it is never inferred from gender) -->
+    <div class="field" data-field="bride_attire_type" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" id="gr-label-attire-1">What is your partner wearing?</label>
+      <div class="yn-row attire-row" data-yn-group="bride_attire_type">
+        <button type="button" class="yn-btn" data-val="Dress">Dress</button>
+        <button type="button" class="yn-btn" data-val="Suit or tux">Suit or tux</button>
+        <button type="button" class="yn-btn" data-val="Jumpsuit">Jumpsuit</button>
+        <button type="button" class="yn-btn" data-val="Other">Other</button>
+        <button type="button" class="yn-btn" data-val="Not sure yet">Not sure yet</button>
+      </div>
+    </div>
+
+    <!-- Q7a-2 groom_attire_type (attire pick; label uses partner 2's name) -->
+    <div class="field" data-field="groom_attire_type" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" id="gr-label-attire-2">What is your partner wearing?</label>
+      <div class="yn-row attire-row" data-yn-group="groom_attire_type">
+        <button type="button" class="yn-btn" data-val="Dress">Dress</button>
+        <button type="button" class="yn-btn" data-val="Suit or tux">Suit or tux</button>
+        <button type="button" class="yn-btn" data-val="Jumpsuit">Jumpsuit</button>
+        <button type="button" class="yn-btn" data-val="Other">Other</button>
+        <button type="button" class="yn-btn" data-val="Not sure yet">Not sure yet</button>
+      </div>
+    </div>
+
+    <!-- Q7b bride_into_dress_time (into dress/attire: the later moment, separate from getting-ready START; label uses partner 1's name) -->
+    <div class="field" data-field="bride_into_dress_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" id="gr-label-intodress-1" for="bride_into_dress_time">What time does your partner get into their dress or attire?</label>
+      <input type="text" id="bride_into_dress_time" placeholder="e.g. 2:30pm" />
+    </div>
+
+    <!-- Q7c groom_into_attire_time (into dress/attire; label uses partner 2's name) -->
+    <div class="field" data-field="groom_into_attire_time" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" id="gr-label-intodress-2" for="groom_into_attire_time">What time does your partner get into their dress or attire?</label>
+      <input type="text" id="groom_into_attire_time" placeholder="e.g. 2:30pm" />
     </div>
 
     <!-- Q8 getting_ready_bride (backend key unchanged; single location box, label uses partner 1's name) -->
@@ -1659,7 +1702,9 @@
     'wedding_date', 'venue_name', 'traveling_other_locations_yn', 'traveling_other_locations_detail',
     'estimated_coverage_window',
     // Section 2
-    'bride_dress_time', 'groom_tux_time', 'getting_ready_bride', 'getting_ready_groom',
+    'bride_dress_time', 'groom_tux_time', 'bride_into_dress_time', 'groom_into_attire_time',
+    'bride_attire_type', 'groom_attire_type',
+    'getting_ready_bride', 'getting_ready_groom',
     'first_look', 'ceremony_time', 'ceremony_length', 'special_traditions',
     'letter_reading_yn', 'letter_reading_detail', 'wedding_party_photos_time', 'wedding_party_photos_location',
     'sunset_photos_yn', 'sunset_photos_when', 'cocktail_hour_start', 'cocktail_hour_couple_time',
@@ -1841,6 +1886,12 @@
       return;
     }
     if (ynGroups.indexOf(name) >= 0) {
+      // Attire pickers store the option label verbatim ("Dress", "Suit or tux"),
+      // so restore by exact data-val, not the yes/no whitelist.
+      if (name === 'bride_attire_type' || name === 'groom_attire_type') {
+        if (value) { setYn(name, value); updateIntoAttireLabels(); }
+        return;
+      }
       var v = (value || '').toLowerCase();
       if (v === 'yes' || v === 'no' || v === 'not sure yet' || v === 'will send soon') {
         setYn(name, v);
@@ -1962,6 +2013,7 @@
    * Y/N quick-click behavior
    * ============================================================ */
   var ynGroups = [
+    'bride_attire_type', 'groom_attire_type',
     'traveling_other_locations_yn', 'letter_reading_yn',
     'sunset_photos_yn', 'grand_march_yn', 'prayer_before_dinner_yn',
     'couple_welcome_speech_yn', 'other_special_dances_yn',
@@ -1983,6 +2035,10 @@
           // mark field state
           if (FIELD_NAMES.indexOf(group) >= 0) {
             handleFieldChange(group);
+          }
+          // Attire choice drives the "get into their <dress/suit>" label live.
+          if (group === 'bride_attire_type' || group === 'groom_attire_type') {
+            updateIntoAttireLabels();
           }
           // first_look_yn special: drives the first_look canonical field
           if (group === 'first_look_yn') {
@@ -2102,6 +2158,8 @@
     'estimated_coverage_window': 'estimated_coverage_window',
     'bride_dress_time': 'bride_dress_time',
     'groom_tux_time': 'groom_tux_time',
+    'bride_into_dress_time': 'bride_into_dress_time',
+    'groom_into_attire_time': 'groom_into_attire_time',
     'ceremony_time': 'ceremony_time',
     'ceremony_length': 'ceremony_length',
     'special_traditions': 'special_traditions',
@@ -3021,6 +3079,23 @@
     return n || 'your partner';
   }
 
+  // Map a stored attire value to the noun used in the "get into their ___" label.
+  function attireNoun(v) {
+    v = (v || '').toLowerCase();
+    if (v.indexOf('dress') >= 0) return 'dress';
+    if (v.indexOf('suit') >= 0 || v.indexOf('tux') >= 0) return 'suit or tux';
+    if (v.indexOf('jumpsuit') >= 0) return 'jumpsuit';
+    return 'dress or attire';
+  }
+
+  function updateIntoAttireLabels() {
+    var n1 = gettingReadyName(1), n2 = gettingReadyName(2);
+    var ld1 = document.getElementById('gr-label-intodress-1');
+    if (ld1) ld1.textContent = 'What time does ' + n1 + ' get into their ' + attireNoun(ynState['bride_attire_type']) + '?';
+    var ld2 = document.getElementById('gr-label-intodress-2');
+    if (ld2) ld2.textContent = 'What time does ' + n2 + ' get into their ' + attireNoun(ynState['groom_attire_type']) + '?';
+  }
+
   function applyCoupleNamesToLabels() {
     var n1 = gettingReadyName(1);
     var n2 = gettingReadyName(2);
@@ -3028,6 +3103,11 @@
     if (l1) l1.textContent = 'What time does ' + n1 + ' start getting ready? (or upload your timeline above and we\'ll pre-fill this section for you)';
     var l2 = document.getElementById('gr-label-dress-2');
     if (l2) l2.textContent = 'What time does ' + n2 + ' start getting ready?';
+    var la1 = document.getElementById('gr-label-attire-1');
+    if (la1) la1.textContent = 'What is ' + n1 + ' wearing?';
+    var la2 = document.getElementById('gr-label-attire-2');
+    if (la2) la2.textContent = 'What is ' + n2 + ' wearing?';
+    updateIntoAttireLabels();
     var l3 = document.getElementById('gr-label-loc-1');
     if (l3) l3.textContent = 'Where is ' + n1 + ' getting ready? (include hotel and room number if applicable)';
     var l4 = document.getElementById('gr-label-loc-2');
