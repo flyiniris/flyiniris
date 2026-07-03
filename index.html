@@ -3636,7 +3636,7 @@
                 fetch(WORKER_URL + '/webhook/calculator', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(Object.assign({}, calcData, { 'cf-turnstile-response': (window.fiTurnstileToken || '') }))
+                  body: JSON.stringify(Object.assign({}, calcData, { 'cf-turnstile-response': window.fiConsumeToken() }))
                 }).catch(function(err) { console.log('Calc submission error:', err); });
                 state.calcSubmitted = true;
               }
@@ -3833,7 +3833,7 @@
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.assign({}, inquiryData, { 'cf-turnstile-response': (window.fiTurnstileToken || '') }))
+              body: JSON.stringify(Object.assign({}, inquiryData, { 'cf-turnstile-response': window.fiConsumeToken() }))
             }).then(function(resp) {
               // A non-2xx means no contact was created. Throw into the catch
               // so the couple is asked to retry instead of being told success.
@@ -3896,7 +3896,12 @@
 
     })();
   </script>
-  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};
+  /* Two forms share one Turnstile widget on this page. A token is single-use, so read the
+     current token AND reset the widget on each submit, giving the next form a fresh token
+     (a calculator submit then an inquiry submit would otherwise reuse one token and 403 the
+     second once enforce is on). Single-form pages do not need this. */
+  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
   <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>
