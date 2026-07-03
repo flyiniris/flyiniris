@@ -919,6 +919,7 @@
     /* ========== HIDDEN ========== */
     .hidden { display: none !important; }
   </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -1330,7 +1331,8 @@ async function submitEmail() {
         weddingDate: date || undefined,
         submissionType: 'quiz',
         filmVibe: [style.name],
-        variant: 'quiz'
+        variant: 'quiz',
+        'cf-turnstile-response': (window.fiTurnstileToken || '')
       })
     });
   } catch (e) {
@@ -1470,5 +1472,7 @@ function showToast(msg) {
 }
 </script>
 
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>

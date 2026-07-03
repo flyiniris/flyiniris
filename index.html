@@ -2056,6 +2056,7 @@
     }
 
   </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -3635,7 +3636,7 @@
                 fetch(WORKER_URL + '/webhook/calculator', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(calcData)
+                  body: JSON.stringify(Object.assign({}, calcData, { 'cf-turnstile-response': (window.fiTurnstileToken || '') }))
                 }).catch(function(err) { console.log('Calc submission error:', err); });
                 state.calcSubmitted = true;
               }
@@ -3832,7 +3833,7 @@
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(inquiryData)
+              body: JSON.stringify(Object.assign({}, inquiryData, { 'cf-turnstile-response': (window.fiTurnstileToken || '') }))
             }).then(function(resp) {
               // A non-2xx means no contact was created. Throw into the catch
               // so the couple is asked to retry instead of being told success.
@@ -3895,5 +3896,7 @@
 
     })();
   </script>
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>

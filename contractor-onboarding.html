@@ -440,6 +440,7 @@
       .form-grid .full { grid-column: 1; }
     }
   </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -978,7 +979,7 @@
         const res = await fetch('https://iris-automation.flyin-iris-mp.workers.dev/webhook/contractor-onboarding', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+          body: JSON.stringify(Object.assign({}, data, { 'cf-turnstile-response': (window.fiTurnstileToken || '') })),
         });
 
         if (!res.ok) throw new Error('Server error: ' + res.status);
@@ -1025,5 +1026,7 @@
     });
   </script>
 
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>
