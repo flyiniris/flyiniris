@@ -141,8 +141,9 @@ visitors (copy, schema, and page-source JS all stay price-free).
   /api/package/save (save alone stores no config; that ordering is
   load-bearing). saved.html renders the saved package and ends in book-a-call.
 - Pricing constants mirror src/pricing.ts on the GATED pages only.
-Worker-side follow-ups for this funnel are specced in
-backend-brief-site-funnel.md at repo root.
+Worker-side follow-ups for this funnel were specced in the backend brief,
+now archived at iris-automation/docs/plans/backend-brief-site-funnel-2026-07-03.md
+(moved out of this repo 2026-07-04 because Pages serves every committed file).
 
 ## Brand Reference
 - Background: `#0A0A0A` (primary), `#111110` (secondary), `#161615` (cards), `#1A1A19` (elevated)
