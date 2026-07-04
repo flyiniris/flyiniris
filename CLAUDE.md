@@ -118,11 +118,31 @@ C:\Users\flyin\Claude Projects\Landing Page\flyiniris\  # Project root (existing
 ```
 
 ## CRITICAL RULES
-1. **DO NOT modify** index.html, privacy.html, terms.html, or any existing files
-2. All new work goes in `delivery/` (source code) and `films/` (generated output)
-3. This is a Windows machine, provide both .sh (bash/WSL) and .ps1 (PowerShell) versions of scripts
-4. The project auto-deploys to Cloudflare Pages from GitHub main branch
-5. Film pages will be accessible at flyiniris.com/films/{slug} via Cloudflare Pages routing
+1. Pushing to main deploys PRODUCTION. Feature work happens on branches; Sean reviews the branch preview and merges.
+2. This is a Windows machine; provide both .sh (bash/WSL) and .ps1 (PowerShell) versions of scripts when scripts are the deliverable.
+3. Film delivery pages live at flyiniris.com/films/{slug} via Cloudflare Pages routing; their source tooling is `delivery/`.
+4. Every committed file is served publicly by Pages. There is no ignore mechanism (.cfignore is a myth). Internal docs and tooling either stay out of the repo or get a shadowing 301 in `_redirects` (see the block at the top of that file). Never commit secrets, GHL IDs, or ops notes.
+5. `_headers` carries the CSP. Any page that adds a new third-party origin MUST add it to the CSP in the same commit or the resource is silently blocked.
+
+## FUNNEL ARCHITECTURE (locked 2026-07-03, session site/selling-machine)
+The site is an inquiry-first funnel. Exact pricing is NEVER shown to anonymous
+visitors (copy, schema, and page-source JS all stay price-free).
+- index.html renders the short inquiry form at #quiz (#inquiry alias): first
+  names, email, phone, wedding date (inline availability check), venue
+  optional, one non-marketing SMS consent checkbox.
+- Submit POSTs /webhook/inquiry on the Worker with event_id + attribution;
+  the response's session_token goes to localStorage (fi_session_token) and
+  the couple routes to /thanks?session=TOKEN.
+- thanks.html is the router: availability payoff + film match, PRIMARY
+  embedded booking widget (book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR),
+  SECONDARY /calculator/?session=TOKEN.
+- /calculator/ is token-gated (head gate; anonymous hits redirect to
+  /?src=calculator#inquiry). Save flow = POST /api/package/dream THEN
+  /api/package/save (save alone stores no config; that ordering is
+  load-bearing). saved.html renders the saved package and ends in book-a-call.
+- Pricing constants mirror src/pricing.ts on the GATED pages only.
+Worker-side follow-ups for this funnel are specced in
+backend-brief-site-funnel.md at repo root.
 
 ## Brand Reference
 - Background: `#0A0A0A` (primary), `#111110` (secondary), `#161615` (cards), `#1A1A19` (elevated)

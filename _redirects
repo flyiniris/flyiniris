@@ -3,6 +3,7 @@
 # rules shadow the underlying files (there is no Pages ignore mechanism;
 # .cfignore was a no-op and has been deleted).
 /CLAUDE.md                  /   301
+/backend-brief-site-funnel.md   /   301
 /README.md                  /   301
 /package.json               /   301
 /package-lock.json          /   301
