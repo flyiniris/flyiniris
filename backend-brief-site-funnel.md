@@ -154,7 +154,22 @@ Then verify live pairing end to end: submit a test inquiry on the branch
 preview (use the reset-test-lead skill persona), and in Test Events confirm
 ONE Lead with matching event_id from both Browser and Server sources.
 
-## 11. Small page-contract notes (no Worker action, context only)
+## 11. Preview-domain CORS (small, do early: unblocks Sean's preview review)
+
+ALLOWED_ORIGINS (src/index.ts:203-212) has no Pages preview origins, so on
+the branch preview (site-selling-machine.flyiniris.pages.dev) every Worker
+API call fails CORS: availability check, /api/session, the inquiry POST, the
+films index. Verified in-browser 2026-07-03; the pages degrade gracefully but
+the funnel cannot be exercised end to end on a preview. Add
+`https://flyiniris.pages.dev` plus a suffix check for
+`.flyiniris.pages.dev` origins in getCorsHeaders (suffix check, not a
+wildcard header; keep echoing the exact origin). Also note the Turnstile
+widget sitekey does not include the pages.dev preview hostname (console
+error 110200 on preview); harmless in log-mode, and adding the preview
+hostname to the Turnstile widget config in the Cloudflare dashboard makes
+preview testing fully realistic before the enforce flip.
+
+## 12. Small page-contract notes (no Worker action, context only)
 
 - Pages send tracking top-level fields: event_id, fbp, fbc, fbclid, gclid,
   utm_*, ad_id, adset_id, campaign_id, landing_page. handleInquiry already
