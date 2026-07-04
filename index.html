@@ -53,9 +53,8 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev" crossorigin>
+  <link rel="preconnect" href="https://media.flyiniris.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.vidstack.io">
-  <link rel="dns-prefetch" href="https://media.flyiniris.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Vidstack Player (deferred - loads when films section is near viewport) -->
@@ -2134,7 +2133,11 @@
         img.fetchPriority = 'high';
         img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
         wrapper.appendChild(img);
-        var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
+        // media.flyiniris.com is the R2 custom domain over the same bucket;
+        // the heroes carry Cache-Control public, max-age=31536000, immutable
+        // there (Code-Backend, 2026-07-04), unlike the rate-limited r2.dev
+        // dev endpoint this replaced.
+        var cdnBase = 'https://media.flyiniris.com';
         var video = document.createElement('video');
         video.src = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
         video.autoplay = true;
