@@ -40,6 +40,11 @@
 /contract.html             https://agreement.flyiniris.com/agreement  301
 /payment                   https://agreement.flyiniris.com/agreement  301
 /payment/*                 https://agreement.flyiniris.com/agreement  301
+# payment.html deleted 2026-07-03: it was a stale client-side bridge to the
+# workers.dev payment page, so /payment.html and /payment disagreed on the
+# destination. Same literal-.html pattern as /contract.html above; the
+# agreement subdomain is canonical.
+/payment.html              https://agreement.flyiniris.com/agreement  301
 
 # Stale duplicate of the canonical delivery page (old root copy deleted 2026-06-10)
 /amanda-boris              /films/amanda-boris/  301
