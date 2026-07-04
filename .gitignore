@@ -1,4 +1,6 @@
 node_modules/
+.claude/
+delivery/logs/
 delivery/test-output/
 delivery/output/
 delivery/workers/video-serve/node_modules/

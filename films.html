@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Films That Hit Different.">
+  <meta property="og:title" content="Wedding Films That Hit Different | Flyin' Iris">
   <meta property="og:description" content="Cinematic wedding films by Flyin' Iris. Milwaukee and Wisconsin.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/films">
@@ -22,6 +22,24 @@
   <meta name="twitter:image" content="https://www.flyiniris.com/og-films.png">
 
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+
+  <!-- Meta Pixel (deferred 3s for page speed) -->
+  <script>
+  setTimeout(function() {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbq.js');
+    fbq('init', '518972926490365');
+    fbq('track', 'PageView');
+  }, 3000);
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -500,8 +518,18 @@
 
     <!-- Film Grid -->
     <section class="film-grid">
-      <p class="section-label">OUR WORK</p>
+      <h2 class="section-label" style="font-family:'Outfit',sans-serif;">OUR WORK</h2>
 
+      <!-- Live film grid, rendered from /api/films when the index carries
+           playable media. The curated markup below stays as the instant
+           fallback (and the render if the index has no media-complete films,
+           which is the state at build time 2026-07-03). Regeneration path:
+           the film index lives in Worker KV key "films" (Studio Films tab /
+           iris-automation scripts write it); entries need slug, coupleNames,
+           venue, thumbnailUrl, and teaserUrl to appear here. -->
+      <div id="film-grid-live" style="display:none;"></div>
+
+      <div id="film-grid-curated">
       <!-- Featured Film (full-width) -->
       <div class="film-featured">
         <a href="https://www.flyiniris.com/yours?film=taylor-kane&amp;fc=Taylor%20%26%20Kane&amp;fv=The%20Green%20Bay%20Country%20Club" class="film-thumb-link">
@@ -550,6 +578,7 @@
           </div>
         </div>
       </div>
+      </div><!-- /film-grid-curated -->
     </section>
 
     <!-- Social Proof -->
@@ -559,12 +588,13 @@
       <p class="quote-attribution">A Flyin' Iris Couple</p>
     </section>
 
-    <!-- CTA -->
+    <!-- CTA: inquiry-first so cold search traffic gets captured before the
+         call-booking ask. -->
     <section class="cta-section">
       <h2 class="cta-heading">Imagine this for your day.</h2>
-      <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="cta-button">LET'S TALK</a>
+      <a href="https://www.flyiniris.com/#inquiry" class="cta-button">CHECK YOUR DATE</a>
       <br>
-      <a href="https://www.flyiniris.com/calculator/" class="cta-link">Or build your custom package &rarr;</a>
+      <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="cta-link">Or book a call with Sierra &amp; Sean &rarr;</a>
     </section>
 
     <!-- Sign-off -->
@@ -578,6 +608,7 @@
       <p class="footer-brand">FLYIN' IRIS</p>
       <p class="footer-location">Milwaukee, Wisconsin</p>
       <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
+      <p class="footer-legal" style="margin-bottom:8px;"><a href="/">Home</a> &middot; <a href="/venues/">Wisconsin Venue Films</a> &middot; <a href="/quiz/">Film Style Quiz</a></p>
       <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
     </footer>
 
@@ -594,6 +625,48 @@
         venueMatch.textContent = 'Films that reminded us of ' + vn;
         venueMatch.style.display = 'block';
       }
+    })();
+
+    // Live film grid from the Worker film index. Renders only entries with
+    // complete public media (thumbnailUrl + teaserUrl); if fewer than 4
+    // qualify, the curated static grid above stays exactly as authored.
+    (function() {
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+      var PLAY_SVG = '<div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/></svg></div>';
+      fetch('https://iris-automation.flyin-iris-mp.workers.dev/api/films')
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          var films = (data && data.films) || [];
+          var playable = films.filter(function(f) {
+            return f && f.slug && f.coupleNames && f.thumbnailUrl && f.teaserUrl;
+          }).slice(0, 12);
+          if (playable.length < 4) return; // curated grid stays
+          var featured = playable.filter(function(f) { return f.featured; })[0] || playable[0];
+          var rest = playable.filter(function(f) { return f !== featured; });
+          function card(f, wrapClass) {
+            var href = 'https://www.flyiniris.com/yours?film=' + encodeURIComponent(f.slug) + '&fc=' + encodeURIComponent(f.coupleNames);
+            return '<div class="' + wrapClass + '">' +
+              '<a href="' + href + '" class="film-thumb-link">' +
+              '<img src="' + esc(f.thumbnailUrl) + '" alt="' + esc(f.coupleNames) + ' wedding film" class="film-thumb" loading="lazy">' +
+              PLAY_SVG + '</a>' +
+              '<div class="film-info"><h3 class="film-title">' + esc(f.coupleNames) + '</h3>' +
+              '<p class="film-subtitle">' + esc(f.venue || 'A Wisconsin Love Story') + '</p></div></div>';
+          }
+          var h = card(featured, 'film-featured');
+          h += '<div class="film-grid-secondary">';
+          rest.forEach(function(f) { h += card(f, 'film-grid-item'); });
+          h += '</div>';
+          var live = document.getElementById('film-grid-live');
+          var curated = document.getElementById('film-grid-curated');
+          if (live && curated) {
+            live.innerHTML = h;
+            live.style.display = '';
+            curated.style.display = 'none';
+          }
+        })
+        .catch(function() { /* curated grid stays */ });
     })();
   </script>
 

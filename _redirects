@@ -1,3 +1,16 @@
+# Repo tooling and docs that must stay committed but never be served.
+# Cloudflare Pages evaluates _redirects before static assets, so these
+# rules shadow the underlying files (there is no Pages ignore mechanism;
+# .cfignore was a no-op and has been deleted).
+/CLAUDE.md                  /   301
+/README.md                  /   301
+/package.json               /   301
+/package-lock.json          /   301
+/.gitignore                 /   301
+/.gitattributes             /   301
+/delivery/*                 /   301
+/.claude/*                  /   301
+
 # Old Squarespace pages: 301 permanent redirects
 /wedding-films              /  301
 /wedding-films/*            /  301
@@ -27,6 +40,16 @@
 /contract.html             https://agreement.flyiniris.com/agreement  301
 /payment                   https://agreement.flyiniris.com/agreement  301
 /payment/*                 https://agreement.flyiniris.com/agreement  301
+# payment.html deleted 2026-07-03: it was a stale client-side bridge to the
+# workers.dev payment page, so /payment.html and /payment disagreed on the
+# destination. Same literal-.html pattern as /contract.html above; the
+# agreement subdomain is canonical.
+/payment.html              https://agreement.flyiniris.com/agreement  301
 
 # Stale duplicate of the canonical delivery page (old root copy deleted 2026-06-10)
 /amanda-boris              /films/amanda-boris/  301
+
+# Dead A/B variant stub deleted 2026-07-03 (index.html hardcodes the unified
+# experience; nothing read ?v=b). Redirects cover any stale ad or saved link.
+/b                         /  301
+/b/*                       /  301

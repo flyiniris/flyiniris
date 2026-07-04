@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wedding Questionnaire | Flyin' Iris</title>
+  <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -2692,7 +2693,7 @@
     fetch(API_BASE + '/webhook/questionnaire', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({}, body, { 'cf-turnstile-response': (window.fiTurnstileToken || '') }))
+      body: JSON.stringify(Object.assign({}, body, { 'cf-turnstile-response': (window.fiConsumeToken ? window.fiConsumeToken() : (window.fiTurnstileToken || '')) }))
     }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json().catch(function () { return {}; });
@@ -2802,7 +2803,7 @@
       });
     }
     // Intentionally NOT restoring snap._step. The welcome page (step 0) is
-    // always the entry point — it carries the timeline-upload prompt the
+    // always the entry point: it carries the timeline-upload prompt the
     // couple should see every visit. Form data above is still restored, so
     // nothing they typed is lost; they just re-enter through the front door
     // and click "Start the Questionnaire". Explicit deep-links still work:
@@ -3151,7 +3152,13 @@
 
 })();
 </script>
-  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};
+  /* Turnstile tokens are single-use: the Worker consumes one on EVERY submit
+     attempt, including failed ones. Read the current token AND reset the
+     widget so a retry after a network blip gets a fresh token instead of
+     stranding on a consumed one (403 under TURNSTILE_ENFORCE). Same pattern
+     as index.html fiConsumeToken. */
+  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
   <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>

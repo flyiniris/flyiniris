@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Milwaukee Wedding Videographer | Cinematic Wedding Films | Flyin' Iris</title>
   <meta name="description" content="Milwaukee husband-and-wife wedding videographers crafting cinematic wedding films across Wisconsin. 5.0 stars, 100+ love stories filmed. Now booking 2026 & 2027.">
-  <meta name="keywords" content="Wisconsin wedding videographer, Milwaukee wedding videographer, cinematic wedding films, wedding video Wisconsin, Door County wedding videographer, Madison wedding videographer, Chicago wedding videographer">
   <link rel="canonical" href="https://www.flyiniris.com/">
   <meta name="robots" content="index, follow">
 
@@ -26,6 +25,9 @@
   <!-- Google Tag Manager + Meta Pixel (deferred 3s for page speed) -->
   <script>
   window.dataLayer = window.dataLayer || [];
+  // One PageView event id shared by the browser pixel and the server CAPI
+  // PageView (/api/pageview) so Meta dedups the pair instead of counting two.
+  window.__fi_pv_event_id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
   setTimeout(function() {
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -42,7 +44,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbq.js');
     fbq('init', '518972926490365');
-    fbq('track', 'PageView');
+    fbq('track', 'PageView', {}, { eventID: window.__fi_pv_event_id });
   }, 3000);
   </script>
   <noscript><img height="1" width="1" style="display:none"
@@ -51,9 +53,8 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev" crossorigin>
+  <link rel="preconnect" href="https://media.flyiniris.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.vidstack.io">
-  <link rel="dns-prefetch" href="https://media.flyiniris.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Vidstack Player (deferred - loads when films section is near viewport) -->
@@ -64,7 +65,7 @@
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "VideoProductionCompany"],
     "name": "Flyin' Iris Media Productions LLC",
-    "description": "Premium cinematic wedding videography serving Wisconsin, Northern Illinois, and Chicago. Custom packages starting at $2,800.",
+    "description": "Premium cinematic wedding videography serving Wisconsin, Northern Illinois, and Chicago. Every collection is built around the couple's day; exact pricing is shared on inquiry.",
     "url": "https://www.flyiniris.com/",
     "telephone": "+12623845079",
     "address": {
@@ -79,7 +80,7 @@
       "latitude": 43.2967,
       "longitude": -87.9862
     },
-    "priceRange": "$2,800 - $7,000",
+    "priceRange": "$$$",
     "areaServed": [
       "Milwaukee, WI",
       "Madison, WI",
@@ -96,8 +97,7 @@
       "@type": "AggregateRating",
       "ratingValue": "5.0",
       "reviewCount": "43",
-      "bestRating": "5",
-      "worstRating": "5"
+      "bestRating": "5"
     },
     "sameAs": [
       "https://www.instagram.com/flyin.iris/",
@@ -117,7 +117,7 @@
         "name": "How much does a wedding videographer cost in Milwaukee?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our film packages start at $2,800 for the Team experience and $3,800 for the Sierra & Sean experience, plus Wisconsin sales tax. Build your exact price in about 2 minutes with our package calculator at flyiniris.com/calculator."
+          "text": "Milwaukee wedding film collections vary widely with coverage hours, team, and film length, so we build every package around the couple's actual day instead of a fixed menu. Share your date and a few details at flyiniris.com and we send exact pricing plus your date's availability right away."
         }
       },
       {
@@ -1005,7 +1005,7 @@
       font-style: italic;
       font-weight: 400;
       font-size: 1.05rem;
-      color: #F0C850;
+      color: #FFBD1D;
       margin-top: 20px;
       opacity: 0;
       transform: translateY(20px);
@@ -2056,7 +2056,11 @@
     }
 
   </style>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Turnstile api.js is lazy-injected when the inquiry section nears the
+       viewport (see the observer near the hero video injector). Keeping it
+       out of the head saves a third-party fetch on the ad landing path. -->
+  <link rel="preload" as="image" href="hero-poster-16x9.webp" media="(min-width: 769px)" fetchpriority="high">
+  <link rel="preload" as="image" href="hero-poster-9x16.webp" media="(max-width: 768px)" fetchpriority="high">
 </head>
 <body>
 
@@ -2112,6 +2116,43 @@
         </div>
       </div>
     </section>
+    <script>
+      // Hero paint path: the preloaded first-frame poster becomes the LCP
+      // element immediately; the mp4 fades in over it whenever it is ready.
+      // Runs here, right after the hero markup, instead of at the bottom of
+      // the document so the video request starts ~150KB of HTML earlier.
+      (function() {
+        var isMobile = window.innerWidth <= 768;
+        var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
+        if (!wrapper) return;
+        var posterSrc = isMobile ? 'hero-poster-9x16.webp' : 'hero-poster-16x9.webp';
+        var img = new Image();
+        img.src = posterSrc;
+        img.alt = '';
+        img.decoding = 'async';
+        img.fetchPriority = 'high';
+        img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+        wrapper.appendChild(img);
+        // media.flyiniris.com is the R2 custom domain over the same bucket;
+        // the heroes carry Cache-Control public, max-age=31536000, immutable
+        // there (Code-Backend, 2026-07-04), unlike the rate-limited r2.dev
+        // dev endpoint this replaced.
+        var cdnBase = 'https://media.flyiniris.com';
+        var video = document.createElement('video');
+        video.src = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        video.poster = posterSrc;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.6s ease;';
+        video.addEventListener('playing', function() { video.style.opacity = '1'; }, { once: true });
+        wrapper.appendChild(video);
+      })();
+    </script>
 
     <!-- ========== SOCIAL PROOF BAR ========== -->
     <section class="social-proof reveal" aria-label="Credentials">
@@ -2317,8 +2358,26 @@
           <span class="reviews-label">5.0 on Google</span>
         </div>
         <div class="reveal-child">
-          <script src="https://elfsightcdn.com/platform.js" async></script>
           <div class="elfsight-app-fb2d57a6-a5d9-4ac3-85a0-146ee0086522" data-elfsight-app-lazy></div>
+          <script>
+            // Elfsight platform.js only loads when the reviews block nears
+            // the viewport; it is a heavy third party and never belongs on
+            // the ad-landing critical path.
+            (function() {
+              var host = document.querySelector('.elfsight-app-fb2d57a6-a5d9-4ac3-85a0-146ee0086522');
+              if (!host) return;
+              var eObserver = new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) {
+                  var s = document.createElement('script');
+                  s.src = 'https://elfsightcdn.com/platform.js';
+                  s.async = true;
+                  document.head.appendChild(s);
+                  eObserver.disconnect();
+                }
+              }, { rootMargin: '400px 0px' });
+              eObserver.observe(host);
+            })();
+          </script>
         </div>
         <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Check Your Date &#10022;</a>
@@ -2335,10 +2394,12 @@
         <h2 class="section-heading reveal-child">Your film. Your way. No cookie cutters.</h2>
         <div class="investment-text">
           <p class="reveal-child">Every couple is different, so every film should be too. We'll sit down with you, learn about your day, figure out what matters most, and put together a film package that fits. Whether you want a short, cinematic recap you'll rewatch a thousand times or the whole day captured start to finish, we'll build it around you.</p>
-          <p class="investment-price reveal-child">Film Packages Starting at $2,800</p>
-          <p class="reveal-child investment-desc">6 hours of coverage, a cinematic highlight film, drone coverage, professional audio, and free travel within 120 miles of Milwaukee all come standard. The FOMO Documentary Edit ($1,000 value) is free for the first 3 couples who book each month, otherwise a $1,000 add-on. Netflix-style delivery so you can relive it anytime.</p>
+          <!-- TBD-SEAN-REVIEW: de-priced investment copy, voice is yours -->
+          <p class="investment-price reveal-child">Built around your day, not a menu</p>
+          <p class="reveal-child investment-desc">6 hours of coverage, a cinematic highlight film, drone coverage, professional audio, and free travel within 120 miles of Milwaukee all come standard. The FOMO Documentary Edit, the raw uncut film of your entire day, is included free for the first few couples who book each month. Netflix-style delivery so you can relive it anytime.</p>
+          <p class="reveal-child investment-desc"><strong style="font-weight:500;color:var(--accent)">We don't do menu pricing.</strong> Tell us your date and a few details, and you'll get our exact pricing plus your date's availability right away. No pressure, no games, no surprises later.</p>
           <div class="reveal-child cta-center">
-            <a href="#quiz" class="btn">Let's Build Yours</a>
+            <a href="#quiz" class="btn">Get Our Pricing</a>
           </div>
         </div>
       </div>
@@ -2351,10 +2412,17 @@
       </a>
     </section>
 
-    <!-- ========== QUIZ / CALCULATOR ========== -->
-    <section id="quiz" class="section quiz-section" aria-label="Wedding film quiz">
+    <!-- ========== INQUIRY (formerly quiz/calculator) ========== -->
+    <div id="inquiry"></div>
+    <section id="quiz" class="section quiz-section" aria-label="Check your date and get pricing">
       <div class="section-inner reveal">
         <div id="quizApp"></div>
+        <!-- Turnstile lives OUTSIDE #quizApp: render() replaces that node's
+             innerHTML on every state change and would destroy the widget.
+             api.js is lazy-injected when this section nears the viewport. -->
+        <div style="display:flex;justify-content:center;margin-top:4px">
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto"></div>
+        </div>
       </div>
     </section>
 
@@ -2366,7 +2434,7 @@
         <div class="faq-list reveal-child">
           <details class="faq-item">
             <summary>How much does a wedding videographer cost in Milwaukee?</summary>
-            <p>Our film packages start at $2,800 for the Team experience and $3,800 for the Sierra &amp; Sean experience, plus Wisconsin sales tax. Build your exact price in about 2 minutes with our <a href="/calculator/">package calculator</a>.</p>
+            <p>Wedding film collections vary widely with coverage hours, team, and film length, so we build every package around your actual day instead of a fixed menu. <a href="#inquiry">Share your date and a few details</a> and we'll send exact pricing plus your date's availability right away.</p>
           </details>
           <details class="faq-item">
             <summary>Do you travel outside Milwaukee?</summary>
@@ -2406,7 +2474,7 @@
     </div>
     <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
     <p class="footer-contact">758 Hillside Ct, Cedarburg, WI 53012 &middot; <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a> &middot; <a href="tel:+12623845079">(262) 384-5079</a></p>
-    <p class="footer-services">Cinematic Wedding Films &middot; Wedding Highlight Videos &middot; Elopement Videography &middot; Drone Wedding Coverage &middot; Destination Wedding Videographer</p>
+    <p class="footer-services">Cinematic Wedding Films &middot; Wedding Highlight Films &middot; Elopement Videography &middot; Drone Wedding Coverage &middot; Destination Wedding Videographer</p>
     <p class="footer-explore"><a href="/films">Wedding Films</a> &middot; <a href="/venues/">Wisconsin Venue Films</a> &middot; <a href="/quiz/">Film Style Quiz</a> &middot; <a href="/calculator/">Build Your Package</a></p>
     <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
   </footer>
@@ -2465,24 +2533,38 @@
         observer.observe(bgEl);
       })();
 
-      // ========== HERO VIDEO - LOAD ONLY ONE ==========
+      // Hero video injection moved to an inline script directly after the
+      // hero section markup (poster-first LCP path).
+
+      // ========== LAZY THIRD PARTIES (Turnstile) ==========
+      // Turnstile api.js loads when the inquiry section approaches, same
+      // pattern as the Vidstack loader. Implicit rendering scans for
+      // .cf-turnstile when the script executes.
       (function() {
-        var isMobile = window.innerWidth <= 768;
-        var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
-        var videoSrc = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
-        var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
-        if (wrapper) {
-          var video = document.createElement('video');
-          video.src = videoSrc;
-          video.autoplay = true;
-          video.loop = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.setAttribute('playsinline', '');
-          video.setAttribute('webkit-playsinline', '');
-          video.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
-          wrapper.appendChild(video);
+        var quizSection = document.getElementById('quiz');
+        if (!quizSection) return;
+        var loaded = false;
+        function loadTurnstile() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+          s.async = true;
+          s.defer = true;
+          document.head.appendChild(s);
         }
+        var tObserver = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            loadTurnstile();
+            tObserver.disconnect();
+          }
+        }, { rootMargin: '600px 0px' });
+        tObserver.observe(quizSection);
+        // Safety: anchor jumps from the nav can outrun the observer margin.
+        document.addEventListener('click', function(e) {
+          var a = e.target && e.target.closest ? e.target.closest('a[href="#quiz"], a[href="#inquiry"]') : null;
+          if (a) loadTurnstile();
+        });
       })();
 
       // ========== NAV SCROLL BEHAVIOR ==========
@@ -2600,44 +2682,49 @@
         // Availability now served from Worker D1 database (no more Apps Script)
         var AVAILABILITY_URL = WORKER_URL + '/api/availability';
 
-        // --- LIVE FOMO SPOT STATE ---
-        // Fetched from iris-automation Worker /api/pricing/constants on load.
-        // Default false (PAID) is the revenue-safe fail-closed state. The
-        // breakdown lines in calcPrice render the +$1,000 / -$1,000 paired
-        // free framing only when fomoFreeSpot is true. On any fetch failure
-        // we stay at the paid default rather than accidentally giving away
-        // a free spot that does not exist.
-        var fomoFreeSpot = false;
-        fetch(WORKER_URL + '/api/pricing/constants')
-          .then(function(r) { return r.ok ? r.json() : null; })
-          .then(function(data) {
-            if (data && typeof data.fomoFreeSpot === 'boolean') {
-              fomoFreeSpot = data.fomoFreeSpot;
-            }
-          })
-          .catch(function() { /* stay at safe-default false */ });
 
         // --- UNIFIED EXPERIENCE (split test removed) ---
         window.__fi_variant = 'unified';
         window.__fi_variant_source = 'unified';
 
-        // --- UTM / FBCLID CAPTURE ---
-        // Capture tracking params from URL on page load and store in sessionStorage
+        // --- UTM / FBCLID / AD ID CAPTURE ---
+        // First-touch attribution persists in localStorage for 90 days (a
+        // couple who clicks an ad, closes the tab, and comes back tomorrow
+        // still carries the ad attribution into the inquiry). sessionStorage
+        // is read as a legacy fallback for tabs opened before this deploy.
+        var TRACKING_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ad_id', 'adset_id', 'campaign_id'];
+        var TRACKING_TTL_MS = 90 * 24 * 60 * 60 * 1000;
         (function() {
-          var params = new URLSearchParams(window.location.search);
-          var trackingKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
-          trackingKeys.forEach(function(key) {
-            var val = params.get(key);
-            if (val) sessionStorage.setItem('fi_' + key, val);
-          });
-          // Fire server-side PageView for CAPI when fbclid is present
-          var fbclid = params.get('fbclid') || sessionStorage.getItem('fi_fbclid');
+          try {
+            var ts = parseInt(localStorage.getItem('fi_tracking_ts') || '0', 10);
+            if (ts && (Date.now() - ts) > TRACKING_TTL_MS) {
+              TRACKING_KEYS.concat(['landing_page']).forEach(function(k) { localStorage.removeItem('fi_' + k); });
+              localStorage.removeItem('fi_tracking_ts');
+            }
+            var params = new URLSearchParams(window.location.search);
+            var captured = false;
+            TRACKING_KEYS.forEach(function(key) {
+              var val = params.get(key);
+              if (val) { localStorage.setItem('fi_' + key, val); captured = true; }
+            });
+            if (captured || !localStorage.getItem('fi_landing_page')) {
+              localStorage.setItem('fi_landing_page', window.location.href.split('#')[0]);
+            }
+            if (captured || !localStorage.getItem('fi_tracking_ts')) {
+              localStorage.setItem('fi_tracking_ts', String(Date.now()));
+            }
+          } catch (e) { /* storage blocked: tracking degrades gracefully */ }
+          // Fire server-side PageView for CAPI when fbclid is present, using
+          // the SAME event id as the browser pixel PageView so Meta dedups.
+          var fbclid = '';
+          try {
+            fbclid = new URLSearchParams(window.location.search).get('fbclid') || localStorage.getItem('fi_fbclid') || sessionStorage.getItem('fi_fbclid') || '';
+          } catch (e) { /* ignore */ }
           if (fbclid) {
-            var pvEventId = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
             fetch(WORKER_URL + '/api/pageview', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fbclid: fbclid, event_id: pvEventId })
+              body: JSON.stringify({ fbclid: fbclid, event_id: window.__fi_pv_event_id })
             }).catch(function() {});
           }
         })();
@@ -2647,11 +2734,15 @@
         }
         function getTrackingData() {
           var data = {};
-          var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
-          keys.forEach(function(key) {
-            var val = sessionStorage.getItem('fi_' + key);
+          TRACKING_KEYS.forEach(function(key) {
+            var val = null;
+            try { val = localStorage.getItem('fi_' + key) || sessionStorage.getItem('fi_' + key); } catch (e) { /* ignore */ }
             if (val) data[key] = val;
           });
+          try {
+            var lp = localStorage.getItem('fi_landing_page');
+            if (lp) data.landing_page = lp;
+          } catch (e) { /* ignore */ }
           // Read Meta browser cookies for CAPI match quality
           var fbp = getCookie('_fbp');
           var fbc = getCookie('_fbc');
@@ -2721,178 +2812,6 @@
           return dateStr;
         }
 
-        // --- PRICING (mirrors iris-automation/src/pricing.ts; update both together) ---
-        var SALES_TAX_RATE = 0.055;
-        // Team pricing (We want an incredible wedding film). Prices only:
-        // internal cost data and the profit floor live server side in
-        // pricing.ts (the floor is non binding across this page's whole
-        // config space, verified by the 140 config engine sweep).
-        var TEAM_BASE_PRICE = 2800;
-        var TEAM_HOURLY = 150;
-        var TEAM_HOURS = { 6:{price:0}, 7:{price:150}, 8:{price:300}, 9:{price:450}, 10:{price:600}, 11:{price:750}, 12:{price:900} };
-        var TEAM_HIGHLIGHT = {
-          "5 min":{price:0}, "6-8 min":{price:300},
-          "9-12 min":{price:600}, "13-15 min":{price:1000}, "15-20 min":{price:1300}
-        };
-        var TEAM_ADDONS = { teaser:{price:500}, storySession:{price:1000} };
-        // S&S pricing (We want Sierra & Sean creating with us)
-        var SS_BASE_PRICE = 3800;
-        var SS_HOURLY = 225;
-        var SS_HOURS = { 6:0, 7:225, 8:450, 9:675, 10:900, 11:1125, 12:1350 };
-        var SS_HIGHLIGHT = { "5 min":0, "6-8 min":300, "9-12 min":600, "13-15 min":1000, "15-20 min":1300 };
-        var SS_ADDONS = { teaser:500, storySession:1000 };
-
-        function getHoursNum(label) {
-          if (!label) return 6;
-          if (label.indexOf("12") >= 0) return 12;
-          if (label.indexOf("11") >= 0) return 11;
-          if (label.indexOf("10") >= 0) return 10;
-          if (label.indexOf("9") >= 0) return 9;
-          if (label.indexOf("8") >= 0) return 8;
-          if (label.indexOf("7") >= 0) return 7;
-          return 6;
-        }
-
-        function calcPrice(a) {
-          var isTeam = a.quality === "We want an incredible wedding film";
-          var isSS = a.quality === "We want Sierra & Sean creating with us";
-          if (!isTeam && !isSS) return { price:0, savings:0, rawPrice:0, breakdown:[] };
-          var hours = getHoursNum(a.hours);
-          var hasTeas = a.teaser && a.teaser.indexOf("Yes") >= 0;
-          var hasStory = a.storySession && a.storySession.indexOf("Yes") >= 0;
-          // FOMO is on a monthly rolling promo (free for first 3 couples each
-          // month, $1,000 paid after). The fomoFreeSpot module flag, fetched
-          // on init from iris-automation /api/pricing/constants, drives the
-          // breakdown rendering: when true, the paired +$1,000 / -$1,000
-          // visible-value pattern (free framing); when false, a single
-          // +$1,000 line (paid). Default is false until fetch resolves.
-          var extraHours = hours - 6;
-
-          if (isTeam) {
-            var hd = TEAM_HOURS[hours] || TEAM_HOURS[6];
-            var hld = TEAM_HIGHLIGHT[a.highlight] || {price:0};
-            var tp = hasTeas ? TEAM_ADDONS.teaser.price : 0;
-            var sp = hasStory ? TEAM_ADDONS.storySession.price : 0;
-            // FOMO is always in the package: +$1,000 in the subtotal, netted back
-            // out by the -$1,000 credit only when a free spot remains. Mirrors
-            // pricing.ts buildLineItems so the breakdown lines sum to the total.
-            var rawPrice = TEAM_BASE_PRICE + hd.price + hld.price + tp + sp + (fomoFreeSpot ? 0 : 1000);
-            // Bundle: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
-            var addOnCount = 0;
-            if (hasTeas) addOnCount++;
-            if (hasStory) addOnCount++;
-            if (hld.price > 0) addOnCount++;
-            if (extraHours >= 3) addOnCount++;
-            var discount = 0;
-            if (addOnCount >= 4) discount = 0.12;
-            else if (addOnCount >= 3) discount = 0.08;
-            else if (addOnCount >= 2) discount = 0.05;
-            // Canonical rounding: Math.round on discount, subtract from raw.
-            var discountAmount = Math.round(rawPrice * discount);
-            var preTaxTotal = rawPrice - discountAmount;
-            // The canonical Team profit floor is enforced server side at
-            // proposal time. It cannot bind for any combination this page
-            // can produce, so no cost data ships to the client.
-            var savings = discountAmount;
-            var tax = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
-            var finalPrice = preTaxTotal + tax;
-            var bd = [];
-            bd.push({label:"Base package (6hr + highlight + drone)", value:TEAM_BASE_PRICE});
-            if (a.hours) {
-              var h = getHoursNum(a.hours);
-              if (h > 6) {
-                bd.push({label: h + " hours of total coverage", value: hd.price, prefix: "+"});
-              } else {
-                bd.push({label: "6 hours of coverage", value: 0, display: "Included"});
-              }
-            }
-            if (a.highlight) {
-              if (hld.price > 0) {
-                bd.push({label: a.highlight + " highlight film", value: hld.price, prefix: "+"});
-              } else {
-                bd.push({label: "5 min highlight film", value: 0, display: "Included"});
-              }
-            }
-            bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-            if (fomoFreeSpot) {
-              bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
-            }
-            if (hasTeas) {
-              bd.push({label:"Teaser film", value:tp, prefix:"+"});
-            } else {
-              bd.push({label:"Teaser film", value:0, display:"Declined"});
-            }
-            if (hasStory) {
-              bd.push({label:"Story Session", value:sp, prefix:"+"});
-            } else if (a.storySession && a.storySession.indexOf("Tell me more") >= 0) {
-              bd.push({label:"Story Session", value:0, display:"Ask on the call \u2753"});
-            } else {
-              bd.push({label:"Story Session", value:0, display:"Declined"});
-            }
-            if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
-            bd.push({label:"Sales tax (5.5% Wisconsin)", value:tax, prefix:"+", decimals:true});
-            return { price:finalPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
-          }
-          // S&S path
-          var hp = SS_HOURS[hours] || 0;
-          var hlp = SS_HIGHLIGHT[a.highlight] || 0;
-          var tp2 = hasTeas ? SS_ADDONS.teaser : 0;
-          var sp2 = hasStory ? SS_ADDONS.storySession : 0;
-          // Same FOMO handling as the Team path above (mirrors pricing.ts).
-          var rawPrice = SS_BASE_PRICE + hp + hlp + tp2 + sp2 + (fomoFreeSpot ? 0 : 1000);
-          // Bundle: highlight upgrades, teaser, story session, hour upgrades +3hrs or more
-          var addOnCount = 0;
-          if (hasTeas) addOnCount++;
-          if (hasStory) addOnCount++;
-          if (hlp > 0) addOnCount++;
-          if (extraHours >= 3) addOnCount++;
-          var discount = 0;
-          if (addOnCount >= 4) discount = 0.12;
-          else if (addOnCount >= 3) discount = 0.08;
-          else if (addOnCount >= 2) discount = 0.05;
-          // Canonical rounding: Math.round on discount, subtract from raw. No profit floor on S&S.
-          var discountAmount = Math.round(rawPrice * discount);
-          var preTaxTotal = rawPrice - discountAmount;
-          var savings = discountAmount;
-          var tax = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
-          var finalPrice = preTaxTotal + tax;
-          var bd = [];
-          bd.push({label:"Base package (6hr + highlight + drone)", value:SS_BASE_PRICE});
-          if (a.hours) {
-            var hourNum = hours;
-            if (hourNum > 6) {
-              bd.push({label: hourNum + " hours of total coverage", value: hp, prefix: "+"});
-            } else {
-              bd.push({label: "6 hours of coverage", value: 0, display: "Included"});
-            }
-          }
-          if (a.highlight) {
-            if (hlp > 0) {
-              bd.push({label: a.highlight + " highlight film", value: hlp, prefix: "+"});
-            } else {
-              bd.push({label: "5 min highlight film", value: 0, display: "Included"});
-            }
-          }
-          bd.push({label:"FOMO Documentary Edit", value:1000, prefix:"+"});
-          if (fomoFreeSpot) {
-            bd.push({label:"FOMO Documentary Edit (free, monthly promo)", value:1000, prefix:"−"});
-          }
-          if (hasTeas) {
-            bd.push({label:"Teaser film", value:tp2, prefix:"+"});
-          } else {
-            bd.push({label:"Teaser film", value:0, display:"Declined"});
-          }
-          if (hasStory) {
-            bd.push({label:"Story Session", value:sp2, prefix:"+"});
-          } else if (a.storySession && a.storySession.indexOf("Tell me more") >= 0) {
-            bd.push({label:"Story Session", value:0, display:"Ask on the call \u2753"});
-          } else {
-            bd.push({label:"Story Session", value:0, display:"Declined"});
-          }
-          if (savings > 0) bd.push({label:"Estimated bundle savings*", value:savings, prefix:"\u2212"});
-          bd.push({label:"Sales tax (5.5% Wisconsin)", value:tax, prefix:"+", decimals:true});
-          return { price:finalPrice, savings:savings>0?savings:0, rawPrice:rawPrice, breakdown:bd };
-        }
         function fp(n) { return "$" + n.toLocaleString(); }
         // Always-2-decimal formatter for tax + estimated total (which can have fractional cents).
         function fpMoney(n) { return "$" + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -2911,92 +2830,12 @@
           return base + '?first_name=' + encodeURIComponent(first) + '&last_name=' + encodeURIComponent(last) + '&email=' + encodeURIComponent(ci.email || '') + '&phone=' + encodeURIComponent(phone);
         }
 
-        // --- QUIZ DATA ---
-        var quizSteps = [
-          { id:"excited", label:"The Fun Part", question:"What part of your wedding day are you most excited about?", subtext:"Be honest, there\u2019s no wrong answer here.", type:"single", options:[
-            {emoji:"\ud83e\udd70",label:"Marrying my best friend",desc:"The whole reason we\u2019re doing this"},
-            {emoji:"\ud83d\ude2d",label:"The ceremony",desc:"Vows, first look, the moment it becomes real"},
-            {emoji:"\ud83d\udc83",label:"The party",desc:"Dancing, drinks, and chaos with your people"},
-            {emoji:"\ud83c\udf8a",label:"Being with all my favorite people",desc:"Everyone you love, one place, one night"},
-            {emoji:"\ud83e\udd29",label:"Honestly everything!",desc:"All of it. Every single second"}
-          ], valueMessage:{"Marrying my best friend":"Okay stop, we\u2019re already emotional. This energy is exactly what makes a wedding film hit different: when the love is that real, the camera can feel it.","The ceremony":"That\u2019s where the real magic lives. We\u2019re trained to catch every micro-expression, every tear, every squeeze of the hand you\u2019ll miss in the moment.","The party":"Us too. There\u2019s nothing better on film than a dance floor that\u2019s completely lost it. Those are the moments you\u2019ll watch on repeat.","Being with all my favorite people":"That\u2019s the magic of a wedding film: you\u2019ll see moments between your favorite people that you completely missed because you were busy getting married.","Honestly everything!":"Same. That\u2019s exactly why wedding films exist: so you don\u2019t have to choose what to remember. You get ALL of it back."}},
-          { id:"vibe", label:"Your Vibe", question:"How would you describe your wedding vibe?", subtext:"Close your eyes for a sec. What does your day FEEL like?", type:"single", options:[
-            {emoji:"\ud83c\udf7e",label:"Elegant & Timeless",desc:"Black tie energy, slow dances, the kind of night that feels like a movie"},
-            {emoji:"\ud83c\udf89",label:"Big Energy & Fun",desc:"Shoes off by 9pm, the DJ won\u2019t stop, your grandma\u2019s on the dance floor"},
-            {emoji:"\ud83c\udf3f",label:"Warm & Intimate",desc:"Small guest list, big feelings, the kind of day where every hug lasts longer"},
-            {emoji:"\u2728",label:"A little bit of everything",desc:"Ugly crying at the altar, then closing down the bar, because why not both?"}
-          ], valueMessage:{"Elegant & Timeless":"We love this. Think slow-motion details, soft light, and the kind of film that feels like a love letter you\u2019ll open every anniversary.","Big Energy & Fun":"Oh we\u2019re going to have FUN. Our films match your energy: if the dance floor is wild, the film is wild. No sleepy highlight reels here.","Warm & Intimate":"Intimate weddings are honestly our favorite to film. Every glance means more, every laugh hits harder, and the films are always incredible.","A little bit of everything":"The best weddings have range. Ugly cry during vows \u2192 absolute mayhem at the reception. We live for that contrast and edit to match every shift in energy."}},
-          { id:"priority", label:"Your Film", question:"What matters most to you in a wedding film?", subtext:"Pick as many as you want, or just go with \u2018all of the above\u2019 (we won\u2019t judge).", type:"multi", options:[
-            {emoji:"\ud83d\ude2d",label:"Raw emotion & real moments",desc:"The tears, the laughter, the moments nobody saw coming"},
-            {emoji:"\ud83c\udfac",label:"Cinematic & beautiful",desc:"Stunning shots, color grading, movie-quality visuals"},
-            {emoji:"\u26a1",label:"Energy & vibeeee",desc:"YOUR vibe woven into every second of the film"},
-            {emoji:"\ud83d\udcd6",label:"Our story, not just the day",desc:"Who we are as a couple. The real stuff"},
-            {emoji:"\ud83e\udd0d",label:"All of the above",desc:"We want it all. Is that too much to ask?"}
-          ], valueMessage:{"Raw emotion & real moments":"That\u2019s literally why we do this. We\u2019re trained to find the real story: the moments you didn\u2019t even know happened.","Cinematic & beautiful":"You\u2019re in the right place. We obsess over color grading and composition. Every film gets a custom edit matched to YOUR look and energy.","Energy & vibeeee":"We call this \u2018vibe-matched editing.\u2019 Your film should feel exactly like your day felt: your music, your energy, your personality in every cut.","Our story, not just the day":"This is what separates a wedding video from a wedding FILM. We get to know you so the film tells a real story.","All of the above":"Not too much at all. That\u2019s literally what we do. Every Flyin\u2019 Iris film blends raw emotion, cinematic quality, your energy, and real storytelling."}},
-          { id:"budget", label:"Budget", question:"What are you thinking for video investment?", subtext:"Just helps us understand what to put together for you.", type:"single", options:[
-            {emoji:"\ud83c\udfac",label:"The essentials",desc:"Great coverage + a beautiful highlight film. Most couples land between $2,800 to $4,500"},
-            {emoji:"\u2728",label:"The whole experience",desc:"Longer films, teasers, story sessions, the works. $4,500+"}
-          ]},
-          { id:"contact", label:"Let\u2019s Talk!", question:"Last step. Let\u2019s make this real.", subtext:"Drop your info and we\u2019ll personally reach out within 24 hours. Usually way faster, we get excited.", type:"contact" }
-        ];
-
-        // --- CALCULATOR DATA ---
-        function getCalcSteps() {
-          var ca = state.calcAnswers;
-          var isTeam = ca.quality === "We want an incredible wedding film";
-          return [
-            { id:"hook", question:"If you could relive one moment from your wedding day forever, what would it be?", subtext:"Not a trick question. This is how we think about wedding films.", type:"single", options:[
-              {emoji:"\ud83d\ude2d",label:"The first time we see each other",desc:"That look. That reaction. The one you can\u2019t fake."},
-              {emoji:"\ud83d\udc8d",label:"The vows: every single word",desc:"The promises nobody else will ever hear the same way"},
-              {emoji:"\ud83c\udfa4",label:"The speeches that wreck us",desc:"Dad\u2019s voice cracking. The best friend who nails it."},
-              {emoji:"\ud83d\udc83",label:"The moment the dance floor erupts",desc:"When the song hits and everyone just GOES"},
-              {emoji:"\ud83c\udf05",label:"The quiet moments nobody else saw",desc:"A stolen glance, a whisper, a hand squeeze"},
-              {emoji:"\u2728",label:"Honestly? All of it.",desc:"Every second."}
-            ], valueMessage:{"The first time we see each other":"First looks are pure, unscripted emotion on film.","The vows: every single word":"Vows are the one thing you\u2019ll want to hear again and again.","The speeches that wreck us":"In 10 years, you\u2019ll want to hear your dad\u2019s voice say those words again.","The moment the dance floor erupts":"Dance floor energy is contagious, even on film.","The quiet moments nobody else saw":"These moments separate a wedding video from a wedding FILM.","Honestly? All of it.":"The investment you make determines how much you get to keep forever."}},
-            { id:"quality", question:"What matters most to you in who films your day?", subtext:"This is the single <span style=\"color:var(--accent);font-weight:700\">BIGGEST</span> factor in your investment, and there\u2019s no wrong answer.", type:"single", options:[
-              {emoji:"\ud83c\udfac",label:"We want an incredible wedding film",desc:"Our expert team has filmed hundreds of weddings. They capture every moment with precision. Sierra edits every moment into a cinematic story, and Sean reviews every cut before it reaches you."},
-              {emoji:"\u2728",label:"We want Sierra & Sean creating with us",desc:"Sean is in the room joking with your groomsmen, hyping up the energy, making everyone feel comfortable. Sierra is feeling every moment, catching the details nobody else sees. When they sit down to edit, they don't have to guess what it felt like. They were there. That's the difference."}
-            ], valueMessage:{"We want an incredible wedding film":"Our team members are experts. Hundreds of weddings filmed. Sierra edits every frame, Sean reviews every cut, and the final product is stunning.","We want Sierra & Sean creating with us":"When Sierra and Sean are both there in person, they feel every moment together. The music, the energy, the tears. Your film won't just look like your wedding. It'll feel like it."}},
-            isTeam ? { id:"hours", question:"How many hours of coverage do you need?", subtext:"When should cameras start, and when should they stop?", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Ceremony through first dances, included in your package"},
-              {emoji:"\u23f0",label:"7 hours",desc:"A little extra buffer before or after"},
-              {emoji:"\ud83d\udc84",label:"8 hours",desc:"Getting ready through the reception highlights"},
-              {emoji:"\ud83c\udf1e",label:"9 hours",desc:"Full prep through reception party"},
-              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day coverage: pre-ceremony through the party"},
-              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day: almost everything"},
-              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"The whole thing: first moment to last song"}
-            ], valueMessage:{"6 hours":"Great starting point: ceremony, toasts, first dances.","7 hours":"A little extra room to breathe.","8 hours":"Getting ready through the reception highlights.","9 hours":"Full prep through the party.","10 hours":"The full story: pre-ceremony through the party.","11 hours":"Extended coverage: almost everything.","12 hours":"Every chapter, first moment to last song."}}
-            : { id:"hours", question:"How long is your wedding day?", subtext:"Sierra & Sean will be there for every moment you choose.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udc92",label:"6 hours",desc:"Intimate day: ceremony through first dances"},
-              {emoji:"\u23f0",label:"7 hours",desc:"A little more room"},
-              {emoji:"\ud83d\udc84",label:"8 hours",desc:"Classic day: getting ready through reception"},
-              {emoji:"\ud83c\udf1e",label:"9 hours",desc:"Full prep through reception"},
-              {emoji:"\ud83c\udf05",label:"10 hours",desc:"Full day: we\u2019ll be there for everything"},
-              {emoji:"\ud83c\udf19",label:"11 hours",desc:"Extended day: almost everything"},
-              {emoji:"\ud83c\udf1f",label:"12 hours",desc:"Epic day: first moment to last song"}
-            ], valueMessage:{"6 hours":"Intimate and intentional.","7 hours":"A little more room.","8 hours":"Classic day: getting ready through reception.","9 hours":"Full prep through reception.","10 hours":"Full day: we\u2019ll be there for everything.","11 hours":"Extended day: almost everything.","12 hours":"Epic day: first moment to last song."}},
-            { id:"highlight", question:"How long do you want your highlight film?", subtext:"Included in every package. The cinematic, music-driven film you\u2019ll share and rewatch forever. Most couples choose between 5-12 minutes.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\u26a1",label:"5 min",desc:"Punchy, powerful, perfect for sharing, included in your package"},
-              {emoji:"\ud83c\udfac",label:"6-8 min",desc:"More emotion, details, room to breathe"},
-              {emoji:"\ud83c\udf9e\ufe0f",label:"9-12 min",desc:"A real short film: the full emotional arc"},
-              {emoji:"\ud83d\udcd6",label:"13-15 min",desc:"Extended story: every chapter, nothing rushed"},
-              {emoji:"\ud83c\udfc6",label:"15-20 min",desc:"The ultimate: every detail, nothing left out"}
-            ], valueMessage:{"5 min":"Included in your package. Punchy, powerful, perfect for sharing.","6-8 min":"Storytelling opens up. Room for quiet moments and details.","9-12 min":"Feels like a real short film. Speech excerpts, ceremony, every energy shift.","13-15 min":"Extended story: every chapter gets its moment.","15-20 min":"The ultimate keepsake. Nothing cut, nothing rushed."}},
-            { id:"teaser", question:"Do you want a social media teaser?", subtext:"A 60-90 second cinematic sneak peek to share while your full film is being edited. Something to post while everyone\u2019s still talking about your wedding.", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83d\udd25",label:"Yes, give me something to post!",desc:"A cinematic preview to share while the full film is in the works"},
-              {emoji:"\ud83d\ude45",label:"No, I\u2019ll wait for the full film",desc:"All focus goes into the main film"}
-            ], valueMessage:{"Yes, give me something to post!":"Post a cinematic preview while everyone\u2019s still talking about the wedding. Instant hype.","No, I\u2019ll wait for the full film":"Everything goes into making your main film incredible."}},
-            { id:"storySession", question:"Want to turn your wedding film into a full blown Love Story?", subtext:"Our most immersive film experience. Think of it like an engagement shoot, but for video. We meet up with you both in a place that feels like yours, capture you being yourselves on camera, do real interviews about your relationship, and weave it all into your final wedding film. It takes your film from \u2018great wedding video\u2019 to \u2018this is our actual love story.\u2019", type:"single", showPriceImpact:true, options:[
-              {emoji:"\ud83c\udfac",label:"Yes, make it a Love Story",desc:"An intimate pre-wedding session with on-camera interviews and cinematic portraits, all woven into your film"},
-              {emoji:"\ud83e\udd14",label:"Tell me more on the call",desc:"Sounds amazing but I\u2019d want to talk about it first"},
-              {emoji:"\ud83d\udc92",label:"No, just the wedding day",desc:"All the focus goes into making the wedding day incredible"}
-            ], valueMessage:{"Yes, make it a Love Story":"This is the difference between a wedding video and a Love Story. When we know you before the day, your film has a depth that\u2019s impossible to fake. Couples consistently say it\u2019s the thing they didn\u2019t know they needed.","No, just the wedding day":"The wedding day gives us plenty to work with. All the energy and investment goes into making that one day as cinematic as possible.","Tell me more on the call":"We\u2019d love to walk you through it. The Love Story Session is one of our favorite things, and once you hear how it works, it usually sells itself."}}
-          ];
-        }
-
         // --- STATE ---
+        // mode starts at "inquiry": the short form IS the funnel entry now.
+        // The old intro/quiz-step/inline-calculator renderers below are
+        // legacy (unreachable from the live path) pending the cleanup pass.
         var state = {
-          mode: "intro",
+          mode: "inquiry",
           quizStep: 0, quizAnswers: {}, referralName: "",
           contactInfo: null,
           calcStep: 0, calcAnswers: {},
@@ -3047,17 +2886,6 @@
 
         loadInquiryDraft();
 
-        // --- PRICE TAG HELPER ---
-        function getCalcPriceTag(step, opt) {
-          return "";
-        }
-
-        function getVM(step, answer) {
-          if (!step || !step.valueMessage) return "";
-          if (step.type === "multi") { if (!answer || !answer.length) return ""; return step.valueMessage[answer[answer.length - 1]] || ""; }
-          return step.valueMessage[answer] || "";
-        }
-
         function scrollToQuiz() {
           var el = document.getElementById("quiz");
           if (!el) return;
@@ -3085,11 +2913,9 @@
         // --- RENDER ---
         function render() {
           var html = '<div class="quiz-container">';
-          if (state.mode === "intro") html += renderIntro();
-          else if (state.mode === "experience-loading") html += renderExperienceLoading();
+          if (state.mode === "experience-loading") html += renderExperienceLoading();
           else if (state.mode === "confirmation") html += renderConfirmation();
-          else if (state.mode === "calcResults") html += renderCalcResults();
-          else html += renderStep();
+          else html += renderInquiryForm();
           html += '</div>';
           quizApp.innerHTML = html;
           restoreFormValues();
@@ -3116,162 +2942,66 @@
           }
         }
 
-        function renderIntro() {
-          return '<div class="quiz-value-intro">' +
-            '<p class="quiz-intro-label">Flyin\u2019 Iris \u2726 Milwaukee, WI</p>' +
-            '<h2>See what your wedding film could look like</h2>' +
-            '<ul class="quiz-value-list">' +
-              '<li><span class="qv-check">\u2714</span> Your personalized film match</li>' +
-              '<li><span class="qv-check">\u2714</span> Real-time availability check</li>' +
-              '<li><span class="qv-check">\u2714</span> Custom package builder</li>' +
-              '<li><span class="qv-check">\u2714</span> Live pricing, no surprises</li>' +
-            '</ul>' +
-            '<p class="quiz-value-sub">No sales pitch. No obligation. Just a fun preview of your day.</p>' +
-            '<button class="quiz-start-btn" data-action="start-quiz">Show Me My Film Match \u2192</button>' +
-            '<p class="quiz-intro-note">5.0 stars across every platform \u00b7 5+ years \u00b7 Free travel within 120 mi</p>' +
-          '</div>';
-        }
-
-        function renderStep() {
-          var isCalc = state.mode === "calculator";
-          var steps = isCalc ? getCalcSteps() : quizSteps;
-          var stepIdx = isCalc ? state.calcStep : state.quizStep;
-          var step = steps[stepIdx];
-          var answers = isCalc ? state.calcAnswers : state.quizAnswers;
-          var cur = answers[step.id];
-
-          if (step.type === "contact") return renderContactForm(step);
-
-          var title = isCalc ? "Investment Calculator" : "Flyin\u2019 Iris";
-          var h = '<div class="quiz-header"><span class="quiz-brand">' + esc(title) + '</span>';
-          if (isCalc && state.contactInfo) h += '<p class="quiz-calc-greeting">Hey ' + esc(state.contactInfo.name) + '! Let\u2019s figure out your investment.</p>';
-          h += '</div>';
-          h += '<div class="quiz-progress"><div class="quiz-progress-fill" style="width:' + (((stepIdx + 1) / steps.length) * 100) + '%"></div></div>';
-          h += '<div class="quiz-step">';
-          h += '<h2 class="quiz-question">' + step.question + '</h2>';
-          h += '<p class="quiz-subtext">' + step.subtext + '</p>';
-          if (step.type === "multi") h += '<p class="quiz-multi-hint">Select all that apply \u2726</p>';
-          h += '<div class="quiz-options">';
-          for (var i = 0; i < step.options.length; i++) {
-            var opt = step.options[i];
-            var isSel = step.type === "multi" ? ((cur || []).indexOf(opt.label) >= 0) : (cur === opt.label);
-            var ptag = isCalc ? getCalcPriceTag(step, opt) : "";
-            var cls = "quiz-option" + (isSel ? " selected" : "") + (!opt.desc ? " no-desc" : "");
-            h += '<button class="' + cls + '" data-action="select" data-value="' + esc(opt.label) + '">';
-            if (isSel) h += '<div class="quiz-option-accent"></div>';
-            h += '<span class="quiz-option-emoji">' + opt.emoji + '</span>';
-            h += '<div class="quiz-option-info"><div class="quiz-option-label-row">';
-            h += '<span class="quiz-option-label">' + esc(opt.label) + '</span>';
-            if (ptag && !isSel) h += '<span class="quiz-price-tag">' + ptag + '</span>';
-            h += '</div>';
-            if (opt.desc) h += '<span class="quiz-option-desc">' + esc(opt.desc) + '</span>';
-            h += '</div>';
-            if (isSel) h += '<div class="quiz-option-check"><span>\u2713</span></div>';
-            h += '</button>';
-          }
-          h += '</div>';
-
-          // Value message
-          var vm = getVM(step, cur);
-          if (vm) h += '<div class="quiz-value-msg"><p><span class="vm-icon">\u2726 </span>' + vm + '</p></div>';
-
-          if (isCalc && step.id === "quality" && cur) {
-            h += '<p style="font-size:0.75rem;color:var(--text-secondary);font-family:\'Outfit\',sans-serif;text-align:center;margin-top:10px;font-style:italic">The more you add, the better the value. We\u2019ll show you everything at the end.</p>';
-          }
-
-          // Navigation
-          var canProceed = step.type === "multi" ? (cur && cur.length > 0) : !!cur;
-          var showBack = stepIdx > 0 || isCalc;
-          var nextLabel = (isCalc && stepIdx === steps.length - 1) ? "See my estimate \u2192" : (stepIdx === steps.length - 2 ? "Almost done \u2192" : "Next \u2192");
-          h += '<div class="quiz-nav">';
-          h += '<button class="quiz-nav-back' + (showBack ? '' : ' hidden') + '" data-action="prev">\u2190 Back</button>';
-          h += '<span class="quiz-nav-step">' + (stepIdx + 1) + ' of ' + steps.length + '</span>';
-          h += '<button class="quiz-nav-next' + (canProceed ? '' : ' disabled') + '" data-action="next"' + (canProceed ? '' : ' disabled') + '>' + nextLabel + '</button>';
-          h += '</div></div>';
-          return h;
-        }
-
-        function renderContactForm(step) {
+        // The short inquiry form: first names, email, phone, wedding date
+        // (with the live availability check), venue optional. The hook is
+        // pricing + date availability delivered immediately after submit
+        // (thanks-page router + welcome email). Hook copy finalized
+        // 2026-07-04: "Start with your date."
+        function renderInquiryForm() {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = f.found && f.found.length > 0, vOk = f.venue.trim().length >= 2;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0;
           var h = '<div class="quiz-step">';
-          h += '<h2 class="quiz-question" tabindex="-1" style="font-size:1.625rem;outline:none">' + step.question + '</h2>';
-          h += '<p class="quiz-subtext">' + step.subtext + '</p>';
-          if (state.submitError) h += '<p class="quiz-form-submit-error" role="alert">That didn\u2019t go through. Your answers are saved, just tap submit again. Still stuck? Text us at (262) 384-5079.</p>';
+          h += '<p class="quiz-intro-label" style="text-align:center">Flyin’ Iris ✦ Milwaukee, WI</p>';
+          h += '<h2 class="quiz-question" tabindex="-1" style="outline:none;text-align:center">Start with your date.</h2>';
+          h += '<p class="quiz-subtext" style="text-align:center">Tell us a little about your day. You’ll get our pricing and your date’s real-time availability the moment you hit the button.</p>';
+          if (/[?&]src=calculator/.test(window.location.search)) {
+            h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.8125rem;color:var(--accent);text-align:center;margin:-6px 0 14px">The package builder unlocks right after this step. About a minute, then you build.</p>';
+          }
+          if (state.submitError) h += '<p class="quiz-form-submit-error" role="alert">That didn’t go through. Your answers are saved, just tap the button again. Still stuck? Text us at (262) 384-5079.</p>';
           h += '<div class="quiz-form">';
-          // Name row
+          // First names row
           h += '<div class="quiz-form-row">';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-name">Your Full Name <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" id="qf-name" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="First & Last Name">';
-          if (t && !nOk) h += '<p class="quiz-form-error">We need your first & last name!</p>';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-name">Your First Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-name" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="Your first name" autocomplete="given-name">';
+          if (t && !nOk) h += '<p class="quiz-form-error">We need your first name!</p>';
           h += '</div>';
-          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-partner">Your Partner\u2019s Full Name <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" id="qf-partner" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Partner\'s First & Last Name">';
-          if (t && !paOk) h += '<p class="quiz-form-error">We need your partner\'s name too!</p>';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-partner">Partner’s First Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-partner" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Their first name">';
+          if (t && !paOk) h += '<p class="quiz-form-error">We’d love their name too!</p>';
           h += '</div></div>';
           // Email
           h += '<div><label class="quiz-form-label" for="qf-email">Email <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="email" id="qf-email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com">';
-          if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn\u2019t look right. Double check?' : 'We need your email to reach out!') + '</p>';
+          h += '<input type="email" id="qf-email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com" autocomplete="email">';
+          if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn’t look right. Double check?' : 'We need your email to send your pricing!') + '</p>';
           h += '</div>';
-          // Phone
+          // Phone + single non-marketing SMS consent
           h += '<div><label class="quiz-form-label" for="qf-phone">Phone <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="tel" id="qf-phone" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234">';
+          h += '<input type="tel" id="qf-phone" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234" autocomplete="tel">';
           if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
           h += '<div style="margin-top:8px">';
           h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing" role="checkbox" aria-checked="' + (f.smsNonMarketing ? 'true' : 'false') + '">';
-          h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>\u2713</span>' : '') + '</div>';
-          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive non-marketing text messages from Flyin\u2019 Iris Media Productions LLC about wedding videography booking updates, scheduling, and appointment reminders. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
-          h += '</button>';
-          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-marketing" role="checkbox" aria-checked="' + (f.smsMarketing ? 'true' : 'false') + '" style="margin-top:6px">';
-          h += '<div class="quiz-checkbox' + (f.smsMarketing ? ' checked' : '') + '">' + (f.smsMarketing ? '<span>\u2713</span>' : '') + '</div>';
-          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive marketing text messages from Flyin\u2019 Iris Media Productions LLC at the phone number provided. Frequency may vary. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
+          h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>✓</span>' : '') + '</div>';
+          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive non-marketing text messages from Flyin’ Iris Media Productions LLC about wedding videography booking updates, scheduling, and appointment reminders. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
           h += '</button>';
           h += '</div></div>';
-          // Venue
-          h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="text" id="qf-venue" class="quiz-form-input' + (t && !vOk ? ' error' : '') + '" data-field="venue" placeholder="Venue Name \u00b7 City, WI (or TBD)">';
-          if (t && !vOk) h += '<p class="quiz-form-error">We need to know your venue (or \'TBD\' if undecided)!</p>';
-          h += '</div>';
-          // Wedding Date
+          // Wedding date (the hook)
           var minDate = new Date().toISOString().split('T')[0];
           var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
-          h += '<div><label class="quiz-form-label" for="quiz-date">Anticipated Wedding Date <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="date" id="quiz-date" class="quiz-form-input" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
+          h += '<div><label class="quiz-form-label" for="quiz-date">Wedding Date <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="date" id="quiz-date" class="quiz-form-input' + (t && !dOk ? ' error' : '') + '" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
           h += '<div id="availability-msg" style="min-height:0;margin-top:6px" aria-live="polite"></div>';
-          if (t && !dOk) h += '<p class="quiz-form-error">We need your anticipated wedding date to check availability!</p>';
+          if (t && !dOk) h += '<p class="quiz-form-error">We need your date to check availability!</p>';
           h += '</div>';
-          // How'd you hear about us (required)
-          h += '<div><label class="quiz-form-label" for="qf-found">How\u2019d you hear about us? <span style="color:var(--accent)">*</span></label>';
-          h += '<select id="qf-found" class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
-          h += '<option value="">Select one</option>';
-          h += '<option value="Google"' + (f.found === "Google" ? ' selected' : '') + '>Google</option>';
-          h += '<option value="Instagram"' + (f.found === "Instagram" ? ' selected' : '') + '>Instagram</option>';
-          h += '<option value="Facebook"' + (f.found === "Facebook" ? ' selected' : '') + '>Facebook</option>';
-          h += '<option value="Referral"' + (f.found === "Referral" ? ' selected' : '') + '>Referral</option>';
-          h += '<option value="Wedding Planner"' + (f.found === "Wedding Planner" ? ' selected' : '') + '>Wedding Planner</option>';
-          h += '<option value="The Knot/WeddingWire"' + (f.found === "The Knot/WeddingWire" ? ' selected' : '') + '>The Knot/WeddingWire</option>';
-          h += '<option value="Other"' + (f.found === "Other" ? ' selected' : '') + '>Other</option>';
-          h += '</select>';
-          if (t && !fOk) h += '<p class="quiz-form-error">Please let us know how you heard about us!</p>';
-          if (f.found === "Referral" || f.found === "Wedding Planner") {
-            h += '<div style="margin-top:8px"><label class="quiz-form-label" for="qf-referral">Who sent you our way? (so we can thank them! \ud83d\udc9b)</label>';
-            h += '<input type="text" id="qf-referral" class="quiz-form-input" data-field="referralName" placeholder="Their name">';
-            h += '</div>';
-          }
+          // Venue (optional)
+          h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--text-secondary);font-weight:300;font-size:0.6875rem">(optional)</span></label>';
+          h += '<input type="text" id="qf-venue" class="quiz-form-input" data-field="venue" placeholder="Venue Name · City (or leave blank)">';
           h += '</div>';
-          // Notes
-          h += '<div><label class="quiz-form-label" for="qf-note">Anything else?</label>';
-          h += '<textarea id="qf-note" class="quiz-form-textarea" data-field="note" rows="3" placeholder="Your love story in 3 words, your go-to karaoke song, or literally anything \ud83e\udd19"></textarea></div>';
           // Submit
-          h += '<button class="quiz-submit-btn" data-action="submit-contact">Reveal My Film Match \u2192</button>';
-          if (t && !(nOk && paOk && eOk && pOk && dOk && fOk && vOk)) h += '<p class="quiz-form-submit-error">\u2191 Just need a few more details!</p>';
-          h += '<p class="quiz-form-hint">No spam ever. Just a real conversation about your day.</p>';
+          h += '<button class="quiz-submit-btn" data-action="submit-inquiry">Check My Date →</button>';
+          if (t && !(nOk && paOk && eOk && pOk && dOk)) h += '<p class="quiz-form-submit-error">↑ Just need a few more details!</p>';
+          h += '<p class="quiz-form-hint">No spam ever. Real pricing, real availability, and a real conversation about your day.</p>';
           h += '<p style="font-size:0.5625rem;color:rgba(200,195,185,0.4);text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Terms & Conditions</a></p>';
-          h += '</div>';
-          // Back button
-          h += '<div class="quiz-nav" style="margin-top:12px"><button class="quiz-nav-back" data-action="prev">\u2190 Back</button><span class="quiz-nav-step">' + quizSteps.length + ' of ' + quizSteps.length + '</span><span></span></div>';
-          h += '</div>';
+          h += '</div></div>';
           return h;
         }
 
@@ -3322,33 +3052,11 @@
           h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" title="Book your discovery call" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-discovery-cal"></iframe>';
           h += '</div>';
 
-          // Calculator CTA
-          h += '<div class="quiz-gold-box" style="border-color:rgba(255,189,29,0.2);margin-top:16px;margin-bottom:24px">';
-          h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.375rem;color:var(--text-primary);margin-bottom:8px">Still hesitant about booking a call?</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);line-height:1.6;margin-bottom:16px">See what your dream package looks like first. Build a custom estimate in 60 seconds, then decide if you\u2019re ready to chat.</p>';
-          h += '<button class="quiz-start-btn" data-action="start-calc" style="padding:12px 32px;font-size:0.875rem">Build My Package \u2726</button>';
+          // Gated calculator pointer (fallback confirmation only renders when
+          // the inquiry response carried no session token, so no token link
+          // is available here; the welcome email carries their pricing link)
+          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);margin-top:16px">Your pricing and package builder link is in your welcome email.</p>';
           h += '</div>';
-
-          // Answer summary
-          h += '<div class="quiz-box" style="text-align:left">';
-          h += '<p class="quiz-box-label-muted">Your answers</p>';
-          var labels = {excited:"Most excited about",vibe:"Vibe",priority:"Film priorities"};
-          for (var key in qa) {
-            if (qa.hasOwnProperty(key)) {
-              var val = Array.isArray(qa[key]) ? qa[key].join(", ") : qa[key];
-              h += '<div class="quiz-answer-row"><span class="quiz-answer-key">' + esc(labels[key] || key) + '</span><span class="quiz-answer-val">' + esc(val) + '</span></div>';
-            }
-          }
-          if (state.contactForm.found) {
-            h += '<div class="quiz-answer-row"><span class="quiz-answer-key">Found us via</span><span class="quiz-answer-val">' + esc(state.contactForm.found) + '</span></div>';
-          }
-          if (state.referralName) {
-            h += '<div class="quiz-answer-row"><span class="quiz-answer-key">Referred by</span><span class="quiz-answer-val">' + esc(state.referralName) + '</span></div>';
-          }
-          if (ci && ci.weddingDate) {
-            h += '<div class="quiz-answer-row"><span class="quiz-answer-key">Wedding Date</span><span class="quiz-answer-val">' + esc(formatWeddingDate(ci.weddingDate)) + '</span></div>';
-          }
-          h += '</div></div>';
 
           // Trigger availability check - spinner shows ~2 seconds then fades to result
           setTimeout(function() {
@@ -3412,155 +3120,6 @@
           return h;
         }
 
-        function renderCalcResults() {
-          var a = state.calcAnswers;
-          var ci = state.contactInfo;
-          var est = calcPrice(a);
-          var isTop = a.quality === "We want Sierra & Sean creating with us";
-          var isTeam = a.quality === "We want an incredible wedding film";
-          var hours = getHoursNum(a.hours);
-
-          var h = '<div style="text-align:center;margin-bottom:20px">';
-          h += '<p style="color:var(--accent);font-size:0.625rem;letter-spacing:4px;text-transform:uppercase;font-weight:700;font-family:\'Outfit\',sans-serif;margin-bottom:10px">Flyin\u2019 Iris \u2726 Investment Calculator</p>';
-          h += '<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:1.625rem;color:var(--text-primary);font-weight:600;margin-bottom:8px">Your Personalized Estimate</h2>';
-          h += '</div>';
-
-          h += '<div style="text-align:center;margin-bottom:24px">';
-          h += '<p class="calc-estimate-label">Your estimated investment</p>';
-          h += '<p class="calc-estimate-amount">' + fp(est.price) + '*</p>';
-          if (est.savings > 0) h += '<p class="calc-estimate-note" style="color:var(--accent)">Includes ' + fp(est.savings) + ' in estimated bundle savings*</p>';
-          h += '<p class="calc-estimate-note">* This is an estimate. Your final investment may vary. Schedule a discovery call with us to get your final, custom package pricing.</p>';
-          h += '</div>';
-
-          // Tier badge
-          h += '<div class="quiz-gold-box" style="margin-bottom:20px">';
-          h += '<span class="calc-tier-badge">' + esc(isTeam ? "Team Package" : "S&S Experience") + '</span>';
-          h += '<p class="calc-tier-desc">' + (isTeam ? "Our expert team captures your day with the same Flyin' Iris cinematic style. Edited in-house, reviewed by Sean, polished by Sierra." : "Sierra & Sean personally film and edit your story. Founder-level storytelling from start to finish.") + '</p>';
-          h += '</div>';
-
-          // Price breakdown
-          h += '<div class="quiz-box" style="margin-bottom:20px">';
-          h += '<p class="quiz-box-label">Price breakdown</p>';
-          for (var i = 0; i < est.breakdown.length; i++) {
-            var item = est.breakdown[i];
-            var valStr = "";
-            if (item.display) {
-              if (item.display === "Declined") {
-                valStr = '<span style="color:#6B6B6B;font-style:italic">' + item.display + '</span>';
-              } else if (item.display.indexOf("Ask on the call") >= 0) {
-                valStr = '<span style="color:var(--accent);font-style:italic">' + item.display + '</span>';
-              } else {
-                valStr = item.display;
-              }
-            }
-            else {
-              var formatter = item.decimals ? fpMoney : fp;
-              if (item.prefix === "\u2212") { valStr = "\u2212" + formatter(item.value); }
-              else if (item.prefix === "+") { valStr = "+" + formatter(item.value); }
-              else { valStr = formatter(item.value); }
-            }
-            h += '<div class="quiz-answer-row"><span class="quiz-answer-key">' + esc(item.label) + '</span><span class="quiz-answer-val"' + (item.prefix === "\u2212" ? ' style="color:#4CAF50"' : '') + '>' + valStr + '</span></div>';
-          }
-          h += '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">';
-          h += '<div class="quiz-answer-row" style="border:none;margin:0;padding:0"><span class="quiz-answer-key" style="font-weight:600;color:var(--text-primary)">Estimated total</span><span class="quiz-answer-val" style="font-size:0.875rem;font-weight:700">' + fpMoney(est.price) + '*</span></div>';
-          h += '</div></div>';
-          h += '<button class="calc-back-btn" data-action="start-calc" style="border:2px solid var(--accent);color:var(--accent);background:transparent;margin-bottom:48px;margin-top:12px">Redo My Estimate \u2726</button>';
-
-          // Availability re-check
-          if (ci && ci.weddingDate) {
-            h += '<p style="font-family:\'Outfit\',sans-serif;font-size:1rem;color:var(--text-primary);font-weight:500;margin-bottom:12px;text-align:center">' + esc(formatWeddingDate(ci.weddingDate)) + '</p>';
-          }
-          h += '<div id="calc-spinner-wrap" style="margin-bottom:8px;text-align:center">';
-          h += '<div class="av-spinner-wrap"><div class="av-spinner" style="width:28px;height:28px;border-width:3px"></div><span class="av-spinner-text">Checking availability for your date...</span></div>';
-          h += '</div>';
-          h += '<div id="calc-availability-result" style="margin-bottom:32px;min-height:28px;opacity:0;transition:opacity 0.5s ease;text-align:center"></div>';
-
-          // Post-calculator copy
-          h += '<div style="text-align:center;margin-bottom:20px">';
-          h += '<p style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px">Love what you see? Let\u2019s make it real.</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9375rem;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto">15-20 minutes. No pitch. We\u2019ll walk through your custom estimate, answer every question, and make sure we\u2019re the right fit.</p>';
-          h += '</div>';
-
-          // Here's what we'll cover
-          h += '<div style="text-align:center;margin-bottom:32px">';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-weight:500;font-size:0.875rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px">Here\u2019s what we\u2019ll cover</p>';
-          h += '</div>';
-
-          h += '<div style="text-align:center;max-width:400px;margin:0 auto">';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">1.</strong> Get to know you both</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">2.</strong> Learn what you want in your film</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:10px"><strong style="color:var(--accent)">3.</strong> Show you what\u2019s possible</p>';
-          h += '<p style="font-family:\'Outfit\',sans-serif;font-size:0.875rem;color:var(--text-primary);margin-bottom:0"><strong style="color:var(--accent)">4.</strong> Make sure we\u2019re the right fit</p>';
-          h += '</div>';
-          h += '<div style="height:40px"></div>';
-
-          // Calendar iframe (Discovery Call - Post Inquiry; consolidated from the duplicate Post Calculator calendar 2026-06-08)
-          h += '<div style="width:100%;max-width:520px;margin:0 auto 20px;border-radius:10px;overflow:hidden;min-height:1000px">';
-          h += '<iframe src="' + buildCalendarUrl('Kd7zWqsXzAswGHR1HuDR') + '" title="Book your discovery call" style="width:100%;min-height:1000px;border:none;overflow:hidden;" scrolling="yes" id="ghl-calc-cal"></iframe>';
-          h += '</div>';
-
-          // Meta Pixel + dataLayer tracking
-          if (typeof fbq === "function") { fbq("trackCustom", "CalendarViewed", { calendar: "post_calculator" }); }
-          if (window.dataLayer) { dataLayer.push({ event: "calendar_viewed", calendar: "post_calculator" }); }
-
-          // Trigger availability check for calc results
-          setTimeout(function() {
-            var spinnerWrap = document.getElementById('calc-spinner-wrap');
-            var resultEl = document.getElementById('calc-availability-result');
-            if (!spinnerWrap || !resultEl || !ci || !ci.weddingDate) {
-              if (spinnerWrap) spinnerWrap.style.display = 'none';
-              return;
-            }
-            var startTime = Date.now();
-            fetch(AVAILABILITY_URL + '?date=' + ci.weddingDate)
-              .then(function(r) { return r.json(); })
-              .then(function(data) {
-                var color, icon, msg;
-                if (data.status === 'available') { color = '#4CAF50'; icon = '\u2705'; msg = data.message; }
-                else if (data.status === 'limited') { color = '#FF9800'; icon = '\u26a1'; msg = data.message; }
-                else if (data.status === 'booked') { color = '#f44336'; icon = '\ud83d\udcc5'; msg = data.message; }
-                else if (data.status === 'weekday') { color = 'var(--accent)'; icon = '\ud83d\udc9b'; msg = 'Weekday weddings have flexible availability. Let\u2019s chat!'; }
-                else if (data.status === 'too_soon') { color = 'var(--text-secondary)'; icon = '\u23f0'; msg = 'Coming up fast! Let\u2019s chat about your timeline.'; }
-                else if (data.status === 'too_far') { color = 'var(--text-secondary)'; icon = '\ud83d\udd2e'; msg = 'Planning ahead? We love it!'; }
-                else { msg = ''; }
-                var elapsed = Date.now() - startTime;
-                var delay = Math.max(0, 2000 - elapsed);
-                setTimeout(function() {
-                  spinnerWrap.style.transition = 'opacity 0.4s ease';
-                  spinnerWrap.style.opacity = '0';
-                  setTimeout(function() {
-                    spinnerWrap.style.display = 'none';
-                    if (msg) {
-                      resultEl.innerHTML = '<span style="color:' + color + ';font-size:1rem;font-weight:500">' + icon + ' ' + msg + '</span>';
-                      resultEl.style.opacity = '1';
-                    }
-                  }, 400);
-                }, delay);
-              })
-              .catch(function() {
-                var elapsed = Date.now() - startTime;
-                var delay = Math.max(0, 2000 - elapsed);
-                setTimeout(function() {
-                  spinnerWrap.style.transition = 'opacity 0.4s ease';
-                  spinnerWrap.style.opacity = '0';
-                  setTimeout(function() { spinnerWrap.style.display = 'none'; }, 400);
-                }, delay);
-              });
-          }, 100);
-
-          // Defer-load GoHighLevel embed script
-          setTimeout(function() {
-            if (!document.getElementById('ghl-embed-script')) {
-              var s = document.createElement('script');
-              s.id = 'ghl-embed-script';
-              s.src = 'https://book.flyiniris.com/js/form_embed.js';
-              document.body.appendChild(s);
-            }
-          }, 50);
-
-          return h;
-        }
-
         // --- INLINE EXPERIENCE RENDERERS ---
         function renderExperienceLoading() {
           return '<div class="inline-experience">' +
@@ -3572,99 +3131,6 @@
         }
 
         // --- EVENT HANDLING ---
-        function handleSelect(label) {
-          var isCalc = state.mode === "calculator";
-          var steps = isCalc ? getCalcSteps() : quizSteps;
-          var stepIdx = isCalc ? state.calcStep : state.quizStep;
-          var step = steps[stepIdx];
-          var answersKey = isCalc ? "calcAnswers" : "quizAnswers";
-
-          if (step.type === "multi") {
-            var cur = state[answersKey][step.id] || [];
-            var allLabels = [], noLabels = [];
-            for (var i = 0; i < step.options.length; i++) {
-              if (step.options[i].label.indexOf("All of") >= 0) allLabels.push(step.options[i].label);
-              if (step.options[i].label.indexOf("No,") >= 0) noLabels.push(step.options[i].label);
-            }
-            if (allLabels.indexOf(label) >= 0) { state[answersKey][step.id] = [label]; }
-            else if (noLabels.indexOf(label) >= 0) { state[answersKey][step.id] = [label]; }
-            else {
-              var w = cur.filter(function(l){ return allLabels.indexOf(l) < 0 && noLabels.indexOf(l) < 0; });
-              if (w.indexOf(label) >= 0) { state[answersKey][step.id] = w.filter(function(l){ return l !== label; }); }
-              else { w.push(label); state[answersKey][step.id] = w; }
-            }
-          } else {
-            // Clear downstream calc answers when quality changes
-            if (isCalc && step.id === "quality" && state.calcAnswers.quality !== label) {
-              delete state.calcAnswers.hours;
-              delete state.calcAnswers.highlight;
-              delete state.calcAnswers.teaser;
-              delete state.calcAnswers.storySession;
-              // extra (FOMO) removed from quiz; FOMO is rendered separately in the breakdown (monthly promo).
-            }
-            state[answersKey][step.id] = label;
-          }
-        }
-
-        function goNext() {
-          if (state.mode === "quiz") { if (state.quizStep < quizSteps.length - 1) state.quizStep++; }
-          else if (state.mode === "calculator") {
-            if (state.calcStep < getCalcSteps().length - 1) { state.calcStep++; }
-            else {
-              // Send calculator results to Worker
-              if (!state.calcSubmitted) {
-                var est = calcPrice(state.calcAnswers);
-                var calcNameParts = (state.contactInfo ? state.contactInfo.name : '').trim().split(' ');
-                var calcTracking = getTrackingData();
-                var calcData = Object.assign({
-                  submissionType: 'calculator',
-                  firstName: calcNameParts[0] || '',
-                  lastName: calcNameParts.slice(1).join(' ') || '',
-                  email: state.contactInfo ? state.contactInfo.email : '',
-                  phone: state.contactInfo ? state.contactInfo.phone : '',
-                  weddingDate: state.contactInfo ? (state.contactInfo.weddingDate || '') : '',
-                  hook: state.calcAnswers.hook || '',
-                  quality: state.calcAnswers.quality || '',
-                  hours: state.calcAnswers.hours || '',
-                  teaser: state.calcAnswers.teaser || '',
-                  highlight: state.calcAnswers.highlight || '',
-                  storySession: state.calcAnswers.storySession || '',
-                  extra: 'Included',
-                  estimatedPrice: est.price,
-                  bundleSavings: est.savings
-                }, calcTracking);
-                fetch(WORKER_URL + '/webhook/calculator', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(Object.assign({}, calcData, { 'cf-turnstile-response': window.fiConsumeToken() }))
-                }).catch(function(err) { console.log('Calc submission error:', err); });
-                state.calcSubmitted = true;
-              }
-              // Track calculator completion
-              if (window.dataLayer) { dataLayer.push({ event: 'calc_completed', estimated_price: calcPrice(state.calcAnswers).price, bundle_savings: calcPrice(state.calcAnswers).savings }); }
-              state.mode = "calcResults";
-            }
-          }
-          // Track quiz/calc step progression
-          if (window.dataLayer) {
-            var stepName, stepNumber;
-            if (state.mode === 'quiz') {
-              stepName = quizSteps[state.quizStep] ? quizSteps[state.quizStep].id : 'unknown';
-              stepNumber = state.quizStep + 1;
-              dataLayer.push({ event: 'quiz_step', step_name: stepName, step_number: stepNumber, total_steps: quizSteps.length });
-            } else if (state.mode === 'calculator') {
-              stepName = getCalcSteps()[state.calcStep] ? getCalcSteps()[state.calcStep].id : 'unknown';
-              stepNumber = state.calcStep + 1;
-              dataLayer.push({ event: 'calc_step', step_name: stepName, step_number: stepNumber, total_steps: getCalcSteps().length });
-            }
-          }
-        }
-
-        function goPrev() {
-          if (state.mode === "quiz") { if (state.quizStep > 0) state.quizStep--; }
-          else if (state.mode === "calculator") { if (state.calcStep > 0) state.calcStep--; else state.mode = "confirmation"; }
-        }
-
         function saveFormFields() {
           var fields = quizApp.querySelectorAll("[data-field]");
           for (var i = 0; i < fields.length; i++) {
@@ -3694,13 +3160,7 @@
             if (act === "toggle-sms-nonmarketing") {
               e.preventDefault();
               saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render();
-              var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus();
-              return;
-            }
-            if (act === "toggle-sms-marketing") {
-              e.preventDefault();
-              saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render();
-              var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus();
+              var nxt = document.getElementById('quiz-date'); if (nxt) nxt.focus();
               return;
             }
           }
@@ -3734,152 +3194,79 @@
           if (!btn) return;
           var action = btn.getAttribute("data-action");
 
-          if (action === "start-quiz") { if (window.dataLayer) { dataLayer.push({ event: 'quiz_started' }); } state.mode = "quiz"; state.quizStep = 0; render(); scrollToQuiz(); focusQuizHeading(); return; }
-          if (action === "select") {
-            saveFormFields();
-            var selectedValue = btn.getAttribute("data-value");
-            handleSelect(selectedValue);
-            var isCalcMode = state.mode === "calculator";
-            var currentSteps = isCalcMode ? getCalcSteps() : quizSteps;
-            var currentStepIdx = isCalcMode ? state.calcStep : state.quizStep;
-            var currentStep = currentSteps[currentStepIdx];
-            if (currentStep && currentStep.id === "budget") {
-              if (typeof fbq === "function") {
-                fbq("trackCustom", "BudgetSelected", {
-                  budget_range: selectedValue,
-                  qualified: true
-                });
-              }
-              if (window.dataLayer) {
-                dataLayer.push({
-                  event: "budget_selected",
-                  budget_range: selectedValue,
-                  budget_qualified: true
-                });
-              }
-            }
-            render();
-            // Restore focus to the re-rendered copy of the option the keyboard
-            // user just activated (render() destroyed the original button).
-            var opts = quizApp.querySelectorAll('[data-action="select"]');
-            for (var oi = 0; oi < opts.length; oi++) {
-              if (opts[oi].getAttribute('data-value') === selectedValue) { opts[oi].focus(); break; }
-            }
-            return;
-          }
-          if (action === "next") {
-            var isCalc = state.mode === "calculator";
-            var steps = isCalc ? getCalcSteps() : quizSteps;
-            var stepIdx = isCalc ? state.calcStep : state.quizStep;
-            var step = steps[stepIdx];
-            var answers = isCalc ? state.calcAnswers : state.quizAnswers;
-            var cur = answers[step.id];
-            var canProceed = step.type === "multi" ? (cur && cur.length > 0) : !!cur;
-            if (!canProceed) return;
-            saveFormFields();
-
-            goNext(); render(); scrollToQuiz(); focusQuizHeading();
-            return;
-          }
-          if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); focusQuizHeading(); return; }
-          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
-          if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
-          if (action === "submit-contact") {
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = document.getElementById('quiz-date'); if (nxt) nxt.focus(); return; }
+          if (action === "submit-inquiry") {
             saveFormFields();
             state.contactFormTried = true;
-            var f = state.contactForm;
-            var canSubmit = f.name.trim().length >= 2 && f.partner.trim().length >= 2 && isValidEmail(f.email) && isValidPhone(f.phone) && f.weddingDate && f.weddingDate.length > 0 && f.found && f.found.length > 0 && f.venue.trim().length >= 2;
-            if (!canSubmit) { render(); return; }
-            var dateVal = document.getElementById('quiz-date');
-            if (dateVal) state.contactForm.weddingDate = dateVal.value;
-            state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
+            var fi = state.contactForm;
+            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && fi.weddingDate && fi.weddingDate.length > 0;
+            if (!okToSend) { render(); return; }
+            var dateEl = document.getElementById('quiz-date');
+            if (dateEl && dateEl.value) state.contactForm.weddingDate = dateEl.value;
+            state.contactInfo = { name: fi.name, partner: fi.partner, email: fi.email, phone: fi.phone, smsNonMarketing: fi.smsNonMarketing, smsMarketing: false, venue: fi.venue, note: '', weddingDate: fi.weddingDate };
             state.submitError = false;
-            // Analytics: shared event_id for pixel + CAPI deduplication. The
-            // pixel fires only after a confirmed 2xx below, so failed submits
-            // do not report phantom Leads to Meta.
-            var leadEventId = generateEventId();
-            // Send to Worker (iris-automation)
-            var nameParts = (state.contactInfo.name || '').trim().split(' ');
-            var partnerParts = (state.contactInfo.partner || '').trim().split(' ');
-            var tracking = getTrackingData();
-            tracking.event_id = leadEventId;
-            var inquiryData = Object.assign({
+            // Shared event_id: pixel Lead fires only after a confirmed 2xx,
+            // with the same id the Worker reuses for the CAPI Lead.
+            var inqEventId = generateEventId();
+            var inqTracking = getTrackingData();
+            inqTracking.event_id = inqEventId;
+            var shortInquiry = Object.assign({
               submissionType: 'inquiry',
-              firstName: nameParts[0] || '',
-              lastName: nameParts.slice(1).join(' ') || '',
-              email: state.contactInfo.email,
-              phone: state.contactInfo.phone,
-              smsNonMarketing: state.contactInfo.smsNonMarketing ? 'Yes' : 'No',
-              smsMarketing: state.contactInfo.smsMarketing ? 'Yes' : 'No',
-              venue: state.contactInfo.venue || '',
-              partnerFirstName: partnerParts[0] || '',
-              partnerLastName: partnerParts.slice(1).join(' ') || '',
-              note: state.contactInfo.note || '',
-              weddingDate: state.contactInfo.weddingDate || '',
-              excited: state.quizAnswers.excited || '',
-              vibe: state.quizAnswers.vibe || '',
-              priority: Array.isArray(state.quizAnswers.priority) ? state.quizAnswers.priority.join(', ') : (state.quizAnswers.priority || ''),
-              budget: state.quizAnswers.budget || '',
-              found: state.contactForm.found || '',
-              referralName: state.referralName || '',
+              firstName: fi.name.trim().split(' ')[0] || '',
+              lastName: fi.name.trim().split(' ').slice(1).join(' ') || '',
+              email: fi.email,
+              phone: fi.phone,
+              smsNonMarketing: fi.smsNonMarketing ? 'Yes' : 'No',
+              smsMarketing: 'No',
+              venue: fi.venue.trim() || '',
+              partnerFirstName: fi.partner.trim().split(' ')[0] || '',
+              partnerLastName: fi.partner.trim().split(' ').slice(1).join(' ') || '',
+              weddingDate: fi.weddingDate || '',
               variant: 'unified',
               variant_source: 'unified'
-            }, tracking);
-            // Show loading state immediately
+            }, inqTracking);
             state.mode = "experience-loading";
             render();
             scrollToQuiz();
-
             fetch(WORKER_URL + '/webhook/inquiry', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.assign({}, inquiryData, { 'cf-turnstile-response': window.fiConsumeToken() }))
+              body: JSON.stringify(Object.assign({}, shortInquiry, { 'cf-turnstile-response': window.fiConsumeToken() }))
             }).then(function(resp) {
-              // A non-2xx means no contact was created. Throw into the catch
-              // so the couple is asked to retry instead of being told success.
               if (!resp.ok) throw new Error('inquiry HTTP ' + resp.status);
               return resp.json();
             }).then(function(result) {
-              // Inquiry POST succeeded. Fire analytics now that the lead is real.
-              if (window.dataLayer) { dataLayer.push({ event: "quiz_contact_submitted", form_name: "quiz_contact" }); }
-              if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: leadEventId }); }
-              // Clear the local draft so a later visit starts clean instead of
-              // restoring already-submitted data. The .catch path below
-              // intentionally does NOT clear: on a failed submit the typed
-              // data should survive for a retry.
+              if (window.dataLayer) { dataLayer.push({ event: "inquiry_submitted", form_name: "short_inquiry" }); }
+              if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: inqEventId }); }
               clearInquiryDraft();
-              // Store session token for redirect
               var sessionToken = (result && result.session_token) || '';
-              // Wait 2.5s on loading screen, then redirect to experience page
+              if (sessionToken) {
+                try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
+              }
               setTimeout(function() {
                 if (sessionToken) {
-                  window.location.href = '/experience?session=' + sessionToken;
+                  window.location.href = '/thanks?session=' + sessionToken;
                 } else {
-                  // No session token: go to confirmation instead
-                  state.contactInfo = { name: f.name, partner: f.partner, email: f.email, phone: f.phone, smsNonMarketing: f.smsNonMarketing, smsMarketing: f.smsMarketing, venue: f.venue, note: f.note, weddingDate: f.weddingDate };
+                  // No token came back: fall back to the inline confirmation
+                  // with the booking calendar so the couple still has a path.
                   state.mode = "confirmation";
                   render();
                   scrollToQuiz();
                 }
-              }, 2500);
+              }, 1500);
             }).catch(function(err) {
               console.log('Inquiry submission error:', err);
-              // The inquiry never reached the Worker: no contact, no emails.
-              // Return the couple to the form (the draft kept their answers)
-              // with a clear retry message instead of a false success screen.
               setTimeout(function() {
                 state.submitError = true;
-                state.mode = "quiz";
-                state.quizStep = quizSteps.length - 1;
+                state.mode = "inquiry";
                 render();
                 scrollToQuiz();
               }, 800);
             });
             return;
           }
-          if (action === "start-calc") { if (window.dataLayer) { dataLayer.push({ event: 'calc_started' }); } state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false; state.mode = "calculator"; render(); scrollToQuiz(); return; }
           if (action === "start-over") {
-            state.mode = "intro"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
+            state.mode = "inquiry"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
             state.contactFormTried = false;
             state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
@@ -3902,6 +3289,5 @@
      (a calculator submit then an inquiry submit would otherwise reuse one token and 403 the
      second once enforce is on). Single-form pages do not need this. */
   window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
-  <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>

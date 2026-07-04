@@ -64,7 +64,7 @@
       --text-muted: rgba(200, 195, 185, 0.5);
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
-      --accent-light: #FFCC4D;
+      --accent-light: #FFF0C9;
       --border: #2A2A28;
     }
 
@@ -1003,7 +1003,8 @@
       <div id="email-success" class="hidden" style="text-align:center; padding: 16px 0;">
         <div style="font-size: 2rem; margin-bottom: 12px;">🎬</div>
         <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); margin-bottom: 8px;">You're on the list!</p>
-        <p style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--text-secondary);">Keep an eye on your inbox over the next few days. Can't wait to show you what's possible.</p>
+        <p style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--text-secondary); margin-bottom: 20px;">Check your inbox. Your film matches are on the way. Want to skip ahead?</p>
+        <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" style="display:inline-block; font-family:'Outfit',sans-serif; font-weight:600; font-size:0.9rem; color:var(--bg-primary); background:var(--accent); padding:12px 28px; border-radius:8px; text-decoration:none;">Book a Discovery Call</a>
       </div>
     </div>
 
@@ -1321,28 +1322,53 @@ async function submitEmail() {
 
   const style = styles[quizResult];
 
+  // Attribution: same field names the landing page sends and the Worker
+  // reads (utm_*, fbclid, gclid, ad ids, fbp/fbc cookies, landing_page),
+  // plus an event_id shared by the pixel Lead and the Worker CAPI Lead so
+  // Meta dedups the pair (the old bare fbq Lead double-counted every quiz).
+  function qGetCookie(n) {
+    const m = document.cookie.match(new RegExp('(^| )' + n + '=([^;]+)'));
+    return m ? decodeURIComponent(m[2]) : '';
+  }
+  const tracking = {};
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ad_id', 'adset_id', 'campaign_id'].forEach(function(k) {
+    let v = null;
+    try { v = new URLSearchParams(window.location.search).get(k) || localStorage.getItem('fi_' + k) || sessionStorage.getItem('fi_' + k); } catch (e) { /* ignore */ }
+    if (v) tracking[k] = v;
+  });
+  try { tracking.landing_page = localStorage.getItem('fi_landing_page') || window.location.href.split('#')[0]; } catch (e) { /* ignore */ }
+  const fbp = qGetCookie('_fbp');
+  const fbc = qGetCookie('_fbc');
+  if (fbp) tracking.fbp = fbp;
+  if (fbc) tracking.fbc = fbc;
+  const leadEventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+  let submitOk = false;
   try {
-    await fetch('https://iris-automation.flyin-iris-mp.workers.dev/webhook/inquiry', {
+    const resp = await fetch('https://iris-automation.flyin-iris-mp.workers.dev/webhook/inquiry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: JSON.stringify(Object.assign({
         email,
         firstName: name || undefined,
         weddingDate: date || undefined,
         submissionType: 'quiz',
         filmVibe: [style.name],
         variant: 'quiz',
-        'cf-turnstile-response': (window.fiTurnstileToken || '')
-      })
+        event_id: leadEventId,
+        'cf-turnstile-response': (window.fiConsumeToken ? window.fiConsumeToken() : (window.fiTurnstileToken || ''))
+      }, tracking))
     });
+    submitOk = resp.ok;
   } catch (e) {
     // Silently fail, don't block the UX
     console.warn('Webhook error:', e);
   }
 
-  // Track
-  if (typeof fbq !== 'undefined') {
-    fbq('track', 'Lead');
+  // Track: pixel Lead only after the Worker accepted the submission, with
+  // the shared eventID (no more phantom or duplicate Leads).
+  if (submitOk && typeof fbq !== 'undefined') {
+    fbq('track', 'Lead', {}, { eventID: leadEventId });
   }
   window.dataLayer = window.dataLayer || [];
   dataLayer.push({ event: 'quiz_lead' });
@@ -1472,7 +1498,13 @@ function showToast(msg) {
 }
 </script>
 
-  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};</script>
+  <script>window.fiTurnstileToken='';window.fiTsCb=function(t){window.fiTurnstileToken=t;};
+  /* Turnstile tokens are single-use: the Worker consumes one on EVERY submit
+     attempt, including failed ones. Read the current token AND reset the
+     widget so a retry after a network blip gets a fresh token instead of
+     stranding on a consumed one (403 under TURNSTILE_ENFORCE). Same pattern
+     as index.html fiConsumeToken. */
+  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
   <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>
