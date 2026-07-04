@@ -2055,7 +2055,11 @@
     }
 
   </style>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Turnstile api.js is lazy-injected when the inquiry section nears the
+       viewport (see the observer near the hero video injector). Keeping it
+       out of the head saves a third-party fetch on the ad landing path. -->
+  <link rel="preload" as="image" href="hero-poster-16x9.webp" media="(min-width: 769px)" fetchpriority="high">
+  <link rel="preload" as="image" href="hero-poster-9x16.webp" media="(max-width: 768px)" fetchpriority="high">
 </head>
 <body>
 
@@ -2111,6 +2115,39 @@
         </div>
       </div>
     </section>
+    <script>
+      // Hero paint path: the preloaded first-frame poster becomes the LCP
+      // element immediately; the mp4 fades in over it whenever it is ready.
+      // Runs here, right after the hero markup, instead of at the bottom of
+      // the document so the video request starts ~150KB of HTML earlier.
+      (function() {
+        var isMobile = window.innerWidth <= 768;
+        var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
+        if (!wrapper) return;
+        var posterSrc = isMobile ? 'hero-poster-9x16.webp' : 'hero-poster-16x9.webp';
+        var img = new Image();
+        img.src = posterSrc;
+        img.alt = '';
+        img.decoding = 'async';
+        img.fetchPriority = 'high';
+        img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+        wrapper.appendChild(img);
+        var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
+        var video = document.createElement('video');
+        video.src = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        video.poster = posterSrc;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.6s ease;';
+        video.addEventListener('playing', function() { video.style.opacity = '1'; }, { once: true });
+        wrapper.appendChild(video);
+      })();
+    </script>
 
     <!-- ========== SOCIAL PROOF BAR ========== -->
     <section class="social-proof reveal" aria-label="Credentials">
@@ -2316,8 +2353,26 @@
           <span class="reviews-label">5.0 on Google</span>
         </div>
         <div class="reveal-child">
-          <script src="https://elfsightcdn.com/platform.js" async></script>
           <div class="elfsight-app-fb2d57a6-a5d9-4ac3-85a0-146ee0086522" data-elfsight-app-lazy></div>
+          <script>
+            // Elfsight platform.js only loads when the reviews block nears
+            // the viewport; it is a heavy third party and never belongs on
+            // the ad-landing critical path.
+            (function() {
+              var host = document.querySelector('.elfsight-app-fb2d57a6-a5d9-4ac3-85a0-146ee0086522');
+              if (!host) return;
+              var eObserver = new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) {
+                  var s = document.createElement('script');
+                  s.src = 'https://elfsightcdn.com/platform.js';
+                  s.async = true;
+                  document.head.appendChild(s);
+                  eObserver.disconnect();
+                }
+              }, { rootMargin: '400px 0px' });
+              eObserver.observe(host);
+            })();
+          </script>
         </div>
         <div class="reveal-child cta-center">
           <a href="#quiz" class="btn">Check Your Date &#10022;</a>
@@ -2464,24 +2519,38 @@
         observer.observe(bgEl);
       })();
 
-      // ========== HERO VIDEO - LOAD ONLY ONE ==========
+      // Hero video injection moved to an inline script directly after the
+      // hero section markup (poster-first LCP path).
+
+      // ========== LAZY THIRD PARTIES (Turnstile) ==========
+      // Turnstile api.js loads when the inquiry section approaches, same
+      // pattern as the Vidstack loader. Implicit rendering scans for
+      // .cf-turnstile when the script executes.
       (function() {
-        var isMobile = window.innerWidth <= 768;
-        var cdnBase = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev';
-        var videoSrc = isMobile ? cdnBase + '/hero-9x16-v3.mp4' : cdnBase + '/hero-16x9-v3.mp4';
-        var wrapper = document.querySelector(isMobile ? '.hero-video-mobile' : '.hero-video-desktop');
-        if (wrapper) {
-          var video = document.createElement('video');
-          video.src = videoSrc;
-          video.autoplay = true;
-          video.loop = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.setAttribute('playsinline', '');
-          video.setAttribute('webkit-playsinline', '');
-          video.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
-          wrapper.appendChild(video);
+        var quizSection = document.getElementById('quiz');
+        if (!quizSection) return;
+        var loaded = false;
+        function loadTurnstile() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+          s.async = true;
+          s.defer = true;
+          document.head.appendChild(s);
         }
+        var tObserver = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            loadTurnstile();
+            tObserver.disconnect();
+          }
+        }, { rootMargin: '600px 0px' });
+        tObserver.observe(quizSection);
+        // Safety: anchor jumps from the nav can outrun the observer margin.
+        document.addEventListener('click', function(e) {
+          var a = e.target && e.target.closest ? e.target.closest('a[href="#quiz"], a[href="#inquiry"]') : null;
+          if (a) loadTurnstile();
+        });
       })();
 
       // ========== NAV SCROLL BEHAVIOR ==========
