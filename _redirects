@@ -48,3 +48,8 @@
 
 # Stale duplicate of the canonical delivery page (old root copy deleted 2026-06-10)
 /amanda-boris              /films/amanda-boris/  301
+
+# Dead A/B variant stub deleted 2026-07-03 (index.html hardcodes the unified
+# experience; nothing read ?v=b). Redirects cover any stale ad or saved link.
+/b                         /  301
+/b/*                       /  301
