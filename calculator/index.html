@@ -6,6 +6,24 @@
   <title>Build Your Film Package | Flyin' Iris Wedding Videography</title>
   <meta name="description" content="Build your custom wedding film package with Flyin' Iris. Your tier, your coverage, your film, priced live as you build it.">
   <meta name="robots" content="noindex, nofollow">
+  <script>
+  // Token gate: the calculator is pricing access, granted on inquiry. The
+  // session token arrives as ?session= (inquiry redirect, email links) or
+  // from localStorage (same-device return visit). Anonymous hits go to the
+  // inquiry form. Runs first in head so pricing never paints for anonymous
+  // visitors.
+  (function() {
+    var t = '';
+    try {
+      var p = new URLSearchParams(window.location.search);
+      t = p.get('session') || p.get('token') || '';
+      if (!t) { try { t = localStorage.getItem('fi_session_token') || ''; } catch (e) { /* storage blocked */ } }
+    } catch (e) { /* fall through to redirect */ }
+    if (!t) { window.location.replace('/?src=calculator#inquiry'); return; }
+    window.__fi_session_token = t;
+    try { localStorage.setItem('fi_session_token', t); } catch (e) { /* ignore */ }
+  })();
+  </script>
 
   <!-- Open Graph -->
   <meta property="og:title" content="Build Your Film Package | Flyin' Iris">
@@ -738,14 +756,16 @@
   <!-- Nav -->
   <nav class="nav">
     <a href="https://www.flyiniris.com" class="nav-brand">Flyin<span>'</span> Iris</a>
-    <a href="https://api.leadconnectorhq.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="nav-cta">Book a Call</a>
+    <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="nav-cta" id="navBookLink">Book a Call</a>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
     <div class="hero-eyebrow">Package Builder</div>
+    <div id="sessionGreeting" style="display:none;font-family:'Outfit',sans-serif;font-weight:500;font-size:0.9375rem;color:var(--accent);margin-bottom:10px;"></div>
+    <div id="sessionExpired" style="display:none;font-family:'Outfit',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--text-secondary);border:1px solid rgba(255,189,29,0.3);border-radius:8px;padding:10px 16px;margin:0 auto 14px;max-width:520px;">Your pricing link has expired. <a href="/#inquiry" style="color:var(--accent);text-decoration:underline;">Grab a fresh one here</a>, it takes about a minute.</div>
     <h1>Build your <em>dream film</em> package</h1>
-    <p class="hero-sub">Pick your tier, customize your coverage, and see your price update in real time. Every package includes 6 hours, a 5-minute highlight film, drone, and free travel within 120 miles. The FOMO Documentary Edit ($1,000 value) is free for the first 3 couples who book each month, otherwise a $1,000 add-on.</p>
+    <p class="hero-sub">Pick your tier, customize your coverage, and see your price update in real time. Every package includes 6 hours, a 5-minute highlight film, drone, and free travel within 120 miles. The FOMO Documentary Edit is free for the first 3 couples who book each month.</p>
   </section>
 
   <!-- Calculator -->
@@ -874,7 +894,11 @@
 
     <!-- CTA -->
     <div class="cta-section">
-      <a href="https://api.leadconnectorhq.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="cta-button">Book Your Discovery Call</a>
+      <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="cta-button" id="ctaBookLink">Book Your Discovery Call</a>
+      <div style="margin-top:12px">
+        <button id="savePackageBtn" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:0.875rem;color:var(--accent);background:transparent;border:2px solid var(--accent);padding:12px 30px;border-radius:8px;cursor:pointer;transition:all 0.25s ease;">Save My Package</button>
+      </div>
+      <p id="saveResult" style="display:none;font-family:'Outfit',sans-serif;font-weight:300;font-size:0.8125rem;color:var(--accent);margin-top:10px;"></p>
       <p class="cta-sub">15 minutes to talk through your day, your vision, and your custom package.</p>
     </div>
 
@@ -1100,6 +1124,120 @@
         .catch(function() { recalc(); });
     }
     loadFomoState();
+
+    // ========== SESSION (token gate passed in head) ==========
+    var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var sessionToken = window.__fi_session_token || '';
+    var sessionData = null;
+
+    function applyBookingPrefill() {
+      if (!sessionData) return;
+      var first = (sessionData.name || '').split(' ')[0];
+      var q = [];
+      if (first) q.push('first_name=' + encodeURIComponent(first));
+      if (sessionData.lastName) q.push('last_name=' + encodeURIComponent(sessionData.lastName));
+      if (sessionData.email) q.push('email=' + encodeURIComponent(sessionData.email));
+      if (sessionData.phone) q.push('phone=' + encodeURIComponent((sessionData.phone || '').replace(/\D/g, '')));
+      if (!q.length) return;
+      ['navBookLink', 'ctaBookLink'].forEach(function(id) {
+        var a = document.getElementById(id);
+        if (a) a.href = a.href.split('?')[0] + '?' + q.join('&');
+      });
+    }
+
+    if (sessionToken) {
+      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(s) {
+          if (s && s.success) {
+            sessionData = s;
+            var first = (s.name || '').split(' ')[0];
+            if (first) {
+              var g = document.getElementById('sessionGreeting');
+              g.textContent = 'Hey ' + first + '! This is your live pricing. Build away.';
+              g.style.display = 'block';
+            }
+            applyBookingPrefill();
+          } else {
+            // Expired or unknown token: soft banner, keep the page usable.
+            // The person already unlocked pricing once; do not fight them.
+            document.getElementById('sessionExpired').style.display = 'block';
+          }
+        })
+        .catch(function() { /* network hiccup: page stays usable */ });
+    }
+
+    // ========== SAVE MY PACKAGE ==========
+    // Two-step contract: /api/package/dream WRITES the config into
+    // saved_packages (validated server-side against the canonical engine),
+    // then /api/package/save mints the return-visit token + sends the save
+    // SMS. Calling save alone stores NO config (verified in the Worker:
+    // save only re-tokens a previously written dream/realistic config).
+    function currentConfig() {
+      return {
+        tier: currentTier,
+        hours: String(document.getElementById('hoursSelect').value),
+        highlight: document.getElementById('highlightSelect').value + ' min',
+        teaser: document.getElementById('teaserCheck').checked,
+        storySession: document.getElementById('storyCheck').checked
+      };
+    }
+
+    function getCookie(name) {
+      var m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return m ? decodeURIComponent(m[2]) : '';
+    }
+
+    document.getElementById('savePackageBtn').addEventListener('click', function() {
+      var btn = this;
+      var resultEl = document.getElementById('saveResult');
+      if (!sessionToken) {
+        resultEl.textContent = 'Your pricing link expired. Grab a fresh one from the inquiry form.';
+        resultEl.style.display = 'block';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      var cfg = currentConfig();
+      var eventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      var priceText = document.getElementById('summaryPrice').textContent.replace(/[^0-9.]/g, '');
+      fetch(WORKER_URL + '/api/package/dream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_token: sessionToken, config: cfg })
+      }).then(function(r) {
+        if (!r.ok) throw new Error('dream HTTP ' + r.status);
+        return fetch(WORKER_URL + '/api/package/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_token: sessionToken,
+            config: cfg,
+            calculated_price: parseFloat(priceText) || 0,
+            event_id: eventId,
+            fbp: getCookie('_fbp') || undefined,
+            fbc: getCookie('_fbc') || undefined
+          })
+        });
+      }).then(function(r) {
+        if (!r.ok) throw new Error('save HTTP ' + r.status);
+        return r.json();
+      }).then(function(res) {
+        btn.textContent = 'Saved';
+        var savedUrl = res && res.saved_url;
+        resultEl.innerHTML = 'Saved! ' + (savedUrl ? 'Your package lives at <a href="' + savedUrl + '" style="color:var(--accent);text-decoration:underline;">this link</a> for 30 days.' : 'Check your texts for your package link.');
+        resultEl.style.display = 'block';
+        if (typeof fbq === 'function') {
+          fbq('track', 'CalculatorCompleted', { value: parseFloat(priceText) || 0, currency: 'USD' }, { eventID: eventId });
+        }
+        if (window.dataLayer) { dataLayer.push({ event: 'calc_saved', estimated_price: parseFloat(priceText) || 0 }); }
+      }).catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Save My Package';
+        resultEl.textContent = 'That save did not go through. Give it another tap?';
+        resultEl.style.display = 'block';
+      });
+    });
   })();
   </script>
 
