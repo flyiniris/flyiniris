@@ -2945,15 +2945,8 @@
         // The short inquiry form: first names, email, phone, wedding date
         // (with the live availability check), venue optional. The hook is
         // pricing + date availability delivered immediately after submit
-        // (thanks-page router + welcome email).
-        // TBD-SEAN-PICK, hook copy variants (Option 1 is live below):
-        //   Option 2 (warm):  "Every film starts with a hello." /
-        //     "Share a little about the two of you, and we'll reply with our
-        //      pricing and whether your date is still ours to give." / "Say Hello"
-        //   Option 3 (scarcity): "One wedding per weekend. That's the whole
-        //      model." / "Inquire and we'll confirm whether your weekend is
-        //      still available, along with everything our collections
-        //      include." / "See If My Date Is Open"
+        // (thanks-page router + welcome email). Hook copy finalized
+        // 2026-07-04: "Start with your date."
         function renderInquiryForm() {
           var f = state.contactForm, t = state.contactFormTried;
           var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0;
