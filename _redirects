@@ -15,11 +15,12 @@
 /wedding-films              /  301
 /wedding-films/*            /  301
 /meet-ss                    /  301
-/our-services               /  301
+/our-services               /#investment  301
+/contact-us                 /#inquiry  301
 /testimonials               /  301
 /home-1                     /  301
 /privacy-policy             /privacy  301
-/lets-talk                  /  301
+/lets-talk                  /#inquiry  301
 /blog                       /  301
 /blog/*                     /  301
 /story-sessions             /  301
