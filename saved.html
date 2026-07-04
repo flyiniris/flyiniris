@@ -317,6 +317,7 @@
       <h1 id="saved-heading">Your Saved Package</h1>
       <p class="saved-sub">Here's what you put together. Ready when you are.</p>
       <div class="saved-card" id="saved-card"></div>
+      <p id="lock-nudge" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.875rem;color:var(--text-secondary);margin:4px 0 16px;">This package is saved for you for 30 days. Lock your date on a 15-minute call.</p>
       <a id="book-cta" href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn">
         Book a Discovery Call &#10038;
       </a>
@@ -406,6 +407,12 @@
       var contactName = (data.contact && data.contact.name) || '';
       if (contactName) {
         document.getElementById('saved-heading').textContent = 'Hey ' + contactName + '!';
+        // Prefill the booking widget with what this endpoint exposes (first
+        // name only; /api/saved carries no email/phone by design).
+        var bookCta = document.getElementById('book-cta');
+        if (bookCta) {
+          bookCta.href = BOOKING_URL + '?first_name=' + encodeURIComponent(contactName.split(' ')[0]);
+        }
       }
 
       // Render the engine's line items verbatim (audit entry 43). line_items

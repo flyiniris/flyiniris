@@ -1697,6 +1697,11 @@
     // ========== URL PARAMS ==========
     var params = new URLSearchParams(window.location.search);
     var sessionToken = params.get('session') || params.get('token') || '';
+    // Persist for the token-gated /calculator/ so an email-link visitor can
+    // open the package builder later on this device without re-inquiring.
+    if (sessionToken) {
+      try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
+    }
 
     // ========== HELPERS ==========
     function formatPrice(n) {
@@ -2278,25 +2283,38 @@
 
         if (sessionToken) {
           var c = calculateTotal();
-          fetch(WORKER_URL + '/api/package/save', {
+          var saveCfg = {
+            tier: bs.tier,
+            hours: bs.hours,
+            highlight: bs.highlight,
+            teaser: bs.addons.teaser,
+            storySession: bs.addons.storySession
+          };
+          // /api/package/dream writes the config into saved_packages;
+          // /api/package/save alone only re-tokens a previously written
+          // config (verified in the Worker), so saving without the dream
+          // call produced saved.html links with a $0 empty package.
+          fetch(WORKER_URL + '/api/package/dream', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              session_token: sessionToken,
-              config: {
-                tier: bs.tier,
-                hours: bs.hours,
-                highlight: bs.highlight,
-                teaser: bs.addons.teaser,
-                storySession: bs.addons.storySession
-              },
-              calculated_price: c.total
-            })
-          }).then(function() {
+            body: JSON.stringify({ session_token: sessionToken, config: saveCfg })
+          }).then(function(r) {
+            if (!r.ok) throw new Error('dream HTTP ' + r.status);
+            return fetch(WORKER_URL + '/api/package/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                session_token: sessionToken,
+                config: saveCfg,
+                calculated_price: c.total
+              })
+            });
+          }).then(function(r) {
+            if (!r.ok) throw new Error('save HTTP ' + r.status);
             showToast('Package saved! Check your texts.');
             btn.textContent = 'Saved';
           }).catch(function() {
-            showToast('Package saved to this link.');
+            showToast('That save did not go through. Give it another tap?');
             btn.textContent = 'Save My Package';
             btn.disabled = false;
           });
