@@ -3,19 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Film Match | Flyin' Iris</title>
-  <meta name="description" content="We matched you with a film that feels like your day. See your personalized film match from Flyin' Iris.">
+  <title>You're In | Flyin' Iris</title>
+  <meta name="description" content="We got your inquiry. Book your call or build your package with Flyin' Iris.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0A0A0A">
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+
+  <!-- Meta Pixel (deferred 3s for page speed) -->
+  <script>
+  setTimeout(function() {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbq.js');
+    fbq('init', '518972926490365');
+    fbq('track', 'PageView');
+    fbq('track', 'ViewContent', { content_name: 'thank_you_router' });
+  }, 3000);
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+  <!-- HLS.js (deferred; only needed once a film match renders) -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" defer></script>
 
   <style>
     :root {
@@ -32,12 +51,7 @@
       --border: #2A2A28;
     }
 
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
     body {
@@ -48,7 +62,6 @@
       letter-spacing: 0.01em;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
     }
 
@@ -83,82 +96,91 @@
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    .page-wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
 
-    /* Layout */
-    .page-wrap {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* Film Reveal Section */
-    .film-reveal {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* Confirmation header */
+    .confirm-head {
       text-align: center;
-      padding: 80px 20px 60px;
+      padding: 72px 20px 8px;
+      max-width: 620px;
+      margin: 0 auto;
     }
-
-    .film-reveal h1 {
+    .confirm-check {
+      font-size: 2.75rem;
+      color: var(--accent);
+      font-weight: 700;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+    .confirm-head h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      color: var(--text-primary);
-      margin-bottom: 12px;
+      font-size: clamp(2rem, 6vw, 3.25rem);
+      margin: 8px 0 10px;
       opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
     }
-
-    .film-reveal .subtitle {
-      font-family: 'Outfit', sans-serif;
+    .confirm-head .subtitle {
       font-weight: 300;
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
       color: var(--text-secondary);
       max-width: 480px;
-      margin: 0 auto 40px;
+      margin: 0 auto;
       opacity: 0;
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
     }
+    .availability-line {
+      display: none;
+      font-weight: 400;
+      font-size: 0.9375rem;
+      color: var(--accent);
+      margin: 18px auto 0;
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+    }
 
-    /* Video Player */
+    /* Film reveal */
+    .film-reveal {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 36px 20px 8px;
+    }
+    .film-reveal .reveal-label {
+      font-size: 0.625rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+    }
     .video-wrap {
       position: relative;
       width: 100%;
       max-width: 640px;
-      margin: 0 auto 24px;
+      margin: 0 auto 16px;
       border-radius: 8px;
       overflow: hidden;
       background: var(--bg-card);
       opacity: 0;
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
     }
-
-    .video-aspect {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%; /* 16:9 */
-    }
-
+    .video-aspect { position: relative; width: 100%; padding-top: 56.25%; }
     .video-aspect video {
-      position: absolute;
-      top: 0; left: 0;
+      position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
       object-fit: cover;
       background: #000;
     }
-
     .sound-toggle {
       position: absolute;
-      bottom: 16px;
-      right: 16px;
+      bottom: 16px; right: 16px;
       background: rgba(10, 10, 10, 0.7);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -176,101 +198,104 @@
       align-items: center;
       gap: 6px;
     }
+    .sound-toggle:hover { background: rgba(255, 189, 29, 0.15); border-color: var(--accent); }
+    .sound-toggle svg { width: 16px; height: 16px; fill: currentColor; }
+    .film-meta { text-align: center; margin-bottom: 4px; }
+    .film-meta .couple-name { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.375rem; }
+    .film-meta .venue-name { font-weight: 300; font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
 
-    .sound-toggle:hover {
-      background: rgba(255, 189, 29, 0.15);
-      border-color: var(--accent);
+    .gold-divider {
+      width: 60px; height: 2px;
+      background: var(--accent);
+      margin: 40px auto 36px;
+      border-radius: 2px;
     }
 
-    .sound-toggle svg {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
-    }
-
-    .film-meta {
+    /* Router: primary book-a-call */
+    .router {
       text-align: center;
-      margin-bottom: 16px;
-      opacity: 0;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
-    }
-
-    .film-meta .couple-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.5rem;
-      color: var(--text-primary);
-    }
-
-    .film-meta .venue-name {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    /* Confirmation Section */
-    .confirmation {
-      text-align: center;
-      padding: 60px 20px 100px;
-      max-width: 560px;
+      padding: 0 20px 30px;
+      max-width: 620px;
       margin: 0 auto;
     }
-
-    .confirm-check {
-      font-size: 3rem;
-      color: var(--accent);
-      margin-bottom: 20px;
-      font-weight: 700;
-      opacity: 0;
-      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-    }
-
-    .confirmation h2 {
+    .router h2 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
-      font-size: clamp(1.5rem, 4vw, 2rem);
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      opacity: 0;
-      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+      font-size: clamp(1.5rem, 4.5vw, 2.125rem);
+      margin-bottom: 10px;
     }
-
-    .confirmation p {
-      font-family: 'Outfit', sans-serif;
+    .router .router-sub {
       font-weight: 300;
       font-size: 0.9375rem;
       color: var(--text-secondary);
+      max-width: 460px;
+      margin: 0 auto 6px;
       line-height: 1.7;
-      margin-bottom: 12px;
-      opacity: 0;
-      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
     }
+    .pricing-first-line {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin: 14px auto 8px;
+    }
+    .pricing-first-line a { color: var(--accent); text-decoration: underline; }
+    .pricing-first-line a:hover { color: var(--accent-light); }
 
-    .gold-divider {
-      width: 60px;
-      height: 2px;
-      background: var(--accent);
-      margin: 32px auto;
-      border-radius: 2px;
-      opacity: 0;
-      animation: fadeIn 0.6s ease 0.6s forwards;
+    .cal-wrap {
+      width: 100%;
+      max-width: 520px;
+      margin: 18px auto 4px;
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 1000px;
     }
+    .cal-wrap iframe { width: 100%; min-height: 1000px; border: none; overflow: hidden; }
+    .cal-fallback {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .cal-fallback a { color: var(--accent); text-decoration: underline; }
 
-    .skip-ahead {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 1rem;
-      color: var(--text-primary);
-      margin-bottom: 20px;
-      opacity: 0;
-      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+    /* Secondary: build your package */
+    .package-box {
+      border: 1px solid rgba(255, 189, 29, 0.25);
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 28px 24px;
+      max-width: 520px;
+      margin: 28px auto 0;
+      text-align: center;
     }
+    .package-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.375rem;
+      margin-bottom: 8px;
+    }
+    .package-box p {
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .btn-outline {
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--accent);
+      background: transparent;
+      border: 2px solid var(--accent);
+      padding: 12px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-outline:hover { background: rgba(255, 189, 29, 0.1); color: var(--accent-light); border-color: var(--accent-light); }
 
     .cta-btn {
       display: inline-block;
-      font-family: 'Outfit', sans-serif;
       font-weight: 600;
       font-size: 0.9375rem;
       color: var(--bg-primary);
@@ -281,22 +306,11 @@
       transition: all 0.25s ease;
       border: none;
       cursor: pointer;
-      opacity: 0;
-      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
     }
-
-    .cta-btn:hover {
-      background: var(--accent-light);
-      transform: translateY(-1px);
-    }
+    .cta-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
 
     /* Footer */
-    .footer {
-      text-align: center;
-      padding: 40px 20px;
-      border-top: 1px solid var(--border);
-    }
-
+    .footer { text-align: center; padding: 48px 20px 40px; border-top: 1px solid var(--border); margin-top: 48px; }
     .footer-brand {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
@@ -306,56 +320,29 @@
       display: block;
       margin-bottom: 8px;
     }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-legal { font-size: 0.6875rem; color: var(--text-muted); margin-top: 4px; }
+    .footer-legal a { color: var(--text-muted); text-decoration: underline; }
 
-    .footer-copy {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .footer-legal {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .footer-legal a {
-      color: var(--text-muted);
-      text-decoration: underline;
-    }
-
-    /* Fallback thumbnail */
-    .film-thumb-fallback {
-      display: none;
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto 24px;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .film-thumb-fallback img {
-      width: 100%;
-      display: block;
-    }
-
-    /* Mobile adjustments */
     @media (max-width: 640px) {
-      .film-reveal {
-        padding: 60px 16px 40px;
-      }
-      .confirmation {
-        padding: 40px 16px 80px;
-      }
+      .confirm-head { padding: 56px 16px 8px; }
+      .router { padding: 0 12px 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Film Reveal Section -->
-  <section class="film-reveal">
-    <h1 id="reveal-heading">We found your film.</h1>
-    <p class="subtitle">Based on what you told us, we matched you with a film that feels like your day...</p>
+  <!-- Confirmation -->
+  <section class="confirm-head">
+    <div class="confirm-check">&#10003;</div>
+    <h1 id="confirm-heading">We got your inquiry!</h1>
+    <p class="subtitle" id="confirm-sub">Your pricing is on its way to your inbox right now, and everything you need is right here on this page.</p>
+    <p class="availability-line" id="availability-line"></p>
+  </section>
 
+  <!-- Film match reveal (renders when the session or legacy params carry a match) -->
+  <section class="film-reveal" id="film-reveal">
+    <p class="reveal-label">We matched you with a film</p>
     <div class="video-wrap" id="video-wrap">
       <div class="video-aspect">
         <video id="film-video" playsinline muted loop preload="metadata"></video>
@@ -370,30 +357,31 @@
         <span id="sound-label">Tap for Sound</span>
       </button>
     </div>
-
-    <div class="film-thumb-fallback" id="film-fallback">
-      <img id="film-thumb-img" src="" alt="Wedding film thumbnail">
-    </div>
-
     <div class="film-meta" id="film-meta">
       <div class="couple-name" id="film-couple"></div>
       <div class="venue-name" id="film-venue"></div>
     </div>
   </section>
 
-  <!-- Confirmation Section -->
-  <section class="confirmation">
-    <div class="confirm-check">&#10003;</div>
-    <h2>We got your inquiry!</h2>
-    <p>We're so excited about your day.</p>
-    <p>Check your inbox. We're sending you some beautiful films and everything you need to know about working with us.</p>
+  <div class="gold-divider"></div>
 
-    <div class="gold-divider"></div>
+  <!-- Router: PRIMARY book the call -->
+  <section class="router">
+    <h2>Lock in your date on a quick call.</h2>
+    <p class="router-sub">15 to 20 minutes with Sierra &amp; Sean. No pitch, no pressure. We'll walk through your day, your pricing, and make sure we're the right fit.</p>
+    <p class="pricing-first-line" id="pricing-first-line" style="display:none">Want to see your pricing first? <a href="#build-package">Build your package below</a> and get your exact number in about a minute.</p>
 
-    <p class="skip-ahead">Want to skip ahead? Book a call and let's chat!</p>
-    <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener" class="cta-btn" id="book-call-cta">
-      Book a Discovery Call &#10038;
-    </a>
+    <div class="cal-wrap" id="cal-wrap">
+      <iframe id="booking-iframe" title="Book your discovery call" scrolling="yes" src="about:blank"></iframe>
+    </div>
+    <p class="cal-fallback">Calendar not loading? <a id="book-call-link" href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+
+    <!-- SECONDARY: token-gated calculator -->
+    <div class="package-box" id="build-package" style="display:none">
+      <h3>Or build your package first.</h3>
+      <p>Pick your coverage, your film length, your add-ons, and watch your exact investment update live. Save it, sleep on it, bring it to the call.</p>
+      <a class="btn-outline" id="build-package-link" href="/calculator/">Build My Package &#10022;</a>
+    </div>
   </section>
 
   <!-- Footer -->
@@ -405,116 +393,165 @@
 
   <script>
     (function() {
+      var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
+      var BOOKING_BASE = 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
+
+      // Legacy film map for pre-router links (?fn=&film=) that still land here.
       var FILMS_DATA = {
-        'marie-matt': { couple: 'Marie & Matt', venue: 'Westmoor Country Club', vibes: ['romantic','timeless','elegant'] },
-        'kayla-jason': { couple: 'Kayla & Jason', venue: 'The Covenant at Murray Mansion', vibes: ['romantic','intimate','adventurous'] },
-        'allie-matt': { couple: 'Matt & Allie', venue: '10 South', vibes: ['modern','grand','adventurous'] },
-        'sally-aj': { couple: 'Sally & AJ', venue: '10 South', vibes: ['romantic','elegant','grand'] },
-        'taylor-kane': { couple: 'Taylor & Kane', venue: 'Green Bay Country Club', vibes: ['romantic','modern','elegant'] },
-        'kate-thomas': { couple: 'Kate & Thomas', venue: 'Peck & Bushel', vibes: ['romantic','elegant','rustic'] },
-        'sandra-chas': { couple: 'Sandra & Chas', venue: 'Terrace 167', vibes: ['modern','elegant','cultural'] },
-        'amanda-boris': { couple: 'Amanda & Boris', venue: 'Mercantile Hall', vibes: ['romantic','intimate','cultural'] },
-        'izzy-hunter': { couple: 'Izzy & Hunter', venue: 'The Gage', vibes: ['modern','elegant','grand'] },
-        'emily-bobby': { couple: 'Emily & Bobby', venue: 'Monona Terrace', vibes: ['romantic','timeless','elegant'] },
-        'rachel-michael-woolf': { couple: 'Rachel & Michael', venue: 'Thyme Restaurant', vibes: ['romantic','timeless','elegant'] },
-        'rachel-michael-street': { couple: 'Rachel & Michael S.', venue: '10 South', vibes: ['romantic','timeless','elegant'] },
-        'taylor-austin': { couple: 'Taylor & Austin', venue: 'The Fields Reserve', vibes: ['romantic','timeless','rustic'] },
-        'olivia-austin': { couple: 'Olivia & Austin', venue: 'Oakbrook Church', vibes: ['romantic','modern','timeless'] },
-        'sarah-cody': { couple: 'Sarah & Cody', venue: 'The Bowery', vibes: ['grand','adventurous','glamorous'] },
+        'marie-matt': { couple: 'Marie & Matt', venue: 'Westmoor Country Club' },
+        'kayla-jason': { couple: 'Kayla & Jason', venue: 'The Covenant at Murray Mansion' },
+        'allie-matt': { couple: 'Matt & Allie', venue: '10 South' },
+        'sally-aj': { couple: 'Sally & AJ', venue: '10 South' },
+        'taylor-kane': { couple: 'Taylor & Kane', venue: 'Green Bay Country Club' },
+        'kate-thomas': { couple: 'Kate & Thomas', venue: 'Peck & Bushel' },
+        'sandra-chas': { couple: 'Sandra & Chas', venue: 'Terrace 167' },
+        'amanda-boris': { couple: 'Amanda & Boris', venue: 'Mercantile Hall' },
+        'izzy-hunter': { couple: 'Izzy & Hunter', venue: 'The Gage' },
+        'emily-bobby': { couple: 'Emily & Bobby', venue: 'Monona Terrace' },
+        'rachel-michael-woolf': { couple: 'Rachel & Michael', venue: 'Thyme Restaurant' },
+        'rachel-michael-street': { couple: 'Rachel & Michael S.', venue: '10 South' },
+        'taylor-austin': { couple: 'Taylor & Austin', venue: 'The Fields Reserve' },
+        'olivia-austin': { couple: 'Olivia & Austin', venue: 'Oakbrook Church' },
+        'sarah-cody': { couple: 'Sarah & Cody', venue: 'The Bowery' }
       };
 
       var params = new URLSearchParams(window.location.search);
-      var fn = params.get('fn') || '';
-      var filmSlug = params.get('film') || '';
-
-      // Set heading
-      var heading = document.getElementById('reveal-heading');
-      if (fn) {
-        heading.textContent = 'Hey ' + decodeURIComponent(fn) + '!';
-      }
-
-      // R10 booking prefill: the GHL widget honors first_name as a query
-      // param. This page only ever receives fn (no email/phone), so partial
-      // prefill is the ceiling here.
-      if (fn) {
-        var bookCta = document.getElementById('book-call-cta');
-        if (bookCta) {
-          bookCta.href += (bookCta.href.indexOf('?') === -1 ? '?' : '&') + 'first_name=' + encodeURIComponent(decodeURIComponent(fn));
-        }
-      }
-
-      // Film data
-      var filmData = FILMS_DATA[filmSlug];
-      var coupleEl = document.getElementById('film-couple');
-      var venueEl = document.getElementById('film-venue');
-      if (filmData) {
-        coupleEl.textContent = filmData.couple;
-        venueEl.textContent = filmData.venue;
-      }
-
-      // Video setup
-      if (!filmSlug) {
-        document.getElementById('video-wrap').style.display = 'none';
-        document.getElementById('film-meta').style.display = 'none';
-        return;
-      }
-
-      var hlsUrl = 'https://video.flyiniris.com/couples/' + filmSlug + '/hls/teaser/master.m3u8';
-      var thumbUrl = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/' + filmSlug + '/thumbs/thumb.jpg';
-      var video = document.getElementById('film-video');
-      var videoWrap = document.getElementById('video-wrap');
-      var fallback = document.getElementById('film-fallback');
-      var thumbImg = document.getElementById('film-thumb-img');
-
-      video.poster = thumbUrl;
-
-      function startPlayback() {
-        video.play().catch(function() {});
-      }
-
-      if (Hls.isSupported()) {
-        var hls = new Hls({ startLevel: -1 });
-        hls.loadSource(hlsUrl);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          startPlayback();
-        });
-        hls.on(Hls.Events.ERROR, function(event, data) {
-          if (data.fatal) {
-            videoWrap.style.display = 'none';
-            fallback.style.display = 'block';
-            thumbImg.src = thumbUrl;
-            thumbImg.alt = (filmData ? filmData.couple : 'Wedding') + ' film';
-          }
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = hlsUrl;
-        startPlayback();
+      var sessionToken = params.get('session') || params.get('token') || '';
+      if (!sessionToken) {
+        try { sessionToken = localStorage.getItem('fi_session_token') || ''; } catch (e) { /* ignore */ }
       } else {
-        videoWrap.style.display = 'none';
-        fallback.style.display = 'block';
-        thumbImg.src = thumbUrl;
-        thumbImg.alt = (filmData ? filmData.couple : 'Wedding') + ' film';
+        try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
       }
 
-      // Sound toggle
-      var soundToggle = document.getElementById('sound-toggle');
-      var soundLabel = document.getElementById('sound-label');
-      var iconOff = document.getElementById('sound-icon-off');
-      var iconOn = document.getElementById('sound-icon-on');
-
-      soundToggle.addEventListener('click', function() {
-        video.muted = !video.muted;
-        if (video.muted) {
-          soundLabel.textContent = 'Tap for Sound';
-          iconOff.style.display = '';
-          iconOn.style.display = 'none';
-        } else {
-          soundLabel.textContent = 'Sound On';
-          iconOff.style.display = 'none';
-          iconOn.style.display = '';
+      function setBooking(prefill) {
+        var url = BOOKING_BASE;
+        var q = [];
+        if (prefill) {
+          if (prefill.first_name) q.push('first_name=' + encodeURIComponent(prefill.first_name));
+          if (prefill.last_name) q.push('last_name=' + encodeURIComponent(prefill.last_name));
+          if (prefill.email) q.push('email=' + encodeURIComponent(prefill.email));
+          if (prefill.phone) q.push('phone=' + encodeURIComponent(prefill.phone));
         }
-      });
+        if (q.length) url += '?' + q.join('&');
+        var iframe = document.getElementById('booking-iframe');
+        var link = document.getElementById('book-call-link');
+        iframe.src = url;
+        link.href = url;
+        // GHL embed helper (same defer pattern as the landing page)
+        setTimeout(function() {
+          if (!document.getElementById('ghl-embed-script')) {
+            var s = document.createElement('script');
+            s.id = 'ghl-embed-script';
+            s.src = 'https://book.flyiniris.com/js/form_embed.js';
+            document.body.appendChild(s);
+          }
+        }, 50);
+        // Book-call intent signal (custom event; the real Schedule fires
+        // server-side on the GHL AppointmentBooked webhook)
+        link.addEventListener('click', function() {
+          if (typeof fbq === 'function') fbq('trackCustom', 'BookCallClicked');
+        });
+      }
+
+      function attachFilm(videoUrl, posterUrl, coupleName, venueName) {
+        var reveal = document.getElementById('film-reveal');
+        var video = document.getElementById('film-video');
+        var wrap = document.getElementById('video-wrap');
+        reveal.style.display = 'flex';
+        if (coupleName) document.getElementById('film-couple').textContent = coupleName;
+        if (venueName) document.getElementById('film-venue').textContent = venueName;
+        if (posterUrl) video.poster = posterUrl;
+
+        function startPlayback() { video.play().catch(function() {}); }
+        function initHls() {
+          if (window.Hls && Hls.isSupported()) {
+            var hls = new Hls({ startLevel: -1 });
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, startPlayback);
+            hls.on(Hls.Events.ERROR, function(event, data) {
+              if (data.fatal) wrap.style.display = 'none';
+            });
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoUrl;
+            startPlayback();
+          } else {
+            wrap.style.display = 'none';
+          }
+        }
+        // hls.js is deferred; wait for it if needed
+        if (window.Hls || video.canPlayType('application/vnd.apple.mpegurl')) initHls();
+        else window.addEventListener('load', initHls);
+
+        var soundToggle = document.getElementById('sound-toggle');
+        var soundLabel = document.getElementById('sound-label');
+        var iconOff = document.getElementById('sound-icon-off');
+        var iconOn = document.getElementById('sound-icon-on');
+        soundToggle.addEventListener('click', function() {
+          video.muted = !video.muted;
+          soundLabel.textContent = video.muted ? 'Tap for Sound' : 'Sound On';
+          iconOff.style.display = video.muted ? '' : 'none';
+          iconOn.style.display = video.muted ? 'none' : '';
+        });
+      }
+
+      function renderFromSession(s) {
+        var first = (s.name || '').split(' ')[0];
+        if (first) {
+          document.getElementById('confirm-heading').textContent = first + ", you're in!";
+        }
+        if (s.availabilityMessage) {
+          var av = document.getElementById('availability-line');
+          av.textContent = s.availabilityMessage;
+          av.style.display = 'block';
+        }
+        if (s.matchedFilm && s.matchedFilm.video_url) {
+          attachFilm(s.matchedFilm.video_url, s.matchedFilm.thumbnail_url || '', s.matchedFilm.couple_name || '', s.matchedFilm.venue || '');
+        }
+        setBooking({
+          first_name: first,
+          last_name: s.lastName || '',
+          email: s.email || '',
+          phone: (s.phone || '').replace(/\D/g, '')
+        });
+        // Unlock the token-gated calculator path
+        var box = document.getElementById('build-package');
+        var line = document.getElementById('pricing-first-line');
+        var link = document.getElementById('build-package-link');
+        link.href = '/calculator/?session=' + encodeURIComponent(sessionToken);
+        box.style.display = 'block';
+        line.style.display = 'block';
+      }
+
+      function renderLegacy() {
+        var fn = params.get('fn') || '';
+        var filmSlug = params.get('film') || '';
+        if (fn) {
+          document.getElementById('confirm-heading').textContent = decodeURIComponent(fn) + ", you're in!";
+        }
+        var filmData = FILMS_DATA[filmSlug];
+        if (filmSlug && filmData) {
+          attachFilm(
+            'https://video.flyiniris.com/couples/' + filmSlug + '/hls/teaser/master.m3u8',
+            'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/' + filmSlug + '/thumbs/thumb.jpg',
+            filmData.couple,
+            filmData.venue
+          );
+        }
+        setBooking(fn ? { first_name: decodeURIComponent(fn) } : null);
+      }
+
+      if (sessionToken) {
+        fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(s) {
+            if (s && s.success) renderFromSession(s);
+            else renderLegacy();
+          })
+          .catch(function() { renderLegacy(); });
+      } else {
+        renderLegacy();
+      }
     })();
   </script>
 </body>
