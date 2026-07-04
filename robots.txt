@@ -1,4 +1,15 @@
 User-agent: *
+Disallow: /delivery/
+Disallow: /_shells/
+Disallow: /b/
+Disallow: /thanks
+Disallow: /saved
+Disallow: /experience
+Disallow: /portal
+Disallow: /questionnaire
+Disallow: /contractor-onboarding
+Disallow: /*.md$
+Disallow: /*.csv$
 Allow: /
 
 Sitemap: https://www.flyiniris.com/sitemap.xml

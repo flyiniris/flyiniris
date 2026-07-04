@@ -1,3 +1,16 @@
+# Repo tooling and docs that must stay committed but never be served.
+# Cloudflare Pages evaluates _redirects before static assets, so these
+# rules shadow the underlying files (there is no Pages ignore mechanism;
+# .cfignore was a no-op and has been deleted).
+/CLAUDE.md                  /   301
+/README.md                  /   301
+/package.json               /   301
+/package-lock.json          /   301
+/.gitignore                 /   301
+/.gitattributes             /   301
+/delivery/*                 /   301
+/.claude/*                  /   301
+
 # Old Squarespace pages: 301 permanent redirects
 /wedding-films              /  301
 /wedding-films/*            /  301

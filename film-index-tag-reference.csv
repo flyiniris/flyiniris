@@ -1,8 +1,0 @@
-Column,Valid Values
-Venue Type,"barn, ballroom, outdoor, lakefront, garden, rooftop, church, estate, country-club, winery, industrial, restaurant, hotel, park, brewery"
-Vibe,"romantic, modern, timeless, boho, elegant, rustic, intimate, grand, cultural, adventurous, classic, whimsical"
-Season,"spring, summer, fall, winter"
-Region,"milwaukee, madison, door-county, green-bay, lake-geneva, chicago, waukesha, kohler, appleton, kenosha, destination"
-Guest Size,"intimate, medium, large"
-Emotional Tone,"tearjerker, joyful, party, quiet-intimate, cinematic-epic"
-Package Tier,"team, ss-experience"
