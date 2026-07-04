@@ -2408,10 +2408,17 @@
       </a>
     </section>
 
-    <!-- ========== QUIZ / CALCULATOR ========== -->
-    <section id="quiz" class="section quiz-section" aria-label="Wedding film quiz">
+    <!-- ========== INQUIRY (formerly quiz/calculator) ========== -->
+    <div id="inquiry"></div>
+    <section id="quiz" class="section quiz-section" aria-label="Check your date and get pricing">
       <div class="section-inner reveal">
         <div id="quizApp"></div>
+        <!-- Turnstile lives OUTSIDE #quizApp: render() replaces that node's
+             innerHTML on every state change and would destroy the widget.
+             api.js is lazy-injected when this section nears the viewport. -->
+        <div style="display:flex;justify-content:center;margin-top:4px">
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto"></div>
+        </div>
       </div>
     </section>
 
@@ -3091,8 +3098,11 @@
         }
 
         // --- STATE ---
+        // mode starts at "inquiry": the short form IS the funnel entry now.
+        // The old intro/quiz-step/inline-calculator renderers below are
+        // legacy (unreachable from the live path) pending the cleanup pass.
         var state = {
-          mode: "intro",
+          mode: "inquiry",
           quizStep: 0, quizAnswers: {}, referralName: "",
           contactInfo: null,
           calcStep: 0, calcAnswers: {},
@@ -3181,7 +3191,8 @@
         // --- RENDER ---
         function render() {
           var html = '<div class="quiz-container">';
-          if (state.mode === "intro") html += renderIntro();
+          if (state.mode === "inquiry") html += renderInquiryForm();
+          else if (state.mode === "intro") html += renderIntro();
           else if (state.mode === "experience-loading") html += renderExperienceLoading();
           else if (state.mode === "confirmation") html += renderConfirmation();
           else if (state.mode === "calcResults") html += renderCalcResults();
@@ -3210,6 +3221,73 @@
               checkAvailability(this.value);
             });
           }
+        }
+
+        // The short inquiry form: first names, email, phone, wedding date
+        // (with the live availability check), venue optional. The hook is
+        // pricing + date availability delivered immediately after submit
+        // (thanks-page router + welcome email).
+        // TBD-SEAN-PICK, hook copy variants (Option 1 is live below):
+        //   Option 2 (warm):  "Every film starts with a hello." /
+        //     "Share a little about the two of you, and we'll reply with our
+        //      pricing and whether your date is still ours to give." / "Say Hello"
+        //   Option 3 (scarcity): "One wedding per weekend. That's the whole
+        //      model." / "Inquire and we'll confirm whether your weekend is
+        //      still available, along with everything our collections
+        //      include." / "See If My Date Is Open"
+        function renderInquiryForm() {
+          var f = state.contactForm, t = state.contactFormTried;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0;
+          var h = '<div class="quiz-step">';
+          h += '<p class="quiz-intro-label" style="text-align:center">Flyin’ Iris ✦ Milwaukee, WI</p>';
+          h += '<h2 class="quiz-question" tabindex="-1" style="outline:none;text-align:center">Start with your date.</h2>';
+          h += '<p class="quiz-subtext" style="text-align:center">Tell us a little about your day. You’ll get our pricing and your date’s real-time availability the moment you hit the button.</p>';
+          if (state.submitError) h += '<p class="quiz-form-submit-error" role="alert">That didn’t go through. Your answers are saved, just tap the button again. Still stuck? Text us at (262) 384-5079.</p>';
+          h += '<div class="quiz-form">';
+          // First names row
+          h += '<div class="quiz-form-row">';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-name">Your First Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-name" class="quiz-form-input' + (t && !nOk ? ' error' : '') + '" data-field="name" placeholder="Your first name" autocomplete="given-name">';
+          if (t && !nOk) h += '<p class="quiz-form-error">We need your first name!</p>';
+          h += '</div>';
+          h += '<div class="quiz-form-group"><label class="quiz-form-label" for="qf-partner">Partner’s First Name <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="text" id="qf-partner" class="quiz-form-input' + (t && !paOk ? ' error' : '') + '" data-field="partner" placeholder="Their first name">';
+          if (t && !paOk) h += '<p class="quiz-form-error">We’d love their name too!</p>';
+          h += '</div></div>';
+          // Email
+          h += '<div><label class="quiz-form-label" for="qf-email">Email <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="email" id="qf-email" class="quiz-form-input' + (t && !eOk ? ' error' : '') + '" data-field="email" placeholder="you@email.com" autocomplete="email">';
+          if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn’t look right. Double check?' : 'We need your email to send your pricing!') + '</p>';
+          h += '</div>';
+          // Phone + single non-marketing SMS consent
+          h += '<div><label class="quiz-form-label" for="qf-phone">Phone <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="tel" id="qf-phone" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234" autocomplete="tel">';
+          if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
+          h += '<div style="margin-top:8px">';
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing" role="checkbox" aria-checked="' + (f.smsNonMarketing ? 'true' : 'false') + '">';
+          h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>✓</span>' : '') + '</div>';
+          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I consent to receive non-marketing text messages from Flyin’ Iris Media Productions LLC about wedding videography booking updates, scheduling, and appointment reminders. Message & data rates may apply. Text HELP for assistance, reply STOP to opt out.</span>';
+          h += '</button>';
+          h += '</div></div>';
+          // Wedding date (the hook)
+          var minDate = new Date().toISOString().split('T')[0];
+          var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
+          h += '<div><label class="quiz-form-label" for="quiz-date">Wedding Date <span style="color:var(--accent)">*</span></label>';
+          h += '<input type="date" id="quiz-date" class="quiz-form-input' + (t && !dOk ? ' error' : '') + '" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
+          h += '<div id="availability-msg" style="min-height:0;margin-top:6px" aria-live="polite"></div>';
+          if (t && !dOk) h += '<p class="quiz-form-error">We need your date to check availability!</p>';
+          h += '</div>';
+          // Venue (optional)
+          h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--text-secondary);font-weight:300;font-size:0.6875rem">(optional)</span></label>';
+          h += '<input type="text" id="qf-venue" class="quiz-form-input" data-field="venue" placeholder="Venue Name · City (or leave blank)">';
+          h += '</div>';
+          // Submit
+          h += '<button class="quiz-submit-btn" data-action="submit-inquiry">Check My Date →</button>';
+          if (t && !(nOk && paOk && eOk && pOk && dOk)) h += '<p class="quiz-form-submit-error">↑ Just need a few more details!</p>';
+          h += '<p class="quiz-form-hint">No spam ever. Real pricing, real availability, and a real conversation about your day.</p>';
+          h += '<p style="font-size:0.5625rem;color:rgba(200,195,185,0.4);text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Terms & Conditions</a></p>';
+          h += '</div></div>';
+          return h;
         }
 
         function renderIntro() {
@@ -3880,6 +3958,76 @@
           if (action === "prev") { saveFormFields(); goPrev(); render(); scrollToQuiz(); focusQuizHeading(); return; }
           if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-action="toggle-sms-marketing"]'); if (nxt) nxt.focus(); return; }
           if (action === "toggle-sms-marketing") { saveFormFields(); state.contactForm.smsMarketing = !state.contactForm.smsMarketing; saveInquiryDraft(); render(); var nxt = quizApp.querySelector('[data-field="venue"]'); if (nxt) nxt.focus(); return; }
+          if (action === "submit-inquiry") {
+            saveFormFields();
+            state.contactFormTried = true;
+            var fi = state.contactForm;
+            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && fi.weddingDate && fi.weddingDate.length > 0;
+            if (!okToSend) { render(); return; }
+            var dateEl = document.getElementById('quiz-date');
+            if (dateEl && dateEl.value) state.contactForm.weddingDate = dateEl.value;
+            state.contactInfo = { name: fi.name, partner: fi.partner, email: fi.email, phone: fi.phone, smsNonMarketing: fi.smsNonMarketing, smsMarketing: false, venue: fi.venue, note: '', weddingDate: fi.weddingDate };
+            state.submitError = false;
+            // Shared event_id: pixel Lead fires only after a confirmed 2xx,
+            // with the same id the Worker reuses for the CAPI Lead.
+            var inqEventId = generateEventId();
+            var inqTracking = getTrackingData();
+            inqTracking.event_id = inqEventId;
+            var shortInquiry = Object.assign({
+              submissionType: 'inquiry',
+              firstName: fi.name.trim().split(' ')[0] || '',
+              lastName: fi.name.trim().split(' ').slice(1).join(' ') || '',
+              email: fi.email,
+              phone: fi.phone,
+              smsNonMarketing: fi.smsNonMarketing ? 'Yes' : 'No',
+              smsMarketing: 'No',
+              venue: fi.venue.trim() || '',
+              partnerFirstName: fi.partner.trim().split(' ')[0] || '',
+              partnerLastName: fi.partner.trim().split(' ').slice(1).join(' ') || '',
+              weddingDate: fi.weddingDate || '',
+              variant: 'unified',
+              variant_source: 'unified'
+            }, inqTracking);
+            state.mode = "experience-loading";
+            render();
+            scrollToQuiz();
+            fetch(WORKER_URL + '/webhook/inquiry', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(Object.assign({}, shortInquiry, { 'cf-turnstile-response': window.fiConsumeToken() }))
+            }).then(function(resp) {
+              if (!resp.ok) throw new Error('inquiry HTTP ' + resp.status);
+              return resp.json();
+            }).then(function(result) {
+              if (window.dataLayer) { dataLayer.push({ event: "inquiry_submitted", form_name: "short_inquiry" }); }
+              if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: inqEventId }); }
+              clearInquiryDraft();
+              var sessionToken = (result && result.session_token) || '';
+              if (sessionToken) {
+                try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
+              }
+              setTimeout(function() {
+                if (sessionToken) {
+                  window.location.href = '/thanks?session=' + sessionToken;
+                } else {
+                  // No token came back: fall back to the inline confirmation
+                  // with the booking calendar so the couple still has a path.
+                  state.mode = "confirmation";
+                  render();
+                  scrollToQuiz();
+                }
+              }, 1500);
+            }).catch(function(err) {
+              console.log('Inquiry submission error:', err);
+              setTimeout(function() {
+                state.submitError = true;
+                state.mode = "inquiry";
+                render();
+                scrollToQuiz();
+              }, 800);
+            });
+            return;
+          }
           if (action === "submit-contact") {
             saveFormFields();
             state.contactFormTried = true;
@@ -3998,6 +4146,5 @@
      (a calculator submit then an inquiry submit would otherwise reuse one token and 403 the
      second once enforce is on). Single-form pages do not need this. */
   window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
-  <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>
