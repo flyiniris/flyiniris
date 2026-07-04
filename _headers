@@ -1,0 +1,13 @@
+# Security headers for all routes. The site is hand-authored static HTML with
+# extensive inline script/style and no build step, so the CSP allows
+# 'unsafe-inline' (and 'unsafe-eval' for the Elfsight widget). It still pins
+# every allowed network origin, which is the practical win available here.
+# Origin inventory date: 2026-07-03. If a page adds a new third party, add it
+# here in the same commit or the resource will be silently blocked.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://cdn.jsdelivr.net https://cdn.vidstack.io https://challenges.cloudflare.com https://static.elfsight.com https://elfsightcdn.com https://*.elfsightcdn.com https://www.gstatic.com https://book.flyiniris.com https://api.leadconnectorhq.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.vidstack.io; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev https://www.facebook.com https://www.googletagmanager.com https://*.elfsight.com https://*.elfsightcdn.com https://*.cdninstagram.com https://*.fbcdn.net https://*.vimeocdn.com; media-src 'self' blob: https://video.flyiniris.com https://media.flyiniris.com https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev; connect-src 'self' https://iris-automation.flyin-iris-mp.workers.dev https://video.flyiniris.com https://media.flyiniris.com https://challenges.cloudflare.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://*.elfsight.com https://*.elfsightcdn.com https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev https://cdn.jsdelivr.net https://cdn.vidstack.io https://www.gstatic.com; frame-src 'self' https://book.flyiniris.com https://api.leadconnectorhq.com https://player.vimeo.com https://challenges.cloudflare.com https://www.facebook.com https://www.googletagmanager.com https://*.elfsight.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://iris-automation.flyin-iris-mp.workers.dev
