@@ -25,6 +25,9 @@
   <!-- Google Tag Manager + Meta Pixel (deferred 3s for page speed) -->
   <script>
   window.dataLayer = window.dataLayer || [];
+  // One PageView event id shared by the browser pixel and the server CAPI
+  // PageView (/api/pageview) so Meta dedups the pair instead of counting two.
+  window.__fi_pv_event_id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
   setTimeout(function() {
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -41,7 +44,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbq.js');
     fbq('init', '518972926490365');
-    fbq('track', 'PageView');
+    fbq('track', 'PageView', {}, { eventID: window.__fi_pv_event_id });
   }, 3000);
   </script>
   <noscript><img height="1" width="1" style="display:none"
@@ -2689,23 +2692,44 @@
         window.__fi_variant = 'unified';
         window.__fi_variant_source = 'unified';
 
-        // --- UTM / FBCLID CAPTURE ---
-        // Capture tracking params from URL on page load and store in sessionStorage
+        // --- UTM / FBCLID / AD ID CAPTURE ---
+        // First-touch attribution persists in localStorage for 90 days (a
+        // couple who clicks an ad, closes the tab, and comes back tomorrow
+        // still carries the ad attribution into the inquiry). sessionStorage
+        // is read as a legacy fallback for tabs opened before this deploy.
+        var TRACKING_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ad_id', 'adset_id', 'campaign_id'];
+        var TRACKING_TTL_MS = 90 * 24 * 60 * 60 * 1000;
         (function() {
-          var params = new URLSearchParams(window.location.search);
-          var trackingKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
-          trackingKeys.forEach(function(key) {
-            var val = params.get(key);
-            if (val) sessionStorage.setItem('fi_' + key, val);
-          });
-          // Fire server-side PageView for CAPI when fbclid is present
-          var fbclid = params.get('fbclid') || sessionStorage.getItem('fi_fbclid');
+          try {
+            var ts = parseInt(localStorage.getItem('fi_tracking_ts') || '0', 10);
+            if (ts && (Date.now() - ts) > TRACKING_TTL_MS) {
+              TRACKING_KEYS.concat(['landing_page']).forEach(function(k) { localStorage.removeItem('fi_' + k); });
+              localStorage.removeItem('fi_tracking_ts');
+            }
+            var params = new URLSearchParams(window.location.search);
+            var captured = false;
+            TRACKING_KEYS.forEach(function(key) {
+              var val = params.get(key);
+              if (val) { localStorage.setItem('fi_' + key, val); captured = true; }
+            });
+            if (captured || !localStorage.getItem('fi_landing_page')) {
+              localStorage.setItem('fi_landing_page', window.location.href.split('#')[0]);
+            }
+            if (captured || !localStorage.getItem('fi_tracking_ts')) {
+              localStorage.setItem('fi_tracking_ts', String(Date.now()));
+            }
+          } catch (e) { /* storage blocked: tracking degrades gracefully */ }
+          // Fire server-side PageView for CAPI when fbclid is present, using
+          // the SAME event id as the browser pixel PageView so Meta dedups.
+          var fbclid = '';
+          try {
+            fbclid = new URLSearchParams(window.location.search).get('fbclid') || localStorage.getItem('fi_fbclid') || sessionStorage.getItem('fi_fbclid') || '';
+          } catch (e) { /* ignore */ }
           if (fbclid) {
-            var pvEventId = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
             fetch(WORKER_URL + '/api/pageview', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fbclid: fbclid, event_id: pvEventId })
+              body: JSON.stringify({ fbclid: fbclid, event_id: window.__fi_pv_event_id })
             }).catch(function() {});
           }
         })();
@@ -2715,11 +2739,15 @@
         }
         function getTrackingData() {
           var data = {};
-          var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
-          keys.forEach(function(key) {
-            var val = sessionStorage.getItem('fi_' + key);
+          TRACKING_KEYS.forEach(function(key) {
+            var val = null;
+            try { val = localStorage.getItem('fi_' + key) || sessionStorage.getItem('fi_' + key); } catch (e) { /* ignore */ }
             if (val) data[key] = val;
           });
+          try {
+            var lp = localStorage.getItem('fi_landing_page');
+            if (lp) data.landing_page = lp;
+          } catch (e) { /* ignore */ }
           // Read Meta browser cookies for CAPI match quality
           var fbp = getCookie('_fbp');
           var fbc = getCookie('_fbc');

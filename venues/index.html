@@ -46,16 +46,9 @@
     fbq('trackCustom', 'VenueExplorerViewed');
   }, 3000);
 
-  // GA4
-  (function() {
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E';
-    document.head.appendChild(s);
-  })();
-  window.gtag = function(){window.dataLayer.push(arguments)};
-  gtag('js', new Date());
-  gtag('config', 'G-XGSWD6JW3E');
+  // GA4 loads via the GTM container above (same as index). The page
+  // previously loaded a direct gtag config on top of GTM, which
+  // double-counted page_view for this page.
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
