@@ -1345,7 +1345,7 @@ async function submitEmail() {
 
   let submitOk = false;
   try {
-    const resp = await fetch('https://iris-automation.flyin-iris-mp.workers.dev/webhook/inquiry', {
+    const resp = await fetch('https://api.flyiniris.com/webhook/inquiry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(Object.assign({

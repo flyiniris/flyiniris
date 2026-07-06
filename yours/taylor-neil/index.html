@@ -1338,7 +1338,7 @@
   <script>
   (function() {
     var PRICING_VERSION = '2026-04-26';
-    var SUBMIT_ENDPOINT = 'https://iris-automation.flyin-iris-mp.workers.dev/api/yours/taylor-neil/submit';
+    var SUBMIT_ENDPOINT = 'https://api.flyiniris.com/api/yours/taylor-neil/submit';
     var SLUG = 'taylor-neil';
     // Per-couple page token. The Worker requires it on /submit and /viewed so
     // the guessable slug alone can no longer fire Pushovers or stage moves.
@@ -1577,7 +1577,7 @@
       var viewedKey = 'yours_viewed_' + SLUG;
       if (!sessionStorage.getItem(viewedKey)) {
         sessionStorage.setItem(viewedKey, '1');
-        fetch('https://iris-automation.flyin-iris-mp.workers.dev/api/yours/' + SLUG + '/viewed', {
+        fetch('https://api.flyiniris.com/api/yours/' + SLUG + '/viewed', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug: SLUG, token: YOURS_TOKEN }),

@@ -974,7 +974,7 @@
     // fetch fails or returns an unexpected shape we render the paid single
     // line, never accidentally the free pair.
     var fomoFreeSpot = false;
-    var PRICING_CONSTANTS_URL = 'https://iris-automation.flyin-iris-mp.workers.dev/api/pricing/constants';
+    var PRICING_CONSTANTS_URL = 'https://api.flyiniris.com/api/pricing/constants';
 
     // ========== FUNCTIONS ==========
     window.setTier = function(tier) {
@@ -1126,7 +1126,7 @@
     loadFomoState();
 
     // ========== SESSION (token gate passed in head) ==========
-    var WORKER_URL = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var WORKER_URL = 'https://api.flyiniris.com';
     var sessionToken = window.__fi_session_token || '';
     var sessionData = null;
 

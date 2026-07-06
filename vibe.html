@@ -365,7 +365,7 @@
     // API_BASE pinned to the Worker because this page is served from
     // flyiniris.com (Pages) but the pre-call API lives on the automation
     // Worker. CORS for /api/precall/* is already allow-listed there.
-    var API_BASE = 'https://iris-automation.flyin-iris-mp.workers.dev';
+    var API_BASE = 'https://api.flyiniris.com';
     var token = new URLSearchParams(location.search).get('token');
 
     var data = null;
