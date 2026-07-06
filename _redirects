@@ -1,3 +1,21 @@
+# Cache tombstones for internal files DELETED from the tree 2026-07-03.
+# Cloudflare Pages' internal CDN for custom domains cached these at first
+# fetch with a 7 day TTL, below the customer zone (zone shows DYNAMIC for
+# .md, so zone Purge Everything cannot evict them; verified 2026-07-06,
+# incident doc 2026-07-06-post-purge-survivor.md in iris-automation).
+# Redirect rules evaluate before that cache, so these force the stale 200s
+# to 301 immediately. Keep them; they are also permanent link hygiene.
+/QA-REPORT.md               /   301
+/email-audit-report.md      /   301
+/operations-overview.md     /   301
+/sms-cheatsheet-v2.md       /   301
+/vimeo-upload-task.md       /   301
+/film-index-tag-reference.csv   /   301
+/film-index-template.csv    /   301
+/film-intake-form-spec      /   301
+/film-intake-form-spec.html /   301
+/ghl-emails/*               /   301
+
 # Repo tooling and docs that must stay committed but never be served.
 # Cloudflare Pages evaluates _redirects before static assets, so these
 # rules shadow the underlying files (there is no Pages ignore mechanism;
