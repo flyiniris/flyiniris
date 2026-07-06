@@ -28,6 +28,7 @@
 /.gitattributes             /   301
 /delivery/*                 /   301
 /.claude/*                  /   301
+/.githooks/*                /   301
 
 # Old Squarespace pages: 301 permanent redirects
 /wedding-films              /  301
