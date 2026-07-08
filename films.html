@@ -23,6 +23,15 @@
 
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
+  <!-- GA4 (same direct pattern as /calculator; this page has no GTM) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XGSWD6JW3E');
+  </script>
+
   <!-- Meta Pixel (deferred 3s for page speed) -->
   <script>
   setTimeout(function() {

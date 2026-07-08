@@ -9,6 +9,15 @@
   <meta name="theme-color" content="#0A0A0A">
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
+  <!-- GA4 (same direct pattern as /calculator; this page has no GTM) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XGSWD6JW3E');
+  </script>
+
   <!-- Meta Pixel (deferred 3s for page speed) -->
   <script>
   setTimeout(function() {
@@ -450,6 +459,7 @@
         // server-side on the GHL AppointmentBooked webhook)
         link.addEventListener('click', function() {
           if (typeof fbq === 'function') fbq('trackCustom', 'BookCallClicked');
+          if (typeof gtag === 'function') gtag('event', 'book_call_link_clicked', { link_type: 'widget_fallback_new_tab' });
         });
       }
 
@@ -496,6 +506,13 @@
       }
 
       function renderFromSession(s) {
+        // Client-side trace of the conversion moment: a real inquirer landed
+        // here with a valid session. GA4 never saw this before 2026-07-08.
+        if (typeof gtag === 'function') {
+          gtag('event', 'inquiry_confirmed', {
+            has_film_match: !!(s.matchedFilm && s.matchedFilm.video_url)
+          });
+        }
         var first = (s.name || '').split(' ')[0];
         if (first) {
           document.getElementById('confirm-heading').textContent = first + ", you're in!";
