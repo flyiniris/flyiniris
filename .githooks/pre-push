@@ -47,6 +47,34 @@ while read local_ref local_sha remote_ref remote_sha; do
   [ -n "$touched" ] && CLAUDE_MD_TOUCHED=1
 done
 
+# 2026-07-08 tracking invariant (incident: CSP analytics blackout 7/03-7/08).
+# Analytics silently dying in a routine ship is not acceptable; this check
+# verifies the outgoing tree on EVERY push, regardless of what the push
+# touches. If a page legitimately drops a tag or the manifest changes, edit
+# the manifest here in the same commit and say so in the commit body.
+TIP=$(git rev-parse -q --verify HEAD)
+check_contains() { # file, needle, label
+  if ! git show "$TIP:$1" 2>/dev/null | grep -q "$2"; then
+    echo "PUSH BLOCKED: tracking invariant failed: $1 is missing $3" >&2
+    status=1
+  fi
+}
+# CSP must allow the analytics endpoints (bare apex, not just the wildcard)
+check_contains "_headers" "https://analytics.google.com "        "bare analytics.google.com in CSP"
+check_contains "_headers" "static.cloudflareinsights.com"        "Cloudflare beacon origin in CSP"
+check_contains "_headers" "www.googletagmanager.com"             "googletagmanager origin in CSP"
+check_contains "_headers" "connect.facebook.net"                 "Meta pixel origin in CSP"
+# Tag manifest: which measurement each public page must carry
+check_contains "index.html"            "GTM-M74R95NX"  "GTM container"
+check_contains "venues/index.html"     "GTM-M74R95NX"  "GTM container"
+check_contains "thanks.html"           "G-XGSWD6JW3E"  "GA4 tag"
+check_contains "films.html"            "G-XGSWD6JW3E"  "GA4 tag"
+check_contains "calculator/index.html" "G-XGSWD6JW3E"  "GA4 tag"
+check_contains "quiz/index.html"       "G-XGSWD6JW3E"  "GA4 tag"
+for pg in index.html thanks.html films.html experience.html saved.html venues/index.html; do
+  check_contains "$pg" "fbq(" "Meta pixel"
+done
+
 if [ "$CLAUDE_MD_TOUCHED" = "1" ]; then
   CHECKER="C:/Users/flyin/Claude Projects/iris-automation/scripts/hooks/claude-md-checks.sh"
   if [ -f "$CHECKER" ]; then
