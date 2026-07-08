@@ -149,7 +149,7 @@ Text link `.text-link` (index.html lines 791-815): Outfit 400 `0.95rem`, gold, n
 1. Google Fonts URL: thanks.html loads extra weights (Cormorant Garamond 300/500 plus italic 300, Outfit 200). The kit uses the landing page URL above.
 2. `--text-secondary`: `#C8C3B9E6` (90% alpha) on index vs opaque `#C8C3B9` on thanks.
 3. `--text-muted`: `rgba(200,195,185,0.9)` on index vs `0.5` on thanks.
-4. `--bg-card`: thanks defines `#161615` (and `--bg-elevated: #1A1A19`); index USES `var(--bg-card)` on FAQ items but never defines it, so index FAQ cards silently render transparent. Latent bug on index; the kit defines `--bg-card: #161615` from thanks so the token exists.
+4. `--bg-card`: originally only thanks defined it (`#161615`, plus `--bg-elevated: #1A1A19`) while index used `var(--bg-card)` on FAQ items without defining it, rendering them transparent. Fixed 2026-07-07: index now defines `--bg-card: #161615` too. `--bg-elevated` remains thanks-only.
 5. Primary button hover: index darkens to `#D99E0A`; thanks (`.cta-btn`) lightens to `#FFF0C9` and lifts 1px, at weight 600 and padding `14px 36px` instead of 700 and `15px 40px`. Kit standardizes on the index darken behavior.
 6. Grain overlay scope: hero-only (z-index 3) on index vs full-page fixed (z-index 9999) on thanks.
 7. index has the `prefers-reduced-motion` guard; thanks.html does not.
