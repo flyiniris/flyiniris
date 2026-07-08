@@ -31,6 +31,7 @@ If a question about pricing, copy, brand, or a cross-cutting standard arises whi
 3. Film delivery pages live at flyiniris.com/films/{slug} via Pages routing; their source tooling is `delivery/`.
 4. Every committed file is served publicly by Pages; this repo is PUBLIC on GitHub. There is no ignore mechanism (.cfignore is a myth). Internal docs and tooling either stay out of the repo or get a shadowing 301 in `_redirects` (see the block at the top of that file). Never commit secrets, GHL IDs, or ops notes.
 5. `_headers` carries the CSP. Any page that adds a new third-party origin MUST add it to the CSP in the same commit or the resource is silently blocked.
+6. `brand-kit/` is documentation of production and must never drift from it. Any commit that modifies anything under `brand-kit/` MUST end its session summary with the line: "BRAND KIT CHANGED: re-upload brand-kit.md, brand-tokens.css, and updated screenshots to the Fly Iris Film Redesign project in Claude Design." And whenever shipped page styling changes in a way that alters values the kit documents (colors, fonts, buttons, spacing, signature treatments), the same session must update `brand-kit/` to match and emit that same line.
 
 ## FUNNEL ARCHITECTURE (locked 2026-07-03, session site/selling-machine)
 
