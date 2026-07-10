@@ -1,0 +1,1399 @@
+<!--
+  Design reference for /start (guided inquiry flow).
+  Extracted from the Claude Design bundler export (Flyin Iris Inquiry Flow.html,
+  1.4MB self-unpacking bundle). This file is the actual design source: the
+  screen markup plus the prototype logic script at the bottom. The embedded
+  React/Babel vendor payloads and woff2 fonts were stripped; the original
+  bundle stays local-only (gitignored) because this repo is public and the
+  pre-push secret scan rejects opaque base64 blobs.
+  Not a served page: /prototypes/* is shadowed in _redirects.
+-->
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="c0ff0634-c7e5-48b0-8e1b-325eca6dcb97"></script>
+
+
+
+</head>
+<body>
+
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("68aa93cf-b1f3-447c-9f33-10d1b51f3457") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2b5f202d-c7a2-4c62-a823-a846f702710c") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("89770caf-8df2-4428-a5cb-9c504556cadc") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("58eb5c08-c86c-4404-83ec-a7a4952bcfd4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("383e75b0-d4b8-44de-a047-cb04c7f2b07c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("02123525-92e3-41fb-b7ec-5d1842659d56") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2b2bfb76-fdbe-4be9-8302-b9a4baa1ba20") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e85a3ca2-5302-402f-a4a9-10866ceff32a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b97a924e-891d-4334-b077-57fc855de608") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("67fd3b39-36f6-4fd5-8e36-338f4dc65f7d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("02123525-92e3-41fb-b7ec-5d1842659d56") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("2b2bfb76-fdbe-4be9-8302-b9a4baa1ba20") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e85a3ca2-5302-402f-a4a9-10866ceff32a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b97a924e-891d-4334-b077-57fc855de608") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("67fd3b39-36f6-4fd5-8e36-338f4dc65f7d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("02123525-92e3-41fb-b7ec-5d1842659d56") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("2b2bfb76-fdbe-4be9-8302-b9a4baa1ba20") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e85a3ca2-5302-402f-a4a9-10866ceff32a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b97a924e-891d-4334-b077-57fc855de608") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("67fd3b39-36f6-4fd5-8e36-338f4dc65f7d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("e1edbe9f-b410-4ffb-8152-f26208cbf369") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("79f073ba-51a3-47c7-9c92-979c7ed82bdb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e1edbe9f-b410-4ffb-8152-f26208cbf369") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("79f073ba-51a3-47c7-9c92-979c7ed82bdb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e1edbe9f-b410-4ffb-8152-f26208cbf369") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("79f073ba-51a3-47c7-9c92-979c7ed82bdb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e1edbe9f-b410-4ffb-8152-f26208cbf369") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("79f073ba-51a3-47c7-9c92-979c7ed82bdb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e1edbe9f-b410-4ffb-8152-f26208cbf369") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("79f073ba-51a3-47c7-9c92-979c7ed82bdb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060605; }
+  a { color: #FFBD1D; text-decoration: none; }
+  a:hover { color: #FFF0C9; }
+  input::placeholder { color: #6B6B6B; }
+  input { outline: none; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes dot { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+  @keyframes barFill { from { width: 0; } to { width: 100%; } }
+  @keyframes ringPulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(1.7); opacity: 0; } }
+  @keyframes popIn { 0% { opacity: 0; transform: scale(.86); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes grain { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-4%,-4%)} 20%{transform:translate(-8%,3%)} 30%{transform:translate(4%,-6%)} 40%{transform:translate(-3%,8%)} 50%{transform:translate(-8%,3%)} 60%{transform:translate(6%,2%)} 70%{transform:translate(-2%,-6%)} 80%{transform:translate(5%,6%)} 90%{transform:translate(-6%,-2%)} }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: linear-gradient(135deg, #0A0A0A 0%, #1a1815 50%, #0A0A0A 100%); display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 34px 16px 56px; font-family: 'Outfit', sans-serif;">
+
+  <!-- DIRECTOR CONTROLS -->
+  <div style="width: 100%; max-width: 402px; display: flex; flex-direction: column; gap: 13px; padding: 16px 18px; border: 1px solid #2A2A28; border-radius: 12px; background: #111110;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 400; letter-spacing: 0.2em; color: #8E8E8E; text-transform: uppercase;">Prototype controls</span>
+      <button onclick="{{ restart }}" style="background: none; border: 1px solid #2A2A28; border-radius: 8px; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 11px; padding: 5px 12px; cursor: pointer;" style-hover="border-color: #FFBD1D; color: #FFBD1D;">Restart</button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <span style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #8E8E8E;">Welcome layout</span>
+      <div style="display: flex; gap: 7px;">
+        <button onclick="{{ setVariantStd }}" style="{{ variantStdStyle }}">Standard 1a</button>
+        <button onclick="{{ setVariantEmb }}" style="{{ variantEmbStyle }}">Date on welcome 1b</button>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <span style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #8E8E8E;">Availability result</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+        <button onclick="{{ setAvailOpen }}" style="{{ availOpenStyle }}">Open</button>
+        <button onclick="{{ setAvailHeld }}" style="{{ availHeldStyle }}">Held (Team)</button>
+        <button onclick="{{ setAvailBooked }}" style="{{ availBookedStyle }}">Fully booked</button>
+        <button onclick="{{ setAvailError }}" style="{{ availErrorStyle }}">Check error</button>
+      </div>
+    </div>
+    <div style="display: flex; gap: 14px;">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 7px;">
+        <span style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #8E8E8E;">Final submit</span>
+        <div style="display: flex; gap: 7px;">
+          <button onclick="{{ setFinalOk }}" style="{{ finalOkStyle }}">Success</button>
+          <button onclick="{{ setFinalFail }}" style="{{ finalFailStyle }}">Fail</button>
+        </div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 7px;">
+        <span style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #8E8E8E;">Session</span>
+        <div style="display: flex; gap: 7px;">
+          <button onclick="{{ setSessionNew }}" style="{{ sessionNewStyle }}">New</button>
+          <button onclick="{{ setSessionReturning }}" style="{{ sessionReturnStyle }}">Returning</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHONE -->
+  <x-import component-from-global-scope="IOSDevice" from="d669e1d0-9394-4247-8ed3-d94d8825a97b#/ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+    <div style="position: relative; height: 100%; width: 100%; background: #0A0A0A; color: #F5F0EB; overflow: hidden;">
+
+      <!-- FILM GRAIN LAYER -->
+      <div style="position: absolute; inset: -50%; width: 200%; height: 200%; z-index: 46; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;); animation: grain 8s steps(10) infinite;"></div>
+
+      <!-- TOP BAR: back + progress -->
+      <div style="position: absolute; top: 56px; left: 22px; right: 22px; z-index: 40; display: flex; align-items: center; justify-content: space-between; pointer-events: none;">
+        <div style="pointer-events: auto;">
+          <sc-if value="{{ showBack }}">
+            <button onclick="{{ back }}" style="display: flex; align-items: center; gap: 6px; background: none; border: none; padding: 6px 4px; cursor: pointer; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 13px;" style-hover="color: #FFBD1D;">
+              <svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M6 1L1 6l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Back
+            </button>
+          </sc-if>
+        </div>
+        <div style="pointer-events: auto;">
+          <sc-if value="{{ showProgress }}">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 54px; height: 2px; border-radius: 2px; background: #1a1a1a; overflow: hidden;">
+                <div style="{{ progressBarStyle }}"></div>
+              </div>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.14em; color: #8E8E8E;">{{ progressLabel }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- ============ S1 WELCOME ============ -->
+      <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+        <div style="position: absolute; inset: 0; padding: 108px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+
+          <!-- 1a standard -->
+          <sc-if value="{{ isStandardWelcome }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 22px;">
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Flyin' Iris</span>
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2A2A28; border-radius: 4px; padding: 2px 6px;">1a</span>
+              </div>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 46px; line-height: 1.12; letter-spacing: 0.005em; margin: 0; color: #F5F0EB;">Start with your <span style="font-style: italic; color: #FFBD1D;">date.</span></h1>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 20px 0 0;">Answer a few quick questions and we'll send your pricing, your availability, and the films that match your day.</p>
+              <button onclick="{{ start }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 34px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Check availability</button>
+            </div>
+          </sc-if>
+
+          <!-- 1b embedded date -->
+          <sc-if value="{{ isEmbedded }}">
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Flyin' Iris</span>
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2A2A28; border-radius: 4px; padding: 2px 6px;">1b</span>
+              </div>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.12; margin: 0; color: #F5F0EB;">Start with your <span style="font-style: italic; color: #FFBD1D;">date.</span></h1>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 14px 0 0;">Pick the day and we'll check it live, then send your pricing and the films that match.</p>
+
+              <div style="width: 100%; max-width: 320px; margin-top: 22px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: #F5F0EB;">October 2026</span>
+                  <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8E8E8E;">The first tap</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px;">
+                  <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                    <div style="text-align: center; font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #6B6B6B; padding: 3px 0;">{{ w.d }}</div>
+                  </sc-for>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7,1fr); gap: 4px;">
+                  <sc-for list="{{ cells }}" as="cell" hint-placeholder-count="35">
+                    <div onclick="{{ cell.onClick }}" style="{{ cell.style }}">{{ cell.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <sc-if value="{{ checking }}">
+                <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: #1a1700; border: 1px solid rgba(255,189,29,0.2);">
+                  <div style="display: flex; gap: 5px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out infinite;"></span>
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .18s infinite;"></span>
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .36s infinite;"></span>
+                  </div>
+                  <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Checking {{ selectedLabel }} with Sierra &amp; Sean.</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ============ S2 DATE ============ -->
+      <sc-if value="{{ isDate }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Your date</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">When is the wedding?</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 12px 0 0;">Choose your date and we'll check it against Sierra &amp; Sean's calendar right now.</p>
+
+          <div style="width: 100%; max-width: 320px; margin-top: 22px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: #F5F0EB;">October 2026</span>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8E8E8E;">Tap a date</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px;">
+              <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                <div style="text-align: center; font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #6B6B6B; padding: 3px 0;">{{ w.d }}</div>
+              </sc-for>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7,1fr); gap: 4px;">
+              <sc-for list="{{ cells }}" as="cell" hint-placeholder-count="35">
+                <div onclick="{{ cell.onClick }}" style="{{ cell.style }}">{{ cell.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ checking }}">
+            <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: #1a1700; border: 1px solid rgba(255,189,29,0.2);">
+              <div style="display: flex; gap: 5px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out infinite;"></span>
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .18s infinite;"></span>
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .36s infinite;"></span>
+              </div>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Checking {{ selectedLabel }} with Sierra &amp; Sean.</span>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ============ S2a DATE OPEN ============ -->
+      <sc-if value="{{ isOpen }}">
+        <div style="position: absolute; inset: 0; padding: 108px 30px 118px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <div style="width: 58px; height: 58px; border-radius: 50%; border: 1px solid #FFBD1D; display: flex; align-items: center; justify-content: center; margin-bottom: 26px; animation: popIn .6s ease both;">
+            <svg width="22" height="18" viewBox="0 0 22 18" fill="none"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 16px; animation: popIn .6s ease .08s both;">Good news</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 48px; line-height: 1.1; margin: 0; color: #F5F0EB; animation: popIn .7s ease .12s both;">{{ openHeadline }}</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 20px 0 0; max-width: 300px;">That means Sierra &amp; Sean can be there, camera in hand, for every moment of your day.</p>
+
+          <div style="width: 48px; height: 2px; background: #FFBD1D; margin: 30px 0 0;"></div>
+
+          <div style="margin-top: 26px; width: 180px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="width: 100%; height: 2px; border-radius: 2px; background: #1a1a1a; overflow: hidden;">
+              <div style="height: 100%; background: #FFBD1D; animation: barFill 2.8s linear forwards;"></div>
+            </div>
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">Taking you to the next question</span>
+          </div>
+          <button onclick="{{ continueFromOpen }}" style="background: none; border: none; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 16px; padding: 8px;">Continue now</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ S2b DATE HELD BRANCH ============ -->
+      <sc-if value="{{ isHeld }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 14px;">A quick note</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.18; margin: 0; color: #F5F0EB;">We are already with a couple that day.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">{{ heldLine }} Your day is still in wonderful hands.</p>
+
+          <div style="margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: #1a1700;">
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">The Team experience</span>
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 23px; line-height: 1.4; color: #FFF0C9; margin: 12px 0 0;">Our team, trained by us, shooting in our style, with Sierra &amp; Sean editing every frame.</p>
+          </div>
+
+          <button onclick="{{ teamExperience }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Tell me about the Team experience</button>
+          <button onclick="{{ flexible }}" style="background: none; border: none; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 14px; cursor: pointer; margin-top: 10px; padding: 12px;" style-hover="color: #FFBD1D;">My date is flexible</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ S2c FULLY BOOKED ============ -->
+      <sc-if value="{{ isBooked }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 14px;">A quick note</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.18; margin: 0; color: #F5F0EB;">{{ bookedHeadline }}</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">Both of our crews are committed that day, so we are not able to take on your wedding. We would rather be straight with you than leave you waiting.</p>
+
+          <sc-if value="{{ notWaitlisted }}">
+            <div style="margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid #2A2A28; background: #111110;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; color: #C8C3B9E6;">If a spot opens up</span>
+              <input value="{{ email }}" oninput="{{ onEmail }}" placeholder="you@email.com" style="width: 100%; margin-top: 10px; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+              <button onclick="{{ submitWaitlist }}" style="{{ waitlistCtaStyle }}" style-hover="{{ waitlistCtaHover }}">Tell me if anything opens up</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ waitlisted }}">
+            <div style="margin-top: 24px; padding: 18px 20px; border-radius: 10px; border-left: 2px solid #FFBD1D; background: #111110; display: flex; gap: 12px; align-items: flex-start;">
+              <svg width="18" height="14" viewBox="0 0 22 18" fill="none" style="flex-shrink: 0; margin-top: 2px;"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">You're on the list. If anything changes for {{ selectedLabel }}, we'll email you first. No pressure either way.</span>
+            </div>
+          </sc-if>
+
+          <button onclick="{{ flexible }}" style="background: none; border: none; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 14px; cursor: pointer; margin-top: 14px; padding: 12px;" style-hover="color: #FFBD1D;">My date is flexible</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ CHECK ERROR ============ -->
+      <sc-if value="{{ isCheckError }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 14px;">One moment</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">We couldn't check that just now.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">Our calendar didn't answer. Keep going and we'll confirm your availability by email, usually within the hour.</p>
+
+          <button onclick="{{ continueFromOpen }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 26px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Keep going</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ WELCOME BACK ============ -->
+      <sc-if value="{{ isWelcomeBack }}">
+        <div style="position: absolute; inset: 0; padding: 108px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 14px;">Welcome back</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; color: #F5F0EB;">Picking up where you left off.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">We saved your details. Here's the day you had in mind.</p>
+
+          <div style="margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid #2A2A28; background: #111110; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">Your date</span>
+              <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB;">{{ savedDateLabel }}, 2026</span>
+            </div>
+            <span style="width: 26px; height: 26px; border-radius: 50%; background: #1a1700; border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="12" height="10" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </span>
+          </div>
+
+          <button onclick="{{ welcomeBackContinue }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Continue</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ VENUE ============ -->
+      <sc-if value="{{ isVenue }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">The place</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">Where is the celebration?</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 12px 0 0;">For travel and logistics. Not booked yet? Just say so.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 24px;">
+            <input value="{{ venue }}" oninput="{{ onVenue }}" placeholder="Venue, city, or not booked yet" style="width: 100%; padding: 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+          </div>
+
+          <button onclick="{{ continueVenue }}" style="{{ venueCtaStyle }}" style-hover="{{ venueCtaHover }}">Continue</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ ROUTER ============ -->
+      <sc-if value="{{ isRouter }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Your call</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">While you're here, what would help most?</h1>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
+            <sc-for list="{{ routerCards }}" as="card" hint-placeholder-count="3">
+              <button onclick="{{ card.onClick }}" style="{{ card.style }}" style-hover="border-color: #333;">
+                <span style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 500; color: #F5F0EB;">{{ card.title }}</span>
+                  <span style="font-family: 'Outfit', sans-serif; font-size: 12.5px; font-weight: 300; color: #C8C3B9E6;">{{ card.desc }}</span>
+                </span>
+                <sc-if value="{{ card.notDone }}">
+                  <svg width="8" height="13" viewBox="0 0 8 13" fill="none" style="flex-shrink: 0;"><path d="M1 1l5.5 5.5L1 12" stroke="#FFBD1D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </sc-if>
+                <sc-if value="{{ card.done }}">
+                  <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                    <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Seen</span>
+                    <span style="width: 18px; height: 18px; border-radius: 50%; background: #1a1700; border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center;">
+                      <svg width="9" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                  </span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+
+          <button onclick="{{ getMyPricing }}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; background: none; border: none; border-top: 1px solid #1a1a1a; margin-top: 18px; padding: 18px 4px 0; cursor: pointer; color: #8E8E8E; transition: color .2s ease;" style-hover="color: #FFBD1D;">
+            <span style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 400; color: inherit;">Just send me the pricing</span>
+            <svg width="15" height="10" viewBox="0 0 15 10" fill="none" style="flex-shrink: 0;"><path d="M1 5h12M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+        </div>
+      </sc-if>
+
+      <!-- ============ FILMS MODULE ============ -->
+      <sc-if value="{{ isFilms }}">
+        <div style="position: absolute; inset: 0; padding: 96px 26px 130px; display: flex; flex-direction: column; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">The films</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.18; margin: 0; color: #F5F0EB;">A few days we filmed lately.</h1>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+            <sc-for list="{{ films }}" as="film" hint-placeholder-count="3">
+              <div onclick="{{ film.onClick }}" style="display: flex; gap: 14px; align-items: center; padding: 10px; border: 2px solid #1a1a1a; border-radius: 10px; background: #0f0f0f; cursor: pointer; transition: border-color .2s ease;" style-hover="border-color: #333;">
+                <div style="position: relative; width: 96px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: radial-gradient(120% 120% at 35% 25%, #7a5636 0%, #43301f 55%, #1d150e 100%);">
+                  <video data-film="{{ film.dataFilm }}" src="{{ film.src }}" playsinline="" loop="" preload="metadata" style="{{ film.videoStyle }}"></video>
+                  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);"></div>
+                  <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                    <span style="width: 26px; height: 26px; border-radius: 50%; background: rgba(10,10,10,0.45); display: flex; align-items: center; justify-content: center;">
+                      <sc-if value="{{ film.paused }}">
+                        <svg width="9" height="10" viewBox="0 0 9 10" fill="none"><path d="M1 1L8 5L1 9Z" fill="#F5F0EB"></path></svg>
+                      </sc-if>
+                      <sc-if value="{{ film.playing }}">
+                        <svg width="9" height="10" viewBox="0 0 9 10" fill="none"><rect x="1" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"></rect><rect x="5.6" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"></rect></svg>
+                      </sc-if>
+                    </span>
+                  </div>
+                </div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+                  <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 19px; line-height: 1.1; color: #F5F0EB;">{{ film.names }}</span>
+                  <span style="font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 12px; color: #8E8E8E;">{{ film.venue }}</span>
+                  <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 14px; color: #FFBD1D;">{{ film.vibe }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: 16px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid #FFBD1D; background: #111110;">
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: #FFF0C9; margin: 0;">It brings unlimited tears to your eyes when you get to relive it.</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px; color: #F5F0EB;">Kendall</span>
+              <span style="display: flex; gap: 2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+              </span>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E;">Google review</span>
+            </div>
+          </div>
+
+          <button onclick="{{ getMyPricing }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Get my pricing</button>
+          <button onclick="{{ showSomethingElse }}" style="background: none; border: none; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 13.5px; cursor: pointer; margin-top: 8px; padding: 10px;" style-hover="color: #FFBD1D;">Show me something else</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ MEET MODULE ============ -->
+      <sc-if value="{{ isMeet }}">
+        <div style="position: absolute; inset: 0; padding: 96px 26px 130px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Say hello</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.18; margin: 0 0 20px; color: #F5F0EB;">The two of us, in a minute.</h1>
+
+          <div onclick="{{ toggleMeet }}" style="position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; cursor: pointer; background: radial-gradient(120% 120% at 38% 26%, #8a6238 0%, #4a3421 52%, #1d150e 100%); border: 1px solid #2A2A28;">
+            <svg width="100%" height="100%" viewBox="0 0 100 75" preserveAspectRatio="xMidYMax meet" fill="none" style="position: absolute; inset: 0;">
+              <circle cx="37" cy="34" r="15" fill="#c39f6d"></circle>
+              <path d="M8 75 C8 55 22 46 37 46 C52 46 66 55 66 75 Z" fill="#c39f6d"></path>
+              <circle cx="66" cy="30" r="16" fill="#e2c79c"></circle>
+              <path d="M38 75 C38 52 52 43 66 43 C80 43 94 52 94 75 Z" fill="#e2c79c"></path>
+            </svg>
+            <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);"></div>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+              <span style="width: 52px; height: 52px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,189,29,0.5);">
+                <sc-if value="{{ meetPaused }}">
+                  <svg width="15" height="17" viewBox="0 0 15 17" fill="none"><path d="M2 1.5L13 8.5L2 15.5Z" fill="#FFBD1D"></path></svg>
+                </sc-if>
+                <sc-if value="{{ meetPlaying }}">
+                  <svg width="16" height="18" viewBox="0 0 16 18" fill="none"><rect x="2" y="1" width="4" height="16" rx="1" fill="#FFBD1D"></rect><rect x="10" y="1" width="4" height="16" rx="1" fill="#FFBD1D"></rect></svg>
+                </sc-if>
+              </span>
+            </div>
+            <div style="position: absolute; left: 14px; bottom: 12px;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; background: rgba(10,10,10,0.55); border: 1px solid rgba(255,189,29,0.3); color: #F5F0EB;">{{ meetLabel }}</span>
+            </div>
+          </div>
+
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 20px 0 0;">We are Sierra &amp; Sean, a husband and wife team. We shoot every wedding side by side and edit every frame ourselves, so your film always sounds like the two of you.</p>
+
+          <div style="margin-top: 20px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid #FFBD1D; background: #111110;">
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: #FFF0C9; margin: 0;">It felt like spending the day with friends.</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px; color: #F5F0EB;">Cassidy</span>
+              <span style="display: flex; gap: 2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+              </span>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E;">Google review</span>
+            </div>
+          </div>
+
+          <button onclick="{{ getMyPricing }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Get my pricing</button>
+          <button onclick="{{ showSomethingElse }}" style="background: none; border: none; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 13.5px; cursor: pointer; margin-top: 8px; padding: 10px;" style-hover="color: #FFBD1D;">Show me something else</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ DIFFERENT MODULE ============ -->
+      <sc-if value="{{ isDifferent }}">
+        <div style="position: absolute; inset: 0; padding: 96px 26px 130px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Why us</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.18; margin: 0; color: #F5F0EB;">Three things that set us apart.</h1>
+
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 22px;">
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">01</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">Films that feel like you, not a template.</span>
+            </div>
+            <div style="height: 1px; background: #1a1a1a;"></div>
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">02</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">A system built so we spend hours on your film, not our inbox.</span>
+            </div>
+            <div style="height: 1px; background: #1a1a1a;"></div>
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">03</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">You always know exactly what you get, and what it costs.</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 22px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid #FFBD1D; background: #111110;">
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: #FFF0C9; margin: 0;">Out of everything we paid for, this by far was worth every penny.</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px; color: #F5F0EB;">Taylor</span>
+              <span style="display: flex; gap: 2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg>
+              </span>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E;">Google review</span>
+            </div>
+          </div>
+
+          <button onclick="{{ getMyPricing }}" style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px; transition: background-color .3s ease;" style-hover="background: #D99E0A;">Get my pricing</button>
+          <button onclick="{{ showSomethingElse }}" style="background: none; border: none; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 13.5px; cursor: pointer; margin-top: 8px; padding: 10px;" style-hover="color: #FFBD1D;">Show me something else</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ S3 VIBE ============ -->
+      <sc-if value="{{ isVibe }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">The feeling</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">What should your film feel like?</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 12px 0 0;">We'll match you with the films most like your day, in your inbox and on the next page.</p>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 300; color: #8E8E8E; margin: 8px 0 0;">Choose as many as you like.</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px;">
+            <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="6">
+              <button onclick="{{ chip.onClick }}" style="{{ chip.style }}">
+                <span>{{ chip.label }}</span>
+                <span style="{{ chip.dotStyle }}"></span>
+              </button>
+            </sc-for>
+          </div>
+
+          <button onclick="{{ continueVibe }}" style="{{ vibeCtaStyle }}" style-hover="{{ vibeCtaHover }}">Continue</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ S4 MICRO-CAPTURE ============ -->
+      <sc-if value="{{ isCapture }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Your details</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0; color: #F5F0EB;">Let's get your pricing ready.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 12px 0 0;">Pricing, availability, and your film matches, straight to your inbox.</p>
+
+          <div style="display: flex; align-items: flex-end; gap: 12px; margin-top: 26px;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Your first name</label>
+              <input value="{{ name1 }}" oninput="{{ onName1 }}" placeholder="First name" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+            </div>
+            <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 26px; color: #FFBD1D; padding-bottom: 9px;">&amp;</span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Your fiancé's first name</label>
+              <input value="{{ name2 }}" oninput="{{ onName2 }}" placeholder="First name" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 18px;">
+            <label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Email</label>
+            <input value="{{ email }}" oninput="{{ onEmail }}" placeholder="you@email.com" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+          </div>
+
+          <button onclick="{{ submitCapture }}" style="{{ captureCtaStyle }}" style-hover="{{ captureCtaHover }}">Continue</button>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 300; text-align: center; color: #8E8E8E; margin: 14px 0 0;">Takes about a minute. We promise.</p>
+        </div>
+      </sc-if>
+
+      <!-- ============ SAVED BEAT ============ -->
+      <sc-if value="{{ isSaved }}">
+        <div style="position: absolute; inset: 0; padding: 108px 30px 118px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; animation: fadeUp .6s cubic-bezier(0.16,1,0.3,1) both;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; border: 1px solid #FFBD1D; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; animation: popIn .6s ease both;">
+            <svg width="20" height="16" viewBox="0 0 22 18" fill="none"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 46px; line-height: 1.1; margin: 0; color: #F5F0EB; animation: popIn .7s ease .08s both;">Got it.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0; max-width: 280px;">Two quick things and your pricing is on the way.</p>
+
+          <div style="margin-top: 30px; width: 180px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="width: 100%; height: 2px; border-radius: 2px; background: #1a1a1a; overflow: hidden;">
+              <div style="height: 100%; background: #FFBD1D; animation: barFill 1.8s linear forwards;"></div>
+            </div>
+            <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">Bringing up your next question</span>
+          </div>
+          <button onclick="{{ afterSaved }}" style="background: none; border: none; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 16px; padding: 8px;">Continue now</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ S5 CONTACT ============ -->
+      <sc-if value="{{ isContact }}">
+        <div style="position: absolute; inset: 0; padding: 100px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Last step</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 32px; line-height: 1.18; margin: 0; color: #F5F0EB;">Want your pricing by text, too?</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 12px 0 0;">Add a number and we'll text your pricing and a few film matches the moment they're ready.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px;">
+            <input value="{{ phone }}" oninput="{{ onPhone }}" placeholder="Phone number" style="width: 100%; padding: 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
+          </div>
+
+          <div onclick="{{ toggleSms }}" style="display: flex; align-items: flex-start; gap: 11px; margin-top: 16px; cursor: pointer;">
+            <div style="{{ smsBoxStyle }}">
+              <sc-if value="{{ smsChecked }}">
+                <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </sc-if>
+            </div>
+            <span style="font-family: 'Outfit', sans-serif; font-size: 11.5px; font-weight: 300; line-height: 1.55; color: #8E8E8E;">I agree to receive text messages from Sierra &amp; Sean at Flyin' Iris about my inquiry. Message frequency varies, message and data rates may apply, reply STOP to opt out.</span>
+          </div>
+
+          <sc-if value="{{ submitError }}">
+            <div style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink: 0;"><circle cx="8" cy="8" r="7" stroke="#e74c3c" stroke-width="1.4"></circle><path d="M8 4.5v4.2M8 11.2v.2" stroke="#e74c3c" stroke-width="1.6" stroke-linecap="round"></path></svg>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 400; color: #e74c3c;">That didn't go through. Try again.</span>
+            </div>
+          </sc-if>
+
+          <button onclick="{{ submitContact }}" style="{{ contactCtaStyle }}" style-hover="{{ contactCtaHover }}">Text me my pricing</button>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 300; text-align: center; color: #8E8E8E; margin: 14px 0 0;">Instant delivery. No pressure, no spam, no chasing. We promise.</p>
+        </div>
+      </sc-if>
+
+      <!-- ============ S6 CONFIRM ============ -->
+      <sc-if value="{{ isConfirm }}">
+        <div style="position: absolute; inset: 0; padding: 104px 26px 118px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; border: 1px solid #FFBD1D; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; animation: popIn .6s ease both;">
+            <svg width="20" height="16" viewBox="0 0 22 18" fill="none"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">On its way</span>
+          <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 44px; line-height: 1.1; margin: 0; color: #F5F0EB;">Check your inbox.</h1>
+          <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">Your pricing, your date confirmation, and a handful of films matched to your feeling are on their way to {{ confirmEmail }}.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px;">
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Full pricing for your date</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Films matched to your chosen feeling</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Your availability, confirmed</span></div>
+          </div>
+
+          <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2A2A28; background: #111110;">
+            <p style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB; margin: 0;">Want to talk it through?</p>
+            <p style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 8px 0 16px;">Booking an intro call holds your date for 7 days while you decide.</p>
+            <button onclick="{{ restart }}" style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .25s ease;" style-hover="background: rgba(255,189,29,0.1); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- VIDEO BUBBLE (persistent, bottom-left) -->
+      <div style="position: absolute; left: 22px; bottom: 26px; z-index: 47; display: flex; align-items: center; gap: 11px;">
+        <div onclick="{{ toggleMute }}" style="position: relative; width: 74px; height: 74px; cursor: pointer; flex-shrink: 0;">
+          <sc-if value="{{ videoUnmuted }}">
+            <span style="position: absolute; inset: 0; border-radius: 50%; border: 1px solid #FFBD1D; animation: ringPulse 1.8s ease-out infinite;"></span>
+            <span style="position: absolute; inset: 0; border-radius: 50%; border: 1px solid #FFBD1D; animation: ringPulse 1.8s ease-out .9s infinite;"></span>
+          </sc-if>
+          <div style="{{ bubbleStyle }}">
+            <svg width="74" height="74" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;">
+              <circle cx="27" cy="35" r="12" fill="#c39f6d"></circle>
+              <path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path>
+              <circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle>
+              <path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path>
+            </svg>
+            <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;">
+                <svg width="8" height="9" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg>
+              </span>
+            </div>
+            <div style="position: absolute; left: 0; bottom: 8px; width: 100%; display: flex; justify-content: center;">
+              <span style="{{ muteStyle }}">{{ muteLabel }}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 16px; color: #F5F0EB; line-height: 1;">Sierra &amp; Sean</span>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">{{ captionHint }}</span>
+        </div>
+      </div>
+
+    </div>
+  </x-import>
+
+  <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">Concept for review. Not production code.</span>
+
+  <!-- ================= DESKTOP ADAPTATION ================= -->
+  <div style="width: 100%; max-width: 960px; margin-top: 40px; display: flex; flex-direction: column; gap: 6px;">
+    <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Desktop adaptation</span>
+    <span style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 300; line-height: 1.6; color: #8E8E8E;">A centered 480px column on the dark stage. The video bubble anchors to the bottom-left of the column. Everything else is inherited from mobile.</span>
+  </div>
+
+  <div style="width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 26px; margin-top: 8px;">
+
+    <!-- DESKTOP 01 WELCOME -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">01 Welcome</span>
+      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+        <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+        <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
+          <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 44px 12px; overflow-y: auto;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 20px;">Flyin' Iris</span>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 54px; line-height: 1.08; margin: 0; color: #F5F0EB;">Start with your <span style="font-style: italic; color: #FFBD1D;">date.</span></h1>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 22px 0 0; max-width: 400px;">Answer a few quick questions and we'll send your pricing, your availability, and the films that match your day.</p>
+              <button style="align-self: flex-start; padding: 15px 40px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 32px;" style-hover="background: #D99E0A;">Check availability</button>
+            </div>
+            <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+                <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
+                <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 15px; color: #F5F0EB; line-height: 1;">Sierra &amp; Sean</span><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Tap to unmute</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP 02 MODULE -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">02 Module (What makes us different)</span>
+      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+        <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+        <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
+          <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 40px 12px 96px; overflow-y: auto;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Why us</span>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 38px; line-height: 1.15; margin: 0; color: #F5F0EB;">Three things that set us apart.</h1>
+              <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 22px;">
+                <div style="display: flex; gap: 14px; align-items: flex-start;"><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">01</span><span style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">Films that feel like you, not a template.</span></div>
+                <div style="height: 1px; background: #1a1a1a;"></div>
+                <div style="display: flex; gap: 14px; align-items: flex-start;"><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">02</span><span style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">A system built so we spend hours on your film, not our inbox.</span></div>
+                <div style="height: 1px; background: #1a1a1a;"></div>
+                <div style="display: flex; gap: 14px; align-items: flex-start;"><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: #FFBD1D; padding-top: 3px;">03</span><span style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.55; color: #F5F0EB;">You always know exactly what you get, and what it costs.</span></div>
+              </div>
+              <div style="margin-top: 22px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid #FFBD1D; background: #111110;">
+                <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: #FFF0C9; margin: 0;">Out of everything we paid for, this by far was worth every penny.</p>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+                  <span style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px; color: #F5F0EB;">Taylor</span>
+                  <span style="display: flex; gap: 2px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg><svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg><svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg><svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg><svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"></path></svg></span>
+                  <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E;">Google review</span>
+                </div>
+              </div>
+              <button style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 22px;" style-hover="background: #D99E0A;">Get my pricing</button>
+            </div>
+            <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+                <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
+                <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 15px; color: #F5F0EB; line-height: 1;">Sierra &amp; Sean</span><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Tap to unmute</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP 03 MICRO-CAPTURE -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">03 Micro-capture</span>
+      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+        <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+        <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
+          <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 44px 12px 96px; overflow-y: auto;">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Your details</span>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.12; margin: 0; color: #F5F0EB;">Let's get your pricing ready.</h1>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 14px 0 0;">Pricing, availability, and your film matches, straight to your inbox.</p>
+              <div style="display: flex; align-items: flex-end; gap: 12px; margin-top: 26px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;"><label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Your first name</label><input placeholder="First name" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;"></div>
+                <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 26px; color: #FFBD1D; padding-bottom: 9px;">&amp;</span>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;"><label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Your fiancé's first name</label><input placeholder="First name" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;"></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 18px;"><label style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #C8C3B9E6;">Email</label><input placeholder="you@email.com" style="width: 100%; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;"></div>
+              <button style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 24px;" style-hover="background: #D99E0A;">Continue</button>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 300; text-align: center; color: #8E8E8E; margin: 14px 0 0;">Takes about a minute. We promise.</p>
+            </div>
+            <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+                <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
+                <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 15px; color: #F5F0EB; line-height: 1;">Sierra &amp; Sean</span><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Tap to unmute</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP 04 CONFIRM -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">04 Confirm</span>
+      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+        <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+        <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
+          <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 40px 12px 96px; overflow-y: auto;">
+              <div style="width: 54px; height: 54px; border-radius: 50%; border: 1px solid #FFBD1D; display: flex; align-items: center; justify-content: center; margin-bottom: 22px;"><svg width="20" height="16" viewBox="0 0 22 18" fill="none"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">On its way</span>
+              <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 46px; line-height: 1.08; margin: 0; color: #F5F0EB;">Check your inbox.</h1>
+              <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">Your pricing, your date confirmation, and a handful of films matched to your feeling are on their way to your inbox.</p>
+              <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px;">
+                <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Full pricing for your date</span></div>
+                <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Films matched to your chosen feeling</span></div>
+                <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Your availability, confirmed</span></div>
+              </div>
+              <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2A2A28; background: #111110;">
+                <p style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB; margin: 0;">Want to talk it through?</p>
+                <p style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 8px 0 16px;">Booking an intro call holds your date for 7 days while you decide.</p>
+                <button style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: rgba(255,189,29,0.1); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
+              </div>
+            </div>
+            <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+                <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
+                <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 15px; color: #F5F0EB; line-height: 1;">Sierra &amp; Sean</span><span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Tap to unmute</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REDUCED MOTION NOTE ================= -->
+  <div style="width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+    <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Reduced motion</span>
+    <div style="border: 1px dashed #2A2A28; border-radius: 14px; background: #0f0f0f; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 22px; line-height: 1.4; color: #F5F0EB; margin: 0;">With prefers-reduced-motion, the experience holds still without losing meaning.</p>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; gap: 12px; align-items: flex-start;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0; margin-top: 7px;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: #C8C3B9E6;"><span style="color: #F5F0EB;">Film grain</span> renders as a static texture. The 8s shuffle stops.</span></div>
+        <div style="display: flex; gap: 12px; align-items: flex-start;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0; margin-top: 7px;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: #C8C3B9E6;"><span style="color: #F5F0EB;">The saved beat</span> gold sweep becomes a simple fade in, no travel across the bar.</span></div>
+        <div style="display: flex; gap: 12px; align-items: flex-start;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0; margin-top: 7px;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: #C8C3B9E6;"><span style="color: #F5F0EB;">Auto-advance</span> still fires on the same timing, so forward motion never depends on animation.</span></div>
+      </div>
+      <span style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 300; letter-spacing: 0.04em; color: #6B6B6B;">Guided by the site's existing prefers-reduced-motion rule.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 480, &quot;height&quot;: 1180 },
+  &quot;startScreen&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;welcome&quot;, &quot;options&quot;: [&quot;welcome&quot;, &quot;date&quot;, &quot;open&quot;, &quot;held&quot;, &quot;booked&quot;, &quot;checkerror&quot;, &quot;welcomeback&quot;, &quot;venue&quot;, &quot;router&quot;, &quot;films&quot;, &quot;meet&quot;, &quot;different&quot;, &quot;capture&quot;, &quot;saved&quot;, &quot;vibe&quot;, &quot;contact&quot;, &quot;confirm&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Prototype&quot; },
+  &quot;welcomeVariant&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;standard&quot;, &quot;options&quot;: [&quot;standard&quot;, &quot;embedded&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Prototype&quot; },
+  &quot;availabilityResult&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;open&quot;, &quot;options&quot;: [&quot;open&quot;, &quot;held&quot;, &quot;booked&quot;, &quot;error&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Prototype&quot; },
+  &quot;finalSubmit&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;success&quot;, &quot;options&quot;: [&quot;success&quot;, &quot;fail&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Prototype&quot; }
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: props.startScreen || "welcome",
+      welcomeVariant: props.welcomeVariant || "standard",
+      availabilityMode: props.availabilityResult || "open",
+      history: [],
+      phase: "idle",
+      selectedDay: null,
+      vibes: [],
+      name1: "", name2: "", venue: "",
+      email: "", phone: "", sms: false,
+      teamTrack: false,
+      videoUnmuted: false,
+      modulesDone: [],
+      playingFilm: null,
+      meetPlaying: false,
+      finalSubmitMode: props.finalSubmit || "success",
+      waitlisted: false,
+      submitError: false,
+      savedDate: "October 17",
+    };
+  }
+
+  componentWillUnmount() { this.clearTimers(); }
+  clearTimers() { clearTimeout(this.checkTimer); clearTimeout(this.autoTimer); clearTimeout(this.savedTimer); }
+
+  goForward = (next) => this.setState((s) => ({ history: [...s.history, s.screen], screen: next }));
+  back = () => { this.clearTimers(); this.setState((s) => { const h = [...s.history]; const prev = h.pop() || "welcome"; return { history: h, screen: prev, phase: "idle" }; }); };
+  start = () => this.goForward("date");
+
+  pickDate = (d) => {
+    this.clearTimers();
+    this.setState({ selectedDay: d, phase: "checking" });
+    this.checkTimer = setTimeout(this.routeAvailability, 1600);
+  };
+  routeAvailability = () => {
+    const map = { open: "open", held: "held", booked: "booked", error: "checkerror" };
+    const mode = this.state.availabilityMode;
+    const next = map[mode] || "open";
+    this.setState((s) => ({ history: [...s.history, s.screen], screen: next, phase: "idle" }));
+    if (mode === "open") this.autoTimer = setTimeout(this.continueFromOpen, 2800);
+  };
+  continueFromOpen = () => { this.clearTimers(); this.setState((s) => ({ history: [...s.history, s.screen], screen: "venue" })); };
+  submitWaitlist = () => { if (this.state.email.trim()) this.setState({ waitlisted: true }); };
+  welcomeBackContinue = () => this.setState({ screen: "capture", history: ["date", "venue", "router"], selectedDay: 17 });
+  teamExperience = () => { this.setState((s) => ({ teamTrack: true, history: [...s.history, "held"], screen: "venue" })); };
+  continueVenue = () => { if (this.state.venue.trim()) this.goForward("router"); };
+
+  chooseModule = (id) => this.setState((s) => ({ history: [...s.history, "router"], screen: id, playingFilm: null, meetPlaying: false }));
+  getMyPricing = () => this.setState((s) => ({ history: [...s.history, s.screen], screen: "capture" }));
+  showSomethingElse = () => this.setState((s) => ({ modulesDone: s.modulesDone.includes(s.screen) ? s.modulesDone : [...s.modulesDone, s.screen], screen: "router", history: s.history.slice(0, -1), playingFilm: null, meetPlaying: false }));
+  toggleFilm = (i) => {
+    const next = this.state.playingFilm === i ? null : i;
+    try {
+      document.querySelectorAll("video[data-film]").forEach((v) => {
+        const idx = Number(v.getAttribute("data-film"));
+        if (idx === next) { v.muted = false; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else { v.pause(); }
+      });
+    } catch (e) {}
+    this.setState({ playingFilm: next });
+  };
+  toggleMeet = () => this.setState((s) => ({ meetPlaying: !s.meetPlaying }));
+  flexible = () => this.setState((s) => ({ screen: "date", phase: "idle", selectedDay: null, history: s.history.slice(0, -1) }));
+
+  toggleVibe = (i) => this.setState((s) => ({ vibes: s.vibes.includes(i) ? s.vibes.filter((x) => x !== i) : [...s.vibes, i] }));
+  continueVibe = () => { if (this.state.vibes.length) this.goForward("contact"); };
+  submitCapture = () => { const s = this.state; if (s.name1.trim() && s.name2.trim() && s.email.trim()) { this.clearTimers(); this.setState({ screen: "saved" }); this.savedTimer = setTimeout(this.afterSaved, 1800); } };
+  afterSaved = () => { clearTimeout(this.savedTimer); this.setState((s) => ({ history: [...s.history, "capture"], screen: "vibe" })); };
+  submitContact = () => {
+    if (!this.state.phone.trim()) return;
+    if (this.state.finalSubmitMode === "fail") { this.setState({ submitError: true }); return; }
+    this.setState({ submitError: false });
+    this.goForward("confirm");
+  };
+
+  restart = () => { this.clearTimers(); this.setState({ screen: "welcome", history: [], phase: "idle", selectedDay: null, vibes: [], name1: "", name2: "", venue: "", email: "", phone: "", sms: false, teamTrack: false, modulesDone: [], playingFilm: null, meetPlaying: false, waitlisted: false, submitError: false }); };
+  toggleMute = () => this.setState((s) => ({ videoUnmuted: !s.videoUnmuted }));
+  toggleSms = () => this.setState((s) => ({ sms: !s.sms }));
+  setVariant = (v) => this.setState({ welcomeVariant: v, screen: "welcome", history: [], phase: "idle", selectedDay: null });
+  setAvail = (m) => this.setState({ availabilityMode: m, waitlisted: false });
+  setFinalSubmit = (m) => this.setState({ finalSubmitMode: m, submitError: false });
+  setSession = (mode) => { this.clearTimers(); if (mode === "returning") { this.setState({ screen: "welcomeback", history: [], phase: "idle", selectedDay: 17 }); } else { this.restart(); } };
+
+  cellStyle(sel) {
+    return {
+      aspectRatio: "1 / 1", display: "flex", alignItems: "center", justifyContent: "center",
+      borderRadius: "50%", fontFamily: "'Outfit', sans-serif", fontSize: "15px", fontWeight: sel ? "600" : "300", cursor: "pointer",
+      color: sel ? "#0A0A0A" : "#F5F0EB", background: sel ? "#FFBD1D" : "transparent",
+      border: sel ? "none" : "1px solid #1a1a1a",
+      transition: "background .2s ease, color .2s ease",
+    };
+  }
+  chipStyle(sel) {
+    return {
+      padding: "14px", borderRadius: "10px",
+      border: "2px solid " + (sel ? "#FFBD1D" : "#1a1a1a"),
+      background: sel ? "#1a1700" : "#0f0f0f",
+      color: sel ? "#FFBD1D" : "#F5F0EB",
+      fontFamily: "'Outfit', sans-serif", fontSize: "13.5px", fontWeight: sel ? "500" : "400", cursor: "pointer",
+      textAlign: "left", transition: "all .2s ease", display: "flex", alignItems: "center",
+      justifyContent: "space-between", gap: "8px", lineHeight: "1.25",
+    };
+  }
+  dotStyle(sel) {
+    return { width: "15px", height: "15px", borderRadius: "50%", flexShrink: 0, border: "2px solid " + (sel ? "#FFBD1D" : "#333"), background: sel ? "#FFBD1D" : "transparent" };
+  }
+  segStyle(active) {
+    return {
+      flex: 1, padding: "8px 10px", borderRadius: "8px",
+      border: "1px solid " + (active ? "#FFBD1D" : "#2A2A28"),
+      background: active ? "#1a1700" : "transparent",
+      color: active ? "#FFBD1D" : "#C8C3B9",
+      fontFamily: "'Outfit', sans-serif", fontSize: "12px", fontWeight: "500", cursor: "pointer", transition: "all .15s ease",
+    };
+  }
+  ctaStyle(enabled) {
+    return {
+      width: "100%", padding: "16px", borderRadius: "8px", border: "none", marginTop: "24px",
+      fontFamily: "'Outfit', sans-serif", fontSize: "15px", fontWeight: "700", letterSpacing: "0.5px",
+      cursor: enabled ? "pointer" : "not-allowed",
+      background: enabled ? "#FFBD1D" : "#1a1a1a",
+      color: enabled ? "#0A0A0A" : "#6B6B6B", transition: "background-color .3s ease",
+    };
+  }
+  smsBoxStyle(on) {
+    return { width: "20px", height: "20px", borderRadius: "4px", flexShrink: 0, marginTop: "1px", border: "2px solid " + (on ? "#FFBD1D" : "#333"), background: on ? "#FFBD1D" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s ease" };
+  }
+  mutePillStyle(on) {
+    return { padding: "2px 7px", borderRadius: "100px", fontFamily: "'Outfit', sans-serif", fontWeight: "500", fontSize: "7.5px", letterSpacing: "0.1em", textTransform: "uppercase", border: "1px solid " + (on ? "#FFBD1D" : "rgba(255,189,29,0.3)"), background: on ? "#FFBD1D" : "rgba(10,10,10,0.6)", color: on ? "#0A0A0A" : "#F5F0EB", backdropFilter: "blur(4px)" };
+  }
+  bubbleStyle(on) {
+    return {
+      position: "relative", width: "74px", height: "74px", borderRadius: "50%", overflow: "hidden",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      background: "radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%)",
+      border: "2px solid " + (on ? "#FFBD1D" : "rgba(255,189,29,0.3)"),
+    };
+  }
+
+  routerCardStyle(done) {
+    return { width: "100%", padding: "18px 16px", borderRadius: "10px", border: "2px solid " + (done ? "#2A2A28" : "#1a1a1a"), background: "#0f0f0f", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", textAlign: "left", opacity: done ? 0.72 : 1, transition: "all .2s ease" };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const y = 2026, m = 9;
+    const first = new Date(y, m, 1).getDay();
+    const dim = new Date(y, m + 1, 0).getDate();
+    const weekdays = ["S", "M", "T", "W", "T", "F", "S"].map((d, i) => ({ d, k: "w" + i }));
+    const cells = [];
+    for (let i = 0; i < first; i++) cells.push({ k: "b" + i, label: "", style: { aspectRatio: "1 / 1" }, onClick: () => {} });
+    for (let d = 1; d <= dim; d++) {
+      const sel = s.selectedDay === d;
+      cells.push({ k: "d" + d, label: String(d), style: this.cellStyle(sel), onClick: () => this.pickDate(d) });
+    }
+    const selDay = s.selectedDay || 17;
+    const selectedLabel = "October " + selDay;
+    const chipDefs = ["Cinematic and dramatic", "Warm and documentary", "Fun and candid", "Romantic and timeless", "Adventurous", "Intimate and quiet"];
+    const chips = chipDefs.map((label, i) => {
+      const sel = s.vibes.includes(i);
+      return { label, k: "c" + i, style: this.chipStyle(sel), dotStyle: this.dotStyle(sel), onClick: () => this.toggleVibe(i) };
+    });
+    const modDefs = [
+      { id: "films", title: "See the films", desc: "Real weddings, start to finish." },
+      { id: "meet", title: "Meet Sierra & Sean", desc: "The two people behind the camera." },
+      { id: "different", title: "What makes us different", desc: "Why couples choose us." },
+    ];
+    const routerCards = modDefs.map((mo) => {
+      const done = s.modulesDone.includes(mo.id);
+      return { id: mo.id, title: mo.title, desc: mo.desc, done, notDone: !done, k: "m_" + mo.id, style: this.routerCardStyle(done), onClick: () => this.chooseModule(mo.id) };
+    });
+    const filmDefs = [
+      { names: "Taylor & Austin", venue: "The Fields Reserve", vibe: "Warm and documentary", src: ((window.__resources && window.__resources.film0) || "https://media.flyiniris.com/videos/proto/taylor-austin-teaser-proto-1080p.mp4") },
+      { names: "Olivia & Austin", venue: "Oakbrook Church", vibe: "Romantic and timeless", src: ((window.__resources && window.__resources.film1) || "https://media.flyiniris.com/videos/proto/olivia-austin-teaser-proto-1080p.mp4") },
+      { names: "Taylor & Kane", venue: "Green Bay Country Club", vibe: "Cinematic and full of joy", src: ((window.__resources && window.__resources.film2) || "https://media.flyiniris.com/videos/proto/taylor-kane-teaser-proto-1080p.mp4") },
+    ];
+    const films = filmDefs.map((f, i) => ({
+      names: f.names, venue: f.venue, vibe: f.vibe, src: f.src, dataFilm: String(i), k: "f" + i,
+      playing: s.playingFilm === i, paused: s.playingFilm !== i,
+      videoStyle: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: s.playingFilm === i ? 1 : 0, transition: "opacity .25s ease", pointerEvents: "none" },
+      onClick: () => this.toggleFilm(i),
+    }));
+    const stepMap = { date: 1, venue: 2, router: 2, films: 2, meet: 2, different: 2, capture: 2, saved: 2, vibe: 3, contact: 4 };
+    const step = stepMap[s.screen];
+    const showProgress = !!step;
+    const isEmbedded = s.welcomeVariant === "embedded";
+    const canVenue = s.venue.trim() !== "";
+    const canCapture = s.name1.trim() !== "" && s.name2.trim() !== "" && s.email.trim() !== "";
+    const canText = s.phone.trim() !== "";
+    const canVibe = s.vibes.length > 0;
+
+    return {
+      isWelcome: s.screen === "welcome",
+      isDate: s.screen === "date",
+      isOpen: s.screen === "open",
+      isHeld: s.screen === "held",
+      isVibe: s.screen === "vibe",
+      isVenue: s.screen === "venue",
+      isCapture: s.screen === "capture",
+      isSaved: s.screen === "saved",
+      isContact: s.screen === "contact",
+      isConfirm: s.screen === "confirm",
+      isRouter: s.screen === "router",
+      isFilms: s.screen === "films",
+      isMeet: s.screen === "meet",
+      isDifferent: s.screen === "different",
+      isBooked: s.screen === "booked",
+      isCheckError: s.screen === "checkerror",
+      isWelcomeBack: s.screen === "welcomeback",
+      routerCards, films,
+      meetPlaying: s.meetPlaying,
+      meetPaused: !s.meetPlaying,
+      meetLabel: s.meetPlaying ? "Now playing" : "Sierra & Sean, tap to play",
+      chooseModule: this.chooseModule,
+      getMyPricing: this.getMyPricing,
+      showSomethingElse: this.showSomethingElse,
+      toggleMeet: this.toggleMeet,
+      isEmbedded,
+      isStandardWelcome: !isEmbedded,
+      checking: s.phase === "checking",
+      weekdays, cells, chips,
+      selectedLabel,
+      openHeadline: selectedLabel + " is open.",
+      heldLine: "Sierra & Sean are already filming " + selectedLabel + ".",
+      bookedHeadline: "We're fully committed on " + selectedLabel + ".",
+      waitlisted: s.waitlisted,
+      notWaitlisted: !s.waitlisted,
+      canWaitlist: s.email.trim() !== "",
+      waitlistCtaStyle: this.ctaStyle(s.email.trim() !== ""),
+      waitlistCtaHover: s.email.trim() !== "" ? { background: "#D99E0A" } : {},
+      submitWaitlist: this.submitWaitlist,
+      savedDateLabel: s.savedDate,
+      welcomeBackContinue: this.welcomeBackContinue,
+      submitError: s.submitError,
+      showProgress,
+      progressLabel: showProgress ? step + " / 4" : "",
+      progressBarStyle: { height: "100%", width: (showProgress ? (step / 4) * 100 : 0) + "%", background: "#FFBD1D", transition: "width .4s ease" },
+      showBack: s.history.length > 0 && s.screen !== "welcome",
+      canVibe, canVenue, canCapture, canText,
+      vibeCtaStyle: this.ctaStyle(canVibe),
+      venueCtaStyle: this.ctaStyle(canVenue),
+      captureCtaStyle: this.ctaStyle(canCapture),
+      contactCtaStyle: this.ctaStyle(canText),
+      vibeCtaHover: canVibe ? { background: "#D99E0A" } : {},
+      venueCtaHover: canVenue ? { background: "#D99E0A" } : {},
+      captureCtaHover: canCapture ? { background: "#D99E0A" } : {},
+      contactCtaHover: canText ? { background: "#D99E0A" } : {},
+      smsBoxStyle: this.smsBoxStyle(s.sms),
+      smsChecked: s.sms,
+      confirmEmail: s.email.trim() !== "" ? s.email : "your inbox",
+      name1: s.name1, name2: s.name2, venue: s.venue, email: s.email, phone: s.phone,
+      videoUnmuted: s.videoUnmuted,
+      bubbleStyle: this.bubbleStyle(s.videoUnmuted),
+      muteStyle: this.mutePillStyle(s.videoUnmuted),
+      muteLabel: s.videoUnmuted ? "Sound on" : "Muted",
+      captionHint: s.videoUnmuted ? "Playing with sound" : "Tap to unmute",
+      welcomeVariant: s.welcomeVariant,
+      availabilityMode: s.availabilityMode,
+      variantStdStyle: this.segStyle(!isEmbedded),
+      variantEmbStyle: this.segStyle(isEmbedded),
+      availOpenStyle: this.segStyle(s.availabilityMode === "open"),
+      availHeldStyle: this.segStyle(s.availabilityMode === "held"),
+      availBookedStyle: this.segStyle(s.availabilityMode === "booked"),
+      availErrorStyle: this.segStyle(s.availabilityMode === "error"),
+      finalOkStyle: this.segStyle(s.finalSubmitMode === "success"),
+      finalFailStyle: this.segStyle(s.finalSubmitMode === "fail"),
+      sessionNewStyle: this.segStyle(s.screen !== "welcomeback"),
+      sessionReturnStyle: this.segStyle(s.screen === "welcomeback"),
+      start: this.start, back: this.back, restart: this.restart,
+      continueFromOpen: this.continueFromOpen, teamExperience: this.teamExperience, flexible: this.flexible,
+      continueVibe: this.continueVibe, continueVenue: this.continueVenue, submitCapture: this.submitCapture, afterSaved: this.afterSaved, submitContact: this.submitContact,
+      toggleMute: this.toggleMute, toggleSms: this.toggleSms,
+      setVariantStd: () => this.setVariant("standard"),
+      setVariantEmb: () => this.setVariant("embedded"),
+      setAvailOpen: () => this.setAvail("open"),
+      setAvailHeld: () => this.setAvail("held"),
+      setAvailBooked: () => this.setAvail("booked"),
+      setAvailError: () => this.setAvail("error"),
+      setFinalOk: () => this.setFinalSubmit("success"),
+      setFinalFail: () => this.setFinalSubmit("fail"),
+      setSessionNew: () => this.setSession("new"),
+      setSessionReturning: () => this.setSession("returning"),
+      onName1: (e) => this.setState({ name1: e.target.value }),
+      onName2: (e) => this.setState({ name2: e.target.value }),
+      onVenue: (e) => this.setState({ venue: e.target.value }),
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onPhone: (e) => this.setState({ phone: e.target.value }),
+    };
+  }
+}
+</script>
+
+
+</body></html>
