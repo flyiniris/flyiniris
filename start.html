@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Here | Flyin' Iris</title>
+  <meta name="description" content="Check your date, see the films that match your day, and get your exact wedding film pricing from Sierra &amp; Sean at Flyin' Iris.">
+  <!-- noindex until Sean approves launch copy; flip to "index, follow" at go-live -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+  <!-- GA4 (same direct pattern as /thanks and /calculator; this page has no GTM) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XGSWD6JW3E');
+  </script>
+
+  <!-- Meta Pixel: immediate (not deferred). /start is an ad landing surface, so the
+       PageView must fire reliably. One event id shared by the browser pixel and the
+       server CAPI PageView (/api/pageview) so Meta dedups the pair (index.html pattern). -->
+  <script>
+  window.__fi_pv_event_id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbq.js');
+  fbq('init', '518972926490365');
+  fbq('track', 'PageView', {}, { eventID: window.__fi_pv_event_id });
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
+
+  <!-- Microsoft Clarity (project xj2t05exbz; session recordings + heatmaps) -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj2t05exbz");
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* brand-kit/brand-tokens.css, lifted verbatim */
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9E6;
+      --text-muted: rgba(200, 195, 185, 0.9);
+      --accent: #FFBD1D;
+      --accent-light: #FFF0C9;
+      --accent-dark: #D99E0A;
+      --border: #2A2A28;
+      --surface-input: #0f0f0f;
+      --border-input: #1a1a1a;
+      --surface-gold-tint: #1a1700;
+      --text-placeholder: #6B6B6B;
+      --error: #e74c3c;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-light); }
+    input { outline: none; font-family: var(--font-body); }
+    input::placeholder { color: var(--text-placeholder); }
+    button { font-family: var(--font-body); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes dot { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+    @keyframes barFill { from { width: 0; } to { width: 100%; } }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(.86); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes grain { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-4%,-4%)} 20%{transform:translate(-8%,3%)} 30%{transform:translate(4%,-6%)} 40%{transform:translate(-3%,8%)} 50%{transform:translate(-8%,3%)} 60%{transform:translate(6%,2%)} 70%{transform:translate(-2%,-6%)} 80%{transform:translate(5%,6%)} 90%{transform:translate(-6%,-2%)} }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* Film-grain signature layer, from the design export */
+    .grain {
+      position: fixed; inset: -50%; width: 200%; height: 200%;
+      z-index: 1; pointer-events: none; opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 8s steps(10) infinite;
+    }
+
+    /* Centered 480px column on the dark stage (desktop adaptation from the export;
+       mobile inherits the same column at full width) */
+    .stage { position: relative; z-index: 2; display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; }
+    .flow {
+      position: relative; width: 100%; max-width: 480px;
+      display: flex; flex-direction: column;
+      padding: 96px 26px 170px;
+      min-height: 100vh; min-height: 100dvh;
+    }
+
+    /* Top bar: back + progress */
+    .topbar {
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 22px 14px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.92) 55%, rgba(10,10,10,0));
+    }
+    .btn-back {
+      display: flex; align-items: center; gap: 6px; background: none; border: none;
+      padding: 6px 4px; cursor: pointer; color: #C8C3B9; font-weight: 400; font-size: 13px;
+      visibility: hidden; transition: color .2s ease;
+    }
+    .btn-back.show { visibility: visible; }
+    .btn-back:hover, .btn-back:focus-visible { color: var(--accent); }
+    .progress-wrap { display: flex; align-items: center; gap: 10px; visibility: hidden; }
+    .progress-wrap.show { visibility: visible; }
+    .progress-track { width: 54px; height: 2px; border-radius: 2px; background: var(--border-input); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: var(--accent); transition: width .4s ease; }
+    .progress-label { font-weight: 400; font-size: 11px; letter-spacing: 0.14em; color: #8E8E8E; }
+
+    /* Screens */
+    .screen { display: flex; flex-direction: column; justify-content: center; flex: 1; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both; }
+    .screen.center { align-items: center; text-align: center; }
+    .eyebrow { font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .headline { font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 1.15; color: var(--text-primary); }
+    .headline .gold-italic { font-style: italic; color: var(--accent); }
+    .headline.xl { font-size: 46px; line-height: 1.12; }
+    .headline.lg { font-size: 40px; line-height: 1.1; }
+    .subcopy { font-size: 14.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin: 12px 0 0; }
+    .subcopy.lg { font-size: 16px; line-height: 1.7; margin-top: 20px; }
+
+    .placeholder-badge {
+      display: inline-block; align-self: flex-start;
+      font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); border: 1px dashed var(--accent); border-radius: 4px;
+      padding: 3px 8px; margin-bottom: 14px;
+    }
+
+    .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .brand-mark { font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+
+    .cta {
+      width: 100%; padding: 16px; border-radius: 8px; border: none; margin-top: 26px;
+      font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
+      background: var(--accent); color: var(--bg-primary); transition: background-color .3s ease;
+    }
+    .cta:hover, .cta:focus-visible { background: var(--accent-dark); }
+    .cta:disabled { background: var(--border-input); color: var(--text-placeholder); cursor: not-allowed; }
+    .cta-ghost {
+      background: none; border: none; color: #C8C3B9; font-size: 14px; cursor: pointer;
+      margin-top: 10px; padding: 12px; transition: color .2s ease;
+    }
+    .cta-ghost:hover, .cta-ghost:focus-visible { color: var(--accent); }
+    .cta-inline { background: none; border: none; color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 16px; padding: 8px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-secondary); }
+    .field input {
+      width: 100%; padding: 13px 14px; background: var(--surface-input);
+      border: 2px solid var(--border-input); border-radius: 8px;
+      color: var(--text-primary); font-size: 16px; transition: border-color .2s ease;
+    }
+    .field input:focus { border-color: var(--accent); }
+
+    /* Calendar */
+    .cal { width: 100%; max-width: 320px; margin-top: 22px; }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .cal-month { font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--text-primary); }
+    .cal-nav { display: flex; gap: 6px; }
+    .cal-nav button {
+      width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
+      background: none; color: #C8C3B9; cursor: pointer; font-size: 14px; line-height: 1;
+      display: flex; align-items: center; justify-content: center; transition: all .2s ease;
+    }
+    .cal-nav button:hover:not(:disabled), .cal-nav button:focus-visible:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .cal-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px; }
+    .cal-weekdays span { text-align: center; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-placeholder); padding: 3px 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+    .cal-day {
+      aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; font-size: 15px; font-weight: 300; cursor: pointer;
+      color: var(--text-primary); background: transparent; border: 1px solid var(--border-input);
+      transition: background .2s ease, color .2s ease;
+    }
+    .cal-day:hover:not(:disabled), .cal-day:focus-visible:not(:disabled) { border-color: var(--accent); }
+    .cal-day.selected { color: var(--bg-primary); background: var(--accent); border: none; font-weight: 600; }
+    .cal-day:disabled { color: #3a3a38; cursor: not-allowed; border-color: transparent; }
+    .cal-blank { aspect-ratio: 1 / 1; }
+    .cal-hint { font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8E8E8E; }
+
+    .checking-row {
+      margin-top: 18px; display: flex; align-items: center; gap: 12px;
+      padding: 15px 16px; border-radius: 10px;
+      background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.2);
+    }
+    .checking-dots { display: flex; gap: 5px; }
+    .checking-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dot 1.1s ease-in-out infinite; }
+    .checking-dots span:nth-child(2) { animation-delay: .18s; }
+    .checking-dots span:nth-child(3) { animation-delay: .36s; }
+    .checking-row p { font-size: 14px; font-weight: 300; color: var(--text-primary); }
+
+    .check-circle {
+      width: 58px; height: 58px; border-radius: 50%; border: 1px solid var(--accent);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+      animation: popIn .6s ease both;
+    }
+    .auto-advance { margin-top: 28px; width: 180px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .auto-advance .track { width: 100%; height: 2px; border-radius: 2px; background: var(--border-input); overflow: hidden; }
+    .auto-advance .fill { height: 100%; background: var(--accent); animation: barFill var(--fill-ms, 2.8s) linear forwards; }
+    .auto-advance .label { font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E; }
+    .gold-rule { width: 48px; height: 2px; background: var(--accent); margin: 30px 0 0; }
+
+    .note-card { margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: var(--surface-gold-tint); }
+    .note-card .kicker { font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .note-card .line { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 23px; line-height: 1.4; color: var(--accent-light); margin: 12px 0 0; }
+
+    .plain-card { margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); }
+    .plain-card .kicker { font-weight: 600; font-size: 12px; letter-spacing: 0.5px; color: var(--text-secondary); }
+    .confirm-strip {
+      margin-top: 24px; padding: 18px 20px; border-radius: 10px; border-left: 2px solid var(--accent);
+      background: var(--bg-secondary); display: flex; gap: 12px; align-items: flex-start;
+      font-size: 14px; font-weight: 300; line-height: 1.55; color: var(--text-primary); text-align: left;
+    }
+
+    /* Router cards */
+    .router-card {
+      width: 100%; padding: 18px 16px; border-radius: 10px; border: 2px solid var(--border-input);
+      background: var(--surface-input); cursor: pointer; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; text-align: left; transition: all .2s ease;
+    }
+    .router-card:hover, .router-card:focus-visible { border-color: #333; }
+    .router-card.done { border-color: var(--border); opacity: 0.72; }
+    .router-card .t { font-size: 15.5px; font-weight: 500; color: var(--text-primary); display: block; }
+    .router-card .d { font-size: 12.5px; font-weight: 300; color: var(--text-secondary); display: block; }
+    .seen-chip { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .seen-chip .word { font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; }
+    .seen-chip .ring { width: 18px; height: 18px; border-radius: 50%; background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; }
+    .link-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+      background: none; border: none; border-top: 1px solid var(--border-input);
+      margin-top: 18px; padding: 18px 4px 0; cursor: pointer; color: #8E8E8E; transition: color .2s ease;
+      font-size: 13.5px; font-weight: 400;
+    }
+    .link-row:hover, .link-row:focus-visible { color: var(--accent); }
+
+    /* Films module */
+    .film-card {
+      display: flex; gap: 14px; align-items: center; padding: 10px;
+      border: 2px solid var(--border-input); border-radius: 10px; background: var(--surface-input);
+      cursor: pointer; transition: border-color .2s ease; width: 100%; text-align: left;
+    }
+    .film-card:hover, .film-card:focus-visible { border-color: #333; }
+    .film-thumb { position: relative; width: 96px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--bg-elevated); }
+    .film-thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .film-thumb .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); }
+    .film-thumb .playwrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .film-thumb .playbtn { width: 26px; height: 26px; border-radius: 50%; background: rgba(10,10,10,0.45); display: flex; align-items: center; justify-content: center; }
+    .film-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .film-names { font-family: var(--font-display); font-weight: 600; font-size: 19px; line-height: 1.1; color: var(--text-primary); }
+    .film-venue { font-weight: 300; font-size: 12px; color: #8E8E8E; }
+    .film-vibe { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 14px; color: var(--accent); }
+
+    .quote-card { margin-top: 16px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid var(--accent); background: var(--bg-secondary); }
+    .quote-card p { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: var(--accent-light); }
+    .quote-attrib { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+    .quote-attrib .name { font-weight: 500; font-size: 13px; color: var(--text-primary); }
+    .quote-attrib .stars { display: flex; gap: 2px; }
+    .quote-attrib .src { font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E; }
+
+    /* Meet module */
+    .meet-photo { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-elevated); }
+    .meet-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .meet-photo .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.55), transparent); }
+    .meet-photo .tag { position: absolute; left: 14px; bottom: 12px; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; background: rgba(10,10,10,0.55); border: 1px solid rgba(255,189,29,0.3); color: var(--text-primary); }
+
+    /* Different module */
+    .diff-item { display: flex; gap: 14px; align-items: flex-start; }
+    .diff-item .num { font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: var(--accent); padding-top: 3px; }
+    .diff-item .txt { font-size: 15.5px; font-weight: 300; line-height: 1.55; color: var(--text-primary); }
+    .diff-rule { height: 1px; background: var(--border-input); }
+
+    /* Vibe chips */
+    .chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+    .chip {
+      padding: 14px; border-radius: 10px; border: 2px solid var(--border-input); background: var(--surface-input);
+      color: var(--text-primary); font-size: 13.5px; font-weight: 400; cursor: pointer; text-align: left;
+      transition: all .2s ease; display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.25;
+    }
+    .chip .dot { width: 15px; height: 15px; border-radius: 50%; flex-shrink: 0; border: 2px solid #333; background: transparent; transition: all .2s ease; }
+    .chip.on { border-color: var(--accent); background: var(--surface-gold-tint); color: var(--accent); font-weight: 500; }
+    .chip.on .dot { border-color: var(--accent); background: var(--accent); }
+
+    /* Contact / consent */
+    .consent-row { display: flex; align-items: flex-start; gap: 11px; margin-top: 16px; cursor: pointer; }
+    .consent-box {
+      width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+      border: 2px solid #333; background: transparent; display: flex; align-items: center; justify-content: center;
+      transition: all .15s ease; cursor: pointer; padding: 0;
+    }
+    .consent-box.on { border-color: var(--accent); background: var(--accent); }
+    .consent-text { font-size: 11.5px; font-weight: 300; line-height: 1.55; color: #8E8E8E; }
+    .error-row { margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--error); }
+    .form-hint { font-size: 12px; font-weight: 300; text-align: center; color: #8E8E8E; margin: 14px 0 0; }
+
+    .bullet-row { display: flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 300; color: var(--text-primary); }
+    .bullet-row .b { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    .talk-card { margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-secondary); text-align: left; }
+    .talk-card .t { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); }
+    .talk-card .d { font-size: 13.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin: 8px 0 16px; }
+    .cta-outline {
+      display: block; width: 100%; padding: 13px; border-radius: 8px; border: 2px solid var(--accent);
+      background: transparent; color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer;
+      text-align: center; transition: all .25s ease;
+    }
+    .cta-outline:hover, .cta-outline:focus-visible { background: rgba(255,189,29,0.1); color: var(--accent-light); border-color: var(--accent-light); }
+
+    .date-card {
+      margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .date-card .k { font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E; display: block; }
+    .date-card .v { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); display: block; margin-top: 4px; }
+    .date-card .ring { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* Persistent Sierra & Sean bubble, bottom-left of the column */
+    .bubble-wrap {
+      position: fixed; bottom: 26px; z-index: 47;
+      left: max(22px, calc(50vw - 218px));
+      display: flex; align-items: center; gap: 11px; pointer-events: none;
+    }
+    .bubble {
+      position: relative; width: 74px; height: 74px; border-radius: 50%; overflow: hidden;
+      border: 2px solid rgba(255,189,29,0.3); background: var(--bg-elevated); flex-shrink: 0;
+    }
+    .bubble img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bubble-label .n { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--text-primary); line-height: 1; display: block; }
+    .bubble-label .c { font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; display: block; margin-top: 3px; }
+
+    /* Turnstile lives outside the re-rendered screen area; interaction-only
+       keeps it invisible unless Cloudflare needs a challenge */
+    #turnstile-slot { position: fixed; bottom: 26px; right: 22px; z-index: 48; }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="stage">
+    <div class="flow">
+      <div class="topbar">
+        <button type="button" class="btn-back" id="btn-back" aria-label="Go back one step">
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true"><path d="M6 1L1 6l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Back
+        </button>
+        <div class="progress-wrap" id="progress-wrap" aria-hidden="true">
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <span class="progress-label" id="progress-label"></span>
+        </div>
+      </div>
+
+      <main id="screen" aria-live="polite"></main>
+
+      <div class="bubble-wrap" aria-hidden="false">
+        <div class="bubble">
+          <img src="/sean-sierra.webp" alt="Sierra &amp; Sean, husband and wife wedding film team" width="74" height="74" loading="lazy">
+        </div>
+        <div class="bubble-label">
+          <span class="n">Sierra &amp; Sean</span>
+          <span class="c">Husband and wife team</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="turnstile-slot">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" data-appearance="interaction-only"></div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    var WORKER_URL = 'https://api.flyiniris.com';
+    var AVAILABILITY_URL = WORKER_URL + '/api/availability';
+    var DRAFT_KEY = 'fi_start_draft';
+    var DRAFT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+    // ===== ATTRIBUTION CAPTURE (identical semantics to index.html) =====
+    var TRACKING_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ad_id', 'adset_id', 'campaign_id'];
+    var TRACKING_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+    (function() {
+      try {
+        var ts = parseInt(localStorage.getItem('fi_tracking_ts') || '0', 10);
+        if (ts && (Date.now() - ts) > TRACKING_TTL_MS) {
+          TRACKING_KEYS.concat(['landing_page']).forEach(function(k) { localStorage.removeItem('fi_' + k); });
+          localStorage.removeItem('fi_tracking_ts');
+        }
+        var params = new URLSearchParams(window.location.search);
+        var captured = false;
+        TRACKING_KEYS.forEach(function(key) {
+          var val = params.get(key);
+          if (val) { localStorage.setItem('fi_' + key, val); captured = true; }
+        });
+        if (captured || !localStorage.getItem('fi_landing_page')) {
+          localStorage.setItem('fi_landing_page', window.location.href.split('#')[0]);
+        }
+        if (captured || !localStorage.getItem('fi_tracking_ts')) {
+          localStorage.setItem('fi_tracking_ts', String(Date.now()));
+        }
+      } catch (e) { /* storage blocked: tracking degrades gracefully */ }
+      // Server-side CAPI PageView with the SAME event id as the browser pixel
+      // PageView so Meta dedups the pair (index.html pattern).
+      var fbclid = '';
+      try {
+        fbclid = new URLSearchParams(window.location.search).get('fbclid') || localStorage.getItem('fi_fbclid') || sessionStorage.getItem('fi_fbclid') || '';
+      } catch (e) { /* ignore */ }
+      if (fbclid) {
+        fetch(WORKER_URL + '/api/pageview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fbclid: fbclid, event_id: window.__fi_pv_event_id })
+        }).catch(function() {});
+      }
+    })();
+
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : '';
+    }
+    function getTrackingData() {
+      var data = {};
+      TRACKING_KEYS.forEach(function(key) {
+        var val = null;
+        try { val = localStorage.getItem('fi_' + key) || sessionStorage.getItem('fi_' + key); } catch (e) { /* ignore */ }
+        if (val) data[key] = val;
+      });
+      try {
+        var lp = localStorage.getItem('fi_landing_page');
+        if (lp) data.landing_page = lp;
+      } catch (e) { /* ignore */ }
+      var fbp = getCookie('_fbp');
+      var fbc = getCookie('_fbc');
+      if (fbp) data.fbp = fbp;
+      if (fbc) data.fbc = fbc;
+      return data;
+    }
+    function generateEventId() {
+      return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+    }
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+    function isValidPhone(p) { return p.replace(/\D/g, '').length >= 10; }
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+    // ===== TURNSTILE (single shared widget; consume + reset per submit) =====
+    window.fiTurnstileToken = '';
+    window.fiTsCb = function(t) { window.fiTurnstileToken = t; };
+    window.fiConsumeToken = function() {
+      var t = (window.turnstile && window.turnstile.getResponse) ? (window.turnstile.getResponse() || '') : (window.fiTurnstileToken || '');
+      if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+      window.fiTurnstileToken = '';
+      return t;
+    };
+    var turnstileLoaded = false;
+    function loadTurnstile() {
+      if (turnstileLoaded) return;
+      turnstileLoaded = true;
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      s.async = true;
+      s.defer = true;
+      document.head.appendChild(s);
+    }
+
+    // ===== ANALYTICS HELPERS =====
+    function ga(eventName, params) {
+      try { if (typeof gtag === 'function') gtag('event', eventName, params || {}); } catch (e) {}
+    }
+
+    // ===== STATE =====
+    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var VIBE_LABELS = ['Cinematic and dramatic', 'Warm and documentary', 'Fun and candid', 'Romantic and timeless', 'Adventurous', 'Intimate and quiet'];
+    var FILMS = [
+      { names: 'Taylor & Austin', venue: 'The Fields Reserve', vibe: 'Warm and documentary', src: 'https://media.flyiniris.com/videos/proto/taylor-austin-teaser-proto-1080p.mp4', poster: '/Taylor-Austin_thumb.jpg' },
+      { names: 'Olivia & Austin', venue: 'Oakbrook Church', vibe: 'Romantic and timeless', src: 'https://media.flyiniris.com/videos/proto/olivia-austin-teaser-proto-1080p.mp4', poster: '/Olivia-Austin_thumb.jpg' },
+      { names: 'Taylor & Kane', venue: 'Green Bay Country Club', vibe: 'Cinematic and full of joy', src: 'https://media.flyiniris.com/videos/proto/taylor-kane-teaser-proto-1080p.mp4', poster: '/Taylor-Kane_thumb.jpg' }
+    ];
+    var MODULES = [
+      { id: 'films', title: 'See the films', desc: 'Real weddings, start to finish.' },
+      { id: 'meet', title: 'Meet Sierra & Sean', desc: 'The two people behind the camera.' },
+      { id: 'different', title: 'What makes us different', desc: 'Why couples choose us.' }
+    ];
+
+    var now = new Date();
+    var state = {
+      screen: 'welcome',
+      history: [],
+      calYear: now.getFullYear(),
+      calMonth: now.getMonth(),
+      selectedDate: null,        // 'YYYY-MM-DD'
+      checking: false,
+      availability: null,        // 'open' | 'held' | 'booked' | 'error'
+      vibes: [],
+      name1: '', name2: '', venue: '',
+      email: '', phone: '', sms: false,
+      teamTrack: false,
+      checkFailed: false,
+      modulesDone: [],
+      playingFilm: null,
+      waitlisted: false,
+      waitlistBusy: false,
+      submitBusy: false,
+      submitError: false,
+      sessionToken: ''
+    };
+    var checkTimer = null, autoTimer = null, savedTimer = null;
+    function clearTimers() { clearTimeout(checkTimer); clearTimeout(autoTimer); clearTimeout(savedTimer); }
+
+    // ===== DRAFT (Tier B autosave: localStorage on input, clear on submit) =====
+    function saveDraft() {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          v: 1, ts: Date.now(),
+          selectedDate: state.selectedDate, venue: state.venue,
+          name1: state.name1, name2: state.name2,
+          email: state.email, phone: state.phone, sms: state.sms,
+          vibes: state.vibes, teamTrack: state.teamTrack
+        }));
+      } catch (e) { /* ignore */ }
+    }
+    function loadDraft() {
+      try {
+        var raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return null;
+        var d = JSON.parse(raw);
+        if (!d || !d.ts || (Date.now() - d.ts) > DRAFT_TTL_MS) return null;
+        return d;
+      } catch (e) { return null; }
+    }
+    function clearDraft() {
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    }
+
+    // ===== DATE HELPERS =====
+    function dateLabel(iso, withYear) {
+      if (!iso) return '';
+      var p = iso.split('-');
+      var label = MONTHS[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10);
+      return withYear ? label + ', ' + p[0] : label;
+    }
+    function isoFor(y, m, d) {
+      return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+
+    // ===== NAVIGATION =====
+    function goForward(next) {
+      state.history.push(state.screen);
+      setScreen(next);
+    }
+    function setScreen(next) {
+      state.screen = next;
+      if (next === 'booked' || next === 'capture' || next === 'contact') loadTurnstile();
+      ga('start_screen', { screen_name: next });
+      render();
+    }
+    function goBack() {
+      clearTimers();
+      state.checking = false;
+      var prev = state.history.pop() || 'welcome';
+      state.screen = prev;
+      render();
+    }
+
+    // ===== AVAILABILITY =====
+    function pickDate(iso) {
+      clearTimers();
+      state.selectedDate = iso;
+      state.checking = true;
+      state.checkFailed = false;
+      saveDraft();
+      render();
+      var startTime = Date.now();
+      var routed = false;
+      function route(result) {
+        if (routed) return;
+        routed = true;
+        // Keep the checking beat on screen at least 1.6s so the moment reads
+        var delay = Math.max(0, 1600 - (Date.now() - startTime));
+        checkTimer = setTimeout(function() {
+          state.checking = false;
+          state.availability = result;
+          ga('start_availability', { status: result, wedding_date: iso });
+          if (result === 'open') {
+            goForward('open');
+            autoTimer = setTimeout(function() { continueFromOpen(); }, 2800);
+          } else if (result === 'held') {
+            goForward('held');
+          } else if (result === 'booked') {
+            goForward('booked');
+          } else {
+            state.checkFailed = true;
+            goForward('checkerror');
+          }
+        }, delay);
+      }
+      fetch(AVAILABILITY_URL + '?date=' + iso)
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+          if (data.ss_available) route('open');
+          else if (data.team_available) route('held');
+          else route('booked');
+        })
+        .catch(function() { route('error'); });
+    }
+    function continueFromOpen() {
+      clearTimers();
+      state.history.push(state.screen);
+      setScreen('venue');
+    }
+
+    // ===== SUBMITS =====
+    function buildInquiryPayload(extra) {
+      var tracking = getTrackingData();
+      var eventId = generateEventId();
+      tracking.event_id = eventId;
+      var payload = Object.assign({
+        submissionType: 'inquiry',
+        firstName: state.name1.trim(),
+        lastName: '',
+        email: state.email.trim(),
+        phone: state.phone.trim(),
+        smsNonMarketing: state.sms ? 'Yes' : 'No',
+        smsMarketing: 'No',
+        venue: state.venue.trim(),
+        partnerFirstName: state.name2.trim(),
+        partnerLastName: '',
+        weddingDate: state.selectedDate || '',
+        vibe: state.vibes.map(function(i) { return VIBE_LABELS[i]; }).join(', '),
+        variant: 'unified',
+        variant_source: 'unified'
+      }, tracking, extra || {});
+      payload['cf-turnstile-response'] = window.fiConsumeToken();
+      return { payload: payload, eventId: eventId };
+    }
+
+    function submitWaitlist() {
+      if (state.waitlistBusy || !isValidEmail(state.email.trim())) return;
+      state.waitlistBusy = true;
+      render();
+      var built = buildInquiryPayload({
+        note: 'Waitlist request from /start: ' + dateLabel(state.selectedDate, true) + ' came back fully booked. Only email us if that date opens up.'
+      });
+      fetch(WORKER_URL + '/webhook/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(built.payload)
+      }).then(function(resp) {
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      }).then(function() {
+        ga('inquiry_submitted', { form_name: 'start_flow_waitlist' });
+        if (typeof fbq === 'function') { fbq('track', 'Lead', {}, { eventID: built.eventId }); }
+        state.waitlistBusy = false;
+        state.waitlisted = true;
+        clearDraft();
+        render();
+      }).catch(function() {
+        state.waitlistBusy = false;
+        render();
+      });
+    }
+
+    function submitContact() {
+      if (state.submitBusy || !isValidPhone(state.phone.trim())) return;
+      state.submitBusy = true;
+      state.submitError = false;
+      render();
+      var noteBits = ['Source: /start guided flow.'];
+      if (state.teamTrack) noteBits.push('Sierra & Sean are booked on their date; couple chose to hear about the Team experience.');
+      if (state.checkFailed) noteBits.push('Live availability check failed during the flow; availability unconfirmed at submit time.');
+      var built = buildInquiryPayload({ note: noteBits.join(' ') });
+      fetch(WORKER_URL + '/webhook/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(built.payload)
+      }).then(function(resp) {
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      }).then(function(result) {
+        ga('inquiry_submitted', { form_name: 'start_flow' });
+        if (typeof fbq === 'function') { fbq('track', 'Lead', {}, { eventID: built.eventId }); }
+        state.sessionToken = (result && result.session_token) || '';
+        if (state.sessionToken) {
+          try { localStorage.setItem('fi_session_token', state.sessionToken); } catch (e) {}
+        }
+        clearDraft();
+        state.submitBusy = false;
+        goForward('confirm');
+      }).catch(function() {
+        state.submitBusy = false;
+        state.submitError = true;
+        render();
+      });
+    }
+
+    // ===== RENDER HELPERS =====
+    var CHECK_SVG = '<svg width="20" height="16" viewBox="0 0 22 18" fill="none" aria-hidden="true"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var SMALL_CHECK_SVG = '<svg width="9" height="7" viewBox="0 0 11 9" fill="none" aria-hidden="true"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var STAR_SVG = '<svg width="12" height="12" viewBox="0 0 12 12" fill="#FFBD1D" aria-hidden="true"><path d="M6 0.5l1.5 3.6 3.9.3-3 2.5.9 3.8L6 9.2 2.7 11.2l.9-3.8-3-2.5 3.9-.3z"/></svg>';
+
+    function stars() { return '<span class="stars" aria-label="Five star review">' + STAR_SVG + STAR_SVG + STAR_SVG + STAR_SVG + STAR_SVG + '</span>'; }
+    function quoteCard(text, name) {
+      return '<div class="quote-card"><p>' + text + '</p>' +
+        '<div class="quote-attrib"><span class="name">' + name + '</span>' + stars() +
+        '<span class="src">Google review</span></div></div>';
+    }
+    function checkingRow() {
+      if (!state.checking) return '';
+      return '<div class="checking-row" role="status"><div class="checking-dots" aria-hidden="true"><span></span><span></span><span></span></div>' +
+        '<p>Checking ' + esc(dateLabel(state.selectedDate)) + ' with Sierra &amp; Sean.</p></div>';
+    }
+
+    function calendarHtml() {
+      var y = state.calYear, m = state.calMonth;
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var first = new Date(y, m, 1).getDay();
+      var dim = new Date(y, m + 1, 0).getDate();
+      var minMonth = today.getFullYear() * 12 + today.getMonth();
+      var maxMonth = minMonth + 36;
+      var thisMonth = y * 12 + m;
+      var h = '<div class="cal">';
+      h += '<div class="cal-head"><span class="cal-month">' + MONTHS[m] + ' ' + y + '</span>';
+      h += '<div class="cal-nav">';
+      h += '<button type="button" data-action="cal-prev" aria-label="Previous month"' + (thisMonth <= minMonth ? ' disabled' : '') + '>&lsaquo;</button>';
+      h += '<button type="button" data-action="cal-next" aria-label="Next month"' + (thisMonth >= maxMonth ? ' disabled' : '') + '>&rsaquo;</button>';
+      h += '</div></div>';
+      h += '<div class="cal-weekdays" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>';
+      h += '<div class="cal-grid">';
+      for (var i = 0; i < first; i++) h += '<span class="cal-blank"></span>';
+      for (var d = 1; d <= dim; d++) {
+        var iso = isoFor(y, m, d);
+        var past = new Date(y, m, d) <= today;
+        var sel = state.selectedDate === iso;
+        h += '<button type="button" class="cal-day' + (sel ? ' selected' : '') + '" data-action="pick-date" data-date="' + iso + '"' +
+          (past || state.checking ? ' disabled' : '') + ' aria-label="' + MONTHS[m] + ' ' + d + ', ' + y + '">' + d + '</button>';
+      }
+      h += '</div></div>';
+      return h;
+    }
+
+    function modulesFooter() {
+      return '<button type="button" class="cta" data-action="get-pricing">Get my pricing</button>' +
+        '<button type="button" class="cta-ghost" data-action="something-else">Show me something else</button>';
+    }
+
+    // ===== SCREEN RENDERERS =====
+    var SCREENS = {
+      welcome: function() {
+        return '<div class="screen">' +
+          '<div class="brand-row"><span class="brand-mark">Flyin\' Iris</span></div>' +
+          // [PLACEHOLDER: welcome headline pending Sean] The line below is the
+          // design export's draft headline, NOT final copy. Do not point ads
+          // here until Sean supplies the final welcome headline.
+          '<span class="placeholder-badge">Placeholder headline: final copy pending Sean</span>' +
+          '<h1 class="headline xl">Start with your <span class="gold-italic">date.</span></h1>' +
+          '<p class="subcopy lg">Answer a few quick questions and we\'ll send your pricing, your availability, and the films that match your day.</p>' +
+          '<button type="button" class="cta" style="margin-top:34px" data-action="start">Check availability</button>' +
+          '</div>';
+      },
+
+      date: function() {
+        return '<div class="screen" style="justify-content:flex-start">' +
+          '<span class="eyebrow">Your date</span>' +
+          '<h1 class="headline">When is the wedding?</h1>' +
+          '<p class="subcopy">Choose your date and we\'ll check it against Sierra &amp; Sean\'s calendar right now.</p>' +
+          calendarHtml() +
+          checkingRow() +
+          '</div>';
+      },
+
+      open: function() {
+        return '<div class="screen center">' +
+          '<div class="check-circle"><svg width="22" height="18" viewBox="0 0 22 18" fill="none" aria-hidden="true"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+          '<span class="eyebrow" style="margin-bottom:16px">Good news</span>' +
+          '<h1 class="headline xl" style="font-size:48px">' + esc(dateLabel(state.selectedDate)) + ' is open.</h1>' +
+          '<p class="subcopy lg" style="max-width:300px">That means Sierra &amp; Sean can be there, camera in hand, for every moment of your day.</p>' +
+          '<div class="gold-rule"></div>' +
+          '<div class="auto-advance"><div class="track"><div class="fill"></div></div>' +
+          '<span class="label">Taking you to the next question</span></div>' +
+          '<button type="button" class="cta-inline" data-action="continue-open">Continue now</button>' +
+          '</div>';
+      },
+
+      held: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow" style="margin-bottom:14px">A quick note</span>' +
+          '<h1 class="headline" style="line-height:1.18">We are already with a couple that day.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Sierra &amp; Sean are already filming ' + esc(dateLabel(state.selectedDate)) + '. Your day is still in wonderful hands.</p>' +
+          '<div class="note-card"><span class="kicker">The Team experience</span>' +
+          '<p class="line">Our team, trained by us, shooting in our style, with Sierra &amp; Sean editing every frame.</p></div>' +
+          '<button type="button" class="cta" style="margin-top:24px" data-action="team-experience">Tell me about the Team experience</button>' +
+          '<button type="button" class="cta-ghost" data-action="flexible">My date is flexible</button>' +
+          '</div>';
+      },
+
+      booked: function() {
+        var h = '<div class="screen">' +
+          '<span class="eyebrow" style="margin-bottom:14px">A quick note</span>' +
+          '<h1 class="headline" style="line-height:1.18">We\'re fully committed on ' + esc(dateLabel(state.selectedDate)) + '.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Both of our crews are committed that day, so we are not able to take on your wedding. We would rather be straight with you than leave you waiting.</p>';
+        if (!state.waitlisted) {
+          h += '<div class="plain-card"><span class="kicker">If a spot opens up</span>' +
+            '<div class="field" style="margin-top:10px"><label for="wl-email" class="sr-only" style="position:absolute;left:-9999px">Email</label>' +
+            '<input id="wl-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
+            '<button type="button" class="cta" style="margin-top:14px" data-action="submit-waitlist"' + (isValidEmail(state.email.trim()) && !state.waitlistBusy ? '' : ' disabled') + '>' +
+            (state.waitlistBusy ? 'One moment...' : 'Tell me if anything opens up') + '</button></div>';
+        } else {
+          h += '<div class="confirm-strip">' + SMALL_CHECK_SVG.replace('width="9" height="7"', 'width="18" height="14" style="flex-shrink:0;margin-top:4px"') +
+            '<span>You\'re on the list. If anything changes for ' + esc(dateLabel(state.selectedDate)) + ', we\'ll email you first. No pressure either way.</span></div>';
+        }
+        h += '<button type="button" class="cta-ghost" style="margin-top:14px" data-action="flexible">My date is flexible</button></div>';
+        return h;
+      },
+
+      checkerror: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow" style="margin-bottom:14px">One moment</span>' +
+          '<h1 class="headline">We couldn\'t check that just now.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Our calendar didn\'t answer. Keep going and we\'ll confirm your availability by email, usually within the hour.</p>' +
+          '<button type="button" class="cta" data-action="continue-open">Keep going</button>' +
+          '</div>';
+      },
+
+      welcomeback: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow" style="margin-bottom:14px">Welcome back</span>' +
+          '<h1 class="headline lg">Picking up where you left off.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">We saved your details. Here\'s the day you had in mind.</p>' +
+          '<div class="date-card"><div><span class="k">Your date</span><span class="v">' + esc(dateLabel(state.selectedDate, true)) + '</span></div>' +
+          '<span class="ring">' + SMALL_CHECK_SVG.replace('width="9" height="7"', 'width="12" height="10"') + '</span></div>' +
+          '<button type="button" class="cta" style="margin-top:24px" data-action="welcome-back-continue">Continue</button>' +
+          '<button type="button" class="cta-ghost" data-action="start-fresh">Start fresh instead</button>' +
+          '</div>';
+      },
+
+      venue: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow">The place</span>' +
+          '<h1 class="headline">Where is the celebration?</h1>' +
+          '<p class="subcopy">For travel and logistics. Not booked yet? Just say so.</p>' +
+          '<div class="field" style="margin-top:24px"><label for="f-venue" style="position:absolute;left:-9999px">Venue</label>' +
+          '<input id="f-venue" type="text" autocomplete="off" placeholder="Venue, city, or not booked yet" data-field="venue" value="' + esc(state.venue) + '"></div>' +
+          '<button type="button" class="cta" data-action="continue-venue"' + (state.venue.trim() ? '' : ' disabled') + '>Continue</button>' +
+          '</div>';
+      },
+
+      router: function() {
+        var h = '<div class="screen">' +
+          '<span class="eyebrow">Your call</span>' +
+          '<h1 class="headline">While you\'re here, what would help most?</h1>' +
+          '<div style="display:flex;flex-direction:column;gap:10px;margin-top:24px">';
+        MODULES.forEach(function(mo) {
+          var done = state.modulesDone.indexOf(mo.id) !== -1;
+          h += '<button type="button" class="router-card' + (done ? ' done' : '') + '" data-action="choose-module" data-module="' + mo.id + '">' +
+            '<span><span class="t">' + esc(mo.title) + '</span><span class="d">' + esc(mo.desc) + '</span></span>';
+          if (done) {
+            h += '<span class="seen-chip"><span class="word">Seen</span><span class="ring">' + SMALL_CHECK_SVG + '</span></span>';
+          } else {
+            h += '<svg width="8" height="13" viewBox="0 0 8 13" fill="none" style="flex-shrink:0" aria-hidden="true"><path d="M1 1l5.5 5.5L1 12" stroke="#FFBD1D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          }
+          h += '</button>';
+        });
+        h += '</div>' +
+          '<button type="button" class="link-row" data-action="get-pricing"><span>Just send me the pricing</span>' +
+          '<svg width="15" height="10" viewBox="0 0 15 10" fill="none" style="flex-shrink:0" aria-hidden="true"><path d="M1 5h12M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
+          '</div>';
+        return h;
+      },
+
+      films: function() {
+        var h = '<div class="screen" style="justify-content:flex-start">' +
+          '<span class="eyebrow">The films</span>' +
+          '<h1 class="headline" style="font-size:30px;line-height:1.18">A few days we filmed lately.</h1>' +
+          '<div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">';
+        FILMS.forEach(function(f, i) {
+          var playing = state.playingFilm === i;
+          h += '<button type="button" class="film-card" data-action="toggle-film" data-film="' + i + '" aria-label="' + (playing ? 'Pause' : 'Play') + ' the ' + esc(f.names) + ' film">' +
+            '<span class="film-thumb">' +
+            '<video data-film-el="' + i + '" src="' + f.src + '" poster="' + f.poster + '" playsinline loop preload="metadata"></video>' +
+            '<span class="shade"></span>' +
+            '<span class="playwrap"><span class="playbtn">' +
+            (playing
+              ? '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><rect x="1" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"/><rect x="5.6" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"/></svg>'
+              : '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><path d="M1 1L8 5L1 9Z" fill="#F5F0EB"/></svg>') +
+            '</span></span></span>' +
+            '<span class="film-meta"><span class="film-names">' + esc(f.names) + '</span>' +
+            '<span class="film-venue">' + esc(f.venue) + '</span>' +
+            '<span class="film-vibe">' + esc(f.vibe) + '</span></span>' +
+            '</button>';
+        });
+        h += '</div>' +
+          quoteCard('It brings unlimited tears to your eyes when you get to relive it.', 'Kendall') +
+          modulesFooter() +
+          '</div>';
+        return h;
+      },
+
+      meet: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow">Say hello</span>' +
+          '<h1 class="headline" style="font-size:30px;line-height:1.18;margin-bottom:20px">The two of us, behind the camera.</h1>' +
+          '<div class="meet-photo"><img src="/sean-sierra.webp" alt="Sierra &amp; Sean of Flyin\' Iris">' +
+          '<span class="shade"></span><span class="tag">Sierra &amp; Sean</span></div>' +
+          '<p class="subcopy" style="font-size:15.5px;line-height:1.7;margin-top:20px">We are Sierra &amp; Sean, a husband and wife team. We shoot every wedding side by side and edit every frame ourselves, so your film always sounds like the two of you.</p>' +
+          quoteCard('It felt like spending the day with friends.', 'Cassidy') +
+          modulesFooter() +
+          '</div>';
+      },
+
+      different: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow">Why us</span>' +
+          '<h1 class="headline" style="font-size:30px;line-height:1.18">Three things that set us apart.</h1>' +
+          '<div style="display:flex;flex-direction:column;gap:16px;margin-top:22px">' +
+          '<div class="diff-item"><span class="num">01</span><span class="txt">Films that feel like you, not a template.</span></div>' +
+          '<div class="diff-rule"></div>' +
+          '<div class="diff-item"><span class="num">02</span><span class="txt">A system built so we spend hours on your film, not our inbox.</span></div>' +
+          '<div class="diff-rule"></div>' +
+          '<div class="diff-item"><span class="num">03</span><span class="txt">You always know exactly what you get, and what it costs.</span></div>' +
+          '</div>' +
+          quoteCard('Out of everything we paid for, this by far was worth every penny.', 'Taylor') +
+          modulesFooter() +
+          '</div>';
+      },
+
+      capture: function() {
+        var can = state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim());
+        return '<div class="screen">' +
+          '<span class="eyebrow">Your details</span>' +
+          '<h1 class="headline">Let\'s get your pricing ready.</h1>' +
+          '<p class="subcopy">Pricing, availability, and your film matches, straight to your inbox.</p>' +
+          '<div style="display:flex;align-items:flex-end;gap:12px;margin-top:26px">' +
+          '<div class="field" style="flex:1"><label for="f-name1">Your first name</label>' +
+          '<input id="f-name1" type="text" autocomplete="given-name" placeholder="First name" data-field="name1" value="' + esc(state.name1) + '"></div>' +
+          '<span style="font-family:var(--font-display);font-style:italic;font-weight:400;font-size:26px;color:var(--accent);padding-bottom:9px">&amp;</span>' +
+          '<div class="field" style="flex:1"><label for="f-name2">Your fiancé\'s first name</label>' +
+          '<input id="f-name2" type="text" autocomplete="off" placeholder="First name" data-field="name2" value="' + esc(state.name2) + '"></div>' +
+          '</div>' +
+          '<div class="field" style="margin-top:18px"><label for="f-email">Email</label>' +
+          '<input id="f-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
+          '<button type="button" class="cta" data-action="submit-capture"' + (can ? '' : ' disabled') + '>Continue</button>' +
+          '<p class="form-hint">Takes about a minute. We promise.</p>' +
+          '</div>';
+      },
+
+      saved: function() {
+        return '<div class="screen center">' +
+          '<div class="check-circle" style="width:54px;height:54px">' + CHECK_SVG + '</div>' +
+          '<h1 class="headline xl">Got it.</h1>' +
+          '<p class="subcopy lg" style="max-width:280px;margin-top:16px">Two quick things and your pricing is on the way.</p>' +
+          '<div class="auto-advance" style="margin-top:30px;--fill-ms:1.8s"><div class="track"><div class="fill"></div></div>' +
+          '<span class="label">Bringing up your next question</span></div>' +
+          '<button type="button" class="cta-inline" data-action="after-saved">Continue now</button>' +
+          '</div>';
+      },
+
+      vibe: function() {
+        var h = '<div class="screen">' +
+          '<span class="eyebrow">The feeling</span>' +
+          '<h1 class="headline">What should your film feel like?</h1>' +
+          '<p class="subcopy">We\'ll match you with the films most like your day, in your inbox and on the next page.</p>' +
+          '<p class="subcopy" style="font-size:13px;color:#8E8E8E;margin-top:8px">Choose as many as you like.</p>' +
+          '<div class="chip-grid">';
+        VIBE_LABELS.forEach(function(label, i) {
+          var on = state.vibes.indexOf(i) !== -1;
+          h += '<button type="button" class="chip' + (on ? ' on' : '') + '" data-action="toggle-vibe" data-vibe="' + i + '" aria-pressed="' + on + '">' +
+            '<span>' + esc(label) + '</span><span class="dot" aria-hidden="true"></span></button>';
+        });
+        h += '</div>' +
+          '<button type="button" class="cta" data-action="continue-vibe"' + (state.vibes.length ? '' : ' disabled') + '>Continue</button>' +
+          '</div>';
+        return h;
+      },
+
+      contact: function() {
+        return '<div class="screen">' +
+          '<span class="eyebrow">Last step</span>' +
+          '<h1 class="headline" style="font-size:32px;line-height:1.18">Want your pricing by text, too?</h1>' +
+          '<p class="subcopy">Add a number and we\'ll text your pricing and a few film matches the moment they\'re ready.</p>' +
+          '<div class="field" style="margin-top:22px"><label for="f-phone" style="position:absolute;left:-9999px">Phone number</label>' +
+          '<input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number" data-field="phone" value="' + esc(state.phone) + '"></div>' +
+          '<div class="consent-row" data-action="toggle-sms">' +
+          '<button type="button" class="consent-box' + (state.sms ? ' on' : '') + '" role="checkbox" aria-checked="' + state.sms + '" aria-label="SMS consent">' +
+          (state.sms ? '<svg width="11" height="9" viewBox="0 0 11 9" fill="none" aria-hidden="true"><path d="M1 4.5L4 7.5L10 1" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '') +
+          '</button>' +
+          '<span class="consent-text">I agree to receive text messages from Sierra &amp; Sean at Flyin\' Iris about my inquiry. Message frequency varies, message and data rates may apply, reply STOP to opt out.</span>' +
+          '</div>' +
+          (state.submitError
+            ? '<div class="error-row" role="alert"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#e74c3c" stroke-width="1.4"/><path d="M8 4.5v4.2M8 11.2v.2" stroke="#e74c3c" stroke-width="1.6" stroke-linecap="round"/></svg><span>That didn\'t go through. Try again.</span></div>'
+            : '') +
+          '<button type="button" class="cta" data-action="submit-contact"' + (isValidPhone(state.phone.trim()) && !state.submitBusy ? '' : ' disabled') + '>' +
+          (state.submitBusy ? 'Sending...' : 'Text me my pricing') + '</button>' +
+          '<p class="form-hint">Instant delivery. No pressure, no spam, no chasing. We promise.</p>' +
+          '</div>';
+      },
+
+      confirm: function() {
+        var bookHref = state.sessionToken ? '/thanks?session=' + encodeURIComponent(state.sessionToken) : 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
+        return '<div class="screen">' +
+          '<div class="check-circle" style="width:54px;height:54px;margin-bottom:22px">' + CHECK_SVG + '</div>' +
+          '<span class="eyebrow">On its way</span>' +
+          '<h1 class="headline xl" style="font-size:44px">Check your inbox.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Your pricing, your date confirmation, and a handful of films matched to your feeling are on their way to ' + esc(state.email.trim() || 'your inbox') + '.</p>' +
+          '<div style="display:flex;flex-direction:column;gap:12px;margin-top:22px">' +
+          '<div class="bullet-row"><span class="b"></span><span>Full pricing for your date</span></div>' +
+          '<div class="bullet-row"><span class="b"></span><span>Films matched to your chosen feeling</span></div>' +
+          '<div class="bullet-row"><span class="b"></span><span>Your availability, confirmed</span></div>' +
+          '</div>' +
+          '<div class="talk-card"><p class="t">Want to talk it through?</p>' +
+          '<p class="d">Booking an intro call holds your date for 7 days while you decide.</p>' +
+          '<a class="cta-outline" href="' + bookHref + '">Book an intro call</a></div>' +
+          '</div>';
+      }
+    };
+
+    // ===== PROGRESS / TOP BAR =====
+    var STEP_MAP = { date: 1, venue: 2, router: 2, films: 2, meet: 2, different: 2, capture: 2, saved: 2, vibe: 3, contact: 4 };
+    function renderTopbar() {
+      var back = document.getElementById('btn-back');
+      var wrap = document.getElementById('progress-wrap');
+      var fill = document.getElementById('progress-fill');
+      var label = document.getElementById('progress-label');
+      var showBack = state.history.length > 0 && state.screen !== 'welcome' && state.screen !== 'confirm';
+      back.classList.toggle('show', showBack);
+      var step = STEP_MAP[state.screen];
+      wrap.classList.toggle('show', !!step);
+      if (step) {
+        fill.style.width = (step / 4) * 100 + '%';
+        label.textContent = step + ' / 4';
+      }
+    }
+
+    // ===== MAIN RENDER =====
+    function render() {
+      var renderer = SCREENS[state.screen] || SCREENS.welcome;
+      document.getElementById('screen').innerHTML = renderer();
+      renderTopbar();
+      window.scrollTo(0, 0);
+    }
+
+    // ===== EVENTS (delegation, same idiom as index.html quiz app) =====
+    var app = document.getElementById('screen');
+
+    app.addEventListener('input', function(e) {
+      var f = e.target.getAttribute && e.target.getAttribute('data-field');
+      if (!f) return;
+      state[f] = e.target.value;
+      saveDraft();
+      // Toggle the CTA without a full re-render (keeps focus in the input)
+      var btn = app.querySelector('[data-action="continue-venue"], [data-action="submit-capture"], [data-action="submit-contact"], [data-action="submit-waitlist"]');
+      if (btn) {
+        var ok = true;
+        if (btn.getAttribute('data-action') === 'continue-venue') ok = !!state.venue.trim();
+        if (btn.getAttribute('data-action') === 'submit-capture') ok = !!(state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim()));
+        if (btn.getAttribute('data-action') === 'submit-contact') ok = isValidPhone(state.phone.trim()) && !state.submitBusy;
+        if (btn.getAttribute('data-action') === 'submit-waitlist') ok = isValidEmail(state.email.trim()) && !state.waitlistBusy;
+        btn.disabled = !ok;
+      }
+    });
+
+    app.addEventListener('click', function(e) {
+      var el = e.target.closest('[data-action]');
+      if (!el) return;
+      var action = el.getAttribute('data-action');
+
+      if (action === 'start') { goForward('date'); return; }
+      if (action === 'cal-prev') {
+        if (--state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+        render(); return;
+      }
+      if (action === 'cal-next') {
+        if (++state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+        render(); return;
+      }
+      if (action === 'pick-date') { pickDate(el.getAttribute('data-date')); return; }
+      if (action === 'continue-open') { continueFromOpen(); return; }
+      if (action === 'team-experience') {
+        state.teamTrack = true; saveDraft();
+        state.history.push('held'); setScreen('venue'); return;
+      }
+      if (action === 'flexible') {
+        clearTimers();
+        state.selectedDate = null; state.checking = false; state.waitlisted = false;
+        state.history.pop();
+        setScreen('date'); return;
+      }
+      if (action === 'submit-waitlist') { submitWaitlist(); return; }
+      if (action === 'continue-venue') { if (state.venue.trim()) goForward('router'); return; }
+      if (action === 'choose-module') {
+        state.history.push('router');
+        state.playingFilm = null;
+        setScreen(el.getAttribute('data-module')); return;
+      }
+      if (action === 'something-else') {
+        if (state.modulesDone.indexOf(state.screen) === -1) state.modulesDone.push(state.screen);
+        state.playingFilm = null;
+        state.history.pop();
+        setScreen('router'); return;
+      }
+      if (action === 'get-pricing') { goForward('capture'); return; }
+      if (action === 'toggle-film') {
+        var idx = parseInt(el.getAttribute('data-film'), 10);
+        var next = state.playingFilm === idx ? null : idx;
+        state.playingFilm = next;
+        render();
+        app.querySelectorAll('video[data-film-el]').forEach(function(v) {
+          var vIdx = parseInt(v.getAttribute('data-film-el'), 10);
+          if (vIdx === next) { v.muted = false; var p = v.play(); if (p && p.catch) p.catch(function() {}); }
+          else { v.pause(); }
+        });
+        return;
+      }
+      if (action === 'submit-capture') {
+        if (state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim())) {
+          clearTimers();
+          goForward('saved');
+          savedTimer = setTimeout(function() { afterSaved(); }, 1800);
+        }
+        return;
+      }
+      if (action === 'after-saved') { afterSaved(); return; }
+      if (action === 'toggle-vibe') {
+        var vi = parseInt(el.getAttribute('data-vibe'), 10);
+        var pos = state.vibes.indexOf(vi);
+        if (pos === -1) state.vibes.push(vi); else state.vibes.splice(pos, 1);
+        saveDraft();
+        render(); return;
+      }
+      if (action === 'continue-vibe') { if (state.vibes.length) goForward('contact'); return; }
+      if (action === 'toggle-sms') {
+        state.sms = !state.sms; saveDraft(); render(); return;
+      }
+      if (action === 'submit-contact') { submitContact(); return; }
+      if (action === 'welcome-back-continue') {
+        state.history = ['date', 'venue', 'router'];
+        setScreen('capture'); return;
+      }
+      if (action === 'start-fresh') {
+        clearDraft();
+        state.selectedDate = null; state.venue = ''; state.name1 = ''; state.name2 = '';
+        state.email = ''; state.phone = ''; state.sms = false; state.vibes = []; state.teamTrack = false;
+        state.history = [];
+        setScreen('welcome'); return;
+      }
+    });
+
+    document.getElementById('btn-back').addEventListener('click', goBack);
+
+    // ===== BOOT =====
+    var draft = loadDraft();
+    if (draft && draft.selectedDate) {
+      state.selectedDate = draft.selectedDate;
+      state.venue = draft.venue || '';
+      state.name1 = draft.name1 || '';
+      state.name2 = draft.name2 || '';
+      state.email = draft.email || '';
+      state.phone = draft.phone || '';
+      state.sms = !!draft.sms;
+      state.vibes = Array.isArray(draft.vibes) ? draft.vibes : [];
+      state.teamTrack = !!draft.teamTrack;
+      var dp = draft.selectedDate.split('-');
+      state.calYear = parseInt(dp[0], 10);
+      state.calMonth = parseInt(dp[1], 10) - 1;
+      state.screen = 'welcomeback';
+      loadTurnstile();
+    }
+    ga('start_screen', { screen_name: state.screen });
+    render();
+
+    function afterSaved() {
+      clearTimeout(savedTimer);
+      state.history.push('capture');
+      setScreen('vibe');
+    }
+  })();
+  </script>
+</body>
+</html>
