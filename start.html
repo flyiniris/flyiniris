@@ -1121,6 +1121,10 @@
       var renderer = SCREENS[state.screen] || SCREENS.welcome;
       document.getElementById('screen').innerHTML = renderer();
       renderTopbar();
+      // The fixed bubble collides with text on the long scrolling module
+      // screens; question screens keep it
+      var bubble = document.querySelector('.bubble-wrap');
+      if (bubble) bubble.style.display = (state.screen === 'meet' || state.screen === 'films') ? 'none' : 'flex';
       window.scrollTo(0, 0);
     }
 
