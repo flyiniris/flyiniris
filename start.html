@@ -151,13 +151,6 @@
     .subcopy { font-size: 14.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin: 12px 0 0; }
     .subcopy.lg { font-size: 16px; line-height: 1.7; margin-top: 20px; }
 
-    .placeholder-badge {
-      display: inline-block; align-self: flex-start;
-      font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent); border: 1px dashed var(--accent); border-radius: 4px;
-      padding: 3px 8px; margin-bottom: 14px;
-    }
-
     .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
     .brand-mark { font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
 
@@ -669,8 +662,13 @@
       if (state.waitlistBusy || !isValidEmail(state.email.trim())) return;
       state.waitlistBusy = true;
       render();
+      // submissionType 'waitlist' labels the GHL Submission Type field honestly.
+      // The Worker does not yet branch on it: this contact still enters
+      // inquiry-nurture until the Worker-side waitlist path ships (flagged
+      // 2026-07-10, awaiting Sean's green light).
       var built = buildInquiryPayload({
-        note: 'Waitlist request from /start: ' + dateLabel(state.selectedDate, true) + ' came back fully booked. Only email us if that date opens up.'
+        submissionType: 'waitlist',
+        note: 'Waitlist request from /start: ' + dateLabel(state.selectedDate, true) + ' came back fully booked (Sierra & Sean and Team both committed). Reach out if anything opens up.'
       });
       fetch(WORKER_URL + '/webhook/inquiry', {
         method: 'POST',
@@ -780,11 +778,8 @@
       welcome: function() {
         return '<div class="screen">' +
           '<div class="brand-row"><span class="brand-mark">Flyin\' Iris</span></div>' +
-          // [PLACEHOLDER: welcome headline pending Sean] The line below is the
-          // design export's draft headline, NOT final copy. Do not point ads
-          // here until Sean supplies the final welcome headline.
-          '<span class="placeholder-badge">Placeholder headline: final copy pending Sean</span>' +
-          '<h1 class="headline xl">Start with your <span class="gold-italic">date.</span></h1>' +
+          // Final headline per Sean, 2026-07-10.
+          '<h1 class="headline lg">Let\'s make something captivating enough to <span class="gold-italic">rewatch for years.</span></h1>' +
           '<p class="subcopy lg">Answer a few quick questions and we\'ll send your pricing, your availability, and the films that match your day.</p>' +
           '<button type="button" class="cta" style="margin-top:34px" data-action="start">Check availability</button>' +
           '</div>';
@@ -814,31 +809,36 @@
       },
 
       held: function() {
+        // $2,800 mirrors TEAM_BASE in iris-automation src/pricing.ts (display
+        // copy only, never computed here); if pricing.ts changes, this follows.
         return '<div class="screen">' +
           '<span class="eyebrow" style="margin-bottom:14px">A quick note</span>' +
-          '<h1 class="headline" style="line-height:1.18">We are already with a couple that day.</h1>' +
-          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Sierra &amp; Sean are already filming ' + esc(dateLabel(state.selectedDate)) + '. Your day is still in wonderful hands.</p>' +
+          '<h1 class="headline" style="line-height:1.18">Your date is open, but Sierra &amp; Sean are already booked that day.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Good news: one of our filmmakers can still capture your wedding through our Team experience, starting at $2,800. Same style, same energy, same films you\'ll want to rewatch. Want to keep going?</p>' +
           '<div class="note-card"><span class="kicker">The Team experience</span>' +
           '<p class="line">Our team, trained by us, shooting in our style, with Sierra &amp; Sean editing every frame.</p></div>' +
-          '<button type="button" class="cta" style="margin-top:24px" data-action="team-experience">Tell me about the Team experience</button>' +
+          '<button type="button" class="cta" style="margin-top:24px" data-action="team-experience">Keep going</button>' +
           '<button type="button" class="cta-ghost" data-action="flexible">My date is flexible</button>' +
           '</div>';
       },
 
       booked: function() {
+        // This screen shows ONLY when both Sierra & Sean and the Team are
+        // booked (ss_available and team_available both false). No availability
+        // promise beyond "we'll reach out": the submit enters normal handling.
         var h = '<div class="screen">' +
           '<span class="eyebrow" style="margin-bottom:14px">A quick note</span>' +
-          '<h1 class="headline" style="line-height:1.18">We\'re fully committed on ' + esc(dateLabel(state.selectedDate)) + '.</h1>' +
-          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Both of our crews are committed that day, so we are not able to take on your wedding. We would rather be straight with you than leave you waiting.</p>';
+          '<h1 class="headline" style="line-height:1.18">' + esc(dateLabel(state.selectedDate)) + ' is fully booked on our calendar.</h1>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Leave your email and we\'ll reach out if anything opens up.</p>';
         if (!state.waitlisted) {
           h += '<div class="plain-card"><span class="kicker">If a spot opens up</span>' +
-            '<div class="field" style="margin-top:10px"><label for="wl-email" class="sr-only" style="position:absolute;left:-9999px">Email</label>' +
+            '<div class="field" style="margin-top:10px"><label for="wl-email" style="position:absolute;left:-9999px">Email</label>' +
             '<input id="wl-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
             '<button type="button" class="cta" style="margin-top:14px" data-action="submit-waitlist"' + (isValidEmail(state.email.trim()) && !state.waitlistBusy ? '' : ' disabled') + '>' +
             (state.waitlistBusy ? 'One moment...' : 'Tell me if anything opens up') + '</button></div>';
         } else {
           h += '<div class="confirm-strip">' + SMALL_CHECK_SVG.replace('width="9" height="7"', 'width="18" height="14" style="flex-shrink:0;margin-top:4px"') +
-            '<span>You\'re on the list. If anything changes for ' + esc(dateLabel(state.selectedDate)) + ', we\'ll email you first. No pressure either way.</span></div>';
+            '<span>You\'re on the list for ' + esc(dateLabel(state.selectedDate)) + '. If anything opens up, we\'ll reach out.</span></div>';
         }
         h += '<button type="button" class="cta-ghost" style="margin-top:14px" data-action="flexible">My date is flexible</button></div>';
         return h;
