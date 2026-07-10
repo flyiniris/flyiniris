@@ -109,11 +109,12 @@
       animation: grain 8s steps(10) infinite;
     }
 
-    /* Centered 480px column on the dark stage (desktop adaptation from the export;
-       mobile inherits the same column at full width) */
+    /* Centered column on the dark stage. 520px matches the live site's
+       quiz-container; screens center their text like index.html sections,
+       with lists and fields left-aligned inside (the site's faq-list pattern). */
     .stage { position: relative; z-index: 2; display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; }
     .flow {
-      position: relative; width: 100%; max-width: 480px;
+      position: relative; width: 100%; max-width: 520px;
       display: flex; flex-direction: column;
       padding: 96px 26px 170px;
       min-height: 100vh; min-height: 100dvh;
@@ -122,7 +123,7 @@
     /* Top bar: back + progress */
     .topbar {
       position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 480px; z-index: 40;
+      width: 100%; max-width: 520px; z-index: 40;
       display: flex; align-items: center; justify-content: space-between;
       padding: 22px 22px 14px;
       background: linear-gradient(to bottom, rgba(10,10,10,0.92) 55%, rgba(10,10,10,0));
@@ -140,9 +141,12 @@
     .progress-fill { height: 100%; width: 0; background: var(--accent); transition: width .4s ease; }
     .progress-label { font-weight: 400; font-size: 11px; letter-spacing: 0.14em; color: #8E8E8E; }
 
-    /* Screens */
-    .screen { display: flex; flex-direction: column; justify-content: center; flex: 1; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both; }
+    /* Screens: centered text like the live site's sections; lists, cards,
+       and labeled fields re-left-align inside via .left-block */
+    .screen { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; flex: 1; animation: fadeUp .8s cubic-bezier(0.16,1,0.3,1) both; }
+    .screen > * { width: 100%; }
     .screen.center { align-items: center; text-align: center; }
+    .left-block { text-align: left; }
     .eyebrow { font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
     .headline { font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 1.15; color: var(--text-primary); }
     .headline .gold-italic { font-style: italic; color: var(--accent); }
@@ -151,7 +155,7 @@
     .subcopy { font-size: 14.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin: 12px 0 0; }
     .subcopy.lg { font-size: 16px; line-height: 1.7; margin-top: 20px; }
 
-    .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .brand-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 22px; }
     .brand-mark { font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
 
     .cta {
@@ -168,7 +172,7 @@
     .cta-ghost:hover, .cta-ghost:focus-visible { color: var(--accent); }
     .cta-inline { background: none; border: none; color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 16px; padding: 8px; }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
     .field label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-secondary); }
     .field input {
       width: 100%; padding: 13px 14px; background: var(--surface-input);
@@ -178,9 +182,20 @@
     .field input:focus { border-color: var(--accent); }
 
     /* Calendar */
-    .cal { width: 100%; max-width: 320px; margin-top: 22px; }
-    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .cal-month { font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--text-primary); }
+    .cal { width: 100%; max-width: 320px; margin: 22px auto 0; }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .cal-selects { display: flex; gap: 8px; flex: 1; }
+    .cal-selects select {
+      flex: 1; padding: 9px 10px; background: var(--surface-input);
+      border: 2px solid var(--border-input); border-radius: 8px;
+      color: var(--text-primary); font-family: var(--font-body); font-size: 14px;
+      cursor: pointer; outline: none; transition: border-color .2s ease;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FFBD1D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 26px;
+    }
+    .cal-selects select:focus, .cal-selects select:hover { border-color: var(--accent); }
+    .cal-selects option { background: var(--surface-input); color: var(--text-primary); }
     .cal-nav { display: flex; gap: 6px; }
     .cal-nav button {
       width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
@@ -226,11 +241,11 @@
     .auto-advance .label { font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E; }
     .gold-rule { width: 48px; height: 2px; background: var(--accent); margin: 30px 0 0; }
 
-    .note-card { margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: var(--surface-gold-tint); }
+    .note-card { margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: var(--surface-gold-tint); text-align: left; }
     .note-card .kicker { font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
     .note-card .line { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 23px; line-height: 1.4; color: var(--accent-light); margin: 12px 0 0; }
 
-    .plain-card { margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); }
+    .plain-card { margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); text-align: left; }
     .plain-card .kicker { font-weight: 600; font-size: 12px; letter-spacing: 0.5px; color: var(--text-secondary); }
     .confirm-strip {
       margin-top: 24px; padding: 18px 20px; border-radius: 10px; border-left: 2px solid var(--accent);
@@ -276,7 +291,7 @@
     .film-venue { font-weight: 300; font-size: 12px; color: #8E8E8E; }
     .film-vibe { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 14px; color: var(--accent); }
 
-    .quote-card { margin-top: 16px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid var(--accent); background: var(--bg-secondary); }
+    .quote-card { margin-top: 16px; padding: 16px 20px; border-radius: 8px; border-left: 2px solid var(--accent); background: var(--bg-secondary); text-align: left; }
     .quote-card p { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.4; color: var(--accent-light); }
     .quote-attrib { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
     .quote-attrib .name { font-weight: 500; font-size: 13px; color: var(--text-primary); }
@@ -285,14 +300,19 @@
 
     /* Meet module */
     .meet-photo { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-elevated); }
-    .meet-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* sean-sierra.webp is a tall portrait with faces in the upper band; a
+       default center crop cuts the heads off in landscape/square frames */
+    .meet-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
     .meet-photo .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.55), transparent); }
     .meet-photo .tag { position: absolute; left: 14px; bottom: 12px; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; background: rgba(10,10,10,0.55); border: 1px solid rgba(255,189,29,0.3); color: var(--text-primary); }
 
-    /* Different module */
-    .diff-item { display: flex; gap: 14px; align-items: flex-start; }
-    .diff-item .num { font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: var(--accent); padding-top: 3px; }
-    .diff-item .txt { font-size: 15.5px; font-weight: 300; line-height: 1.55; color: var(--text-primary); }
+    /* Why couples choose us (inside the merged Meet section); list is
+       left-aligned inside the centered screen, the site's faq-list pattern */
+    .why-heading { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); margin: 30px 0 0; }
+    .diff-item { display: flex; gap: 14px; align-items: flex-start; text-align: left; }
+    .diff-item .num { font-weight: 400; font-size: 12px; letter-spacing: 0.16em; color: var(--accent); padding-top: 4px; }
+    .diff-item .lead { font-size: 15.5px; font-weight: 500; line-height: 1.5; color: var(--text-primary); display: block; }
+    .diff-item .txt { font-size: 14px; font-weight: 300; line-height: 1.65; color: var(--text-secondary); display: block; margin-top: 4px; }
     .diff-rule { height: 1px; background: var(--border-input); }
 
     /* Vibe chips */
@@ -307,7 +327,7 @@
     .chip.on .dot { border-color: var(--accent); background: var(--accent); }
 
     /* Contact / consent */
-    .consent-row { display: flex; align-items: flex-start; gap: 11px; margin-top: 16px; cursor: pointer; }
+    .consent-row { display: flex; align-items: flex-start; gap: 11px; margin-top: 16px; cursor: pointer; text-align: left; }
     .consent-box {
       width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
       border: 2px solid #333; background: transparent; display: flex; align-items: center; justify-content: center;
@@ -334,6 +354,7 @@
     .date-card {
       margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      text-align: left;
     }
     .date-card .k { font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E; display: block; }
     .date-card .v { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); display: block; margin-top: 4px; }
@@ -342,14 +363,14 @@
     /* Persistent Sierra & Sean bubble, bottom-left of the column */
     .bubble-wrap {
       position: fixed; bottom: 26px; z-index: 47;
-      left: max(22px, calc(50vw - 218px));
+      left: max(22px, calc(50vw - 238px));
       display: flex; align-items: center; gap: 11px; pointer-events: none;
     }
     .bubble {
       position: relative; width: 74px; height: 74px; border-radius: 50%; overflow: hidden;
       border: 2px solid rgba(255,189,29,0.3); background: var(--bg-elevated); flex-shrink: 0;
     }
-    .bubble img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bubble img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; display: block; }
     .bubble-label .n { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--text-primary); line-height: 1; display: block; }
     .bubble-label .c { font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; display: block; margin-top: 3px; }
 
@@ -502,9 +523,29 @@
     ];
     var MODULES = [
       { id: 'films', title: 'See the films', desc: 'Real weddings, start to finish.' },
-      { id: 'meet', title: 'Meet Sierra & Sean', desc: 'The two people behind the camera.' },
-      { id: 'different', title: 'What makes us different', desc: 'Why couples choose us.' }
+      { id: 'meet', title: 'Meet Sierra & Sean', desc: 'The two people behind the camera, and why couples choose us.' }
     ];
+    // [PLACEHOLDER: Sean and Sierra are finalizing this copy; swap the strings
+    // below when the final version lands. Structure only, do not restyle.]
+    // The 100+ weddings claim is confirmed true by Sean and cleared for
+    // public display (2026-07-10).
+    var WHY_US = {
+      heading: 'Why couples choose us',
+      items: [
+        {
+          lead: 'We make the day more fun, not less.',
+          body: 'We\'ve filmed over 100 weddings, and the best ones feel like having two friends there who happen to be incredible at their jobs. Sean\'s making sure the groom and every groomsman looks sharp. Sierra\'s catching the moments you\'ll miss. You\'re not being filmed, you\'re just having the best day of your life while we quietly get all of it.'
+        },
+        {
+          lead: 'Films that feel like you, not a template.',
+          body: 'We edit every frame ourselves, so your film sounds like the two of you, not a formula we run on everybody.'
+        },
+        {
+          lead: '100+ weddings in, we don\'t miss.',
+          body: 'The crack in your partner\'s voice during the vows, the choked-up silence before your dad gives you away. We know where to be and when, because we\'ve been there a hundred times.'
+        }
+      ]
+    };
 
     var now = new Date();
     var state = {
@@ -749,7 +790,23 @@
       var maxMonth = minMonth + 36;
       var thisMonth = y * 12 + m;
       var h = '<div class="cal">';
-      h += '<div class="cal-head"><span class="cal-month">' + MONTHS[m] + ' ' + y + '</span>';
+      // Month + year dropdowns so couples booking 1-2 years out can jump
+      // directly; arrows stay for single-month stepping. Both paths land on
+      // the same day buttons, so the availability check fires identically.
+      h += '<div class="cal-head"><div class="cal-selects">';
+      h += '<select data-action="cal-month-select" aria-label="Month">';
+      for (var mi = 0; mi < 12; mi++) {
+        var midx = y * 12 + mi;
+        h += '<option value="' + mi + '"' + (mi === m ? ' selected' : '') + (midx < minMonth || midx > maxMonth ? ' disabled' : '') + '>' + MONTHS[mi] + '</option>';
+      }
+      h += '</select>';
+      h += '<select data-action="cal-year-select" aria-label="Year">';
+      var minYear = today.getFullYear();
+      var maxYear = Math.floor(maxMonth / 12);
+      for (var yi = minYear; yi <= maxYear; yi++) {
+        h += '<option value="' + yi + '"' + (yi === y ? ' selected' : '') + '>' + yi + '</option>';
+      }
+      h += '</select></div>';
       h += '<div class="cal-nav">';
       h += '<button type="button" data-action="cal-prev" aria-label="Previous month"' + (thisMonth <= minMonth ? ' disabled' : '') + '>&lsaquo;</button>';
       h += '<button type="button" data-action="cal-next" aria-label="Next month"' + (thisMonth >= maxMonth ? ' disabled' : '') + '>&rsaquo;</button>';
@@ -778,9 +835,9 @@
       welcome: function() {
         return '<div class="screen">' +
           '<div class="brand-row"><span class="brand-mark">Flyin\' Iris</span></div>' +
-          // Final headline per Sean, 2026-07-10.
-          '<h1 class="headline lg">Let\'s make something captivating enough to <span class="gold-italic">rewatch for years.</span></h1>' +
-          '<p class="subcopy lg">Answer a few quick questions and we\'ll send your pricing, your availability, and the films that match your day.</p>' +
+          // Headline per Sean, 2026-07-10 revision pass.
+          '<h1 class="headline lg">We create captivating films you\'ll <span class="gold-italic">rewatch for generations.</span></h1>' +
+          '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day.</p>' +
           '<button type="button" class="cta" style="margin-top:34px" data-action="start">Check availability</button>' +
           '</div>';
       },
@@ -928,31 +985,28 @@
       },
 
       meet: function() {
-        return '<div class="screen">' +
+        // Merged section: the human intro to Sierra & Sean carries straight
+        // into the differentiators (the old standalone Why Us step is gone)
+        var h = '<div class="screen" style="justify-content:flex-start">' +
           '<span class="eyebrow">Say hello</span>' +
           '<h1 class="headline" style="font-size:30px;line-height:1.18;margin-bottom:20px">The two of us, behind the camera.</h1>' +
           '<div class="meet-photo"><img src="/sean-sierra.webp" alt="Sierra &amp; Sean of Flyin\' Iris">' +
           '<span class="shade"></span><span class="tag">Sierra &amp; Sean</span></div>' +
           '<p class="subcopy" style="font-size:15.5px;line-height:1.7;margin-top:20px">We are Sierra &amp; Sean, a husband and wife team. We shoot every wedding side by side and edit every frame ourselves, so your film always sounds like the two of you.</p>' +
           quoteCard('It felt like spending the day with friends.', 'Cassidy') +
-          modulesFooter() +
-          '</div>';
-      },
-
-      different: function() {
-        return '<div class="screen">' +
-          '<span class="eyebrow">Why us</span>' +
-          '<h1 class="headline" style="font-size:30px;line-height:1.18">Three things that set us apart.</h1>' +
-          '<div style="display:flex;flex-direction:column;gap:16px;margin-top:22px">' +
-          '<div class="diff-item"><span class="num">01</span><span class="txt">Films that feel like you, not a template.</span></div>' +
-          '<div class="diff-rule"></div>' +
-          '<div class="diff-item"><span class="num">02</span><span class="txt">A system built so we spend hours on your film, not our inbox.</span></div>' +
-          '<div class="diff-rule"></div>' +
-          '<div class="diff-item"><span class="num">03</span><span class="txt">You always know exactly what you get, and what it costs.</span></div>' +
-          '</div>' +
+          '<h2 class="why-heading">' + esc(WHY_US.heading) + '</h2>' +
+          '<div style="display:flex;flex-direction:column;gap:16px;margin-top:18px">';
+        WHY_US.items.forEach(function(item, i) {
+          if (i > 0) h += '<div class="diff-rule"></div>';
+          h += '<div class="diff-item"><span class="num">0' + (i + 1) + '</span>' +
+            '<span><span class="lead">' + esc(item.lead) + '</span>' +
+            '<span class="txt">' + esc(item.body) + '</span></span></div>';
+        });
+        h += '</div>' +
           quoteCard('Out of everything we paid for, this by far was worth every penny.', 'Taylor') +
           modulesFooter() +
           '</div>';
+        return h;
       },
 
       capture: function() {
@@ -1033,7 +1087,7 @@
           '<span class="eyebrow">On its way</span>' +
           '<h1 class="headline xl" style="font-size:44px">Check your inbox.</h1>' +
           '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Your pricing, your date confirmation, and a handful of films matched to your feeling are on their way to ' + esc(state.email.trim() || 'your inbox') + '.</p>' +
-          '<div style="display:flex;flex-direction:column;gap:12px;margin-top:22px">' +
+          '<div style="display:inline-flex;flex-direction:column;gap:12px;margin-top:22px;margin-left:auto;margin-right:auto;width:auto;text-align:left">' +
           '<div class="bullet-row"><span class="b"></span><span>Full pricing for your date</span></div>' +
           '<div class="bullet-row"><span class="b"></span><span>Films matched to your chosen feeling</span></div>' +
           '<div class="bullet-row"><span class="b"></span><span>Your availability, confirmed</span></div>' +
@@ -1046,7 +1100,7 @@
     };
 
     // ===== PROGRESS / TOP BAR =====
-    var STEP_MAP = { date: 1, venue: 2, router: 2, films: 2, meet: 2, different: 2, capture: 2, saved: 2, vibe: 3, contact: 4 };
+    var STEP_MAP = { date: 1, venue: 2, router: 2, films: 2, meet: 2, capture: 2, saved: 2, vibe: 3, contact: 4 };
     function renderTopbar() {
       var back = document.getElementById('btn-back');
       var wrap = document.getElementById('progress-wrap');
@@ -1088,6 +1142,22 @@
         if (btn.getAttribute('data-action') === 'submit-waitlist') ok = isValidEmail(state.email.trim()) && !state.waitlistBusy;
         btn.disabled = !ok;
       }
+    });
+
+    app.addEventListener('change', function(e) {
+      var action = e.target.getAttribute && e.target.getAttribute('data-action');
+      if (action !== 'cal-month-select' && action !== 'cal-year-select') return;
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var minMonth = today.getFullYear() * 12 + today.getMonth();
+      var maxMonth = minMonth + 36;
+      if (action === 'cal-month-select') state.calMonth = parseInt(e.target.value, 10);
+      if (action === 'cal-year-select') state.calYear = parseInt(e.target.value, 10);
+      // Clamp: switching year can land the kept month outside the bookable
+      // window (e.g. March selected, then jump to the current year in July)
+      var idx = Math.min(Math.max(state.calYear * 12 + state.calMonth, minMonth), maxMonth);
+      state.calYear = Math.floor(idx / 12);
+      state.calMonth = idx % 12;
+      render();
     });
 
     app.addEventListener('click', function(e) {
