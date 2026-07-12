@@ -266,14 +266,6 @@
     .seen-chip { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .seen-chip .word { font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; }
     .seen-chip .ring { width: 18px; height: 18px; border-radius: 50%; background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; }
-    .link-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
-      background: none; border: none; border-top: 1px solid var(--border-input);
-      margin-top: 18px; padding: 18px 4px 0; cursor: pointer; color: #8E8E8E; transition: color .2s ease;
-      font-size: 13.5px; font-weight: 400;
-    }
-    .link-row:hover, .link-row:focus-visible { color: var(--accent); }
-
     /* Films module */
     .film-card {
       display: flex; gap: 14px; align-items: center; padding: 10px;
@@ -282,7 +274,7 @@
     }
     .film-card:hover, .film-card:focus-visible { border-color: #333; }
     .film-thumb { position: relative; width: 96px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--bg-elevated); }
-    .film-thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .film-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .film-thumb .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); }
     .film-thumb .playwrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     .film-thumb .playbtn { width: 26px; height: 26px; border-radius: 50%; background: rgba(10,10,10,0.45); display: flex; align-items: center; justify-content: center; }
@@ -377,6 +369,41 @@
     /* Turnstile lives outside the re-rendered screen area; interaction-only
        keeps it invisible unless Cloudflare needs a challenge */
     #turnstile-slot { position: fixed; bottom: 26px; right: 22px; z-index: 48; }
+
+    /* Welcome photo strip: existing site stills for warmth */
+    .photo-strip { display: flex; gap: 10px; margin-top: 28px; }
+    .photo-strip img {
+      width: calc((100% - 20px) / 3); height: 92px; object-fit: cover;
+      border-radius: 10px; border: 1px solid var(--border); display: block;
+    }
+
+    /* Film lightbox. The player markup and sizing mirror the homepage's
+       Vidstack convention: a 16:9 padding wrapper positions the player;
+       all sizing stays on the containers, never on media-player itself. */
+    #film-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; }
+    #film-modal[hidden] { display: none; }
+    .fm-backdrop { position: absolute; inset: 0; background: rgba(6, 6, 5, 0.94); }
+    .fm-frame {
+      position: relative; z-index: 1;
+      width: min(1100px, 94vw, calc((100dvh - 120px) * 1.7778));
+    }
+    .fm-stage { position: relative; padding-top: 56.25%; background: #000; border-radius: 10px; overflow: hidden; }
+    .fm-stage media-player, .fm-stage video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .fm-close {
+      position: absolute; top: -50px; right: 0; width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; color: var(--text-primary); cursor: pointer;
+      transition: color .2s ease;
+    }
+    .fm-close:hover, .fm-close:focus-visible { color: var(--accent); }
+    @media (max-width: 640px) {
+      .fm-frame { width: 100vw; }
+      .fm-stage { border-radius: 0; }
+      .fm-close {
+        position: fixed; top: calc(env(safe-area-inset-top, 0px) + 10px); right: 10px;
+        background: rgba(10, 10, 10, 0.55); border-radius: 50%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -411,6 +438,16 @@
 
   <div id="turnstile-slot">
     <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" data-appearance="interaction-only"></div>
+  </div>
+
+  <div id="film-modal" hidden role="dialog" aria-modal="true" aria-label="Film player">
+    <div class="fm-backdrop" data-fm-close></div>
+    <div class="fm-frame">
+      <button type="button" class="fm-close" data-fm-close aria-label="Close the film">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2 2l14 14M16 2L2 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <div class="fm-stage" id="fm-stage"></div>
+    </div>
   </div>
 
   <script>
@@ -508,6 +545,84 @@
       document.head.appendChild(s);
     }
 
+    // ===== FILM LIGHTBOX (Vidstack, the homepage teaser convention) =====
+    var vidstackPromise = null;
+    function loadVidstack() {
+      if (vidstackPromise) return vidstackPromise;
+      vidstackPromise = new Promise(function(resolve, reject) {
+        ['https://cdn.vidstack.io/player/theme.css', 'https://cdn.vidstack.io/player/video.css'].forEach(function(href) {
+          var l = document.createElement('link');
+          l.rel = 'stylesheet'; l.href = href;
+          document.head.appendChild(l);
+        });
+        var s = document.createElement('script');
+        s.type = 'module';
+        s.src = 'https://cdn.vidstack.io/player';
+        s.addEventListener('load', function() { resolve(); });
+        s.addEventListener('error', function() { reject(new Error('vidstack load failed')); });
+        document.head.appendChild(s);
+      });
+      return vidstackPromise;
+    }
+
+    var modalOpener = null;
+    function openFilmModal(i) {
+      var f = FILMS[i];
+      if (!f) return;
+      modalOpener = document.activeElement;
+      var modal = document.getElementById('film-modal');
+      var stage = document.getElementById('fm-stage');
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      ga('start_film_play', { film: f.names });
+      loadVidstack().then(function() {
+        if (modal.hidden) return;
+        var p = document.createElement('media-player');
+        p.setAttribute('src', f.hls);
+        p.setAttribute('title', f.title);
+        p.setAttribute('crossorigin', '');
+        p.setAttribute('playsinline', '');
+        p.setAttribute('autoplay', '');
+        p.style.cssText = '--media-brand:#FFBD1D;';
+        p.innerHTML = '<media-provider></media-provider><media-video-layout></media-video-layout>';
+        stage.innerHTML = '';
+        stage.appendChild(p);
+      }).catch(function() {
+        // Vidstack CDN unavailable: native player on the mp4 teaser
+        if (modal.hidden) return;
+        var v = document.createElement('video');
+        v.src = f.mp4;
+        v.poster = f.poster;
+        v.controls = true;
+        v.autoplay = true;
+        v.setAttribute('playsinline', '');
+        stage.innerHTML = '';
+        stage.appendChild(v);
+      });
+      modal.querySelector('.fm-close').focus();
+    }
+    function closeFilmModal() {
+      var modal = document.getElementById('film-modal');
+      if (modal.hidden) return;
+      var stage = document.getElementById('fm-stage');
+      var player = stage.firstElementChild;
+      if (player) {
+        try { if (typeof player.pause === 'function') player.pause(); } catch (e) {}
+        try { if (typeof player.destroy === 'function') player.destroy(); } catch (e) {}
+      }
+      stage.innerHTML = '';
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (modalOpener && document.contains(modalOpener)) modalOpener.focus();
+      modalOpener = null;
+    }
+    document.getElementById('film-modal').addEventListener('click', function(e) {
+      if (e.target.closest('[data-fm-close]')) closeFilmModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeFilmModal();
+    });
+
     // ===== ANALYTICS HELPERS =====
     function ga(eventName, params) {
       try { if (typeof gtag === 'function') gtag('event', eventName, params || {}); } catch (e) {}
@@ -516,14 +631,19 @@
     // ===== STATE =====
     var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var VIBE_LABELS = ['Cinematic and dramatic', 'Warm and documentary', 'Fun and candid', 'Romantic and timeless', 'Adventurous', 'Intimate and quiet'];
+    // hls = the same teaser masters the live homepage plays through Vidstack;
+    // mp4 stays as the native fallback if the Vidstack CDN fails to load
     var FILMS = [
-      { names: 'Taylor & Austin', venue: 'The Fields Reserve', vibe: 'Warm and documentary', src: 'https://media.flyiniris.com/videos/proto/taylor-austin-teaser-proto-1080p.mp4', poster: '/Taylor-Austin_thumb.jpg' },
-      { names: 'Olivia & Austin', venue: 'Oakbrook Church', vibe: 'Romantic and timeless', src: 'https://media.flyiniris.com/videos/proto/olivia-austin-teaser-proto-1080p.mp4', poster: '/Olivia-Austin_thumb.jpg' },
-      { names: 'Taylor & Kane', venue: 'Green Bay Country Club', vibe: 'Cinematic and full of joy', src: 'https://media.flyiniris.com/videos/proto/taylor-kane-teaser-proto-1080p.mp4', poster: '/Taylor-Kane_thumb.jpg' }
+      { names: 'Taylor & Austin', venue: 'The Fields Reserve', vibe: 'Warm and documentary', title: 'A Wisconsin Love Story', hls: 'https://media.flyiniris.com/videos/teasers/taylor-austin/master.m3u8', mp4: 'https://media.flyiniris.com/videos/proto/taylor-austin-teaser-proto-1080p.mp4', poster: '/thumbs/Taylor-Austin_thumb.webp' },
+      { names: 'Olivia & Austin', venue: 'Oakbrook Church', vibe: 'Romantic and timeless', title: 'A Marine Marries His Duchess', hls: 'https://media.flyiniris.com/videos/teasers/olivia-austin/master.m3u8', mp4: 'https://media.flyiniris.com/videos/proto/olivia-austin-teaser-proto-1080p.mp4', poster: '/thumbs/Olivia-Austin_thumb.webp' },
+      { names: 'Taylor & Kane', venue: 'Green Bay Country Club', vibe: 'Cinematic and full of joy', title: 'Main Characters at The Green Bay Country Club', hls: 'https://media.flyiniris.com/videos/teasers/taylor-kane/master.m3u8', mp4: 'https://media.flyiniris.com/videos/proto/taylor-kane-teaser-proto-1080p.mp4', poster: '/thumbs/Taylor-Kane_thumb.webp' }
     ];
+    // 'pricing' is a full card on equal footing with the browse options: it
+    // routes straight to capture and never earns a Seen state
     var MODULES = [
       { id: 'films', title: 'See the films', desc: 'Real weddings, start to finish.' },
-      { id: 'meet', title: 'Meet Sierra & Sean', desc: 'The two people behind the camera, and why couples choose us.' }
+      { id: 'meet', title: 'Meet Sierra & Sean', desc: 'The two people behind the camera, and why couples choose us.' },
+      { id: 'pricing', title: 'Just send me the pricing', desc: 'Exact pricing for your date, straight to your inbox.' }
     ];
     // Final copy per Sean and Sierra, 2026-07-10. The over-100-weddings claim
     // is confirmed true by Sean and cleared for public display.
@@ -560,7 +680,6 @@
       teamTrack: false,
       checkFailed: false,
       modulesDone: [],
-      playingFilm: null,
       waitlisted: false,
       waitlistBusy: false,
       submitBusy: false,
@@ -614,6 +733,7 @@
     function setScreen(next) {
       state.screen = next;
       if (next === 'booked' || next === 'capture' || next === 'contact') loadTurnstile();
+      if (next === 'films') loadVidstack().catch(function() {});
       ga('start_screen', { screen_name: next });
       render();
     }
@@ -837,6 +957,11 @@
           '<h1 class="headline lg">We create captivating films you\'ll <span class="gold-italic">rewatch for generations.</span></h1>' +
           '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day.</p>' +
           '<button type="button" class="cta" style="margin-top:34px" data-action="start">Check availability</button>' +
+          '<div class="photo-strip">' +
+          '<img src="/grace-sage.webp" alt="Grace and Sage under the veil at golden hour, a still from their wedding film" loading="lazy">' +
+          '<img src="/Izzy-Hunter.webp" alt="Izzy and Hunter\'s first dance dip, a still from their wedding film" loading="lazy">' +
+          '<img src="/Kayla-Jason.webp" alt="Kayla and Jason\'s garden kiss, a still from their wedding film" loading="lazy">' +
+          '</div>' +
           '</div>';
       },
 
@@ -947,10 +1072,7 @@
           }
           h += '</button>';
         });
-        h += '</div>' +
-          '<button type="button" class="link-row" data-action="get-pricing"><span>Just send me the pricing</span>' +
-          '<svg width="15" height="10" viewBox="0 0 15 10" fill="none" style="flex-shrink:0" aria-hidden="true"><path d="M1 5h12M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
-          '</div>';
+        h += '</div></div>';
         return h;
       },
 
@@ -960,15 +1082,12 @@
           '<h1 class="headline" style="font-size:30px;line-height:1.18">A few days we filmed lately.</h1>' +
           '<div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">';
         FILMS.forEach(function(f, i) {
-          var playing = state.playingFilm === i;
-          h += '<button type="button" class="film-card" data-action="toggle-film" data-film="' + i + '" aria-label="' + (playing ? 'Pause' : 'Play') + ' the ' + esc(f.names) + ' film">' +
+          h += '<button type="button" class="film-card" data-action="open-film" data-film="' + i + '" aria-label="Play the ' + esc(f.names) + ' film">' +
             '<span class="film-thumb">' +
-            '<video data-film-el="' + i + '" src="' + f.src + '" poster="' + f.poster + '" playsinline loop preload="metadata"></video>' +
+            '<img src="' + f.poster + '" alt="" loading="lazy">' +
             '<span class="shade"></span>' +
             '<span class="playwrap"><span class="playbtn">' +
-            (playing
-              ? '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><rect x="1" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"/><rect x="5.6" y="1" width="2.4" height="8" rx="0.6" fill="#FFBD1D"/></svg>'
-              : '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><path d="M1 1L8 5L1 9Z" fill="#F5F0EB"/></svg>') +
+            '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><path d="M1 1L8 5L1 9Z" fill="#F5F0EB"/></svg>' +
             '</span></span></span>' +
             '<span class="film-meta"><span class="film-names">' + esc(f.names) + '</span>' +
             '<span class="film-venue">' + esc(f.venue) + '</span>' +
@@ -1191,27 +1310,19 @@
       if (action === 'submit-waitlist') { submitWaitlist(); return; }
       if (action === 'continue-venue') { if (state.venue.trim()) goForward('router'); return; }
       if (action === 'choose-module') {
+        var moduleId = el.getAttribute('data-module');
+        if (moduleId === 'pricing') { goForward('capture'); return; }
         state.history.push('router');
-        state.playingFilm = null;
-        setScreen(el.getAttribute('data-module')); return;
+        setScreen(moduleId); return;
       }
       if (action === 'something-else') {
         if (state.modulesDone.indexOf(state.screen) === -1) state.modulesDone.push(state.screen);
-        state.playingFilm = null;
         state.history.pop();
         setScreen('router'); return;
       }
       if (action === 'get-pricing') { goForward('capture'); return; }
-      if (action === 'toggle-film') {
-        var idx = parseInt(el.getAttribute('data-film'), 10);
-        var next = state.playingFilm === idx ? null : idx;
-        state.playingFilm = next;
-        render();
-        app.querySelectorAll('video[data-film-el]').forEach(function(v) {
-          var vIdx = parseInt(v.getAttribute('data-film-el'), 10);
-          if (vIdx === next) { v.muted = false; var p = v.play(); if (p && p.catch) p.catch(function() {}); }
-          else { v.pause(); }
-        });
+      if (action === 'open-film') {
+        openFilmModal(parseInt(el.getAttribute('data-film'), 10));
         return;
       }
       if (action === 'submit-capture') {
