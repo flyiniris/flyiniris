@@ -10,6 +10,10 @@ index_version_*.html
 index - *.html
 elfsight-combined-preview.html
 
+# Claude Design raw bundle export (1.4MB opaque base64; the committed reference
+# is the extracted prototypes/start/inquiry-flow-source.html)
+prototypes/start/inquiry-flow-export.html
+
 # Large video/media files
 *.mp4
 *.mov

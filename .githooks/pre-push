@@ -71,7 +71,9 @@ check_contains "thanks.html"           "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "films.html"            "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "calculator/index.html" "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "quiz/index.html"       "G-XGSWD6JW3E"  "GA4 tag"
-for pg in index.html thanks.html films.html experience.html saved.html venues/index.html; do
+check_contains "start.html"            "G-XGSWD6JW3E"  "GA4 tag"
+check_contains "404.html"              "G-XGSWD6JW3E"  "GA4 tag"
+for pg in index.html thanks.html films.html experience.html saved.html venues/index.html start.html 404.html; do
   check_contains "$pg" "fbq(" "Meta pixel"
 done
 # Microsoft Clarity (2026-07-08): CSP in both directives + snippet on both
@@ -80,7 +82,7 @@ done
 check_contains "_headers" "script-src[^;]*clarity\.ms"  "clarity.ms in script-src"
 check_contains "_headers" "connect-src[^;]*clarity\.ms" "clarity.ms in connect-src"
 check_contains "_headers" "connect-src[^;]*c\.bing\.com" "c.bing.com in connect-src"
-for pg in index.html thanks.html; do
+for pg in index.html thanks.html start.html 404.html; do
   check_contains "$pg" "clarity\.ms/tag/" "Clarity tag loader"
   check_contains "$pg" "xj2t05exbz"       "Clarity project id"
 done
