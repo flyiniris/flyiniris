@@ -9,7 +9,7 @@ Machine-wide invariants (copy rules, commit hygiene, secrets, pre-build validati
 
 The static Cloudflare Pages site: flyiniris.com (inquiry-first funnel), the agreement SPA shells, per-couple film delivery pages under `films/`, and the delivery tooling under `delivery/`. Deploys to production on git push to main.
 
-State as of 2026-07-06: the inquiry-first funnel (below) is live; `films.html` is the public portfolio page; couple delivery pages are deployed for amanda-boris and rachel-michael-street; `venues/` pages exist; on-site film thumbnails link to `/yours?film={slug}`. The old video-match worker is archived at `delivery/archive/video-match/` (shadowed from serving); live matching runs in the iris-automation Worker.
+State as of 2026-07-12: the inquiry-first funnel (below) is live; `start.html` serves /start, the guided inquiry flow and ad destination (live 2026-07-12); `films.html` is the public portfolio page; couple delivery pages are deployed for amanda-boris and rachel-michael-street; `venues/` pages exist; on-site film thumbnails link to `/yours?film={slug}`. The old video-match worker is archived at `delivery/archive/video-match/` (shadowed from serving); live matching runs in the iris-automation Worker.
 
 ## Cross-repo source of truth (locked 2026-05-08)
 
@@ -36,7 +36,8 @@ If a question about pricing, copy, brand, or a cross-cutting standard arises whi
 
 ## FUNNEL ARCHITECTURE (locked 2026-07-03, session site/selling-machine)
 
-The site is an inquiry-first funnel. Exact pricing is NEVER shown to anonymous visitors (copy, schema, and page-source JS all stay price-free).
+The site is an inquiry-first funnel. Exact pricing is NEVER shown to anonymous visitors (copy, schema, and page-source JS all stay price-free). ONE standing exception, Sean-approved 2026-07-10: /start's Team-available screen shows "starting at $2,800" as static copy mirroring TEAM_BASE in pricing.ts; when pricing.ts changes, that copy follows.
+- start.html is /start, the guided inquiry flow (live 2026-07-12): one question per screen, live availability routing via /api/availability (open / Team pitch / both-booked waitlist with submissionType 'waitlist'), film lightbox on the teaser HLS masters, then the SAME /webhook/inquiry submit and /thanks?session=TOKEN handoff as index. Tracking mirrors index (pixel + CAPI dedup event_id, GA4, Clarity); the pre-push tag manifest covers start.html and 404.html.
 - index.html renders the short inquiry form at #quiz (#inquiry alias): first names, email, phone, wedding date (inline availability check), venue optional, one non-marketing SMS consent checkbox.
 - Submit POSTs /webhook/inquiry on the Worker with event_id + attribution; the response's session_token goes to localStorage (fi_session_token) and the couple routes to /thanks?session=TOKEN.
 - thanks.html is the router: availability payoff + film match, PRIMARY embedded booking widget (book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR), SECONDARY /calculator/?session=TOKEN.
