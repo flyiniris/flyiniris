@@ -351,11 +351,14 @@
     .date-card .v { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); display: block; margin-top: 4px; }
     .date-card .ring { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* Persistent Sierra & Sean bubble, bottom-left of the column */
+    /* Persistent Sierra & Sean bubble, centered at the bottom of the column
+       (photo stacked above the label, matching the page's centered sections).
+       The img is a placeholder until the 60-second intro film exists. */
     .bubble-wrap {
-      position: fixed; bottom: 26px; z-index: 47;
-      left: max(22px, calc(50vw - 238px));
-      display: flex; align-items: center; gap: 11px; pointer-events: none;
+      position: fixed; bottom: 22px; z-index: 47;
+      left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      text-align: center; pointer-events: none;
     }
     .bubble {
       position: relative; width: 74px; height: 74px; border-radius: 50%; overflow: hidden;
