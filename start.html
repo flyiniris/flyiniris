@@ -353,6 +353,32 @@
       border-radius: 4px; padding: 2px 7px; margin-bottom: 8px;
     }
     .tier-footnote { font-size: 12px; font-weight: 300; line-height: 1.6; color: #8E8E8E; margin-top: 12px; text-align: left; }
+
+    /* Ad-gated welcome offer chip (offer=doc), quiet with gold on the payoff */
+    .offer-chip {
+      font-size: 13px; font-weight: 300; line-height: 1.55; color: var(--text-secondary);
+      border: 1px solid rgba(255, 189, 29, 0.35); border-radius: 8px;
+      padding: 10px 14px; margin-top: 18px;
+    }
+    .offer-chip .gold { color: var(--accent); font-weight: 500; }
+
+    /* Confirm process strip: two done steps and the current one */
+    .process-strip {
+      display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+      gap: 6px 10px; margin-bottom: 22px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .process-strip .step { display: inline-flex; align-items: center; gap: 5px; color: #8E8E8E; }
+    .process-strip .step.current { color: var(--accent); font-weight: 500; }
+    .process-strip .sep { width: 14px; height: 1px; background: var(--border); }
+
+    /* Confirm offer closer, sits directly above the booking CTA */
+    .offer-closer {
+      font-size: 13.5px; font-weight: 400; line-height: 1.6; color: var(--text-primary);
+      border: 1px solid rgba(255, 189, 29, 0.35); border-radius: 8px;
+      padding: 12px 16px; margin-top: 26px;
+    }
+    .offer-closer .gold { color: var(--accent); font-weight: 500; }
     .cta-outline {
       display: block; width: 100%; padding: 13px; border-radius: 8px; border: 2px solid var(--accent);
       background: transparent; color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer;
@@ -476,6 +502,10 @@
 
     var WORKER_URL = 'https://api.flyiniris.com';
     var AVAILABILITY_URL = WORKER_URL + '/api/availability';
+    // Ad-congruence gate: ?offer=doc shows the documentary offer chip on the
+    // welcome screen. Read per page load only, never persisted to storage.
+    var OFFER_DOC = false;
+    try { OFFER_DOC = new URLSearchParams(window.location.search).get('offer') === 'doc'; } catch (e) {}
     var DRAFT_KEY = 'fi_start_draft';
     var DRAFT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -586,6 +616,7 @@
     }
 
     var modalOpener = null;
+    var offerLineSeen = false;
     // spec: { hls, title, mp4?, poster? }. mp4 is the native fallback if the
     // Vidstack CDN fails; the matched film from the submit response has no
     // mp4 convention on video.flyiniris.com, so it passes none and the
@@ -942,7 +973,11 @@
           var ssBase = data && data.ss && data.ss.base;
           var teamBase = data && data.team && data.team.base;
           if (typeof ssBase === 'number' && typeof teamBase === 'number') {
-            state.pricing = { ss: ssBase, team: teamBase };
+            state.pricing = {
+              ss: ssBase, team: teamBase,
+              fomoFreeSpot: !!(data && data.fomoFreeSpot),
+              fomoSpotsRemaining: (data && typeof data.fomoSpotsRemaining === 'number') ? data.fomoSpotsRemaining : 0
+            };
             if (state.screen === 'confirm') render();
           }
         })
@@ -1024,7 +1059,10 @@
           // Headline per Sean, 2026-07-10 revision pass.
           '<h1 class="headline lg">We create captivating films you\'ll <span class="gold-italic">rewatch for generations.</span></h1>' +
           '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day.</p>' +
-          '<button type="button" class="cta" style="margin-top:34px" data-action="start">Check availability</button>' +
+          (OFFER_DOC
+            ? '<div class="offer-chip">This month\'s offer: book and the full documentary video of your day is <span class="gold">free</span> ($1,000 value).</div>'
+            : '') +
+          '<button type="button" class="cta" style="margin-top:' + (OFFER_DOC ? '22px' : '34px') + '" data-action="start">Check your date</button>' +
           '<div class="photo-strip">' +
           '<img src="/grace-sage.webp" alt="Grace and Sage under the veil at golden hour, a still from their wedding film" loading="lazy">' +
           '<img src="/Izzy-Hunter.webp" alt="Izzy and Hunter\'s first dance dip, a still from their wedding film" loading="lazy">' +
@@ -1275,8 +1313,13 @@
         // the server check errored. Never branch on result.available.
         var availLine = res.availabilityMessage ||
           "We're confirming your date now and will email you shortly.";
+        var stripCheck = '<svg width="11" height="9" viewBox="0 0 11 9" fill="none" aria-hidden="true"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         var h = '<div class="screen">' +
-          '<div class="check-circle" style="width:54px;height:54px;margin-bottom:20px">' + CHECK_SVG + '</div>' +
+          '<div class="process-strip" aria-label="Where you are">' +
+          '<span class="step">' + stripCheck + 'Date checked</span><span class="sep"></span>' +
+          '<span class="step">' + stripCheck + 'Pricing and films</span><span class="sep"></span>' +
+          '<span class="step current">Book your intro call</span>' +
+          '</div>' +
           '<span class="eyebrow">You\'re in' + (state.name1.trim() ? ', ' + esc(state.name1.trim()) : '') + '</span>' +
           '<h1 class="headline" style="font-size:34px;line-height:1.2">' + esc(availLine) + '</h1>';
 
@@ -1321,9 +1364,21 @@
         h += '</div>' +
           '<p class="tier-footnote">Both include 6 hours of coverage, a highlight film, full audio of your whole day, drone coverage, and private Netflix-style delivery. We take one Sierra &amp; Sean and one Team wedding per weekend.</p>';
 
+        // Offer closer: renders ONLY while the fetched constants say a free
+        // FOMO spot exists this month; no zero-spots state ever shows. The
+        // $1,000 value is Sean's dictated offer copy, matching the ads.
+        var fomo = state.pricing;
+        if (fomo && fomo.fomoFreeSpot === true && fomo.fomoSpotsRemaining >= 1) {
+          var spots = fomo.fomoSpotsRemaining;
+          var monthName = MONTHS[new Date().getMonth()];
+          h += '<div class="offer-closer">Book this month and the full documentary video of your day is <span class="gold">free</span> ($1,000 value). ' +
+            spots + (spots === 1 ? ' spot' : ' spots') + ' left in ' + monthName + '.</div>';
+          if (!offerLineSeen) { offerLineSeen = true; ga('start_offer_line_view', { spots: spots }); }
+        }
+
         // Booking is the one loud action on this screen
-        h += '<a class="cta" style="display:block;text-decoration:none;color:var(--bg-primary)" href="' + bookHref + '" data-book-call>Book your call</a>' +
-          '<p class="form-hint">Booking an intro call holds your date for 7 days while you decide.</p>';
+        h += '<a class="cta" style="display:block;text-decoration:none;color:var(--bg-primary);margin-top:' + ((fomo && fomo.fomoFreeSpot === true && fomo.fomoSpotsRemaining >= 1) ? '14px' : '26px') + '" href="' + bookHref + '" data-book-call>Book your call</a>' +
+          '<p class="form-hint">A quick 15-minute call, zero pressure. Booking holds your date for 7 days while you decide.</p>';
         if (calcHref) {
           h += '<a class="cta-ghost" style="display:inline-block;text-decoration:none" href="' + calcHref + '">See your full pricing</a>';
         }
@@ -1358,7 +1413,13 @@
       // The fixed bubble collides with text on the long scrolling module
       // screens; question screens keep it
       var bubble = document.querySelector('.bubble-wrap');
-      if (bubble) bubble.style.display = (state.screen === 'meet' || state.screen === 'films') ? 'none' : 'flex';
+      if (bubble) {
+        var hide = (state.screen === 'meet' || state.screen === 'films');
+        // The offer chip can push a short viewport's welcome into scroll;
+        // hide the bubble there too instead of letting it overlap the strip
+        if (!hide && state.screen === 'welcome' && document.documentElement.scrollHeight > window.innerHeight + 4) hide = true;
+        bubble.style.display = hide ? 'none' : 'flex';
+      }
       window.scrollTo(0, 0);
     }
 
@@ -1473,6 +1534,12 @@
       }
       if (action === 'submit-contact') { submitContact(); return; }
       if (action === 'welcome-back-continue') {
+        // A returning draft can carry a date but no venue; route those through
+        // the venue question so the film matcher never receives a blank venue
+        if (!state.venue.trim()) {
+          state.history = ['date'];
+          setScreen('venue'); return;
+        }
         state.history = ['date', 'venue', 'router'];
         setScreen('capture'); return;
       }
