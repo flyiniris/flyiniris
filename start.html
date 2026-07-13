@@ -335,6 +335,24 @@
     .talk-card { margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-secondary); text-align: left; }
     .talk-card .t { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); }
     .talk-card .d { font-size: 13.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin: 8px 0 16px; }
+
+    /* Confirm screen: tier anchor cards (near-black surfaces, gold as type
+       and thin strokes only) */
+    .tier-card {
+      padding: 18px 20px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg-secondary); text-align: left;
+    }
+    .tier-card .tier-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .tier-card .tier-name { font-family: var(--font-display); font-weight: 600; font-size: 21px; color: var(--text-primary); }
+    .tier-card .tier-price { font-weight: 500; font-size: 14px; color: var(--accent); white-space: nowrap; }
+    .tier-card .tier-line { font-size: 13.5px; font-weight: 300; line-height: 1.6; color: var(--text-secondary); margin-top: 6px; }
+    .tier-card.tier-unavailable { opacity: 0.62; }
+    .tier-badge {
+      display: inline-block; font-size: 9px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); border: 1px solid rgba(255,189,29,0.45);
+      border-radius: 4px; padding: 2px 7px; margin-bottom: 8px;
+    }
+    .tier-footnote { font-size: 12px; font-weight: 300; line-height: 1.6; color: #8E8E8E; margin-top: 12px; text-align: left; }
     .cta-outline {
       display: block; width: 100%; padding: 13px; border-radius: 8px; border: 2px solid var(--accent);
       background: transparent; color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer;
@@ -568,20 +586,22 @@
     }
 
     var modalOpener = null;
-    function openFilmModal(i) {
-      var f = FILMS[i];
-      if (!f) return;
+    // spec: { hls, title, mp4?, poster? }. mp4 is the native fallback if the
+    // Vidstack CDN fails; the matched film from the submit response has no
+    // mp4 convention on video.flyiniris.com, so it passes none and the
+    // fallback shows the poster with a retry note instead.
+    function openLightbox(spec) {
       modalOpener = document.activeElement;
       var modal = document.getElementById('film-modal');
       var stage = document.getElementById('fm-stage');
       modal.hidden = false;
       document.body.style.overflow = 'hidden';
-      ga('start_film_play', { film: f.names });
+      ga('start_film_play', { film: spec.title });
       loadVidstack().then(function() {
         if (modal.hidden) return;
         var p = document.createElement('media-player');
-        p.setAttribute('src', f.hls);
-        p.setAttribute('title', f.title);
+        p.setAttribute('src', spec.hls);
+        p.setAttribute('title', spec.title);
         p.setAttribute('crossorigin', '');
         p.setAttribute('playsinline', '');
         p.setAttribute('autoplay', '');
@@ -590,18 +610,29 @@
         stage.innerHTML = '';
         stage.appendChild(p);
       }).catch(function() {
-        // Vidstack CDN unavailable: native player on the mp4 teaser
         if (modal.hidden) return;
-        var v = document.createElement('video');
-        v.src = f.mp4;
-        v.poster = f.poster;
-        v.controls = true;
-        v.autoplay = true;
-        v.setAttribute('playsinline', '');
         stage.innerHTML = '';
-        stage.appendChild(v);
+        if (spec.mp4) {
+          var v = document.createElement('video');
+          v.src = spec.mp4;
+          if (spec.poster) v.poster = spec.poster;
+          v.controls = true;
+          v.autoplay = true;
+          v.setAttribute('playsinline', '');
+          stage.appendChild(v);
+        } else {
+          var d = document.createElement('div');
+          d.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#C8C3B9;font-size:14px;' + (spec.poster ? 'background:url(' + spec.poster + ') center/cover;' : '');
+          d.textContent = 'The film could not load just now. It is also in your inbox.';
+          stage.appendChild(d);
+        }
       });
       modal.querySelector('.fm-close').focus();
+    }
+    function openFilmModal(i) {
+      var f = FILMS[i];
+      if (!f) return;
+      openLightbox({ hls: f.hls, title: f.title, mp4: f.mp4, poster: f.poster });
     }
     function closeFilmModal() {
       var modal = document.getElementById('film-modal');
@@ -686,7 +717,9 @@
       waitlistBusy: false,
       submitBusy: false,
       submitError: false,
-      sessionToken: ''
+      sessionToken: '',
+      submitResult: null,
+      pricing: null
     };
     var checkTimer = null, autoTimer = null, savedTimer = null;
     function clearTimers() { clearTimeout(checkTimer); clearTimeout(autoTimer); clearTimeout(savedTimer); }
@@ -735,7 +768,7 @@
     function setScreen(next) {
       state.screen = next;
       if (next === 'booked' || next === 'capture' || next === 'contact') loadTurnstile();
-      if (next === 'films') loadVidstack().catch(function() {});
+      if (next === 'films' || next === 'confirm') loadVidstack().catch(function() {});
       ga('start_screen', { screen_name: next });
       render();
     }
@@ -874,6 +907,18 @@
         if (state.sessionToken) {
           try { localStorage.setItem('fi_session_token', state.sessionToken); } catch (e) {}
         }
+        // The confirm screen renders ENTIRELY from this response. Never call
+        // GET /api/session/{token} here: that endpoint fires
+        // experience_page_opened, which the funnel reads as "clicked through
+        // from the welcome email", and calling it at submit would poison that
+        // metric on every inquiry. Note: result.available is hardcoded true
+        // server-side and lies on some paths; branch on availability_message
+        // and the page's own calendar-branch state, never on it.
+        state.submitResult = {
+          availabilityMessage: (result && result.availability_message) || '',
+          film: (result && result.matched_film) || null
+        };
+        loadPricing();
         clearDraft();
         state.submitBusy = false;
         goForward('confirm');
@@ -883,6 +928,27 @@
         render();
       });
     }
+
+    // Tier starting figures, fetched POST-SUBMIT only from the public
+    // couple-safe endpoint. Display only, never computed here: the canonical
+    // pricing engine is iris-automation src/pricing.ts and this page must not
+    // become a third mirror of the math. No figure exists in page source, so
+    // anonymous pre-submit visitors (and view-source) see no pricing.
+    function loadPricing() {
+      if (state.pricing) return;
+      fetch(WORKER_URL + '/api/pricing/constants')
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+          var ssBase = data && data.ss && data.ss.base;
+          var teamBase = data && data.team && data.team.base;
+          if (typeof ssBase === 'number' && typeof teamBase === 'number') {
+            state.pricing = { ss: ssBase, team: teamBase };
+            if (state.screen === 'confirm') render();
+          }
+        })
+        .catch(function() { /* tier cards render their framing without figures */ });
+    }
+    function money(n) { return '$' + Number(n).toLocaleString('en-US'); }
 
     // ===== RENDER HELPERS =====
     var CHECK_SVG = '<svg width="20" height="16" viewBox="0 0 22 18" fill="none" aria-hidden="true"><path d="M2 9.5L8 15.5L20 2.5" stroke="#FFBD1D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1201,20 +1267,69 @@
 
       confirm: function() {
         var bookHref = state.sessionToken ? '/thanks?session=' + encodeURIComponent(state.sessionToken) : 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
-        return '<div class="screen">' +
-          '<div class="check-circle" style="width:54px;height:54px;margin-bottom:22px">' + CHECK_SVG + '</div>' +
-          '<span class="eyebrow">On its way</span>' +
-          '<h1 class="headline xl" style="font-size:44px">Check your inbox.</h1>' +
-          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Your pricing, your date confirmation, and a handful of films matched to your feeling are on their way to ' + esc(state.email.trim() || 'your inbox') + '.</p>' +
-          '<div style="display:inline-flex;flex-direction:column;gap:12px;margin-top:22px;margin-left:auto;margin-right:auto;width:auto;text-align:left">' +
-          '<div class="bullet-row"><span class="b"></span><span>Full pricing for your date</span></div>' +
-          '<div class="bullet-row"><span class="b"></span><span>Films matched to your chosen feeling</span></div>' +
-          '<div class="bullet-row"><span class="b"></span><span>Your availability, confirmed</span></div>' +
-          '</div>' +
-          '<div class="talk-card"><p class="t">Want to talk it through?</p>' +
-          '<p class="d">Booking an intro call holds your date for 7 days while you decide.</p>' +
-          '<a class="cta-outline" href="' + bookHref + '">Book an intro call</a></div>' +
+        var calcHref = state.sessionToken ? '/calculator/?session=' + encodeURIComponent(state.sessionToken) : '';
+        var res = state.submitResult || {};
+        var film = res.film;
+        // Availability line comes from the server's own check at submit time;
+        // it exists whenever a date was given. Fall back to a neutral line if
+        // the server check errored. Never branch on result.available.
+        var availLine = res.availabilityMessage ||
+          "We're confirming your date now and will email you shortly.";
+        var h = '<div class="screen">' +
+          '<div class="check-circle" style="width:54px;height:54px;margin-bottom:20px">' + CHECK_SVG + '</div>' +
+          '<span class="eyebrow">You\'re in' + (state.name1.trim() ? ', ' + esc(state.name1.trim()) : '') + '</span>' +
+          '<h1 class="headline" style="font-size:34px;line-height:1.2">' + esc(availLine) + '</h1>';
+
+        // The matched film, playable right here in the same lightbox
+        if (film && film.video_url) {
+          h += '<p class="subcopy" style="margin-top:20px;margin-bottom:2px">A film like your day, from a couple like you:</p>' +
+            '<div style="margin-top:12px">' +
+            '<button type="button" class="film-card" data-action="open-matched-film" aria-label="Play the ' + esc(film.couple_name || 'matched') + ' film">' +
+            '<span class="film-thumb">' +
+            (film.thumbnail_url ? '<img src="' + esc(film.thumbnail_url) + '" alt="" loading="lazy">' : '') +
+            '<span class="shade"></span>' +
+            '<span class="playwrap"><span class="playbtn">' +
+            '<svg width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true"><path d="M1 1L8 5L1 9Z" fill="#F5F0EB"/></svg>' +
+            '</span></span></span>' +
+            '<span class="film-meta"><span class="film-names">' + esc(film.couple_name || '') + '</span>' +
+            '<span class="film-venue">' + esc(film.venue || '') + '</span>' +
+            '<span class="film-vibe">Your film match</span></span>' +
+            '</button></div>';
+        }
+
+        // Both tiers, framed the way the DM bot presents them (its proven
+        // converting exposure): Team never reads as the lesser product, and
+        // Sierra edits every frame regardless of crew. Figures come from
+        // state.pricing (fetched post-submit); the framing renders without
+        // figures if that fetch failed.
+        var ssPrice = state.pricing ? 'Starting at ' + money(state.pricing.ss) : '';
+        var teamPrice = state.pricing ? 'Starting at ' + money(state.pricing.team) : '';
+        var ssBookedOnDate = state.teamTrack === true;
+        h += '<div style="display:flex;flex-direction:column;gap:10px;margin-top:24px">';
+        h += '<div class="tier-card' + (ssBookedOnDate ? ' tier-unavailable' : '') + '">' +
+          (ssBookedOnDate ? '<span class="tier-badge">Already booked on your date</span>' : '') +
+          '<div class="tier-head"><span class="tier-name">Sierra &amp; Sean Experience</span>' +
+          (ssPrice ? '<span class="tier-price">' + ssPrice + '</span>' : '') + '</div>' +
+          '<p class="tier-line">Two filmmakers: Sierra &amp; Sean personally, side by side for every moment of your day.</p>' +
           '</div>';
+        h += '<div class="tier-card">' +
+          (ssBookedOnDate ? '<span class="tier-badge">Open on your date</span>' : '') +
+          '<div class="tier-head"><span class="tier-name">Team Experience</span>' +
+          (teamPrice ? '<span class="tier-price">' + teamPrice + '</span>' : '') + '</div>' +
+          '<p class="tier-line">One handpicked filmmaker, personally vetted by Sierra &amp; Sean, and Sierra still edits every frame herself.</p>' +
+          '</div>';
+        h += '</div>' +
+          '<p class="tier-footnote">Both include 6 hours of coverage, a highlight film, full audio of your whole day, drone coverage, and private Netflix-style delivery. We take one Sierra &amp; Sean and one Team wedding per weekend.</p>';
+
+        // Booking is the one loud action on this screen
+        h += '<a class="cta" style="display:block;text-decoration:none;color:var(--bg-primary)" href="' + bookHref + '" data-book-call>Book your call</a>' +
+          '<p class="form-hint">Booking an intro call holds your date for 7 days while you decide.</p>';
+        if (calcHref) {
+          h += '<a class="cta-ghost" style="display:inline-block;text-decoration:none" href="' + calcHref + '">See your full pricing</a>';
+        }
+        h += '<p class="form-hint" style="margin-top:18px;color:#6B6B6B">All of this is in your inbox too' + (state.email.trim() ? ' at ' + esc(state.email.trim()) : '') + '.</p>' +
+          '</div>';
+        return h;
       }
     };
 
@@ -1284,6 +1399,8 @@
     });
 
     app.addEventListener('click', function(e) {
+      var book = e.target.closest('[data-book-call]');
+      if (book) { ga('start_book_call_click', {}); return; }
       var el = e.target.closest('[data-action]');
       if (!el) return;
       var action = el.getAttribute('data-action');
@@ -1325,6 +1442,13 @@
       if (action === 'get-pricing') { goForward('capture'); return; }
       if (action === 'open-film') {
         openFilmModal(parseInt(el.getAttribute('data-film'), 10));
+        return;
+      }
+      if (action === 'open-matched-film') {
+        var mf = state.submitResult && state.submitResult.film;
+        if (mf && mf.video_url) {
+          openLightbox({ hls: mf.video_url, title: (mf.couple_name || 'Your film match'), poster: mf.thumbnail_url || '' });
+        }
         return;
       }
       if (action === 'submit-capture') {
