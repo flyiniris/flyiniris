@@ -51,6 +51,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Welcome-motion poster: preloaded so it paints the moment JS renders the
+       welcome screen (the mp4 lazy-attaches over it; poster-first is the LCP
+       protection, same as the homepage hero) -->
+  <link rel="preload" as="image" href="/hero-poster-9x16.webp">
+
   <style>
     :root {
       /* brand-kit/brand-tokens.css, lifted verbatim */
@@ -361,6 +366,8 @@
       padding: 10px 14px; margin-top: 18px;
     }
     .offer-chip .gold { color: var(--accent); font-weight: 500; }
+    /* Quieter echo of the chip on the capture screen (offer=doc only) */
+    .offer-chip.echo { font-size: 12px; padding: 8px 12px; margin-top: 16px; text-align: center; }
 
     /* Confirm process strip: two done steps and the current one */
     .process-strip {
@@ -416,12 +423,21 @@
        keeps it invisible unless Cloudflare needs a challenge */
     #turnstile-slot { position: fixed; bottom: 26px; right: 22px; z-index: 48; }
 
-    /* Welcome photo strip: existing site stills for warmth */
-    .photo-strip { display: flex; gap: 10px; margin-top: 28px; }
-    .photo-strip img {
-      width: calc((100% - 20px) / 3); height: 92px; object-fit: cover;
-      border-radius: 10px; border: 1px solid var(--border); display: block;
+    /* Welcome motion: the homepage 9x16 hero master cropped to a wide
+       cinematic strip below the CTA (it replaced the three-photo strip).
+       Poster paints immediately; the mp4 lazy-attaches and fades in on
+       playing, the homepage hero pattern. object-position 35% keeps the
+       couple's faces in the crop band. */
+    .welcome-video {
+      position: relative; width: 100%; height: 150px; margin-top: 28px;
+      border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
+      background: var(--bg-elevated);
     }
+    .welcome-video img, .welcome-video video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 50% 35%; display: block;
+    }
+    .welcome-video video { opacity: 0; transition: opacity .6s ease; }
 
     /* Film lightbox. The player markup and sizing mirror the homepage's
        Vidstack convention: a 16:9 padding wrapper positions the player;
@@ -508,6 +524,9 @@
     try { OFFER_DOC = new URLSearchParams(window.location.search).get('offer') === 'doc'; } catch (e) {}
     var DRAFT_KEY = 'fi_start_draft';
     var DRAFT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+    // Welcome-motion source. Swap this one line when the ad master lands;
+    // the poster must stay a same-repo first frame of whatever plays here.
+    var WELCOME_VIDEO = { mp4: 'https://media.flyiniris.com/hero-9x16-v3.mp4', poster: '/hero-poster-9x16.webp' };
 
     // ===== ATTRIBUTION CAPTURE (identical semantics to index.html) =====
     var TRACKING_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ad_id', 'adset_id', 'campaign_id'];
@@ -743,6 +762,8 @@
       email: '', phone: '', sms: false,
       teamTrack: false,
       checkFailed: false,
+      noDate: false,
+      smsSent: false,
       modulesDone: [],
       waitlisted: false,
       waitlistBusy: false,
@@ -757,12 +778,15 @@
 
     // ===== DRAFT (Tier B autosave: localStorage on input, clear on submit) =====
     function saveDraft() {
+      // Once the inquiry is submitted the draft's job is done; the phone
+      // screen is post-submit, so typing there must never resurrect a draft
+      // that would welcome the couple back into an already-finished flow.
+      if (state.sessionToken) return;
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
           v: 1, ts: Date.now(),
-          selectedDate: state.selectedDate, venue: state.venue,
-          name1: state.name1, name2: state.name2,
-          email: state.email, phone: state.phone, sms: state.sms,
+          selectedDate: state.selectedDate, noDate: state.noDate, venue: state.venue,
+          name1: state.name1, name2: state.name2, email: state.email,
           vibes: state.vibes, teamTrack: state.teamTrack
         }));
       } catch (e) { /* ignore */ }
@@ -798,7 +822,7 @@
     }
     function setScreen(next) {
       state.screen = next;
-      if (next === 'booked' || next === 'capture' || next === 'contact') loadTurnstile();
+      if (next === 'booked' || next === 'capture' || next === 'vibe') loadTurnstile();
       if (next === 'films' || next === 'confirm') loadVidstack().catch(function() {});
       ga('start_screen', { screen_name: next });
       render();
@@ -815,6 +839,7 @@
     function pickDate(iso) {
       clearTimers();
       state.selectedDate = iso;
+      state.noDate = false;
       state.checking = true;
       state.checkFailed = false;
       saveDraft();
@@ -915,15 +940,22 @@
       });
     }
 
-    function submitContact() {
-      if (state.submitBusy || !isValidPhone(state.phone.trim())) return;
+    // The real inquiry submit, fired at vibe completion. Phone and SMS
+    // consent are NOT in this payload: the phone screen is post-submit and
+    // optional, and enrichPhone() carries those to the Worker separately.
+    function submitInquiry() {
+      if (state.submitBusy || !state.vibes.length) return;
+      // Already submitted (e.g. a retry click racing the render): never
+      // double-post, just move along to the phone screen.
+      if (state.sessionToken) { goForward('contact'); return; }
       state.submitBusy = true;
       state.submitError = false;
       render();
       var noteBits = ['Source: /start guided flow.'];
       if (state.teamTrack) noteBits.push('Sierra & Sean are booked on their date; couple chose to hear about the Team experience.');
       if (state.checkFailed) noteBits.push('Live availability check failed during the flow; availability unconfirmed at submit time.');
-      var built = buildInquiryPayload({ note: noteBits.join(' ') });
+      if (state.noDate) noteBits.push('No wedding date yet; couple took the no-date path.');
+      var built = buildInquiryPayload({ phone: '', smsNonMarketing: 'No', note: noteBits.join(' ') });
       fetch(WORKER_URL + '/webhook/inquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -952,12 +984,32 @@
         loadPricing();
         clearDraft();
         state.submitBusy = false;
-        goForward('confirm');
+        goForward('contact');
       }).catch(function() {
         state.submitBusy = false;
         state.submitError = true;
         render();
       });
+    }
+
+    // Fire-and-forget phone enrichment after the optional phone screen.
+    // Every response case advances to confirm identically; the only signal
+    // this page acts on is smsSent === true, which extends the confirm
+    // receipt line. A 409 phone_in_use (fill refused) or any error shows
+    // nothing: the email path already carries everything.
+    function enrichPhone() {
+      if (!state.sessionToken || !isValidPhone(state.phone.trim())) return;
+      fetch(WORKER_URL + '/api/inquiry/enrich-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_token: state.sessionToken, phone: state.phone.trim(), smsConsent: state.sms })
+      }).then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (data && data.smsSent === true) {
+            state.smsSent = true;
+            if (state.screen === 'confirm') render();
+          }
+        }).catch(function() { /* email path carries everything */ });
     }
 
     // Tier starting figures, fetched POST-SUBMIT only from the public
@@ -1058,15 +1110,13 @@
           '<div class="brand-row"><span class="brand-mark">Flyin\' Iris</span></div>' +
           // Headline per Sean, 2026-07-10 revision pass.
           '<h1 class="headline lg">We create captivating films you\'ll <span class="gold-italic">rewatch for generations.</span></h1>' +
-          '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day.</p>' +
+          '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day. No date yet? No problem, we\'ll still get you everything.</p>' +
           (OFFER_DOC
             ? '<div class="offer-chip">This month\'s offer: book and the full documentary video of your day is <span class="gold">free</span> ($1,000 value).</div>'
             : '') +
           '<button type="button" class="cta" style="margin-top:' + (OFFER_DOC ? '22px' : '34px') + '" data-action="start">Check your date</button>' +
-          '<div class="photo-strip">' +
-          '<img src="/grace-sage.webp" alt="Grace and Sage under the veil at golden hour, a still from their wedding film" loading="lazy">' +
-          '<img src="/Izzy-Hunter.webp" alt="Izzy and Hunter\'s first dance dip, a still from their wedding film" loading="lazy">' +
-          '<img src="/Kayla-Jason.webp" alt="Kayla and Jason\'s garden kiss, a still from their wedding film" loading="lazy">' +
+          '<div class="welcome-video" id="welcome-video">' +
+          '<img src="' + WELCOME_VIDEO.poster + '" alt="A just-married couple walking through their cheering wedding party, a still from a Flyin\' Iris film" decoding="async">' +
           '</div>' +
           '</div>';
       },
@@ -1078,6 +1128,7 @@
           '<p class="subcopy">Choose your date and we\'ll check it against Sierra &amp; Sean\'s calendar right now.</p>' +
           calendarHtml() +
           checkingRow() +
+          '<button type="button" class="cta-ghost" style="margin-top:16px" data-action="no-date">We don\'t have a date yet.</button>' +
           '</div>';
       },
 
@@ -1143,8 +1194,8 @@
         return '<div class="screen">' +
           '<span class="eyebrow" style="margin-bottom:14px">Welcome back</span>' +
           '<h1 class="headline lg">Picking up where you left off.</h1>' +
-          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">We saved your details. Here\'s the day you had in mind.</p>' +
-          '<div class="date-card"><div><span class="k">Your date</span><span class="v">' + esc(dateLabel(state.selectedDate, true)) + '</span></div>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">We saved your details. ' + (state.noDate ? 'You told us the date is still open.' : 'Here\'s the day you had in mind.') + '</p>' +
+          '<div class="date-card"><div><span class="k">Your date</span><span class="v">' + (state.noDate ? 'No date yet' : esc(dateLabel(state.selectedDate, true))) + '</span></div>' +
           '<span class="ring">' + SMALL_CHECK_SVG.replace('width="9" height="7"', 'width="12" height="10"') + '</span></div>' +
           '<button type="button" class="cta" style="margin-top:24px" data-action="welcome-back-continue">Continue</button>' +
           '<button type="button" class="cta-ghost" data-action="start-fresh">Start fresh instead</button>' +
@@ -1249,6 +1300,9 @@
           '<input id="f-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
           '<button type="button" class="cta" data-action="submit-capture"' + (can ? '' : ' disabled') + '>Continue</button>' +
           '<p class="form-hint">Takes about a minute. We promise.</p>' +
+          (OFFER_DOC
+            ? '<div class="offer-chip echo">Your free <span class="gold">documentary video</span> offer is noted.</div>'
+            : '') +
           '</div>';
       },
 
@@ -1256,7 +1310,7 @@
         return '<div class="screen center">' +
           '<div class="check-circle" style="width:54px;height:54px">' + CHECK_SVG + '</div>' +
           '<h1 class="headline xl">Got it.</h1>' +
-          '<p class="subcopy lg" style="max-width:280px;margin-top:16px">Two quick things and your pricing is on the way.</p>' +
+          '<p class="subcopy lg" style="max-width:280px;margin-top:16px">One more question and your pricing is on the way.</p>' +
           '<div class="auto-advance" style="margin-top:30px;--fill-ms:1.8s"><div class="track"><div class="fill"></div></div>' +
           '<span class="label">Bringing up your next question</span></div>' +
           '<button type="button" class="cta-inline" data-action="after-saved">Continue now</button>' +
@@ -1267,7 +1321,7 @@
         var h = '<div class="screen">' +
           '<span class="eyebrow">The feeling</span>' +
           '<h1 class="headline">What should your film feel like?</h1>' +
-          '<p class="subcopy">We\'ll match you with the films most like your day, in your inbox and on the next page.</p>' +
+          '<p class="subcopy">We\'ll match you with the films most like your day, in your inbox and right after this.</p>' +
           '<p class="subcopy" style="font-size:13px;color:#8E8E8E;margin-top:8px">Choose as many as you like.</p>' +
           '<div class="chip-grid">';
         VIBE_LABELS.forEach(function(label, i) {
@@ -1276,14 +1330,21 @@
             '<span>' + esc(label) + '</span><span class="dot" aria-hidden="true"></span></button>';
         });
         h += '</div>' +
-          '<button type="button" class="cta" data-action="continue-vibe"' + (state.vibes.length ? '' : ' disabled') + '>Continue</button>' +
+          (state.submitError
+            ? '<div class="error-row" role="alert"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#e74c3c" stroke-width="1.4"/><path d="M8 4.5v4.2M8 11.2v.2" stroke="#e74c3c" stroke-width="1.6" stroke-linecap="round"/></svg><span>That didn\'t go through. Try again.</span></div>'
+            : '') +
+          '<button type="button" class="cta" data-action="submit-vibe"' + (state.vibes.length && !state.submitBusy ? '' : ' disabled') + '>' +
+          (state.submitBusy ? 'Sending...' : 'Get my pricing') + '</button>' +
           '</div>';
         return h;
       },
 
       contact: function() {
+        // Post-submit and optional: the inquiry already went through at vibe.
+        // Both paths off this screen land on confirm; the submit path also
+        // fires the fire-and-forget phone enrichment.
         return '<div class="screen">' +
-          '<span class="eyebrow">Last step</span>' +
+          '<span class="eyebrow">One last thing, optional</span>' +
           '<h1 class="headline" style="font-size:32px;line-height:1.18">Want your pricing by text, too?</h1>' +
           '<p class="subcopy">Add a number and we\'ll text your pricing and a few film matches the moment they\'re ready.</p>' +
           '<div class="field" style="margin-top:22px"><label for="f-phone" style="position:absolute;left:-9999px">Phone number</label>' +
@@ -1294,11 +1355,8 @@
           '</button>' +
           '<span class="consent-text">I agree to receive text messages from Sierra &amp; Sean at Flyin\' Iris about my inquiry. Message frequency varies, message and data rates may apply, reply STOP to opt out.</span>' +
           '</div>' +
-          (state.submitError
-            ? '<div class="error-row" role="alert"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#e74c3c" stroke-width="1.4"/><path d="M8 4.5v4.2M8 11.2v.2" stroke="#e74c3c" stroke-width="1.6" stroke-linecap="round"/></svg><span>That didn\'t go through. Try again.</span></div>'
-            : '') +
-          '<button type="button" class="cta" data-action="submit-contact"' + (isValidPhone(state.phone.trim()) && !state.submitBusy ? '' : ' disabled') + '>' +
-          (state.submitBusy ? 'Sending...' : 'Text me my pricing') + '</button>' +
+          '<button type="button" class="cta" data-action="submit-contact"' + (isValidPhone(state.phone.trim()) ? '' : ' disabled') + '>Text me my pricing</button>' +
+          '<button type="button" class="cta-ghost" data-action="skip-phone">Skip, email works too</button>' +
           '<p class="form-hint">Instant delivery. No pressure, no spam, no chasing. We promise.</p>' +
           '</div>';
       },
@@ -1310,18 +1368,26 @@
         var film = res.film;
         // Availability line comes from the server's own check at submit time;
         // it exists whenever a date was given. Fall back to a neutral line if
-        // the server check errored. Never branch on result.available.
-        var availLine = res.availabilityMessage ||
-          "We're confirming your date now and will email you shortly.";
+        // the server check errored. Never branch on result.available. The
+        // no-date path gets its own H1 (distinct from the checkFailed
+        // fallback) and folds the "You're in" eyebrow into it.
+        var namePart = state.name1.trim() ? ', ' + esc(state.name1.trim()) : '';
+        var eyebrowHtml = '<span class="eyebrow">You\'re in' + namePart + '</span>';
+        var availLine = esc(res.availabilityMessage ||
+          "We're confirming your date now and will email you shortly.");
+        if (state.noDate) {
+          eyebrowHtml = '';
+          availLine = 'You\'re in' + namePart + '. Whenever you pick your date, popular dates go first, so you\'ll want to be early.';
+        }
         var stripCheck = '<svg width="11" height="9" viewBox="0 0 11 9" fill="none" aria-hidden="true"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         var h = '<div class="screen">' +
           '<div class="process-strip" aria-label="Where you are">' +
-          '<span class="step">' + stripCheck + 'Date checked</span><span class="sep"></span>' +
+          '<span class="step">' + stripCheck + (state.noDate ? 'Details in' : 'Date checked') + '</span><span class="sep"></span>' +
           '<span class="step">' + stripCheck + 'Pricing and films</span><span class="sep"></span>' +
           '<span class="step current">Book your intro call</span>' +
           '</div>' +
-          '<span class="eyebrow">You\'re in' + (state.name1.trim() ? ', ' + esc(state.name1.trim()) : '') + '</span>' +
-          '<h1 class="headline" style="font-size:34px;line-height:1.2">' + esc(availLine) + '</h1>';
+          eyebrowHtml +
+          '<h1 class="headline" style="font-size:34px;line-height:1.2">' + availLine + '</h1>';
 
         // The matched film, playable right here in the same lightbox
         if (film && film.video_url) {
@@ -1362,7 +1428,11 @@
           '<p class="tier-line">One handpicked filmmaker, personally vetted by Sierra &amp; Sean, and Sierra still edits every frame herself.</p>' +
           '</div>';
         h += '</div>' +
-          '<p class="tier-footnote">Both include 6 hours of coverage, a highlight film, full audio of your whole day, drone coverage, and private Netflix-style delivery. We take one Sierra &amp; Sean and one Team wedding per weekend.</p>';
+          '<p class="tier-footnote">Both include 6 hours of coverage, a highlight film, full audio of your whole day, drone coverage, and private Netflix-style delivery. We take one Sierra &amp; Sean and one Team wedding per weekend.</p>' +
+          // Objection killer between the tier footnote and the booking CTA:
+          // the strongest money-anxiety review, same treatment as the films
+          // module quotes.
+          quoteCard('Out of everything we paid for, this by far was worth every penny.', 'Taylor');
 
         // Offer closer: renders ONLY while the fetched constants say a free
         // FOMO spot exists this month; no zero-spots state ever shows. The
@@ -1382,39 +1452,66 @@
         if (calcHref) {
           h += '<a class="cta-ghost" style="display:inline-block;text-decoration:none" href="' + calcHref + '">See your full pricing</a>';
         }
-        h += '<p class="form-hint" style="margin-top:18px;color:#6B6B6B">All of this is in your inbox too' + (state.email.trim() ? ' at ' + esc(state.email.trim()) : '') + '.</p>' +
+        // Receipt line stays email-only unless the Worker confirmed the
+        // pricing text actually went out (smsSent true); never claim a text
+        // was sent otherwise.
+        h += '<p class="form-hint" style="margin-top:18px;color:#6B6B6B">All of this is in your inbox too' + (state.email.trim() ? ' at ' + esc(state.email.trim()) : '') +
+          (state.smsSent && state.phone.trim() ? ', and your pricing is on its way by text to ' + esc(state.phone.trim()) : '') + '.</p>' +
           '</div>';
         return h;
       }
     };
 
     // ===== PROGRESS / TOP BAR =====
-    var STEP_MAP = { date: 1, venue: 2, router: 2, films: 2, meet: 2, capture: 2, saved: 2, vibe: 3, contact: 4 };
+    // Vibe is the final numbered step: the submit fires there. The phone
+    // screen is post-process and optional, so it carries no step number and,
+    // like confirm, no back button (everything behind it is already sent).
+    var STEP_MAP = { date: 1, venue: 2, router: 2, films: 2, meet: 2, capture: 2, saved: 2, vibe: 3 };
     function renderTopbar() {
       var back = document.getElementById('btn-back');
       var wrap = document.getElementById('progress-wrap');
       var fill = document.getElementById('progress-fill');
       var label = document.getElementById('progress-label');
-      var showBack = state.history.length > 0 && state.screen !== 'welcome' && state.screen !== 'confirm';
+      var showBack = state.history.length > 0 && state.screen !== 'welcome' && state.screen !== 'confirm' && state.screen !== 'contact';
       back.classList.toggle('show', showBack);
       var step = STEP_MAP[state.screen];
       wrap.classList.toggle('show', !!step);
       if (step) {
-        fill.style.width = (step / 4) * 100 + '%';
-        label.textContent = step + ' / 4';
+        fill.style.width = (step / 3) * 100 + '%';
+        label.textContent = step + ' / 3';
       }
     }
 
     // ===== MAIN RENDER =====
+    // Poster-first welcome motion (homepage hero pattern): the poster img is
+    // in the welcome markup and paints immediately; the mp4 attaches here
+    // after render and fades in once it is actually playing. Reduced-motion
+    // visitors keep the still poster.
+    function attachWelcomeVideo() {
+      var slot = document.getElementById('welcome-video');
+      if (!slot || slot.querySelector('video')) return;
+      try { if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
+      var v = document.createElement('video');
+      v.src = WELCOME_VIDEO.mp4;
+      v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+      v.preload = 'auto';
+      v.setAttribute('playsinline', '');
+      v.setAttribute('webkit-playsinline', '');
+      v.setAttribute('muted', '');
+      v.setAttribute('aria-hidden', 'true');
+      v.addEventListener('playing', function() { v.style.opacity = '1'; }, { once: true });
+      slot.appendChild(v);
+    }
     function render() {
       var renderer = SCREENS[state.screen] || SCREENS.welcome;
       document.getElementById('screen').innerHTML = renderer();
       renderTopbar();
+      if (state.screen === 'welcome') attachWelcomeVideo();
       // The fixed bubble collides with text on the long scrolling module
       // screens; question screens keep it
       var bubble = document.querySelector('.bubble-wrap');
       if (bubble) {
-        var hide = (state.screen === 'meet' || state.screen === 'films');
+        var hide = (state.screen === 'meet' || state.screen === 'films' || state.screen === 'confirm');
         // The offer chip can push a short viewport's welcome into scroll;
         // hide the bubble there too instead of letting it overlap the strip
         if (!hide && state.screen === 'welcome' && document.documentElement.scrollHeight > window.innerHeight + 4) hide = true;
@@ -1437,7 +1534,7 @@
         var ok = true;
         if (btn.getAttribute('data-action') === 'continue-venue') ok = !!state.venue.trim();
         if (btn.getAttribute('data-action') === 'submit-capture') ok = !!(state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim()));
-        if (btn.getAttribute('data-action') === 'submit-contact') ok = isValidPhone(state.phone.trim()) && !state.submitBusy;
+        if (btn.getAttribute('data-action') === 'submit-contact') ok = isValidPhone(state.phone.trim());
         if (btn.getAttribute('data-action') === 'submit-waitlist') ok = isValidEmail(state.email.trim()) && !state.waitlistBusy;
         btn.disabled = !ok;
       }
@@ -1476,6 +1573,18 @@
         render(); return;
       }
       if (action === 'pick-date') { pickDate(el.getAttribute('data-date')); return; }
+      if (action === 'no-date') {
+        // Skips the availability check entirely; weddingDate submits blank
+        // and the Worker's dateless handling takes it from there.
+        clearTimers();
+        state.checking = false;
+        state.noDate = true;
+        state.selectedDate = null;
+        state.availability = null;
+        saveDraft();
+        ga('start_no_date', {});
+        goForward('venue'); return;
+      }
       if (action === 'continue-open') { continueFromOpen(); return; }
       if (action === 'team-experience') {
         state.teamTrack = true; saveDraft();
@@ -1528,11 +1637,23 @@
         saveDraft();
         render(); return;
       }
-      if (action === 'continue-vibe') { if (state.vibes.length) goForward('contact'); return; }
+      if (action === 'submit-vibe') { submitInquiry(); return; }
       if (action === 'toggle-sms') {
-        state.sms = !state.sms; saveDraft(); render(); return;
+        state.sms = !state.sms; render(); return;
       }
-      if (action === 'submit-contact') { submitContact(); return; }
+      if (action === 'submit-contact') {
+        // Fire-and-forget: kick off the enrichment and advance immediately.
+        // Every response case (ok, already, 409, 429, network error) lands on
+        // confirm the same way.
+        if (!isValidPhone(state.phone.trim())) return;
+        enrichPhone();
+        ga('start_phone_added', { sms_consent: state.sms ? 'yes' : 'no' });
+        goForward('confirm'); return;
+      }
+      if (action === 'skip-phone') {
+        ga('start_phone_skipped', {});
+        goForward('confirm'); return;
+      }
       if (action === 'welcome-back-continue') {
         // A returning draft can carry a date but no venue; route those through
         // the venue question so the film matcher never receives a blank venue
@@ -1545,8 +1666,9 @@
       }
       if (action === 'start-fresh') {
         clearDraft();
-        state.selectedDate = null; state.venue = ''; state.name1 = ''; state.name2 = '';
+        state.selectedDate = null; state.noDate = false; state.venue = ''; state.name1 = ''; state.name2 = '';
         state.email = ''; state.phone = ''; state.sms = false; state.vibes = []; state.teamTrack = false;
+        state.smsSent = false; state.submitError = false;
         state.history = [];
         setScreen('welcome'); return;
       }
@@ -1556,19 +1678,20 @@
 
     // ===== BOOT =====
     var draft = loadDraft();
-    if (draft && draft.selectedDate) {
-      state.selectedDate = draft.selectedDate;
+    if (draft && (draft.selectedDate || draft.noDate)) {
+      state.selectedDate = draft.selectedDate || null;
+      state.noDate = !!draft.noDate && !draft.selectedDate;
       state.venue = draft.venue || '';
       state.name1 = draft.name1 || '';
       state.name2 = draft.name2 || '';
       state.email = draft.email || '';
-      state.phone = draft.phone || '';
-      state.sms = !!draft.sms;
       state.vibes = Array.isArray(draft.vibes) ? draft.vibes : [];
       state.teamTrack = !!draft.teamTrack;
-      var dp = draft.selectedDate.split('-');
-      state.calYear = parseInt(dp[0], 10);
-      state.calMonth = parseInt(dp[1], 10) - 1;
+      if (draft.selectedDate) {
+        var dp = draft.selectedDate.split('-');
+        state.calYear = parseInt(dp[0], 10);
+        state.calMonth = parseInt(dp[1], 10) - 1;
+      }
       state.screen = 'welcomeback';
       loadTurnstile();
     }
