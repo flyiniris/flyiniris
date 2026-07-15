@@ -423,13 +423,22 @@
        keeps it invisible unless Cloudflare needs a challenge */
     #turnstile-slot { position: fixed; bottom: 26px; right: 22px; z-index: 48; }
 
-    /* Welcome motion: the homepage 9x16 hero master cropped to a wide
-       cinematic strip below the CTA (it replaced the three-photo strip).
-       Poster paints immediately; the mp4 lazy-attaches and fades in on
-       playing, the homepage hero pattern. object-position 35% keeps the
-       couple's faces in the crop band. */
+    /* Welcome motion: the homepage 9x16 hero master cropped to a cinematic
+       16:9 still below the CTA (it replaced the three-photo strip). Poster
+       paints immediately; the mp4 lazy-attaches and fades in on playing,
+       the homepage hero pattern.
+       Crop geometry (2026-07-15 reframe): the box is aspect-ratio 16/9, not
+       a fixed height. A 16:9 window over the 9:16 master shows a constant
+       32 percent of the frame's height at EVERY viewport width, so one
+       object-position works on desktop and phones alike (the old fixed
+       150px strip showed only 16 percent on desktop and beheaded the
+       couple). object-position 50% 35% aims that window at the 24 to 56
+       percent band, verified frame-by-frame against all three shots of
+       hero-9x16-v3: walking couple, seated group, sunglasses close-up. If
+       the clip is ever swapped, re-verify the band against the new shots
+       before shipping. */
     .welcome-video {
-      position: relative; width: 100%; height: 150px; margin-top: 28px;
+      position: relative; width: 100%; aspect-ratio: 16 / 9; margin-top: 28px;
       border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
       background: var(--bg-elevated);
     }
