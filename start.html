@@ -612,6 +612,50 @@
       window.fiTurnstileToken = '';
       return t;
     };
+    /* Turnstile tokens expire after ~5 minutes and this guided flow can take
+       longer, so the old read-and-hope consume path could submit empty tokens
+       and the Worker 403'd real leads (no-token guard blocks, seen through
+       2026-07-17). fiEnsureToken waits for a live token (kicking the widget
+       into a fresh run if needed) before submitting; fiPostWithTurnstile adds
+       one fresh-token retry when the Worker says 403. */
+    window.fiEnsureToken = function (maxMs) {
+      maxMs = maxMs || 15000;
+      function read() {
+        var t = '';
+        try { t = (window.turnstile && window.turnstile.getResponse) ? (window.turnstile.getResponse() || '') : ''; } catch (e) {}
+        return t || window.fiTurnstileToken || '';
+      }
+      function consume(t) {
+        if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+        window.fiTurnstileToken = '';
+        return t;
+      }
+      return new Promise(function (resolve) {
+        var t0 = read();
+        if (t0) { resolve(consume(t0)); return; }
+        if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+        var waited = 0;
+        var iv = setInterval(function () {
+          var t = read();
+          waited += 300;
+          if (t) { clearInterval(iv); resolve(consume(t)); }
+          else if (waited >= maxMs) { clearInterval(iv); resolve(''); }
+        }, 300);
+      });
+    };
+    window.fiPostWithTurnstile = function (url, bodyObj) {
+      function post(tok) {
+        return fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({}, bodyObj, { 'cf-turnstile-response': tok }))
+        });
+      }
+      return window.fiEnsureToken().then(post).then(function (r) {
+        if (r.status !== 403) return r;
+        return window.fiEnsureToken().then(post);
+      });
+    };
     var turnstileLoaded = false;
     function loadTurnstile() {
       if (turnstileLoaded) return;
@@ -913,7 +957,8 @@
         variant: 'unified',
         variant_source: 'unified'
       }, tracking, extra || {});
-      payload['cf-turnstile-response'] = window.fiConsumeToken();
+      // Token attaches at submit time via fiPostWithTurnstile, never here: a
+      // token read at build time can expire before the fetch fires.
       return { payload: payload, eventId: eventId };
     }
 
@@ -929,11 +974,7 @@
         submissionType: 'waitlist',
         note: 'Waitlist request from /start: ' + dateLabel(state.selectedDate, true) + ' came back fully booked (Sierra & Sean and Team both committed). Reach out if anything opens up.'
       });
-      fetch(WORKER_URL + '/webhook/inquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(built.payload)
-      }).then(function(resp) {
+      window.fiPostWithTurnstile(WORKER_URL + '/webhook/inquiry', built.payload).then(function(resp) {
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         return resp.json();
       }).then(function() {
@@ -965,11 +1006,7 @@
       if (state.checkFailed) noteBits.push('Live availability check failed during the flow; availability unconfirmed at submit time.');
       if (state.noDate) noteBits.push('No wedding date yet; couple took the no-date path.');
       var built = buildInquiryPayload({ phone: '', smsNonMarketing: 'No', note: noteBits.join(' ') });
-      fetch(WORKER_URL + '/webhook/inquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(built.payload)
-      }).then(function(resp) {
+      window.fiPostWithTurnstile(WORKER_URL + '/webhook/inquiry', built.payload).then(function(resp) {
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         return resp.json();
       }).then(function(result) {

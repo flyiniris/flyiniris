@@ -3239,11 +3239,7 @@
             state.mode = "experience-loading";
             render();
             scrollToQuiz();
-            fetch(WORKER_URL + '/webhook/inquiry', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.assign({}, shortInquiry, { 'cf-turnstile-response': window.fiConsumeToken() }))
-            }).then(function(resp) {
+            window.fiPostWithTurnstile(WORKER_URL + '/webhook/inquiry', shortInquiry).then(function(resp) {
               if (!resp.ok) throw new Error('inquiry HTTP ' + resp.status);
               return resp.json();
             }).then(function(result) {
@@ -3299,6 +3295,50 @@
      current token AND reset the widget on each submit, giving the next form a fresh token
      (a calculator submit then an inquiry submit would otherwise reuse one token and 403 the
      second once enforce is on). Single-form pages do not need this. */
-  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
+  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};
+  /* Turnstile tokens expire after ~5 minutes and these forms can take longer to
+     fill, so the old read-and-hope consume path submitted empty tokens and the
+     Worker 403'd real couples (no-token guard blocks, seen through 2026-07-17).
+     fiEnsureToken waits for a live token (kicking the widget into a fresh run
+     if needed) before the form ever submits; fiPostWithTurnstile adds one
+     fresh-token retry when the Worker still says 403. */
+  window.fiEnsureToken = function (maxMs) {
+    maxMs = maxMs || 15000;
+    function read() {
+      var t = '';
+      try { t = (window.turnstile && window.turnstile.getResponse) ? (window.turnstile.getResponse() || '') : ''; } catch (e) {}
+      return t || window.fiTurnstileToken || '';
+    }
+    function consume(t) {
+      if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+      window.fiTurnstileToken = '';
+      return t;
+    }
+    return new Promise(function (resolve) {
+      var t0 = read();
+      if (t0) { resolve(consume(t0)); return; }
+      if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+      var waited = 0;
+      var iv = setInterval(function () {
+        var t = read();
+        waited += 300;
+        if (t) { clearInterval(iv); resolve(consume(t)); }
+        else if (waited >= maxMs) { clearInterval(iv); resolve(''); }
+      }, 300);
+    });
+  };
+  window.fiPostWithTurnstile = function (url, bodyObj) {
+    function post(tok) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({}, bodyObj, { 'cf-turnstile-response': tok }))
+      });
+    }
+    return window.fiEnsureToken().then(post).then(function (r) {
+      if (r.status !== 403) return r;
+      return window.fiEnsureToken().then(post);
+    });
+  };</script>
 </body>
 </html>

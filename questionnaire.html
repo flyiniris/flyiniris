@@ -2690,11 +2690,7 @@
       edited_count: editedCount
     });
 
-    fetch(API_BASE + '/webhook/questionnaire', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({}, body, { 'cf-turnstile-response': (window.fiConsumeToken ? window.fiConsumeToken() : (window.fiTurnstileToken || '')) }))
-    }).then(function (r) {
+    window.fiPostWithTurnstile(API_BASE + '/webhook/questionnaire', body).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json().catch(function () { return {}; });
     }).then(function () {
@@ -3158,7 +3154,51 @@
      widget so a retry after a network blip gets a fresh token instead of
      stranding on a consumed one (403 under TURNSTILE_ENFORCE). Same pattern
      as index.html fiConsumeToken. */
-  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};</script>
+  window.fiConsumeToken=function(){var t=(window.turnstile&&window.turnstile.getResponse)?(window.turnstile.getResponse()||''):(window.fiTurnstileToken||'');if(window.turnstile&&window.turnstile.reset){try{window.turnstile.reset();}catch(e){}}window.fiTurnstileToken='';return t;};
+  /* Turnstile tokens expire after ~5 minutes and this questionnaire takes 10+,
+     so the old read-and-hope consume path submitted empty tokens and the Worker
+     403'd real couples (Maddy + Alex, 4 blocked no-token submits, 2026-07-16).
+     fiEnsureToken waits for a live token (kicking the widget into a fresh run
+     if needed) before the form ever submits; fiPostWithTurnstile adds one
+     fresh-token retry when the Worker still says 403. */
+  window.fiEnsureToken = function (maxMs) {
+    maxMs = maxMs || 15000;
+    function read() {
+      var t = '';
+      try { t = (window.turnstile && window.turnstile.getResponse) ? (window.turnstile.getResponse() || '') : ''; } catch (e) {}
+      return t || window.fiTurnstileToken || '';
+    }
+    function consume(t) {
+      if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+      window.fiTurnstileToken = '';
+      return t;
+    }
+    return new Promise(function (resolve) {
+      var t0 = read();
+      if (t0) { resolve(consume(t0)); return; }
+      if (window.turnstile && window.turnstile.reset) { try { window.turnstile.reset(); } catch (e) {} }
+      var waited = 0;
+      var iv = setInterval(function () {
+        var t = read();
+        waited += 300;
+        if (t) { clearInterval(iv); resolve(consume(t)); }
+        else if (waited >= maxMs) { clearInterval(iv); resolve(''); }
+      }, 300);
+    });
+  };
+  window.fiPostWithTurnstile = function (url, bodyObj) {
+    function post(tok) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({}, bodyObj, { 'cf-turnstile-response': tok }))
+      });
+    }
+    return window.fiEnsureToken().then(post).then(function (r) {
+      if (r.status !== 403) return r;
+      return window.fiEnsureToken().then(post);
+    });
+  };</script>
   <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" style="margin:12px 0;"></div>
 </body>
 </html>
