@@ -874,6 +874,35 @@
     })();
 
     selectPackage(state.pkg, false);
+
+    // Proposal-open ping: fires on first meaningful interaction only (first
+    // scroll or a package tap), never on raw page load, so email link
+    // scanners and previews cannot fake an open. Once per browser session;
+    // the Worker additionally throttles per slug so repeat visits never spam.
+    (function () {
+      if (new URLSearchParams(window.location.search).get('status')) return;
+      var fired = false;
+      function firePing() {
+        if (fired) return;
+        fired = true;
+        try {
+          if (sessionStorage.getItem('fi_opened_' + CFG.slug)) return;
+          sessionStorage.setItem('fi_opened_' + CFG.slug, '1');
+        } catch (e) { /* private mode still pings; the Worker throttles */ }
+        var body = JSON.stringify({ token: CFG.pageToken });
+        var url = CFG.apiBase + '/api/commercial/' + CFG.slug + '/opened';
+        var sent = false;
+        try { sent = navigator.sendBeacon(url, new Blob([body], { type: 'text/plain' })); } catch (e) { /* fall through */ }
+        if (!sent) {
+          fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: body, keepalive: true }).catch(function () {});
+        }
+      }
+      window.addEventListener('scroll', firePing, { once: true, passive: true });
+      window.addEventListener('touchmove', firePing, { once: true, passive: true });
+      document.querySelectorAll('.package-card').forEach(function (card) {
+        card.addEventListener('click', firePing);
+      });
+    })();
   </script>
 </body>
 </html>
