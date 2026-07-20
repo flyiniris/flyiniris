@@ -1,0 +1,105 @@
+{
+  "slug": "sweet-spot",
+  "apiBase": "https://api.flyiniris.com",
+  "pageToken": "155627028b040a4da8a4668c20b9527df9aebd7aadc2495c",
+  "title": "Sweet Spot Golf Club x Flyin' Iris",
+  "metaDescription": "A proposal prepared for Evan Kiefer, Sweet Spot Golf Club, by Flyin' Iris.",
+  "eyebrow": "Prepared for Evan Kiefer, Sweet Spot Golf Club",
+  "headline": "No Off-Season.",
+  "subhead": "Cinematic brand films and photography built around Wisconsin's first public indoor short game area, delivered before your fall season begins.",
+  "taxRateBps": 590,
+  "taxNote": "+ 5.9% WI sales tax",
+  "taxLineLabel": "WI sales tax (5.9%)",
+  "packages": [
+    {
+      "id": "essentials",
+      "label": "Essentials",
+      "priceDisplay": "$2,000",
+      "baseCents": 200000,
+      "recommended": false,
+      "features": [
+        "One evening production with Sierra & Sean, all in a single visit",
+        "Your main brand film, 30 to 60 seconds, delivered horizontal and vertical",
+        "Indoor drone flythrough shots woven through your film",
+        "20 edited photos: facility, action, details",
+        "Licensed music and cinematic color grade",
+        "One revision round, delivered within 14 days"
+      ]
+    },
+    {
+      "id": "signature",
+      "label": "Signature",
+      "priceDisplay": "$3,000",
+      "baseCents": 300000,
+      "recommended": true,
+      "features": [
+        "A full evening production with Sierra & Sean",
+        "Your main brand film, 60 to 90 seconds, delivered horizontal and vertical",
+        "Walkthrough film, 45 to 60 seconds: a front door to bunker tour",
+        "2 more vertical edits: short game feature and walkthrough teaser",
+        "Website hero film: a short silent loop for the top of your homepage",
+        "40 edited photos, including portraits of you",
+        "Indoor drone flythrough shots throughout",
+        "Licensed music and cinematic color grade",
+        "One revision round, delivered within 14 days"
+      ]
+    }
+  ],
+  "usageLine": "Both options include full commercial usage rights for Sweet Spot Golf Club across web and social.",
+  "nextTitle": "Where This Goes Next",
+  "nextItems": [
+    "Quick-strike verticals. Your pitch to camera, a winter membership push, a December gift card spot. $200 to $300 each",
+    "\"Your First Visit\" film. For the person who has never touched a simulator. Your whole brand, as one film. $350 to $500",
+    "Mid-winter refresh, half day. We return in January when the place is full: fresh content to carry you to spring. $750 to $1,000"
+  ],
+  "nextClosing": "Nothing to decide now. Tell us which of these sparks something.",
+  "timeline": [
+    {
+      "step": "Book",
+      "body": "Pay in full or 50% to lock your date"
+    },
+    {
+      "step": "Shoot",
+      "body": "One closed-day evening, week of Aug 3 or Aug 10"
+    },
+    {
+      "step": "Deliver",
+      "body": "Films and photos within 14 days"
+    },
+    {
+      "step": "Live",
+      "body": "Everything live for Sept 1"
+    }
+  ],
+  "agreementTitle": "Production Agreement: Sweet Spot Golf Club x Flyin' Iris.",
+  "agreementClauses": [
+    {
+      "lead": "Scope:",
+      "text": "the package selected above, produced in one on-site session at Sweet Spot Golf Club, West Allis, WI."
+    },
+    {
+      "lead": "Payment:",
+      "text": "pay in full today, or 50% today to reserve the date with the balance due on final delivery. All prices plus 5.9% WI sales tax."
+    },
+    {
+      "lead": "Scheduling:",
+      "text": "one complimentary reschedule with at least 72 hours notice."
+    },
+    {
+      "lead": "Delivery:",
+      "text": "all films and photos delivered within 14 days of the shoot date, one revision round included; we want you happy with it."
+    },
+    {
+      "lead": "Usage:",
+      "text": "Sweet Spot Golf Club receives full usage rights to all delivered films and photos, across any channel, however you like. A social tag of Flyin' Iris is appreciated but never required. Flyin' Iris retains the right to use the films, photos, and all material captured at the session in its own portfolio and marketing."
+    },
+    {
+      "lead": "",
+      "text": "By checking the box and completing payment, you accept these terms."
+    }
+  ],
+  "successHeadline": "Your date is locked.",
+  "successBody": "Payment received. Sierra & Sean will reach out to confirm your shoot evening and everything that comes next.",
+  "cancelHeadline": "No charge was made.",
+  "cancelBody": "Take your time. Everything here stays ready whenever you are."
+}

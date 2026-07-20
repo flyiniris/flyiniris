@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Spot Golf Club x Flyin' Iris</title>
+  <meta name="description" content="A proposal prepared for Evan Kiefer, Sweet Spot Golf Club, by Flyin' Iris.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.6);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-brand span { color: var(--accent); }
+
+    .nav-phone {
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+
+    .nav-phone:hover { color: var(--accent); }
+
+    .hero {
+      padding: 130px 24px 48px;
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(2.6rem, 9vw, 4.4rem);
+      line-height: 1.08;
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    .hero-sub {
+      font-size: 1.02rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.75;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    }
+
+    .section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 48px 20px;
+    }
+
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(1.7rem, 4.5vw, 2.5rem);
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    /* Package cards */
+    .package-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 760px) {
+      .package-grid { grid-template-columns: 1fr; }
+    }
+
+    .package-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 34px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .package-card:hover { border-color: rgba(255, 189, 29, 0.45); transform: translateY(-2px); }
+
+    .package-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 18px 44px rgba(0, 0, 0, 0.45);
+    }
+
+    .package-card.recommended { background: linear-gradient(160deg, rgba(255, 189, 29, 0.07) 0%, var(--bg-card) 55%); }
+
+    .package-badge {
+      position: absolute;
+      top: -12px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #141414;
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .package-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .package-price {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .package-price .amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: var(--accent);
+    }
+
+    .package-tax {
+      text-align: center;
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+
+    .package-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 26px;
+      flex-grow: 1;
+    }
+
+    .package-features li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .package-features li::before {
+      content: '';
+      position: absolute;
+      left: 2px; top: 9px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.85;
+    }
+
+    .package-choose {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      background: transparent;
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .package-card.selected .package-choose,
+    .package-choose:hover { background: var(--accent); color: #141414; }
+
+    .usage-line {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Next ideas strip */
+    .next-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .next-grid { grid-template-columns: 1fr; }
+    }
+
+    .next-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 22px 20px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .next-card strong {
+      display: block;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .next-closing {
+      margin-top: 24px;
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--accent-light);
+    }
+
+    /* Timeline */
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 760px) {
+      .timeline-grid { grid-template-columns: 1fr; }
+    }
+
+    .timeline-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .timeline-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+
+    .timeline-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .timeline-body {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Agreement */
+    .agreement-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 30px 28px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .agreement-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+    }
+
+    .agreement-box p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .agreement-box p strong { color: var(--text-primary); font-weight: 500; }
+
+    /* Booking panel */
+    .booking-panel {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 189, 29, 0.3);
+      border-radius: 12px;
+      padding: 32px 28px;
+    }
+
+    .booking-row-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .choice-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .choice-btn {
+      padding: 13px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .choice-btn small { display: block; font-size: 0.72rem; color: var(--text-muted); }
+
+    .choice-btn.selected {
+      border-color: var(--accent);
+      color: var(--text-primary);
+      background: rgba(255, 189, 29, 0.08);
+    }
+
+    .totals {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 2px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .totals-row.grand {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .totals-row.grand .val { color: var(--accent); font-weight: 600; }
+
+    .totals-row.balance { font-size: 0.8rem; color: var(--text-muted); }
+
+    .agree-check {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      cursor: pointer;
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .agree-check input {
+      margin-top: 4px;
+      width: 17px; height: 17px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .pay-btn {
+      width: 100%;
+      padding: 17px 20px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent);
+      color: #141414;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.15s ease;
+    }
+
+    .pay-btn:hover:not(:disabled) { background: var(--accent-light); }
+    .pay-btn:active:not(:disabled) { transform: scale(0.99); }
+    .pay-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .pay-note {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .flow-error {
+      display: none;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #E8A0A0;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(20, 20, 20, 0.3);
+      border-top-color: #141414;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: -2px;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Status states */
+    .status-panel {
+      display: none;
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255, 189, 29, 0.08) 0%, rgba(255, 189, 29, 0.02) 100%);
+      border: 1px solid rgba(255, 189, 29, 0.35);
+      border-radius: 12px;
+      padding: 44px 30px;
+    }
+
+    .status-panel h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 2.1rem;
+      margin-bottom: 12px;
+    }
+
+    .status-panel p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+
+    .status-panel .status-summary {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--accent-light);
+    }
+
+    .cancel-note {
+      display: none;
+      max-width: 640px;
+      margin: 0 auto 8px;
+      text-align: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+
+    .cancel-note strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .cancel-note p { font-size: 0.88rem; color: var(--text-secondary); }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 24px 46px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .footer-brand span { color: var(--accent); }
+
+    .footer p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="https://flyiniris.com" class="nav-brand">Flyin' <span>Iris</span></a>
+    <a href="tel:+12623845079" class="nav-phone">(262) 384-5079</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-eyebrow">Prepared for Evan Kiefer, Sweet Spot Golf Club</div>
+    <h1>No Off-Season.</h1>
+    <p class="hero-sub">Cinematic brand films and photography built around Wisconsin's first public indoor short game area, delivered before your fall season begins.</p>
+  </header>
+
+  <section class="section" id="statusSection" style="padding-top: 0;">
+    <div class="status-panel" id="successPanel">
+      <h2>Your date is locked.</h2>
+      <p>Payment received. Sierra &amp; Sean will reach out to confirm your shoot evening and everything that comes next.</p>
+      <p class="status-summary" id="successSummary"></p>
+    </div>
+    <div class="cancel-note" id="cancelNote">
+      <strong>No charge was made.</strong>
+      <p>Take your time. Everything here stays ready whenever you are.</p>
+    </div>
+  </section>
+
+  <main id="mainFlow">
+    <section class="section" id="packages">
+      <div class="section-eyebrow">Two Ways In</div>
+      <h2 class="section-title">Pick Your Package</h2>
+      <div class="package-grid">
+        <div class="package-card" data-package="essentials">
+          <div class="package-name">Essentials</div>
+          <div class="package-price"><span class="amount">$2,000</span></div>
+          <div class="package-tax">+ 5.9% WI sales tax</div>
+          <ul class="package-features">
+            <li>One evening production with Sierra &amp; Sean, all in a single visit</li>
+            <li>Your main brand film, 30 to 60 seconds, delivered horizontal and vertical</li>
+            <li>Indoor drone flythrough shots woven through your film</li>
+            <li>20 edited photos: facility, action, details</li>
+            <li>Licensed music and cinematic color grade</li>
+            <li>One revision round, delivered within 14 days</li>
+          </ul>
+          <button type="button" class="package-choose">Choose Essentials</button>
+        </div>
+        <div class="package-card recommended" data-package="signature">
+          <div class="package-badge">Recommended</div>
+          <div class="package-name">Signature</div>
+          <div class="package-price"><span class="amount">$3,000</span></div>
+          <div class="package-tax">+ 5.9% WI sales tax</div>
+          <ul class="package-features">
+            <li>A full evening production with Sierra &amp; Sean</li>
+            <li>Your main brand film, 60 to 90 seconds, delivered horizontal and vertical</li>
+            <li>Walkthrough film, 45 to 60 seconds: a front door to bunker tour</li>
+            <li>2 more vertical edits: short game feature and walkthrough teaser</li>
+            <li>Website hero film: a short silent loop for the top of your homepage</li>
+            <li>40 edited photos, including portraits of you</li>
+            <li>Indoor drone flythrough shots throughout</li>
+            <li>Licensed music and cinematic color grade</li>
+            <li>One revision round, delivered within 14 days</li>
+          </ul>
+          <button type="button" class="package-choose">Choose Signature</button>
+        </div>
+      </div>
+      <p class="usage-line">Both options include full commercial usage rights for Sweet Spot Golf Club across web and social.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-eyebrow">After Launch</div>
+      <h2 class="section-title">Where This Goes Next</h2>
+      <div class="next-grid">
+        <div class="next-card"><strong>Quick-strike verticals.</strong>Your pitch to camera, a winter membership push, a December gift card spot. $200 to $300 each</div>
+        <div class="next-card"><strong>&quot;Your First Visit&quot; film.</strong>For the person who has never touched a simulator. Your whole brand, as one film. $350 to $500</div>
+        <div class="next-card"><strong>Mid-winter refresh, half day.</strong>We return in January when the place is full: fresh content to carry you to spring. $750 to $1,000</div>
+      </div>
+      <p class="next-closing">Nothing to decide now. Tell us which of these sparks something.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-eyebrow">How It Works</div>
+      <h2 class="section-title">From Booked to Live</h2>
+      <div class="timeline-grid">
+        <div class="timeline-step">
+          <div class="timeline-num">01</div>
+          <div class="timeline-name">Book</div>
+          <div class="timeline-body">Pay in full or 50% to lock your date</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-num">02</div>
+          <div class="timeline-name">Shoot</div>
+          <div class="timeline-body">One closed-day evening, week of Aug 3 or Aug 10</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-num">03</div>
+          <div class="timeline-name">Deliver</div>
+          <div class="timeline-body">Films and photos within 14 days</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-num">04</div>
+          <div class="timeline-name">Live</div>
+          <div class="timeline-body">Everything live for Sept 1</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="agreement">
+      <div class="section-eyebrow">The Agreement</div>
+      <h2 class="section-title">Simple, In Writing</h2>
+      <div class="agreement-box">
+        <h3>Production Agreement: Sweet Spot Golf Club x Flyin' Iris.</h3>
+        <p><strong>Scope:</strong> the package selected above, produced in one on-site session at Sweet Spot Golf Club, West Allis, WI.</p>
+        <p><strong>Payment:</strong> pay in full today, or 50% today to reserve the date with the balance due on final delivery. All prices plus 5.9% WI sales tax.</p>
+        <p><strong>Scheduling:</strong> one complimentary reschedule with at least 72 hours notice.</p>
+        <p><strong>Delivery:</strong> all films and photos delivered within 14 days of the shoot date, one revision round included; we want you happy with it.</p>
+        <p><strong>Usage:</strong> Sweet Spot Golf Club receives full usage rights to all delivered films and photos, across any channel, however you like. A social tag of Flyin' Iris is appreciated but never required. Flyin' Iris retains the right to use the films, photos, and all material captured at the session in its own portfolio and marketing.</p>
+        <p>By checking the box and completing payment, you accept these terms.</p>
+      </div>
+    </section>
+
+    <section class="section" id="book" style="padding-top: 22px;">
+      <div class="booking-panel">
+        <div class="booking-row-label">Your package</div>
+        <div class="choice-row" id="packageChoiceRow"></div>
+        <div class="booking-row-label">How you'd like to pay</div>
+        <div class="choice-row">
+          <button type="button" class="choice-btn selected" id="payFull" data-choice="full">Pay in full<small>All set today</small></button>
+          <button type="button" class="choice-btn" id="payDeposit" data-choice="deposit">50% to book<small>Balance at final delivery</small></button>
+        </div>
+        <div class="totals" id="totals"></div>
+        <label class="agree-check" for="agreeBox">
+          <input type="checkbox" id="agreeBox">
+          <span>I have read and accept the Production Agreement above.</span>
+        </label>
+        <button type="button" class="pay-btn" id="payButton">Lock In Your Date</button>
+        <p class="pay-note">Secure payment through Stripe. You'll be right back here when it's done.</p>
+        <p class="flow-error" id="flowError"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand">Flyin' <span>Iris</span></div>
+    <p>Sierra &amp; Sean &middot; <a href="https://flyiniris.com">flyiniris.com</a></p>
+  </footer>
+
+  <script>
+    var CFG = {"slug":"sweet-spot","apiBase":"https://api.flyiniris.com","pageToken":"155627028b040a4da8a4668c20b9527df9aebd7aadc2495c","taxRateBps":590,"taxNote":"+ 5.9% WI sales tax","taxLineLabel":"WI sales tax (5.9%)","defaultPackage":"signature","packages":{"essentials":{"label":"Essentials","baseCents":200000,"priceDisplay":"$2,000"},"signature":{"label":"Signature","baseCents":300000,"priceDisplay":"$3,000"}}};
+
+    var state = {
+      pkg: CFG.defaultPackage,
+      choice: 'full',
+    };
+
+    function fmt(cents) {
+      return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function taxFor(subtotal) {
+      return Math.round(subtotal * CFG.taxRateBps / 10000);
+    }
+
+    function amounts() {
+      var base = CFG.packages[state.pkg].baseCents;
+      var subtotal = state.choice === 'full' ? base : Math.round(base / 2);
+      var tax = taxFor(subtotal);
+      var balBase = state.choice === 'full' ? 0 : base - subtotal;
+      return {
+        subtotal: subtotal,
+        tax: tax,
+        total: subtotal + tax,
+        balanceTotal: balBase > 0 ? balBase + taxFor(balBase) : 0,
+      };
+    }
+
+    function renderPackageChoices() {
+      var row = document.getElementById('packageChoiceRow');
+      row.innerHTML = '';
+      Object.keys(CFG.packages).forEach(function (id) {
+        var p = CFG.packages[id];
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'choice-btn' + (state.pkg === id ? ' selected' : '');
+        b.innerHTML = p.label + '<small>' + p.priceDisplay + ' ' + CFG.taxNote + '</small>';
+        b.addEventListener('click', function () { selectPackage(id, false); });
+        row.appendChild(b);
+      });
+    }
+
+    function renderTotals() {
+      var a = amounts();
+      var el = document.getElementById('totals');
+      var rows = '';
+      rows += '<div class="totals-row"><span>' + CFG.packages[state.pkg].label +
+        (state.choice === 'deposit' ? ' (50% today)' : '') + '</span><span>' + fmt(a.subtotal) + '</span></div>';
+      rows += '<div class="totals-row"><span>' + CFG.taxLineLabel + '</span><span>' + fmt(a.tax) + '</span></div>';
+      rows += '<div class="totals-row grand"><span>Due today</span><span class="val">' + fmt(a.total) + '</span></div>';
+      if (a.balanceTotal > 0) {
+        rows += '<div class="totals-row balance"><span>Balance at final delivery (incl. tax)</span><span>' + fmt(a.balanceTotal) + '</span></div>';
+      }
+      el.innerHTML = rows;
+    }
+
+    function selectPackage(id, scroll) {
+      state.pkg = id;
+      document.querySelectorAll('.package-card').forEach(function (card) {
+        card.classList.toggle('selected', card.getAttribute('data-package') === id);
+      });
+      renderPackageChoices();
+      renderTotals();
+      if (scroll) document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function selectChoice(choice) {
+      state.choice = choice;
+      document.getElementById('payFull').classList.toggle('selected', choice === 'full');
+      document.getElementById('payDeposit').classList.toggle('selected', choice === 'deposit');
+      renderTotals();
+    }
+
+    document.querySelectorAll('.package-card').forEach(function (card) {
+      card.addEventListener('click', function () { selectPackage(card.getAttribute('data-package'), true); });
+    });
+    document.getElementById('payFull').addEventListener('click', function () { selectChoice('full'); });
+    document.getElementById('payDeposit').addEventListener('click', function () { selectChoice('deposit'); });
+
+    function showError(msg) {
+      var el = document.getElementById('flowError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    document.getElementById('payButton').addEventListener('click', function () {
+      var btn = this;
+      document.getElementById('flowError').style.display = 'none';
+      if (!document.getElementById('agreeBox').checked) {
+        showError('Please check the agreement box first.');
+        return;
+      }
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Opening secure payment...';
+      var payload = { token: CFG.pageToken, package: state.pkg, paymentChoice: state.choice };
+      var base = CFG.apiBase + '/api/commercial/' + CFG.slug;
+
+      fetch(base + '/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).then(function (r) {
+        if (!r.ok) throw new Error('accept failed');
+        return fetch(base + '/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      }).then(function (r) {
+        if (!r.ok) throw new Error('checkout failed');
+        return r.json();
+      }).then(function (data) {
+        if (!data.url) throw new Error('no checkout url');
+        try {
+          localStorage.setItem('fi_commercial_' + CFG.slug, JSON.stringify({
+            pkg: CFG.packages[state.pkg].label,
+            choice: state.choice,
+            total: data.totalCents,
+          }));
+        } catch (e) { /* private mode, fine */ }
+        window.location.href = data.url;
+      }).catch(function () {
+        btn.disabled = false;
+        btn.textContent = 'Lock In Your Date';
+        showError("Something hiccuped on our end. Give it another try, or text Sierra & Sean at (262) 384-5079 and we'll take care of it.");
+      });
+    });
+
+    // Success / cancel states from Stripe redirects.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var status = params.get('status');
+      if (status === 'success') {
+        document.getElementById('successPanel').style.display = 'block';
+        document.getElementById('book').style.display = 'none';
+        try {
+          var saved = JSON.parse(localStorage.getItem('fi_commercial_' + CFG.slug) || 'null');
+          if (saved && saved.pkg) {
+            var line = saved.pkg + (saved.choice === 'deposit'
+              ? ': 50% paid today, balance due at final delivery.'
+              : ': paid in full.');
+            document.getElementById('successSummary').textContent = line;
+          }
+        } catch (e) { /* fine */ }
+        window.scrollTo(0, 0);
+      } else if (status === 'cancelled') {
+        document.getElementById('cancelNote').style.display = 'block';
+      }
+    })();
+
+    selectPackage(state.pkg, false);
+  </script>
+</body>
+</html>
