@@ -89,7 +89,7 @@ if (leftovers) {
   console.error('Unreplaced placeholders:', leftovers.join(', '));
   process.exit(1);
 }
-if (/[–—]/.test(html)) {
+if (/[\u2013\u2014]/.test(html)) {
   console.error('Banned dash character (U+2013 or U+2014) found in output. Fix the config.');
   process.exit(1);
 }
