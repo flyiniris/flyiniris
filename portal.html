@@ -952,6 +952,20 @@
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
 
+    // Stripe checkout sends couples back here after paying: the portal's own
+    // checkout flow returns with ?paid=1, the legacy flows with
+    // ?status=success. The payment webhook can lag the redirect by a few
+    // seconds, so without this banner a fresh payer can see their invoice
+    // still "pending" and worry.
+    if (params.get('status') === 'success' || params.get('paid') === '1') {
+      const banner = document.createElement('div');
+      banner.setAttribute('role', 'status');
+      banner.style.cssText = 'max-width:720px;margin:16px auto 0;padding:14px 18px;border-radius:10px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.45);color:#4ade80;font-size:0.95rem;text-align:center;';
+      banner.textContent = 'Payment received! Thank you. It can take a minute to show as paid below.';
+      const content = document.getElementById('portal-content');
+      if (content) content.insertBefore(banner, content.firstChild);
+    }
+
     if (!token) {
       showError('Missing Link', 'No access token was provided. Please use the link from your email.');
       return;
@@ -1242,7 +1256,7 @@
     // are billed in order and the checkout endpoint always charges the
     // earliest unpaid invoice, so later invoices show "Upcoming" with no
     // button. Invoices arrive from the API ordered by due_date ascending.
-    const firstUnpaid = invoices.find((i) => i.status !== 'paid');
+    const firstUnpaid = invoices.find((i) => i.status !== 'paid' && i.status !== 'cancelled');
     const firstUnpaidId = firstUnpaid ? firstUnpaid.id : null;
 
     for (const inv of invoices) {

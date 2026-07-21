@@ -61,13 +61,17 @@
 # rule keeps legacy email links alive. Query string (?token=...) is preserved
 # by Cloudflare Pages since the destination has no ? clause.
 /contract.html             https://agreement.flyiniris.com/agreement  301
-/payment                   https://agreement.flyiniris.com/agreement  301
-/payment/*                 https://agreement.flyiniris.com/agreement  301
+# /payment carries contract tokens in ?token=; the portal is the only page
+# with installment pay buttons, so that is where these must land. From
+# 2026-07-03 to 2026-07-21 these pointed at the agreement viewer, which has
+# no pay button; every payment-reminder email's Pay Now dead-ended there
+# (first and only real hit: Meghan & Drew, 2026-07-21). Query string is
+# preserved by Pages since the destination has no ? clause.
+/payment                   /portal  301
+/payment/*                 /portal  301
 # payment.html deleted 2026-07-03: it was a stale client-side bridge to the
-# workers.dev payment page, so /payment.html and /payment disagreed on the
-# destination. Same literal-.html pattern as /contract.html above; the
-# agreement subdomain is canonical.
-/payment.html              https://agreement.flyiniris.com/agreement  301
+# workers.dev payment page. Same literal-.html pattern as /contract.html.
+/payment.html              /portal  301
 
 # Stale duplicate of the canonical delivery page (old root copy deleted 2026-06-10)
 /amanda-boris              /films/amanda-boris/  301

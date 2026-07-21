@@ -667,11 +667,17 @@
 
     list.innerHTML = '';
     for (const p of schedule) {
-      const isPaid = p.due_date <= todayIso && (
-        DATA.agreement_state === 'completed' ||
-        (DATA.agreement_state === 'fully-executed' && p.due_date === schedule[0].due_date) ||
-        (DATA.agreement_state === 'in-flight' && p.due_date <= todayIso)
-      );
+      // Prefer the real invoice status from the API (present whenever the
+      // schedule comes from stored invoice rows). The date heuristic below is
+      // only a fallback for legacy payloads without status: on its own it
+      // marked past-due UNPAID installments as Paid (2026-07-21).
+      const isPaid = p.status
+        ? p.status === 'paid'
+        : p.due_date <= todayIso && (
+            DATA.agreement_state === 'completed' ||
+            (DATA.agreement_state === 'fully-executed' && p.due_date === schedule[0].due_date) ||
+            (DATA.agreement_state === 'in-flight' && p.due_date <= todayIso)
+          );
       const row = document.createElement('div');
       row.className = 'schedule-row ' + (isPaid ? 'paid' : 'pending');
       row.innerHTML =
