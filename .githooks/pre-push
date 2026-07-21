@@ -60,7 +60,7 @@ check_contains() { # file, needle, label
   fi
 }
 # CSP must allow the analytics endpoints (bare apex, not just the wildcard)
-check_contains "_headers" "https://analytics.google.com "        "bare analytics.google.com in CSP"
+check_contains "_headers" " analytics.google.com "               "bare analytics.google.com in CSP"
 check_contains "_headers" "static.cloudflareinsights.com"        "Cloudflare beacon origin in CSP"
 check_contains "_headers" "www.googletagmanager.com"             "googletagmanager origin in CSP"
 check_contains "_headers" "connect.facebook.net"                 "Meta pixel origin in CSP"
