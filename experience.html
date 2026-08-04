@@ -1843,11 +1843,16 @@
       }
 
       // Closing CTA: prefill from session so the booking widget lands with
-      // first name, last name, email, and phone already filled. When the call
-      // is already booked, swap the pitch for we-will-see-you-there copy.
-      if (d.callBooked) {
-        var closingSub = document.querySelector('.closing-cta-subtext');
-        if (closingSub) closingSub.textContent = "You're already on our calendar! Bring this package and every question you have to your call, we'll walk through it all together.";
+      // first name, last name, email, and phone already filled. State ladder
+      // mirrors the calculator CTA (2026-08-03).
+      var closingState = d.ctaState || (d.callBooked ? 'call_upcoming' : 'book');
+      var closingSub = document.querySelector('.closing-cta-subtext');
+      if (closingState === 'call_upcoming' && closingSub) {
+        closingSub.textContent = "You're already on our calendar! Bring this package and every question you have to your call, we'll walk through it all together.";
+      } else if (closingState === 'proposal_out' && closingSub && d.agreementUrl) {
+        closingSub.innerHTML = '<a id="cta-closing" href="' + escHtml(d.agreementUrl) + '" target="_blank" rel="noopener">Your proposal is ready</a>, review it whenever you two are ready. Questions? Just reply to any of our emails or texts.';
+      } else if (closingState === 'booked' && closingSub) {
+        closingSub.textContent = "You're booked with us and we could not be more excited. See you on the big day!";
       } else {
         document.getElementById('cta-closing').href = buildBookingUrl();
       }
@@ -2271,11 +2276,20 @@
 
       h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatMoney(calc.totalWithTax) + '</span></div>';
 
-      if (sessionData && sessionData.callBooked) {
-        // Call already booked: never pitch booking again. Soft, non-final
-        // framing plus Save as the primary action (2026-08-03).
+      // CTA ladder (2026-08-03): 'book' pitches the call, 'call_upcoming' goes
+      // soft, 'proposal_out' points at the live agreement, 'booked' sells
+      // nothing. Falls back to the callBooked boolean for cached responses.
+      var ctaState = (sessionData && (sessionData.ctaState || (sessionData.callBooked ? 'call_upcoming' : 'book'))) || 'book';
+      if (ctaState === 'call_upcoming') {
         h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9rem;color:var(--text-secondary);text-align:center;margin-top:18px;line-height:1.6;">Love where this landed? Save it below and we\'ll talk it all through together on your call. Nothing here is locked in, it\'s just a starting point for our conversation.</div>';
         h += '<button class="price-cta save-package-btn" id="save-package-btn" style="border:none;cursor:pointer;">Save My Package</button>';
+      } else if (ctaState === 'proposal_out' && sessionData.agreementUrl) {
+        h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9rem;color:var(--text-secondary);text-align:center;margin-top:18px;line-height:1.6;">Your custom proposal is already waiting for you. Any questions at all, just reply to any of our emails or texts.</div>';
+        h += '<a href="' + escHtml(sessionData.agreementUrl) + '" target="_blank" rel="noopener" class="price-cta">Review Your Proposal</a>';
+        h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
+      } else if (ctaState === 'booked') {
+        h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9rem;color:var(--text-secondary);text-align:center;margin-top:18px;line-height:1.6;">You\'re officially on our calendar, so this page is just for dreaming now. Want to add something to your package? Just reply to any of our emails or texts.</div>';
+        h += '<button class="save-package-btn" id="save-package-btn" style="display:none;">Save My Package</button>';
       } else {
         h += '<a href="' + buildBookingUrl() + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
         h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
