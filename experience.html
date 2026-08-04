@@ -1843,8 +1843,14 @@
       }
 
       // Closing CTA: prefill from session so the booking widget lands with
-      // first name, last name, email, and phone already filled.
-      document.getElementById('cta-closing').href = buildBookingUrl();
+      // first name, last name, email, and phone already filled. When the call
+      // is already booked, swap the pitch for we-will-see-you-there copy.
+      if (d.callBooked) {
+        var closingSub = document.querySelector('.closing-cta-subtext');
+        if (closingSub) closingSub.textContent = "You're already on our calendar! Bring this package and every question you have to your call, we'll walk through it all together.";
+      } else {
+        document.getElementById('cta-closing').href = buildBookingUrl();
+      }
 
       // Act 7: Share
       if (d.partnerName) {
@@ -2265,8 +2271,15 @@
 
       h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatMoney(calc.totalWithTax) + '</span></div>';
 
-      h += '<a href="' + buildBookingUrl() + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
-      h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
+      if (sessionData && sessionData.callBooked) {
+        // Call already booked: never pitch booking again. Soft, non-final
+        // framing plus Save as the primary action (2026-08-03).
+        h += '<div style="font-family:\'Outfit\',sans-serif;font-weight:300;font-size:0.9rem;color:var(--text-secondary);text-align:center;margin-top:18px;line-height:1.6;">Love where this landed? Save it below and we\'ll talk it all through together on your call. Nothing here is locked in, it\'s just a starting point for our conversation.</div>';
+        h += '<button class="price-cta save-package-btn" id="save-package-btn" style="border:none;cursor:pointer;">Save My Package</button>';
+      } else {
+        h += '<a href="' + buildBookingUrl() + '" target="_blank" rel="noopener" class="price-cta">Book a Discovery Call</a>';
+        h += '<button class="save-package-btn" id="save-package-btn">Save My Package</button>';
+      }
 
       // Availability reminder
       if (sessionData && sessionData.availabilityMessage) {
