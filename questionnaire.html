@@ -2503,24 +2503,46 @@
       };
     }
 
+    // Read the body even on a non-2xx: the analyzer returns an actionable
+    // reason (link pasted instead of contents, no times found) and showing the
+    // generic fallback instead would throw that away.
     fetch(url, fetchOpts).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
+      return r.json().catch(function () { return null; }).then(function (body) {
+        if (!r.ok) {
+          var e = new Error('HTTP ' + r.status);
+          e.serverMessage = body && body.error ? body.error : '';
+          throw e;
+        }
+        return body;
+      });
     }).then(function (resp) {
       analyzeBtn.disabled = false;
       applyAnalyzerResult(resp);
     }).catch(function (err) {
       analyzeBtn.disabled = false;
-      showStatus('error',
-        "Couldn't read that timeline. Try a different file or paste the text instead. (We'll fall back to manual fill if this isn't working.) " +
-        '<button type="button" class="btn-text" id="btn-retry">Try again</button> ' +
-        '<button type="button" class="btn-text" id="btn-skip">Skip and fill manually</button>'
-      );
-      var retry = document.getElementById('btn-retry');
-      var skip = document.getElementById('btn-skip');
-      if (retry) retry.addEventListener('click', function () { clearStatus(); });
-      if (skip) skip.addEventListener('click', function () { clearStatus(); goToStep(1); });
+      showAnalyzerError(err && err.serverMessage);
     });
+  }
+
+  // One error surface for every analyzer failure. Always offers a way forward
+  // so nobody is stuck staring at a box that will not accept their timeline.
+  function showAnalyzerError(serverMessage) {
+    var lead = serverMessage
+      ? escapeForStatus(serverMessage)
+      : "Couldn't read that timeline. Try a different file or paste the text instead.";
+    showStatus('error',
+      lead + " (We'll fall back to manual fill if this isn't working.) " +
+      '<button type="button" class="btn-text" id="btn-retry">Try again</button> ' +
+      '<button type="button" class="btn-text" id="btn-skip">Skip and fill manually</button>'
+    );
+    var retry = document.getElementById('btn-retry');
+    var skip = document.getElementById('btn-skip');
+    if (retry) retry.addEventListener('click', function () { clearStatus(); });
+    if (skip) skip.addEventListener('click', function () { clearStatus(); goToStep(1); });
+  }
+
+  function escapeForStatus(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function applyAnalyzerResult(resp) {
@@ -2542,6 +2564,17 @@
       applyStateToField(name);
       filledCount++;
     });
+
+    // Zero filled fields is a failure wearing a success costume. The analyzer
+    // now returns 422 in this case so we normally never get here, but a stale
+    // cached worker or a future response shape must not be able to show a
+    // green "0 auto-filled fields" box again, or mark the timeline provided.
+    if (filledCount === 0) {
+      sendBeacon('timeline_analyzed', { fields_count: 0, low_confidence_count: lowConf.length });
+      showAnalyzerError('We read that but could not find any wedding-day times in it. '
+        + 'Check that you sent the timeline itself, then try again or fill Section 2 in by hand. Either works.');
+      return;
+    }
 
     timelineProvided = true;
     saveLocal();
