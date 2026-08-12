@@ -1337,7 +1337,7 @@
 
   <script>
   (function() {
-    var PRICING_VERSION = '2026-04-26';
+    var PRICING_VERSION = '2026-05-21';
     var SUBMIT_ENDPOINT = 'https://api.flyiniris.com/api/yours/taylor-neil/submit';
     var SLUG = 'taylor-neil';
     // Per-couple page token. The Worker requires it on /submit and /viewed so
@@ -1436,8 +1436,12 @@
       if (highlightCost > 0) qualifyingCount++;
       if (hasTeaser) qualifyingCount++;
       if (hasStory) qualifyingCount++;
-      if (hasFomo) qualifyingCount++;
       if (extraHours >= 3) qualifyingCount++;
+      // FOMO is deliberately NOT counted. The engine excludes it because the
+      // bundle rewards stacking optional PAID add-ons and FOMO is baked into
+      // every package. Counting it here overstated the discount versus what
+      // the server actually returns. See buildLineItems in iris-automation
+      // src/pricing.ts.
 
       var rawTotal = tier.base + hoursCost + highlightCost + teaserCost + storyCost;
       var discountRate = getBundleDiscount(qualifyingCount);
