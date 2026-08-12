@@ -1091,6 +1091,19 @@
       object-fit: cover;
     }
 
+    /* Story Session example sits in the add-on detail block, which was built
+       for a Vimeo iframe. Same box, HLS player instead. */
+    .addon-video-frame video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
     /* Secondary "skip the call" path under the primary book-a-call CTA. */
     .alt-path {
       margin-top: 34px;
@@ -1457,6 +1470,15 @@
         <p class="addon-detail-body">Think of it like a photo engagement session, but for video. We meet up at a spot that means something to you both. You wear the kind of clothes you actually live in. We capture you walking around together, get a little interview on camera, and chase the sunset for some portraits.</p>
         <p class="addon-detail-body">Sierra weaves all of those moments through your wedding film. It turns the day from a beautiful highlight reel into a full love story. People say their Story Session ends up being their favorite part of the final film.</p>
         <p class="addon-detail-body"><strong>Why couples love it:</strong> It also gets you both used to being on camera, so by your wedding day you forget we are even there. About 90 minutes total. Weekdays preferred. A small travel fee may apply if it is far from Milwaukee.</p>
+
+        <div class="addon-video-slot">
+          <div class="addon-video-frame">
+            <video class="fi-player" controls playsinline preload="none"
+                   data-src="https://video.flyiniris.com/couples/taylor-kane/hls/story/master.m3u8"
+                   poster="https://video.flyiniris.com/couples/taylor-kane/thumbs/story.jpg"></video>
+          </div>
+          <p class="addon-video-caption">Taylor &amp; Kane's Story Session, the same couple whose teaser and full film are up top. Watch it and then watch their wedding film again, and you'll spot where these moments got woven in.</p>
+        </div>
       </div>
     </div>
 
