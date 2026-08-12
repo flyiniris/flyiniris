@@ -252,10 +252,61 @@
     .tier-tabs {
       display: flex;
       gap: 0;
-      margin-bottom: 32px;
+      margin-bottom: 14px;
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--border);
+    }
+
+    /* Tier explainer. Same zero-JS <details> idiom as the homepage FAQ. */
+    .tier-explainer {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background-color: var(--bg-card);
+      margin-bottom: 32px;
+    }
+
+    .tier-explainer summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 15px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .tier-explainer summary::-webkit-details-marker { display: none; }
+
+    .tier-explainer summary::after {
+      content: '+';
+      float: right;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .tier-explainer[open] summary::after { content: '\2212'; }
+    .tier-explainer summary:hover { color: var(--accent); }
+
+    .tier-explainer-body {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .tier-explainer-body p {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .tier-explainer-body p:last-child { margin-bottom: 0; }
+    .tier-explainer-body strong { color: var(--text-primary); font-weight: 500; }
+
+    .tier-explainer-note {
+      color: var(--text-muted) !important;
+      font-size: 0.82rem !important;
     }
 
     .tier-tab {
@@ -784,6 +835,21 @@
         <span class="tier-tab-desc">Sierra &amp; Sean, both there</span>
       </button>
     </div>
+
+    <!-- Tier explainer. Closed by default so it never gets in the way of the
+         builder, but it is the ONLY explanation of the difference on mobile:
+         .tier-tab-desc is display:none under 500px. Uses the same zero-JS
+         <details> pattern as the homepage FAQ. -->
+    <details class="tier-explainer">
+      <summary>What's the difference, actually?</summary>
+      <div class="tier-explainer-body">
+        <p>Every wedding we film gets the same foundation: at least three cameras, drone coverage, audio captured all day, and Sierra editing your final film. That part never changes.</p>
+        <p><strong>One videographer.</strong> One of our team films your day on a three camera setup. They're trained in our style and bring their own eye to it, which we love. Everything essential gets captured.</p>
+        <p><strong>Two videographers.</strong> Two cameras are moving instead of one. Our extra cameras sit locked on tripods, which is perfect right up until your dad grabs the mic and walks across the room, or a guest stands up in front of one. A second videographer follows the moment instead of hoping it stays put. It also means we can be in two places at once while you're both getting ready, and there's time to chase the creative shots. More angles that actually worked means more for Sierra to cut between, and that's what gives a film its depth and its energy.</p>
+        <p><strong>The S&amp;S Experience.</strong> Both of us, filming your day personally. Sierra edits every film we make, so when she's in the room she isn't assembling your day from footage weeks later. She heard the vows. She felt how the night went. That ends up in the edit. We also bring a lot of energy, pumping up you and your guests all day, and a lot of what ends up on screen is energy we helped create in the first place.</p>
+        <p class="tier-explainer-note">If we're already booked on your date, two of our team videographers gets you the same coverage at the same price.</p>
+      </div>
+    </details>
 
     <!-- What's Included -->
     <div class="base-card">
