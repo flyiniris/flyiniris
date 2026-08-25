@@ -111,10 +111,13 @@ Write-Host "Verifying uploads..." -ForegroundColor Yellow
 $verifyFailed = $false
 
 Write-Host "  Checking HLS..."
+$oldEap = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 & rclone check "$OutputDir" "$baseRemote/hls/" --exclude "thumbs/**" 2>&1 | ForEach-Object {
     if ($_ -match "ERROR") { $verifyFailed = $true }
     Write-Host "    $_"
 }
+$ErrorActionPreference = $oldEap
 
 Write-Host "  Checking originals..."
 & rclone check "$OriginalDir" "$baseRemote/originals/" 2>&1 | ForEach-Object {

@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matt & Haley | Flyin' Iris</title>
+  <meta name="description" content="Watch Matt & Haley's wedding films, streamed in cinematic quality by Flyin' Iris.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Matt & Haley | Flyin' Iris">
+  <meta property="og:description" content="Watch Matt & Haley's wedding films, March 20, 2026">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.flyiniris.com/films/matt-haley/">
+  <meta property="og:image" content="https://video.flyiniris.com/couples/matt-haley/thumbs/teaser.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <!-- favicon-32 is 1.2KB; /favicon.png is 631KB and stays reserved for
+       the PWA manifest icon which needs the large size. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Cast SDK (for Chromecast support). async: the sender library
+       is built for async load (it announces readiness via the
+       __onGCastApiAvailable callback that Vidstack's cast support listens
+       for), and loading it synchronously blocked first paint. -->
+  <script async src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+
+  <!-- Vidstack Player -->
+  <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css@1.15.5" />
+  <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css@1.15.5" />
+  <script type="module" src="https://cdn.vidstack.io/player@1.15.5"></script>
+
+  <style>
+    /* ========== Reset & Base ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0A0A0A;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ========== Film Grain Overlay ========== */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-5px, 5px); }
+      50% { transform: translate(5px, -5px); }
+      75% { transform: translate(-5px, -5px); }
+    }
+
+    /* ========== Typography ========== */
+    h1, h2, h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== Container ========== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== Navbar ========== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      transition: background 0.25s ease, padding 0.25s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 32px;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #F5F0EB;
+    }
+    .nav-couple {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .navbar.scrolled .nav-couple { opacity: 1; }
+    .nav-date {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
+      letter-spacing: 0.05em;
+    }
+
+    /* ========== Hero ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+    .hero-names {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+    .hero-date {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      color: #C8C3B9;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .hero-cta {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #F5F0EB;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+    .hero-cta:hover {
+      background: #FFBD1D;
+      color: #0A0A0A;
+      transform: translateY(-2px);
+    }
+    .hero-cta:active { transform: translateY(0); background: #D99E0A; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.4;
+      animation: float 2s ease-in-out infinite;
+    }
+    .hero-scroll-hint svg { width: 24px; height: 24px; stroke: #C8C3B9; }
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ========== Section Shared ========== */
+    .section {
+      padding: 100px 0;
+    }
+    .section-label {
+      display: block;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #FFBD1D;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    /* ========== Hero Row ========== */
+    .hero-row {
+      background: #111110;
+    }
+    .hero-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+    .hero-card {
+      position: relative;
+    }
+    .hero-player-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2A2A28;
+      position: relative;
+      /* Lock the wrap shape so it does not inherit the un-upgraded
+         media-player's intrinsic poster dimensions before first play.
+         Without this, hero cards whose thumbnail JPG is taller than 16:9
+         (e.g. R+M Highlights) render the overlay at thumbnail height,
+         then snap to 16:9 the moment Vidstack attaches and starts
+         playing. Container-level only; no !important and no
+         aspect-ratio on media-player itself, per the v14 + v17 lesson
+         (commits 3145385 + fdfe646 broke playback by hardening the
+         player element directly; rolled back in 97bd3c5). */
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .hero-card:hover .hero-player-wrap,
+    .hero-card:focus-within .hero-player-wrap {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .hero-player-wrap media-player {
+      /* Vidstack's actual brand variables use the --vds-* prefix per the
+         theme.css source. --media-brand was a phantom (no effect). Set both
+         names so the page works regardless of which Vidstack version the CDN
+         bundle is serving. */
+      --vds-primary: #FFBD1D;
+      --vds-primary-hover: #D99E0A;
+      --vds-contrast: #F5F0EB;
+      --media-brand: #FFBD1D;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
+       treatment Featured era (commit 7621991) and re-styled to match the
+       landing page's .video-play-btn (index.html line 647): a 70px gold-
+       bordered circle with a centered play-triangle SVG, visible by
+       default over the poster thumbnail. Click fades the overlay and
+       starts Vidstack playback. After play, the overlay stays hidden
+       (pointer-events: none) so Vidstack's own controls bar becomes
+       interactive without interception. */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A19;
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+    .hero-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .hero-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+    .hero-overlay:hover .hero-play-btn {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .hero-play-btn svg {
+      width: 28px;
+      height: 28px;
+      margin-left: 3px;
+      fill: #FFBD1D;
+    }
+    .hero-info {
+      text-align: center;
+      padding: 20px 0 0;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.6rem;
+    }
+    .hero-duration {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: #C8C3B9;
+    }
+
+    /* Brand-align Vidstack player UI typography (title, button text, etc.).
+       SVG icons are unaffected by font changes. */
+    media-player {
+      font-family: 'Outfit', sans-serif;
+      color: #F5F0EB;
+    }
+
+    /* ========== Archival Collection ========== */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .film-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .film-card:hover {
+      transform: scale(1.03);
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .film-card-thumb {
+      aspect-ratio: 16/9;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A19;
+      position: relative;
+    }
+    .film-card-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+    }
+    .film-card-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      background: rgba(10, 10, 10, 0.3);
+    }
+    .film-card:hover .film-card-play,
+    .film-card:focus-visible .film-card-play { opacity: 1; }
+    @media (hover: none) {
+      .film-card-play { opacity: 0.7; }
+    }
+    .film-card-play svg {
+      width: 48px;
+      height: 48px;
+      fill: #FFBD1D;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+    .film-card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.7rem;
+      background: rgba(10, 10, 10, 0.75);
+      backdrop-filter: blur(4px);
+      color: #F5F0EB;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .film-card-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255, 189, 29, 0.15);
+      color: #FFBD1D;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .film-card-body {
+      padding: 16px;
+    }
+    .film-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    /* ========== Playlist Card ========== */
+    .playlist-card {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 28px 32px;
+      background: linear-gradient(135deg, #161615 0%, #1A1A19 100%);
+      border: 1px solid rgba(255, 189, 29, 0.25);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .playlist-card:hover {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.12);
+      transform: translateY(-2px);
+    }
+    .playlist-card-icon {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 189, 29, 0.1);
+      border: 1px solid rgba(255, 189, 29, 0.2);
+    }
+    .playlist-card-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #FFBD1D;
+    }
+    .playlist-card-info {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+    }
+    .playlist-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .playlist-card-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: #C8C3B9;
+    }
+    .playlist-card-arrow {
+      flex-shrink: 0;
+      color: #FFBD1D;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .playlist-card:hover .playlist-card-arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+    .playlist-card-arrow svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ========== Video Modal ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #C8C3B9;
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.25s ease;
+    }
+    .modal-close:hover { color: #FFBD1D; }
+    .modal-close svg { width: 28px; height: 28px; }
+    .modal-player-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2A2A28;
+    }
+    .modal-player-wrap.has-playlist {
+      border-radius: 8px 8px 0 0;
+      border-bottom: none;
+    }
+    .modal-player-wrap media-player {
+      --vds-primary: #FFBD1D;
+      --vds-primary-hover: #D99E0A;
+      --vds-contrast: #F5F0EB;
+      --media-brand: #FFBD1D;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-top: 16px;
+    }
+
+    /* ========== Playlist Bar (in modal) ========== */
+    .playlist-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      gap: 12px;
+    }
+    .playlist-bar.visible {
+      display: flex;
+    }
+    .playlist-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .playlist-bar-progress {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: #FFBD1D;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+    }
+    .playlist-bar-current {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #F5F0EB;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .playlist-bar-next {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: #C8C3B9;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ========== Download Section ========== */
+    .download-gate {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .download-gate p {
+      color: #C8C3B9;
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+    .download-form {
+      display: flex;
+      gap: 12px;
+    }
+    .download-input {
+      flex: 1;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9rem;
+      padding: 14px 18px;
+      background: #111110;
+      border: 1px solid #2A2A28;
+      border-radius: 8px;
+      color: #F5F0EB;
+      outline: none;
+      transition: border-color 0.25s ease;
+    }
+    .download-input:focus { border-color: #FFBD1D; }
+    .download-input::placeholder { color: rgba(200, 195, 185, 0.4); }
+    .download-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      color: #F5F0EB;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+      white-space: nowrap;
+    }
+    .download-btn:hover { background: #FFBD1D; color: #0A0A0A; }
+    .download-btn:active { background: #D99E0A; }
+    .download-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: #3A3A38;
+    }
+    .download-btn:disabled:hover { background: transparent; color: #F5F0EB; }
+    .download-error {
+      color: #E74C3C;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+    }
+    .download-error.visible { display: block; }
+
+    /* Download links (shown after auth) */
+    .download-links {
+      display: none;
+    }
+    .download-links.visible { display: block; }
+    .download-all-wrap {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .download-all-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 16px 48px;
+      background: transparent;
+      border: 1px solid #FFBD1D;
+      border-radius: 8px;
+      color: #F5F0EB;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .download-all-btn:hover { background: #FFBD1D; color: #0A0A0A; }
+    .download-all-btn:active { background: #D99E0A; }
+    .download-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .download-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #161615;
+      border: 1px solid #2A2A28;
+      border-radius: 8px;
+      transition: border-color 0.25s ease;
+    }
+    .download-item:hover { border-color: #3A3A38; }
+    .download-item-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .download-item-title {
+      font-weight: 400;
+      font-size: 0.95rem;
+    }
+    .download-item-duration {
+      font-size: 0.8rem;
+      color: rgba(200, 195, 185, 0.5);
+    }
+    .download-item-btn {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid #2A2A28;
+      border-radius: 6px;
+      color: #C8C3B9;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    .download-item-btn:hover { border-color: #FFBD1D; color: #FFBD1D; }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      border-top: 1px solid #2A2A28;
+      padding: 60px 0;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .footer-socials a {
+      color: #C8C3B9;
+      transition: color 0.25s ease;
+    }
+    .footer-socials a:hover { color: #FFBD1D; }
+    .footer-socials svg { width: 20px; height: 20px; }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(200, 195, 185, 0.5);
+    }
+
+    /* ========== TV / Remote-Friendly ========== */
+    .film-card:focus-visible,
+    .playlist-card:focus-visible,
+    .hero-cta:focus-visible,
+    .download-btn:focus-visible,
+    .download-all-btn:focus-visible,
+    .download-item-btn:focus-visible,
+    .modal-close:focus-visible {
+      outline: 2px solid #FFBD1D;
+      outline-offset: 2px;
+    }
+    .film-card:focus-visible {
+      border-color: #FFBD1D;
+      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+    }
+    .film-card { min-height: 48px; }
+    .playlist-card { min-height: 48px; }
+    .hero-cta,
+    .download-btn,
+    .download-all-btn,
+    .download-item-btn,
+    .modal-close { min-height: 48px; min-width: 48px; }
+    .film-card { -webkit-tap-highlight-color: transparent; }
+    .playlist-card { -webkit-tap-highlight-color: transparent; }
+
+    /* ========== Scroll Reveal ========== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== Empty State (films pending) ========== */
+    .films-pending {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .films-pending-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: #F5F0EB;
+      margin-bottom: 12px;
+    }
+    .films-pending-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: #C8C3B9;
+    }
+
+    /* ========== Responsive ========== */
+    @media (min-width: 640px) {
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .download-list { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1024px) {
+      .collection-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 16px 20px; }
+      .navbar.scrolled { padding: 12px 20px; }
+      .nav-couple { display: none; }
+      .nav-date { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-cta { padding: 14px 32px; font-size: 0.8rem; }
+      .section { padding: 72px 0; }
+      .hero-stack { gap: 32px; }
+      .hero-title { font-size: 1.3rem; }
+      .modal-content { max-width: 100%; }
+      .modal-close { top: -40px; }
+      .download-form { flex-direction: column; }
+      .playlist-card { padding: 20px 20px; gap: 16px; }
+      .playlist-card-icon { width: 44px; height: 44px; }
+      .playlist-card-icon svg { width: 20px; height: 20px; }
+      .playlist-bar { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== Navbar ========== -->
+  <nav class="navbar" id="navbar">
+    <span class="nav-logo">Flyin' Iris</span>
+    <span class="nav-couple">Matt & Haley</span>
+    <span class="nav-date">03.20.2026</span>
+  </nav>
+
+  <!-- ========== Hero ========== -->
+  <section class="hero" id="hero">
+    <h1 class="hero-names">Matt & Haley</h1>
+    <p class="hero-date">March 20, 2026</p>
+    <button class="hero-cta" id="hero-cta">Watch the Films</button>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Hero Row ========== -->
+  <section class="section hero-row" id="hero-row">
+    <div class="container reveal">
+      <p class="section-label">Your Films</p>
+      <div class="hero-stack" id="hero-stack">
+        <!-- One inline player + title row per hero entry, injected by JS.
+             Hidden entirely if HERO is empty. -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Archival Collection ========== -->
+  <section class="section" id="collection">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">The Collection</p>
+        <h2 class="section-title">All Your Films</h2>
+      </div>
+      <div class="collection-grid" id="collection-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Download Section ========== -->
+  <section class="section" id="downloads">
+    <div class="container reveal">
+      <p class="section-label">Downloads</p>
+      <h2 class="section-title">Download Your Films</h2>
+
+      <!-- Password Gate -->
+      <div class="download-gate" id="download-gate">
+        <p>Enter your password to access full-resolution downloads.</p>
+        <div class="download-form" id="download-form">
+          <input type="password" class="download-input" id="download-password" placeholder="Enter password" autocomplete="off">
+          <button class="download-btn" id="download-submit">Unlock</button>
+        </div>
+        <p class="download-error" id="download-error">Incorrect password. Please try again.</p>
+      </div>
+
+      <!-- Download Links (hidden until auth) -->
+      <div class="download-links" id="download-links">
+        <div class="download-all-wrap">
+          <button class="download-all-btn" id="download-all-btn">Download All Films</button>
+        </div>
+        <div class="download-list" id="download-list">
+          <!-- Items injected by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Footer ========== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-logo">Flyin' Iris</p>
+      <div class="footer-socials">
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/flyin.iris/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/flyiniris/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@flyiniris" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"></path>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+          </svg>
+        </a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ========== Video Modal ========== -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal-player-wrap" id="modal-player-wrap">
+        <!-- Vidstack player injected by JS -->
+      </div>
+      <div class="playlist-bar" id="playlist-bar">
+        <div class="playlist-bar-left">
+          <span class="playlist-bar-progress" id="playlist-bar-progress"></span>
+          <span class="playlist-bar-current" id="playlist-bar-current"></span>
+        </div>
+        <span class="playlist-bar-next" id="playlist-bar-next"></span>
+      </div>
+      <p class="modal-title" id="modal-title"></p>
+    </div>
+  </div>
+
+  <!-- ========== Scripts ========== -->
+  <script>
+    // --- Data ---
+    // These tokens are baked at generate time but are now only a FALLBACK.
+    // The live source of truth is fetched at load time from the delivery
+    // config API (see bootstrapDelivery below). For batch pre-generated
+    // shells the baked values are the empty defaults ([] / '' ); once a
+    // couple's video is attached in Studio, the load-time fetch fills these.
+    // They are var (mutable) so bootstrap can overwrite them before render.
+    var VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"2:26","order":0,"hero":true},{"id":"highlight","title":"Matt & Haley's Wedding","category":"highlight","duration":"20:17","order":1,"hero":true}];
+    var PLAYLIST = [];
+    var HERO = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"2:26","order":0,"hero":true},{"id":"highlight","title":"Matt & Haley's Wedding","category":"highlight","duration":"20:17","order":1,"hero":true}];
+    var CONFIG_API_BASE = 'https://prep.flyiniris.com';
+    var WORKER_BASE = 'https://video.flyiniris.com';
+    var SLUG = 'matt-haley';
+
+    // Hero entries (sorted by order) play as full-width inline players above
+    // the Collection grid. Collection grid excludes them to avoid duplicate
+    // rendering. See delivery-page-standard.md Section 4.5. Recomputed inside
+    // bootstrapDelivery() after the live config resolves.
+    var collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
+
+    function computePlaylistDurationLabel() {
+      var total = 0;
+      for (var i = 0; i < PLAYLIST.length; i++) {
+        var d = PLAYLIST[i].duration;
+        if (!d) return null;
+        var parts = d.split(':').map(Number);
+        var secs;
+        if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
+        else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
+        else return null;
+        if (isNaN(secs)) return null;
+        total += secs;
+      }
+      var hours = Math.floor(total / 3600);
+      var minutes = Math.round((total % 3600) / 60);
+      if (hours > 0) return '~' + hours + ' hr ' + minutes + ' min';
+      return '~' + minutes + ' min';
+    }
+
+    function hlsUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
+    }
+    function thumbUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+    }
+
+    // --- HLS Buffering Config ---
+    var HLS_CONFIG = {
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
+      maxBufferSize: 60000000,
+      maxBufferHole: 0.5,
+      startLevel: -1,
+      capLevelToPlayerSize: true,
+      enableWorker: true
+    };
+
+    function configureHls(playerEl) {
+      playerEl.addEventListener('provider-change', function(e) {
+        var provider = e.detail;
+        if (provider && provider.type === 'hls') {
+          provider.config = HLS_CONFIG;
+        }
+      });
+
+      // Mutual exclusion: when this player starts playing, pause every other
+      // <media-player> on the page. Prevents audio overlap from a couple
+      // accidentally starting hero #2 while hero #1 is still playing, or from
+      // the modal player playing on top of a hero player. Modal-on-hero is
+      // covered automatically because the modal's autoplay fires a play event
+      // which this handler intercepts.
+      playerEl.addEventListener('play', function() {
+        var all = document.querySelectorAll('media-player');
+        for (var i = 0; i < all.length; i++) {
+          if (all[i] !== playerEl) {
+            try { all[i].pause(); } catch (err) { /* not yet attached, ignore */ }
+          }
+        }
+      });
+
+      // Force-hide <media-poster> once playback actually starts. Vidstack's
+      // own auto-hide races on the playlist innerHTML-replace pattern
+      // (loadPlaylistVideo) and on fullscreen transitions, leaving the poster
+      // image rendering on top of the playing video. The CSS-only attempt in
+      // commit fdfe646 was reverted in 97bd3c5 because the bundled
+      // !important + aspect-ratio sizing broke video element rendering.
+      // Hiding via JS sidesteps both the lifecycle race and the sizing trap.
+      function hidePoster() {
+        var poster = playerEl.querySelector('media-poster');
+        if (poster) poster.style.display = 'none';
+      }
+      playerEl.addEventListener('play', hidePoster);
+      playerEl.addEventListener('playing', hidePoster);
+      playerEl.addEventListener('can-play', function() {
+        if (!playerEl.paused) hidePoster();
+      });
+    }
+
+    // --- Player markup helper (shared by hero row, modal, and playlist) ---
+    // Returns the full <media-player> markup. The quality submenu, cast / airplay
+    // buttons, and HLS provider config are identical across all three call sites;
+    // this helper keeps them in lockstep so a single template change applies
+    // everywhere a player is rendered.
+    //
+    // The `load` opt maps to Vidstack's load-strategy attribute:
+    //   - "eager" (default for modal + playlist): provider attaches and pulls
+    //     master.m3u8 on element insert. Right for a player that opens on click
+    //     and immediately autoplays.
+    //   - "visible" (used for hero stack): provider waits until the player
+    //     enters the viewport before pulling source. Prevents 3 simultaneous
+    //     HLS manifest requests on page load when 3 hero players exist, only
+    //     one of which is above the fold on mobile.
+    function createPlayerHtml(opts) {
+      // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
+      var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
+      // <media-poster> MUST be a direct child of <media-player>, NOT nested
+      // inside <media-provider>. Per Vidstack's canonical example
+      // (vidstack.io/docs/wc/player/components/display/poster):
+      //   <media-player>
+      //     <media-provider></media-provider>
+      //     <media-poster src="..."></media-poster>
+      //     <media-video-layout></media-video-layout>
+      //   </media-player>
+      // Earlier template versions had the poster inside media-provider, which
+      // caused Vidstack to silently ignore it and never render the thumbnail.
+      //
+      // Vidstack's default media-video-layout already renders the standard
+      // controls bar including play / seek / volume / captions / settings /
+      // airplay / cast / fullscreen. No custom child elements needed.
+      return (
+        '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
+        (opts.autoplay ? ' autoplay' : '') +
+        loadAttr +
+        ' storage="' + escapeAttr(opts.storage) + '">' +
+        '  <media-provider></media-provider>' +
+        '  <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
+        '  <media-video-layout></media-video-layout>' +
+        '</media-player>'
+      );
+    }
+
+    // --- Hero Row ---
+    // Renders one full-width inline player per HERO entry, stacked vertically.
+    // Section hides entirely when HERO is empty (page degrades to Collection-only).
+    // Called from bootstrapDelivery() after the live config resolves, so it
+    // reads the resolved HERO rather than the baked tokens.
+    function renderHeroRow() {
+      var stack = document.getElementById('hero-stack');
+      var section = document.getElementById('hero-row');
+
+      if (!HERO || HERO.length === 0) {
+        // No hero entries: hide the section entirely. Page renders Navbar -> Hero
+        // (couple names) -> Collection grid -> Downloads -> Footer.
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = '';
+
+      var html = '';
+      for (var i = 0; i < HERO.length; i++) {
+        var h = HERO[i];
+        html +=
+          // No .reveal class. Hero cards are the page's primary content;
+          // applying the scroll-reveal animation made sub-fold heroes
+          // (R+M's third hero, story-session) sit at opacity 0 +
+          // translateY(30px) until 15% of the card scrolled into view,
+          // which read as "wrong size" mid-scroll when the card was
+          // partially through its 0.6s transition. The reveal animation
+          // is still used for the Collection grid and Downloads section
+          // below, which are appropriate sub-fold reveal targets.
+          '<div class="hero-card" data-hero-id="' + escapeAttr(h.id) + '">' +
+          '  <div class="hero-player-wrap">' +
+          createPlayerHtml({
+            title: h.title,
+            src: hlsUrl(h.id),
+            poster: thumbUrl(h.id),
+            autoplay: false,
+            storage: 'fi-hero-' + h.id
+            // Eager load (default). Earlier polish commit 7426460 set
+            // load: 'visible' here to defer HLS provider attach until the
+            // hero card entered the viewport. That caused Vidstack to
+            // render a "click to load" affordance over the poster image
+            // for non-visible heroes, making the thumbnails look broken.
+            // Cost of reverting: each hero pulls its master.m3u8 (~500 bytes)
+            // on page load. With at most 5 hero entries that is under 3KB
+            // of manifest fetches, which is negligible.
+          }) +
+          '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
+          '      <div class="hero-play-btn">' +
+          '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>' +
+          '        </svg>' +
+          '      </div>' +
+          '    </div>' +
+          '  </div>' +
+          '  <div class="hero-info">' +
+          '    <span class="hero-title">' + escapeHtml(h.title) + '</span>' +
+          (h.duration ? '    <span class="hero-duration">' + escapeHtml(h.duration) + '</span>' : '') +
+          '  </div>' +
+          '</div>';
+      }
+      stack.innerHTML = html;
+
+      // Wire overlay click + Enter/Space keyboard activation. Pattern from the
+      // pre-hero-treatment Featured era (commit 7621991): clicking the
+      // thumb-as-overlay hides it and starts Vidstack playback. After hide,
+      // pointer-events: none lets all subsequent clicks reach Vidstack's
+      // controls bar naturally.
+      var overlays = stack.querySelectorAll('.hero-overlay');
+      for (var o = 0; o < overlays.length; o++) {
+        (function(overlay) {
+          var activate = function() {
+            if (overlay.classList.contains('hidden')) return;
+            overlay.classList.add('hidden');
+            var player = overlay.parentElement.querySelector('media-player');
+            if (player && typeof player.play === 'function') {
+              var p = player.play();
+              if (p && typeof p.catch === 'function') p.catch(function() {});
+            }
+          };
+          overlay.addEventListener('click', activate);
+          overlay.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              activate();
+            }
+          });
+        })(overlays[o]);
+      }
+
+      // Wire HLS config on every hero player.
+      var players = stack.querySelectorAll('media-player');
+      for (var p = 0; p < players.length; p++) configureHls(players[p]);
+    }
+
+    // --- Collection Grid ---
+    // Order: Watch the Full Day playlist card FIRST (full-width, eye-catching),
+    // then individual film cards. Putting the playlist promo above the thumbnails
+    // surfaces the "play everything chronologically" experience that couples
+    // would otherwise scroll past. Renders only when 2+ playlist-eligible cuts
+    // exist; below that threshold the playlist card is suppressed and only
+    // film thumbnails render.
+    function renderCollection() {
+      var grid = document.getElementById('collection-grid');
+      var html = '';
+
+      if (PLAYLIST.length >= 2) {
+        var totalLabel = computePlaylistDurationLabel();
+        var subtitle = PLAYLIST.length + ' films in chronological order';
+        if (totalLabel) subtitle += ' &bull; ' + totalLabel;
+        html +=
+          '<div class="playlist-card reveal" id="playlist-card" tabindex="0" role="button" aria-label="Watch the Full Day, plays ' + PLAYLIST.length + ' films in chronological order">' +
+          '  <div class="playlist-card-icon">' +
+          '    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '  </div>' +
+          '  <div class="playlist-card-info">' +
+          '    <p class="playlist-card-title">Watch the Full Day</p>' +
+          '    <p class="playlist-card-subtitle">' + subtitle + '</p>' +
+          '  </div>' +
+          '  <div class="playlist-card-arrow">' +
+          '    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '      <polyline points="9 18 15 12 9 6"></polyline>' +
+          '    </svg>' +
+          '  </div>' +
+          '</div>';
+      }
+
+      for (var i = 0; i < collection.length; i++) {
+        var v = collection[i];
+        html +=
+          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '" tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '">' +
+          // Thumb loads lazily: data-thumb is applied as a background-image
+          // by the IntersectionObserver below, so 1920px thumbnails for
+          // sub-fold cards stop competing with the hero players on load
+          // (audit 2026-06-09, fi-delivery ux low #5).
+          '  <div class="film-card-thumb" data-thumb="' + escapeAttr(thumbUrl(v.id)) + '">' +
+          (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '') +
+          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
+          '    <div class="film-card-play">' +
+          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+          '    </div>' +
+          '  </div>' +
+          '  <div class="film-card-body">' +
+          '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
+          '  </div>' +
+          '</div>';
+      }
+
+      grid.innerHTML = html;
+
+      // Lazy-apply card thumbnails as they approach the viewport. 200px
+      // rootMargin starts the fetch just before the card scrolls in, so
+      // the swap is invisible in practice. No-IO fallback loads eagerly.
+      var thumbs = grid.querySelectorAll('.film-card-thumb[data-thumb]');
+      function applyThumb(el) {
+        el.style.backgroundImage = "url('" + el.getAttribute('data-thumb') + "')";
+        el.removeAttribute('data-thumb');
+      }
+      if ('IntersectionObserver' in window) {
+        var thumbObserver = new IntersectionObserver(function(entries) {
+          for (var t = 0; t < entries.length; t++) {
+            if (entries[t].isIntersecting) {
+              applyThumb(entries[t].target);
+              thumbObserver.unobserve(entries[t].target);
+            }
+          }
+        }, { rootMargin: '200px' });
+        for (var t = 0; t < thumbs.length; t++) thumbObserver.observe(thumbs[t]);
+      } else {
+        for (var t = 0; t < thumbs.length; t++) applyThumb(thumbs[t]);
+      }
+    }
+
+    // --- Empty State ---
+    // Pre-generated shells (no video attached yet) and any config that resolves
+    // to an empty videos array render a single tasteful, on-brand message in the
+    // collection area. Hero and Downloads sections are hidden by bootstrap.
+    function renderEmptyState() {
+      var heroRow = document.getElementById('hero-row');
+      if (heroRow) heroRow.style.display = 'none';
+      var downloads = document.getElementById('downloads');
+      if (downloads) downloads.style.display = 'none';
+      var collectionSection = document.getElementById('collection');
+      if (collectionSection) {
+        var header = collectionSection.querySelector('.reveal');
+        if (header) header.style.display = 'none';
+      }
+      var grid = document.getElementById('collection-grid');
+      if (grid) {
+        grid.innerHTML =
+          '<div class="films-pending">' +
+          '  <p class="films-pending-title">Your films are on the way.</p>' +
+          '  <p class="films-pending-sub">We are putting the finishing touches on your wedding films. Check back soon.</p>' +
+          '</div>';
+      }
+    }
+
+    // --- Modal ---
+    var modalOverlay = document.getElementById('modal-overlay');
+    var modalPlayerWrap = document.getElementById('modal-player-wrap');
+    var modalTitle = document.getElementById('modal-title');
+    var playlistBar = document.getElementById('playlist-bar');
+    var playlistBarProgress = document.getElementById('playlist-bar-progress');
+    var playlistBarCurrent = document.getElementById('playlist-bar-current');
+    var playlistBarNext = document.getElementById('playlist-bar-next');
+
+    var playlistMode = false;
+    var playlistIndex = 0;
+    // Element that had focus before the modal opened. Restored on close so
+    // keyboard / screen reader users return to where they were on the page
+    // (the film card or playlist button they activated).
+    var previousFocus = null;
+
+    function openModal(videoId, title) {
+      playlistMode = false;
+      previousFocus = document.activeElement;
+      playlistBar.classList.remove('visible');
+      modalPlayerWrap.classList.remove('has-playlist');
+
+      modalPlayerWrap.innerHTML = createPlayerHtml({
+        title: title,
+        src: hlsUrl(videoId),
+        poster: thumbUrl(videoId),
+        autoplay: true,
+        storage: 'fi-modal'
+      });
+
+      var player = modalPlayerWrap.querySelector('media-player');
+      if (player) configureHls(player);
+
+      modalTitle.textContent = title;
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // Move focus into the modal so screen readers announce it and
+      // keyboard users can immediately Esc out or Tab through controls.
+      document.getElementById('modal-close').focus();
+    }
+
+    function openPlaylist() {
+      if (PLAYLIST.length === 0) return;
+      previousFocus = document.activeElement;
+      playlistMode = true;
+      playlistIndex = 0;
+      modalPlayerWrap.classList.add('has-playlist');
+      playlistBar.classList.add('visible');
+      loadPlaylistVideo(0);
+      updatePlaylistBar();
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // Same focus handoff as openModal: screen readers announce the
+      // dialog and keyboard users can Esc out immediately.
+      document.getElementById('modal-close').focus();
+    }
+
+    function loadPlaylistVideo(index) {
+      var item = PLAYLIST[index];
+      var newSrc = hlsUrl(item.id);
+      var newPoster = thumbUrl(item.id);
+
+      var player = modalPlayerWrap.querySelector('media-player');
+
+      // Reuse path: same <media-player> element across clip transitions.
+      // Recreating via innerHTML would tear the element out of DOM, which
+      // exits browser fullscreen, and the auto-advance 'ended' event is
+      // not a user gesture so requestFullscreen on a fresh element is
+      // rejected by Chrome / Firefox / Safari. Keeping the element alive
+      // and only swapping src + poster preserves element identity, which
+      // preserves fullscreen across "Watch the Full Day" transitions.
+      if (player && player.__playlistWired) {
+        player.__advanceState.hasAdvanced = false;
+        player.__advanceState.startedAt = Date.now();
+        player.__startResetDone = false;
+        var posterEl = player.querySelector('media-poster');
+        if (posterEl) {
+          posterEl.setAttribute('src', newPoster);
+          posterEl.setAttribute('alt', item.title);
+          // configureHls's hidePoster() set display:none on the prior clip's
+          // play. Clear it so the new clip's poster is visible until that
+          // clip's own play event fires hidePoster again.
+          posterEl.style.display = '';
+        }
+        player.setAttribute('title', item.title);
+        player.setAttribute('src', newSrc);
+        modalTitle.textContent = item.title;
+        return;
+      }
+
+      // First clip of this playlist session: create the player.
+      modalPlayerWrap.innerHTML = createPlayerHtml({
+        title: item.title,
+        src: newSrc,
+        poster: newPoster,
+        autoplay: true,
+        storage: 'fi-playlist'
+      });
+
+      player = modalPlayerWrap.querySelector('media-player');
+      if (player) {
+        configureHls(player);
+
+        // Per-clip mutable state stored on the element. The reuse branch
+        // above resets these fields on each src swap so closures below
+        // (which stay attached for the player's lifetime) see fresh values.
+        player.__playlistWired = true;
+        player.__advanceState = { hasAdvanced: false, lastSeekAt: 0, startedAt: Date.now() };
+        player.__startResetDone = false;
+
+        // Force playlist videos to start at t=0 regardless of any persisted
+        // position from storage="fi-playlist". Storage is good for the
+        // single-card modal (resume) but breaks the sequential playlist
+        // experience when a clip was watched standalone previously.
+        // Listeners stay attached for the player's lifetime; idempotency
+        // per clip comes from the __startResetDone flag, reset above.
+        function resetToStart() {
+          if (player.__startResetDone) return;
+          player.__startResetDone = true;
+          try { player.currentTime = 0; } catch (e) { /* ignore if not yet writable */ }
+        }
+        player.addEventListener('loaded-metadata', resetToStart);
+        player.addEventListener('can-play', resetToStart);
+
+        function advance() {
+          var s = player.__advanceState;
+          if (s.hasAdvanced) return;
+          if (!playlistMode) return;
+          if (playlistIndex >= PLAYLIST.length - 1) return;
+          // Ignore spurious 'ended' / near-end signals during the first 2 sec
+          // of clip init (HLS load races, stale buffers from the prior src).
+          // Real wedding-clip durations are far above 2 sec, so this cannot
+          // block a legitimate advance.
+          if (Date.now() - s.startedAt < 2000) return;
+          s.hasAdvanced = true;
+          playlistIndex++;
+          loadPlaylistVideo(playlistIndex);
+          updatePlaylistBar();
+        }
+
+        // Primary: Vidstack 'ended' event (works on most providers/streams).
+        player.addEventListener('ended', advance);
+
+        // Track seeks so the time-update fallback below does not yank a user
+        // who scrubbed to within 0.4 sec of the end (they want to watch, not advance).
+        player.addEventListener('seeking', function() { player.__advanceState.lastSeekAt = Date.now(); });
+        player.addEventListener('seeked', function() { player.__advanceState.lastSeekAt = Date.now(); });
+
+        // Fallback: HLS streams sometimes do not fire 'ended' (hls.js issue #5000).
+        // Detect natural end via time-update proximity to duration.
+        player.addEventListener('time-update', function(e) {
+          var s = player.__advanceState;
+          if (Date.now() - s.lastSeekAt < 1500) return;
+          var ct, dur;
+          if (e.detail) {
+            ct = e.detail.currentTime;
+            dur = e.detail.duration;
+          }
+          // Backfill ct AND dur independently from player.state. Vidstack's
+          // time-update detail typically includes currentTime but not duration.
+          if (typeof ct !== 'number' && player.state) ct = player.state.currentTime;
+          if (typeof dur !== 'number' && player.state) dur = player.state.duration;
+          if (typeof ct !== 'number' || typeof dur !== 'number' || dur <= 0) return;
+          if (dur - ct < 0.4) advance();
+        });
+      }
+
+      modalTitle.textContent = item.title;
+    }
+
+    function updatePlaylistBar() {
+      playlistBarProgress.textContent = (playlistIndex + 1) + ' of ' + PLAYLIST.length;
+      playlistBarCurrent.textContent = PLAYLIST[playlistIndex].title;
+      if (playlistIndex < PLAYLIST.length - 1) {
+        playlistBarNext.textContent = 'Up Next: ' + PLAYLIST[playlistIndex + 1].title;
+      } else {
+        playlistBarNext.textContent = 'Last in playlist';
+      }
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+      playlistMode = false;
+      // Restore focus to the element that opened the modal so keyboard
+      // and screen reader users land back where they were in the page.
+      if (previousFocus && typeof previousFocus.focus === 'function' && document.contains(previousFocus)) {
+        try { previousFocus.focus(); } catch (e) { /* element may have been replaced */ }
+      }
+      previousFocus = null;
+      // Give transition time to finish before clearing
+      setTimeout(function() {
+        modalPlayerWrap.innerHTML = '';
+        modalPlayerWrap.classList.remove('has-playlist');
+        playlistBar.classList.remove('visible');
+        modalTitle.textContent = '';
+      }, 300);
+    }
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      // Only act on Escape when the modal is actually open. Without this
+      // guard, every Escape press anywhere on the page invoked closeModal
+      // as a no-op, including the document.body.style.overflow reset.
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+    });
+
+    // Card click delegation
+    document.getElementById('collection-grid').addEventListener('click', function(e) {
+      var playlistCard = e.target.closest('#playlist-card');
+      if (playlistCard) {
+        openPlaylist();
+        return;
+      }
+      var card = e.target.closest('.film-card');
+      if (!card) return;
+      openModal(card.dataset.videoId, card.dataset.videoTitle);
+    });
+    // Keyboard activation for playlist card and film cards (TV / remote-friendly)
+    document.getElementById('collection-grid').addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var playlistCard = e.target.closest('#playlist-card');
+      if (playlistCard) {
+        e.preventDefault();
+        openPlaylist();
+        return;
+      }
+      var card = e.target.closest('.film-card');
+      if (card) {
+        e.preventDefault();
+        openModal(card.dataset.videoId, card.dataset.videoTitle);
+      }
+    });
+
+    // --- Navbar Scroll ---
+    (function initNavbar() {
+      var navbar = document.getElementById('navbar');
+      var ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          requestAnimationFrame(function() {
+            if (window.scrollY > 100) {
+              navbar.classList.add('scrolled');
+            } else {
+              navbar.classList.remove('scrolled');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+
+    // --- Hero CTA ---
+    // Scrolls to the hero row when hero entries exist (the new "featured experience"),
+    // else to the Collection grid. The CTA copy "Watch the Teaser" is intentionally
+    // static; copy variability per featured-slot category is tracked as a future
+    // ticket in delivery-page-standard.md Section 11.
+    document.getElementById('hero-cta').addEventListener('click', function() {
+      var heroSection = document.getElementById('hero-row');
+      var heroVisible = heroSection && heroSection.style.display !== 'none';
+      var target = heroVisible ? heroSection : document.getElementById('collection');
+      target.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // --- Scroll Reveal ---
+    // Run from bootstrapDelivery() AFTER hero + collection render, so the
+    // observer sees the dynamically injected .reveal cards (playlist card and
+    // film cards). Running it before render would miss them.
+    function runReveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: show everything
+        for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('revealed');
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            entries[i].target.classList.add('revealed');
+            observer.unobserve(entries[i].target);
+          }
+        }
+      }, { threshold: 0.15 });
+      for (var i = 0; i < reveals.length; i++) observer.observe(reveals[i]);
+    }
+
+    // --- Download list render ---
+    // Module-scope so bootstrapDelivery() can pre-render the (hidden) list and
+    // the auth handler can re-render after unlock.
+    function renderDownloadList() {
+      var downloadList = document.getElementById('download-list');
+      if (!downloadList) return;
+      var html = '';
+      for (var i = 0; i < VIDEOS.length; i++) {
+        var v = VIDEOS[i];
+        html +=
+          '<div class="download-item">' +
+          '  <div class="download-item-info">' +
+          '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
+          (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
+          '  </div>' +
+          '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
+          '</div>';
+      }
+      downloadList.innerHTML = html;
+    }
+
+    // --- Download Auth ---
+    (function initDownloads() {
+      var gate = document.getElementById('download-gate');
+      var linksWrap = document.getElementById('download-links');
+      var passwordInput = document.getElementById('download-password');
+      var submitBtn = document.getElementById('download-submit');
+      var errorMsg = document.getElementById('download-error');
+      var downloadList = document.getElementById('download-list');
+      var authToken = null;
+
+      // Auth submit
+      function submitPassword() {
+        var password = passwordInput.value.trim();
+        if (!password) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '...';
+        errorMsg.classList.remove('visible');
+
+        fetch(WORKER_BASE + '/couples/' + SLUG + '/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password })
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error('auth_failed');
+          return res.json();
+        })
+        .then(function(data) {
+          // Guard against malformed server responses ({}, null, missing
+          // token field). Without this, subsequent download requests would
+          // send 'Authorization: Bearer undefined' and fail with cryptic
+          // 401s instead of surfacing the auth failure here.
+          if (!data || typeof data.token !== 'string' || !data.token) {
+            throw new Error('invalid_auth_response');
+          }
+          authToken = data.token;
+          gate.style.display = 'none';
+          renderDownloadList();
+          linksWrap.classList.add('visible');
+        })
+        .catch(function() {
+          errorMsg.classList.add('visible');
+          passwordInput.value = '';
+          passwordInput.focus();
+        })
+        .finally(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Unlock';
+        });
+      }
+
+      submitBtn.addEventListener('click', submitPassword);
+      passwordInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitPassword();
+      });
+
+      // Individual downloads
+      downloadList.addEventListener('click', function(e) {
+        var btn = e.target.closest('.download-item-btn');
+        if (!btn) return;
+        triggerDownload(btn.dataset.videoId, btn);
+      });
+
+      // Download All (sequential to avoid overwhelming memory). Couples on
+      // mobile or shaky connections need a heads-up that this is a heavy
+      // operation. 4K hero deliverables can be 1+ GB each; a full catalog
+      // is often 5 to 10 GB total. The native confirm() dialog is enough
+      // to catch the "I tapped it by accident" case without adding modal UI.
+      document.getElementById('download-all-btn').addEventListener('click', async function() {
+        var allBtn = this;
+        var btns = downloadList.querySelectorAll('.download-item-btn');
+        var n = btns.length;
+        if (n === 0) return;
+        var ok = window.confirm(
+          'Download all ' + n + ' films?\n\n' +
+          'This may take a while and use significant bandwidth and storage. ' +
+          'Make sure you are on a stable connection and have enough free space on your device.'
+        );
+        if (!ok) return;
+
+        allBtn.disabled = true;
+        allBtn.textContent = 'Downloading...';
+        for (var i = 0; i < btns.length; i++) {
+          await triggerDownload(btns[i].dataset.videoId, btns[i]);
+        }
+        allBtn.disabled = false;
+        allBtn.textContent = 'Download All Films';
+      });
+
+      // The download route is POST-only with a Bearer header (video-serve
+      // Worker), so a plain tokened-URL anchor is not possible yet; the
+      // browser's native download manager would need a GET route accepting
+      // the JWT as a query param. Until that route ships, stream the
+      // response body and show real percent progress instead of an
+      // indeterminate "Downloading..." label, and only reset the password
+      // gate on actual auth failures (401/403). Wifi blips and missing
+      // files were previously mislabeled "Session expired" (audit
+      // 2026-06-09, fi-delivery ux #2).
+      async function triggerDownload(videoId, btn) {
+        var origText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Starting...';
+
+        try {
+          var res = await fetch(WORKER_BASE + '/couples/' + SLUG + '/download/' + videoId, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + authToken }
+          });
+          if (res.status === 401 || res.status === 403) throw new Error('auth');
+          if (!res.ok) throw new Error('failed');
+
+          var blob;
+          var total = parseInt(res.headers.get('Content-Length') || '0', 10);
+          if (res.body && typeof res.body.getReader === 'function') {
+            var reader = res.body.getReader();
+            var chunks = [];
+            var received = 0;
+            for (;;) {
+              var step = await reader.read();
+              if (step.done) break;
+              chunks.push(step.value);
+              received += step.value.length;
+              btn.textContent = total > 0
+                ? 'Downloading ' + Math.min(99, Math.floor(received / total * 100)) + '%'
+                : 'Downloading ' + Math.round(received / 1048576) + ' MB';
+            }
+            blob = new Blob(chunks, { type: 'video/mp4' });
+          } else {
+            // Old browsers without ReadableStream support.
+            blob = await res.blob();
+          }
+
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = videoId + '.mp4';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          // Delayed revoke: revoking synchronously can abort the save on
+          // iOS Safari before the file lands in Downloads.
+          setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
+          btn.textContent = 'Saved';
+          setTimeout(function() { btn.textContent = origText; }, 4000);
+        } catch (e) {
+          if (e && e.message === 'auth') {
+            // Token genuinely expired or invalid: back to the password gate.
+            linksWrap.classList.remove('visible');
+            gate.style.display = '';
+            errorMsg.textContent = 'Session expired. Please re-enter your password.';
+            errorMsg.classList.add('visible');
+            authToken = null;
+            btn.textContent = origText;
+          } else {
+            // Network blip, missing file, or server error: invite a retry
+            // without nuking the session.
+            btn.textContent = 'Try Again';
+          }
+        } finally {
+          btn.disabled = false;
+        }
+      }
+    })();
+
+    // --- Load-time config resolution ---
+    // Delivery pages are batch pre-generated as video-empty shells well ahead
+    // of delivery day. On delivery day Studio writes the couple's video source
+    // to a Worker D1 table; the page must pick it up WITHOUT being regenerated.
+    // resolveConfig() fetches that live source and, when present, overwrites the
+    // baked VIDEOS and DERIVES HERO + PLAYLIST with the same rules the generator
+    // uses. On any failure (network, timeout, non-OK, empty) it silently leaves
+    // the baked fallback in place.
+    function byOrder(a, b) { return a.order - b.order; }
+
+    function deriveFromVideos(videos) {
+      HERO = videos.filter(function(v) { return v.hero === true; }).sort(byOrder);
+      PLAYLIST = videos
+        .filter(function(v) {
+          return (v.category === 'archival' || v.category === 'bonus') && v.playlist !== false;
+        })
+        .sort(byOrder)
+        .map(function(v) { return { id: v.id, title: v.title, duration: v.duration }; });
+    }
+
+    function resolveConfig() {
+      // No API base baked (older generation): rely on the baked data alone.
+      if (!CONFIG_API_BASE) return Promise.resolve();
+      var url = CONFIG_API_BASE + '/api/delivery/' + SLUG + '/videos';
+      var controller = ('AbortController' in window) ? new AbortController() : null;
+      var timer = controller ? setTimeout(function() { controller.abort(); }, 6000) : null;
+      var opts = controller ? { signal: controller.signal } : {};
+      return fetch(url, opts)
+        .then(function(res) {
+          if (timer) clearTimeout(timer);
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function(data) {
+          if (data && Array.isArray(data.videos) && data.videos.length > 0) {
+            VIDEOS = data.videos;
+            deriveFromVideos(VIDEOS);
+          }
+        })
+        .catch(function() {
+          if (timer) clearTimeout(timer);
+          // Fall back to baked data; do not surface an error to the couple.
+        });
+    }
+
+    // Single ordered render pipeline. Hero, then Collection (which injects the
+    // .reveal cards), then the hidden Download list, THEN the reveal observer
+    // so it sees those cards. Empty config short-circuits to the on-brand
+    // "films on the way" state.
+    async function bootstrapDelivery() {
+      await resolveConfig();
+
+      collection = VIDEOS.filter(function(v) { return v.hero !== true; }).sort(byOrder);
+
+      if (!VIDEOS || VIDEOS.length === 0) {
+        renderEmptyState();
+        return;
+      }
+
+      renderHeroRow();
+      renderCollection();
+      renderDownloadList();
+      runReveal();
+    }
+
+    bootstrapDelivery();
+
+    // --- PWA Service Worker ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function() {});
+    }
+
+    // --- Helpers ---
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    function escapeAttr(str) {
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+  </script>
+</body>
+</html>
