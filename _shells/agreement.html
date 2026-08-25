@@ -1719,9 +1719,12 @@
     // Crew statement (Sean 2026-08-05): who films, stated plainly on the
     // agreement itself so no couple can miss it. Derived from the tier string,
     // which fully determines the crew.
-    const crewLine = it.tier === 'S&S Experience'
+    // Use the raw contract tier. itemization.tier is normalized to "Team"
+    // and would label a Team (2 Videographers) package as one videographer.
+    const rawTier = data.tier || it.tier;
+    const crewLine = rawTier === 'S&S Experience'
       ? 'Filmed personally by Sierra & Sean (two videographers)'
-      : it.tier === 'Team (2 Videographers)'
+      : rawTier === 'Team (2 Videographers)'
         ? 'Filmed by two hand-picked Flyin\' Iris team videographers (not Sierra & Sean)'
         : 'Filmed by one hand-picked Flyin\' Iris team videographer (not Sierra & Sean)';
 
