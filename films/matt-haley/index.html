@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css@1.15.5" />
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css@1.15.5" />
   <script type="module" src="https://cdn.vidstack.io/player@1.15.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 
   <style>
     /* ========== Reset & Base ========== */
@@ -249,16 +250,19 @@
       box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
     .hero-player-wrap media-player {
-      /* Vidstack's actual brand variables use the --vds-* prefix per the
-         theme.css source. --media-brand was a phantom (no effect). Set both
-         names so the page works regardless of which Vidstack version the CDN
-         bundle is serving. */
       --vds-primary: #FFBD1D;
       --vds-primary-hover: #D99E0A;
       --vds-contrast: #F5F0EB;
       --media-brand: #FFBD1D;
       width: 100%;
       aspect-ratio: 16/9;
+    }
+    .hero-player-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #1A1A19;
     }
     /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
        treatment Featured era (commit 7621991) and re-styled to match the
@@ -1017,10 +1021,21 @@
     }
 
     function hlsUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8?v=2';
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/1080p/playlist.m3u8';
     }
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+    }
+    function attachHls(video, src) {
+      if (window.Hls && window.Hls.isSupported()) {
+        var hls = new window.Hls({ enableWorker: true, capLevelToPlayerSize: true });
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        return;
+      }
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+      }
     }
 
     // --- HLS Buffering Config ---
@@ -1149,21 +1164,7 @@
           // below, which are appropriate sub-fold reveal targets.
           '<div class="hero-card" data-hero-id="' + escapeAttr(h.id) + '">' +
           '  <div class="hero-player-wrap">' +
-          createPlayerHtml({
-            title: h.title,
-            src: hlsUrl(h.id),
-            poster: thumbUrl(h.id),
-            autoplay: false,
-            storage: 'fi-hero-' + h.id
-            // Eager load (default). Earlier polish commit 7426460 set
-            // load: 'visible' here to defer HLS provider attach until the
-            // hero card entered the viewport. That caused Vidstack to
-            // render a "click to load" affordance over the poster image
-            // for non-visible heroes, making the thumbnails look broken.
-            // Cost of reverting: each hero pulls its master.m3u8 (~500 bytes)
-            // on page load. With at most 5 hero entries that is under 3KB
-            // of manifest fetches, which is negligible.
-          }) +
+          '    <video playsinline controls preload="metadata" poster="' + thumbUrl(h.id) + '" data-hls="' + hlsUrl(h.id) + '"></video>' +
           '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
           '      <div class="hero-play-btn">' +
           '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -1180,6 +1181,11 @@
       }
       stack.innerHTML = html;
 
+      var videos = stack.querySelectorAll('video[data-hls]');
+      for (var v = 0; v < videos.length; v++) {
+        attachHls(videos[v], videos[v].getAttribute('data-hls'));
+      }
+
       // Wire overlay click + Enter/Space keyboard activation. Pattern from the
       // pre-hero-treatment Featured era (commit 7621991): clicking the
       // thumb-as-overlay hides it and starts Vidstack playback. After hide,
@@ -1191,7 +1197,7 @@
           var activate = function() {
             if (overlay.classList.contains('hidden')) return;
             overlay.classList.add('hidden');
-            var player = overlay.parentElement.querySelector('media-player');
+            var player = overlay.parentElement.querySelector('video');
             if (player && typeof player.play === 'function') {
               var p = player.play();
               if (p && typeof p.catch === 'function') p.catch(function() {});
