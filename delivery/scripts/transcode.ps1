@@ -181,10 +181,10 @@ foreach ($mp4 in $mp4Files) {
         $masterPlaylist = @"
 #EXTM3U
 #EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=15000000,RESOLUTION=${srcWidth}x${srcHeight},NAME="4K"
-4k/playlist.m3u8
 #EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080,NAME="1080p"
 1080p/playlist.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=15000000,RESOLUTION=${srcWidth}x${srcHeight},NAME="4K"
+4k/playlist.m3u8
 "@
     } elseif ($srcWidth -ge 1920) {
         # 1080p (or near-1080p / 2K) source: 1080p only ladder, single rung
