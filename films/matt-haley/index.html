@@ -13,7 +13,7 @@
   <meta property="og:description" content="Watch Matt & Haley's wedding films, March 20, 2026">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/films/matt-haley/">
-  <meta property="og:image" content="https://video.flyiniris.com/couples/matt-haley/thumbs/teaser.jpg">
+  <meta property="og:image" content="https://video.flyiniris.com/couples/matt-haley/thumbs/teaser.jpg?v=3">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- PWA -->
@@ -427,6 +427,20 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 1.15rem;
+    }
+    .film-card.coming-soon {
+      cursor: default;
+      opacity: 0.55;
+      filter: grayscale(1);
+    }
+    .film-card.coming-soon:hover {
+      transform: none;
+      border-color: #2A2A28;
+      box-shadow: none;
+    }
+    .film-card.coming-soon .film-card-play { display: none; }
+    .film-card.coming-soon .film-card-title {
+      color: #C8C3B9;
     }
 
     /* ========== Playlist Card ========== */
@@ -988,7 +1002,7 @@
     // shells the baked values are the empty defaults ([] / '' ); once a
     // couple's video is attached in Studio, the load-time fetch fills these.
     // They are var (mutable) so bootstrap can overwrite them before render.
-    var VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"2:26","order":0,"hero":true},{"id":"highlight","title":"Matt & Haley's Wedding","category":"highlight","duration":"20:17","order":1,"hero":true}];
+    var VIDEOS = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"2:26","order":0,"hero":true},{"id":"highlight","title":"Matt & Haley's Wedding","category":"highlight","duration":"20:17","order":1,"hero":true},{"id":"fomo","title":"FOMO Documentary Edit","category":"fomo","order":2,"hero":false,"comingSoon":true,"playlist":false}];
     var PLAYLIST = [];
     var HERO = [{"id":"teaser","title":"Teaser","category":"teaser","duration":"2:26","order":0,"hero":true},{"id":"highlight","title":"Matt & Haley's Wedding","category":"highlight","duration":"20:17","order":1,"hero":true}];
     var CONFIG_API_BASE = 'https://prep.flyiniris.com';
@@ -1024,7 +1038,7 @@
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/1080p/playlist.m3u8';
     }
     function thumbUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg?v=3';
     }
     function attachHls(video, src) {
       if (window.Hls && window.Hls.isSupported()) {
@@ -1252,21 +1266,17 @@
 
       for (var i = 0; i < collection.length; i++) {
         var v = collection[i];
+        var soon = v.comingSoon === true;
         html +=
-          '<div class="film-card reveal" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '" tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '">' +
-          // Thumb loads lazily: data-thumb is applied as a background-image
-          // by the IntersectionObserver below, so 1920px thumbnails for
-          // sub-fold cards stop competing with the hero players on load
-          // (audit 2026-06-09, fi-delivery ux low #5).
-          '  <div class="film-card-thumb" data-thumb="' + escapeAttr(thumbUrl(v.id)) + '">' +
-          (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '') +
-          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
-          '    <div class="film-card-play">' +
-          '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
-          '    </div>' +
+          '<div class="film-card reveal' + (soon ? ' coming-soon' : '') + '" data-video-id="' + escapeAttr(v.id) + '" data-video-title="' + escapeAttr(v.title) + '"' + (soon ? ' aria-disabled="true"' : ' tabindex="0" role="button" aria-label="Play ' + escapeAttr(v.title) + '"') + '>' +
+          '  <div class="film-card-thumb"' + (soon ? '' : ' data-thumb="' + escapeAttr(thumbUrl(v.id)) + '"') + '>' +
+          (soon ? '    <span class="film-card-badge">Coming soon</span>' : (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '')) +
+          '    <span class="film-card-tag">' + escapeHtml(soon ? 'FOMO' : v.category) + '</span>' +
+          (soon ? '' : '    <div class="film-card-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>') +
           '  </div>' +
           '  <div class="film-card-body">' +
           '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
+          (soon ? '    <p class="film-card-title" style="font-family:Outfit,sans-serif;font-weight:300;font-size:0.8rem;letter-spacing:0.04em;margin-top:6px;">Coming soon</p>' : '') +
           '  </div>' +
           '</div>';
       }
@@ -1538,7 +1548,7 @@
         return;
       }
       var card = e.target.closest('.film-card');
-      if (!card) return;
+      if (!card || card.classList.contains('coming-soon')) return;
       openModal(card.dataset.videoId, card.dataset.videoTitle);
     });
     // Keyboard activation for playlist card and film cards (TV / remote-friendly)
@@ -1551,7 +1561,7 @@
         return;
       }
       var card = e.target.closest('.film-card');
-      if (card) {
+      if (card && !card.classList.contains('coming-soon')) {
         e.preventDefault();
         openModal(card.dataset.videoId, card.dataset.videoTitle);
       }
@@ -1619,6 +1629,7 @@
       var html = '';
       for (var i = 0; i < VIDEOS.length; i++) {
         var v = VIDEOS[i];
+        if (v.comingSoon) continue;
         html +=
           '<div class="download-item">' +
           '  <div class="download-item-info">' +
