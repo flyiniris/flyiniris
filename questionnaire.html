@@ -2531,13 +2531,24 @@
       var wt = start.querySelector('h1');
       if (wt) wt.textContent = 'Two quick things';
       var wi = start.querySelector('.step-intro');
+      // A block of prose on the first screen was getting skipped. Short lead
+      // line, then scannable points with the key phrase in brand gold. Swapped
+      // from <p> to <div> because a list cannot legally live inside a <p>.
       if (wi) {
-        wi.innerHTML = 'About a minute, and it is worth doing now rather than the week of your wedding.'
-          + '<br><br>Right now everything we send goes to one inbox, whichever of you filled out our very '
-          + 'first form. Telling us who else should be in the loop means your partner, your planner and '
-          + 'anyone else helping never miss a timeline, a payment reminder, or a question we need answered '
-          + 'to film your day properly. Sorting it out early is the whole point: in the final few weeks '
-          + 'there is too much moving to go chasing the right person.';
+        var intro = document.createElement('div');
+        intro.className = wi.className;
+        var g = 'color:#FFBD1D; font-weight:600;';
+        var li = 'margin:0 0 10px 0; padding-left:18px; position:relative;';
+        var dot = '<span style="position:absolute; left:0; color:#FFBD1D;">&bull;</span>';
+        intro.innerHTML =
+          '<p style="margin:0 0 16px 0;">Takes about a minute, and it is worth doing today rather than in wedding week.</p>'
+          + '<ul style="list-style:none; margin:0 0 4px 0; padding:0;">'
+          + '<li style="' + li + '">' + dot + 'Right now everything we send goes to <span style="' + g + '">one inbox</span>, whichever of you filled out our very first form.</li>'
+          + '<li style="' + li + '">' + dot + '<span style="' + g + '">Your partner</span> stops missing timelines, payment reminders, and questions we need answered to film your day properly.</li>'
+          + '<li style="' + li + '">' + dot + '<span style="' + g + '">Your planner</span> gets exactly what you choose to share with them, and nothing else.</li>'
+          + '<li style="' + li + '">' + dot + '<span style="' + g + '">Doing it now</span> beats the final few weeks, when there is far too much moving to go chasing the right person.</li>'
+          + '</ul>';
+        wi.parentNode.replaceChild(intro, wi);
       }
       var sb = start.querySelector('#btn-start');
       if (sb) {
