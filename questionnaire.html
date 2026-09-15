@@ -2429,9 +2429,13 @@
       if (w) w.textContent = 'About a minute. It makes sure nothing about your wedding goes to the wrong inbox.';
       var wt = start.querySelector('h1');
       if (wt) wt.textContent = 'Two quick things';
-      Array.prototype.forEach.call(start.querySelectorAll('.timeline-upload, .upload-card, [data-timeline-upload]'), function (el) { el.remove(); });
-      var startBtn = start.querySelector('button, .btn-primary');
-      if (startBtn) startBtn.textContent = 'START';
+      // The timeline upload belongs to the full questionnaire. Removing the
+      // whole box also removes its buttons, so it must happen BEFORE the
+      // start-button rename below, or the rename lands on the upload button.
+      var tl = start.querySelector('.timeline-box');
+      if (tl) tl.remove();
+      var startBtn = start.querySelector('#btn-start');
+      if (startBtn) startBtn.textContent = 'Start';
     }
   }
   applyQuickstart();
