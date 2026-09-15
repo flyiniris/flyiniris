@@ -2373,6 +2373,90 @@
    * ============================================================ */
   var stepEls = document.querySelectorAll('.step');
 
+  /* ============================================================
+   * QUICKSTART: the short post-booking ask.
+   *
+   * Same page, same fields, same submit. ?mode=quickstart hides every field
+   * except the four we need right after a couple books, collapses the six
+   * steps into one, and tells the Worker not to mark the full planning
+   * questionnaire as done. The big questionnaire at minus six weeks then
+   * prefills from these answers.
+   *
+   * Reusing this page rather than building a second one on purpose: one form,
+   * one submit path, one place where prefill and autosave already work.
+   * ============================================================ */
+  var QUICKSTART_FIELDS = [
+    'partners_email',
+    'planning_email_recipients',
+    'instagram_username',
+    'partners_instagram_username'
+  ];
+  var IS_QUICKSTART = (function () {
+    try {
+      return new URLSearchParams(window.location.search).get('mode') === 'quickstart';
+    } catch (e) { return false; }
+  })();
+
+  function applyQuickstart() {
+    if (!IS_QUICKSTART) return;
+    // Move the four fields we want into the first real step, in order, then
+    // drop every other field and every other step.
+    var host = document.getElementById('step-1');
+    if (!host) return;
+    var keep = [];
+    QUICKSTART_FIELDS.forEach(function (name) {
+      var el = document.querySelector('.field[data-field="' + name + '"]');
+      if (el) keep.push(el);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.field'), function (el) {
+      if (keep.indexOf(el) === -1) el.remove();
+    });
+    // Insert BEFORE the navigation row, not at the end of the step. Appending
+    // put Back and Next above the questions.
+    var navRow = host.querySelector('.btn-row');
+    keep.forEach(function (el) {
+      if (navRow) host.insertBefore(el, navRow);
+      else host.appendChild(el);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.step'), function (el) {
+      if (el.id !== 'step-0' && el.id !== 'step-1') el.remove();
+    });
+    var title = host.querySelector('.step-title');
+    if (title) title.textContent = 'Two quick things';
+    var intro = host.querySelector('.step-intro');
+    if (intro) intro.textContent = 'Four questions, about a minute. Your full planning questionnaire comes later and will already have these filled in.';
+    var eyebrow = host.querySelector('.step-eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Quick start';
+    // Back has nowhere to go from the only question step.
+    var backBtn = host.querySelector('.btn-back');
+    if (backBtn) backBtn.style.display = 'none';
+    // Next has nowhere to go either: step-2 onward no longer exist, and
+    // goToStep would throw on a missing element. Turn it into the submit.
+    var nextBtn = host.querySelector('.btn-next');
+    if (nextBtn) {
+      nextBtn.removeAttribute('data-action');
+      nextBtn.textContent = 'Send these over';
+      nextBtn.addEventListener('click', function () { submitForm(); });
+    }
+    // The welcome step is about a 15 minute questionnaire and a timeline
+    // upload, neither of which applies here.
+    var start = document.getElementById('step-0');
+    if (start) {
+      var w = start.querySelector('.step-intro');
+      if (w) w.textContent = 'About a minute. It makes sure nothing about your wedding goes to the wrong inbox.';
+      var wt = start.querySelector('h1');
+      if (wt) wt.textContent = 'Two quick things';
+      // The timeline upload belongs to the full questionnaire. Removing the
+      // whole box also removes its buttons, so it must happen BEFORE the
+      // start-button rename below, or the rename lands on the upload button.
+      var tl = start.querySelector('.timeline-box');
+      if (tl) tl.remove();
+      var startBtn = start.querySelector('#btn-start');
+      if (startBtn) startBtn.textContent = 'Start';
+    }
+  }
+  applyQuickstart();
+
   function goToStep(n) {
     if (n < 0 || n > TOTAL_STEPS - 1) return;
     document.getElementById('step-' + currentStep).classList.remove('active');
@@ -2393,6 +2477,14 @@
   function updateProgress() {
     var fill = document.getElementById('progress-fill');
     var label = document.getElementById('progress-label');
+    // Quickstart has one section, so the "Section N of 6" counter would lie.
+    // Guarded here rather than set once in applyQuickstart, because this runs
+    // on every step change and would overwrite a one-time assignment.
+    if (IS_QUICKSTART) {
+      if (fill) fill.style.width = currentStep === 0 ? '0%' : '100%';
+      if (label) label.textContent = currentStep === 0 ? 'Getting started' : 'Quick start';
+      return;
+    }
     if (currentStep === 0) {
       fill.style.width = '0%';
       label.textContent = 'Getting started';
@@ -2748,6 +2840,10 @@
       confirmed_count: confirmedCount,
       edited_count: editedCount
     });
+
+    // Flags the short ask so the Worker does not mark the full planning
+    // questionnaire complete off four answers.
+    if (IS_QUICKSTART) body.mode = 'quickstart';
 
     window.fiPostWithTurnstile(API_BASE + '/webhook/questionnaire', body).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
