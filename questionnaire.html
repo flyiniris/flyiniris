@@ -2411,7 +2411,13 @@
     Array.prototype.forEach.call(document.querySelectorAll('.field'), function (el) {
       if (keep.indexOf(el) === -1) el.remove();
     });
-    keep.forEach(function (el) { host.appendChild(el); });
+    // Insert BEFORE the navigation row, not at the end of the step. Appending
+    // put Back and Next above the questions.
+    var navRow = host.querySelector('.btn-row');
+    keep.forEach(function (el) {
+      if (navRow) host.insertBefore(el, navRow);
+      else host.appendChild(el);
+    });
     Array.prototype.forEach.call(document.querySelectorAll('.step'), function (el) {
       if (el.id !== 'step-0' && el.id !== 'step-1') el.remove();
     });
@@ -2420,7 +2426,10 @@
     var intro = host.querySelector('.step-intro');
     if (intro) intro.textContent = 'Four questions, about a minute. Your full planning questionnaire comes later and will already have these filled in.';
     var eyebrow = host.querySelector('.step-eyebrow');
-    if (eyebrow) eyebrow.textContent = 'QUICK START';
+    if (eyebrow) eyebrow.textContent = 'Quick start';
+    // Back has nowhere to go from the only question step.
+    var backBtn = host.querySelector('.btn-back');
+    if (backBtn) backBtn.style.display = 'none';
     // The welcome step is about a 15 minute questionnaire and a timeline
     // upload, neither of which applies here.
     var start = document.getElementById('step-0');
@@ -2460,6 +2469,14 @@
   function updateProgress() {
     var fill = document.getElementById('progress-fill');
     var label = document.getElementById('progress-label');
+    // Quickstart has one section, so the "Section N of 6" counter would lie.
+    // Guarded here rather than set once in applyQuickstart, because this runs
+    // on every step change and would overwrite a one-time assignment.
+    if (IS_QUICKSTART) {
+      if (fill) fill.style.width = currentStep === 0 ? '0%' : '100%';
+      if (label) label.textContent = currentStep === 0 ? 'Getting started' : 'Quick start';
+      return;
+    }
     if (currentStep === 0) {
       fill.style.width = '0%';
       label.textContent = 'Getting started';
