@@ -416,6 +416,7 @@
 
     /* First-look multi-select options */
     .yn-followup[data-followup-for="first_look_yn"].open { max-height: 1200px; }
+    .yn-followup[data-followup-for="planner_has"].open { max-height: 2000px; }
     .fl-options {
       display: flex;
       flex-direction: column;
@@ -1643,6 +1644,118 @@
   </div>
 
   <!-- ===================== STEP 7: SUCCESS ===================== -->
+  <!-- ============ QUICKSTART: the short post-booking ask ============
+       Built as its own step rather than scavenging fields out of the long
+       questionnaire, so the copy can actually talk to a couple who just booked
+       instead of reading like a form. Shown only when ?mode=quickstart.
+       ================================================================= -->
+  <div class="step" id="step-qs">
+    <div class="step-eyebrow">Quick start</div>
+    <h1 class="step-title">Who else should we be talking to?</h1>
+    <p class="step-intro">Four quick things, about a minute. Right now everything we send goes to one inbox, whichever of you filled out our very first form, and that is rarely the whole picture.</p>
+
+    <div class="field" data-field="partners_email" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="partners_email">What is your fiance's email address?</label>
+      <input type="email" id="partners_email" placeholder="them@email.com" />
+      <div class="field-hint">So you both see the same things and nobody has to forward anything.</div>
+    </div>
+
+    <div class="field" data-field="partner_access" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">What should they get from us?</label>
+      <div class="checkbox-group" data-checkbox-group="partner_access">
+        <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Payment reminders and invoices" /><span class="checkbox-card-label">Payment reminders and invoices</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Your finished films when they are ready" /><span class="checkbox-card-label">Your finished films when they are ready</span></label>
+      </div>
+    </div>
+
+    <div class="field" data-field="planner_has" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Do you have a wedding planner or coordinator?</label>
+      <div class="yn-row" data-yn-group="planner_has">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="field-hint" id="planner-no-note" style="display:none;">No problem at all. If you hire one later, just reply to any email from us and we will get them looped in.</div>
+      <div class="yn-followup" data-followup-for="planner_has">
+        <div class="field" data-field="planner_name" data-state="user_entered">
+          <span class="field-badge"></span>
+          <label class="field-label" for="planner_name">Their name</label>
+          <input type="text" id="planner_name" />
+        </div>
+        <div class="field" data-field="planner_email" data-state="user_entered">
+          <span class="field-badge"></span>
+          <label class="field-label" for="planner_email">Their email address</label>
+          <input type="email" id="planner_email" />
+        </div>
+        <div class="field" data-field="planner_instagram" data-state="user_entered">
+          <span class="field-badge"></span>
+          <label class="field-label" for="planner_instagram">Their Instagram, if you know it</label>
+          <input type="text" id="planner_instagram" placeholder="@theirhandle" />
+          <div class="field-hint">So we can tag them properly when we post your film.</div>
+        </div>
+        <div class="field" data-field="planner_access" data-state="user_entered" style="margin-bottom:0;">
+          <span class="field-badge"></span>
+          <label class="field-label">What should your planner get from us?</label>
+          <div class="checkbox-group" data-checkbox-group="planner_access">
+        <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Payment reminders and invoices" /><span class="checkbox-card-label">Payment reminders and invoices</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Your finished films when they are ready" /><span class="checkbox-card-label">Your finished films when they are ready</span></label>
+          </div>
+          <div class="field-hint">Only tick what you are comfortable with. We never share payment card details with anyone, ever, whatever you pick here.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" data-field="other_contact_name" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="other_contact_name">Anyone else we should keep in the loop?</label>
+      <input type="text" id="other_contact_name" placeholder="Linda, mother of the bride" />
+      <div class="field-hint">Optional. A parent, a maid of honour, whoever is helping you pull this off.</div>
+    </div>
+
+    <div class="field" data-field="other_contact_email" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="other_contact_email">Their email address</label>
+      <input type="email" id="other_contact_email" />
+    </div>
+
+    <div class="field" data-field="other_contact_access" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">What should they get from us?</label>
+      <div class="checkbox-group" data-checkbox-group="other_contact_access">
+        <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Payment reminders and invoices" /><span class="checkbox-card-label">Payment reminders and invoices</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Your finished films when they are ready" /><span class="checkbox-card-label">Your finished films when they are ready</span></label>
+      </div>
+    </div>
+
+    <div class="field" data-field="instagram_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="instagram_username">Last thing: your Instagram handle</label>
+      <input type="text" id="instagram_username" placeholder="@yourhandle" />
+      <div class="field-hint">So we can tag you in anything we post, and so our Instagram auto-replies know you are already booked with us instead of treating you like a new lead.</div>
+    </div>
+
+    <div class="field" data-field="partners_instagram_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="partners_instagram_username">And your fiance's</label>
+      <input type="text" id="partners_instagram_username" placeholder="@theirhandle" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-submit" type="button" id="btn-qs-submit">Send these over</button>
+    </div>
+  </div>
+
   <div class="step" id="step-7">
     <div class="success-wrap">
       <div class="success-mark"></div>
@@ -1772,6 +1885,8 @@
     'photographer_name', 'planner_name', 'dj_band_name', 'hair_makeup_artists', 'other_vendors',
     'planner_email', 'planner_contact_permission_yn', 'planner_file_access_yn',
     'planning_email_recipients',
+    'planner_has', 'planner_instagram', 'other_contact_name', 'other_contact_email',
+    'partner_access', 'planner_access', 'other_contact_access',
     // Section 4
     'dress_code_for_filming_yn', 'dress_code_for_filming_detail', 'color_scheme', 'guest_count',
     'wedding_hashtag', 'detail_items_yn', 'family_heirlooms', 'accessibility_yn',
@@ -2070,6 +2185,7 @@
    * Y/N quick-click behavior
    * ============================================================ */
   var ynGroups = [
+    'planner_has',
     'bride_attire_type', 'groom_attire_type',
     'traveling_other_locations_yn', 'letter_reading_yn',
     'sunset_photos_yn', 'grand_march_yn', 'prayer_before_dinner_yn',
@@ -2210,6 +2326,9 @@
 
   // Map all canonical fields to their input ids
   var DIRECT_INPUT_FIELDS = {
+    'planner_instagram': 'planner_instagram',
+    'other_contact_name': 'other_contact_name',
+    'other_contact_email': 'other_contact_email',
     'wedding_date': 'wedding_date',
     'venue_name': 'venue_name',
     'traveling_other_locations_detail': 'traveling_other_locations_detail',
@@ -2376,21 +2495,16 @@
   /* ============================================================
    * QUICKSTART: the short post-booking ask.
    *
-   * Same page, same fields, same submit. ?mode=quickstart hides every field
-   * except the four we need right after a couple books, collapses the six
-   * steps into one, and tells the Worker not to mark the full planning
-   * questionnaire as done. The big questionnaire at minus six weeks then
-   * prefills from these answers.
+   * ?mode=quickstart shows the purpose-built #step-qs and removes the long
+   * questionnaire entirely. Built as its own step rather than by moving fields
+   * out of the six planning sections, because the copy has to talk to a couple
+   * who just booked, and because scavenging fields left Back and Next pointing
+   * at steps that no longer existed.
    *
-   * Reusing this page rather than building a second one on purpose: one form,
-   * one submit path, one place where prefill and autosave already work.
+   * Same page and same submit path on purpose: prefill, autosave and the
+   * Turnstile post already work here. The submit sends mode=quickstart so the
+   * Worker does not mark the full planning questionnaire complete.
    * ============================================================ */
-  var QUICKSTART_FIELDS = [
-    'partners_email',
-    'planning_email_recipients',
-    'instagram_username',
-    'partners_instagram_username'
-  ];
   var IS_QUICKSTART = (function () {
     try {
       return new URLSearchParams(window.location.search).get('mode') === 'quickstart';
@@ -2399,60 +2513,43 @@
 
   function applyQuickstart() {
     if (!IS_QUICKSTART) return;
-    // Move the four fields we want into the first real step, in order, then
-    // drop every other field and every other step.
-    var host = document.getElementById('step-1');
-    if (!host) return;
-    var keep = [];
-    QUICKSTART_FIELDS.forEach(function (name) {
-      var el = document.querySelector('.field[data-field="' + name + '"]');
-      if (el) keep.push(el);
-    });
-    Array.prototype.forEach.call(document.querySelectorAll('.field'), function (el) {
-      if (keep.indexOf(el) === -1) el.remove();
-    });
-    // Insert BEFORE the navigation row, not at the end of the step. Appending
-    // put Back and Next above the questions.
-    var navRow = host.querySelector('.btn-row');
-    keep.forEach(function (el) {
-      if (navRow) host.insertBefore(el, navRow);
-      else host.appendChild(el);
-    });
     Array.prototype.forEach.call(document.querySelectorAll('.step'), function (el) {
-      if (el.id !== 'step-0' && el.id !== 'step-1') el.remove();
+      if (el.id !== 'step-0' && el.id !== 'step-qs' && el.id !== 'step-7') el.remove();
     });
-    var title = host.querySelector('.step-title');
-    if (title) title.textContent = 'Two quick things';
-    var intro = host.querySelector('.step-intro');
-    if (intro) intro.textContent = 'Four questions, about a minute. Your full planning questionnaire comes later and will already have these filled in.';
-    var eyebrow = host.querySelector('.step-eyebrow');
-    if (eyebrow) eyebrow.textContent = 'Quick start';
-    // Back has nowhere to go from the only question step.
-    var backBtn = host.querySelector('.btn-back');
-    if (backBtn) backBtn.style.display = 'none';
-    // Next has nowhere to go either: step-2 onward no longer exist, and
-    // goToStep would throw on a missing element. Turn it into the submit.
-    var nextBtn = host.querySelector('.btn-next');
-    if (nextBtn) {
-      nextBtn.removeAttribute('data-action');
-      nextBtn.textContent = 'Send these over';
-      nextBtn.addEventListener('click', function () { submitForm(); });
-    }
-    // The welcome step is about a 15 minute questionnaire and a timeline
-    // upload, neither of which applies here.
+    // The welcome step sells a 15 minute questionnaire and a timeline upload,
+    // neither of which applies here. Remove the box BEFORE renaming the start
+    // button, or the rename lands on the upload button inside it.
     var start = document.getElementById('step-0');
     if (start) {
-      var w = start.querySelector('.step-intro');
-      if (w) w.textContent = 'About a minute. It makes sure nothing about your wedding goes to the wrong inbox.';
-      var wt = start.querySelector('h1');
-      if (wt) wt.textContent = 'Two quick things';
-      // The timeline upload belongs to the full questionnaire. Removing the
-      // whole box also removes its buttons, so it must happen BEFORE the
-      // start-button rename below, or the rename lands on the upload button.
       var tl = start.querySelector('.timeline-box');
       if (tl) tl.remove();
-      var startBtn = start.querySelector('#btn-start');
-      if (startBtn) startBtn.textContent = 'Start';
+      var wt = start.querySelector('h1');
+      if (wt) wt.textContent = 'Two quick things';
+      var wi = start.querySelector('.step-intro');
+      if (wi) wi.textContent = 'About a minute. It makes sure nothing about your wedding goes to the wrong person.';
+      var sb = start.querySelector('#btn-start');
+      if (sb) {
+        sb.textContent = 'Start';
+        sb.addEventListener('click', function (e) {
+          e.stopImmediatePropagation();
+          document.getElementById('step-0').classList.remove('active');
+          document.getElementById('step-qs').classList.add('active');
+          updateProgress();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, true);
+      }
+    }
+    var qsSubmit = document.getElementById('btn-qs-submit');
+    if (qsSubmit) qsSubmit.addEventListener('click', function () { submitForm(); });
+    // Planner "no" gets a warm note instead of a dead end.
+    var plannerField = document.querySelector('.field[data-field="planner_has"]');
+    if (plannerField) {
+      plannerField.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('.yn-btn') : null;
+        if (!b) return;
+        var note = document.getElementById('planner-no-note');
+        if (note) note.style.display = b.getAttribute('data-val') === 'no' ? 'block' : 'none';
+      });
     }
   }
   applyQuickstart();
@@ -2481,8 +2578,9 @@
     // Guarded here rather than set once in applyQuickstart, because this runs
     // on every step change and would overwrite a one-time assignment.
     if (IS_QUICKSTART) {
-      if (fill) fill.style.width = currentStep === 0 ? '0%' : '100%';
-      if (label) label.textContent = currentStep === 0 ? 'Getting started' : 'Quick start';
+      var onWelcome = document.getElementById('step-0') && document.getElementById('step-0').classList.contains('active');
+      if (fill) fill.style.width = onWelcome ? '0%' : '100%';
+      if (label) label.textContent = onWelcome ? 'Getting started' : 'Quick start';
       return;
     }
     if (currentStep === 0) {
