@@ -2513,6 +2513,19 @@
 
   function applyQuickstart() {
     if (!IS_QUICKSTART) return;
+    // MOVE the real submit button into this step before removing the step it
+    // lives in. Deleting it broke two things: the init-time
+    // getElementById('btn-submit').addEventListener threw and aborted the rest
+    // of the script, and submitForm itself sets btn-submit.disabled, so the
+    // form could never send. Reusing the real button keeps all of that working
+    // (disabled state, in-flight label, success handling) instead of
+    // reimplementing it.
+    var realSubmit = document.getElementById('btn-submit');
+    var placeholder = document.getElementById('btn-qs-submit');
+    if (realSubmit && placeholder && placeholder.parentNode) {
+      realSubmit.textContent = 'Send these over';
+      placeholder.parentNode.replaceChild(realSubmit, placeholder);
+    }
     Array.prototype.forEach.call(document.querySelectorAll('.step'), function (el) {
       if (el.id !== 'step-0' && el.id !== 'step-qs' && el.id !== 'step-7') el.remove();
     });
@@ -2539,8 +2552,6 @@
         }, true);
       }
     }
-    var qsSubmit = document.getElementById('btn-qs-submit');
-    if (qsSubmit) qsSubmit.addEventListener('click', function () { submitForm(); });
     // Planner "no" gets a warm note instead of a dead end.
     var plannerField = document.querySelector('.field[data-field="planner_has"]');
     if (plannerField) {
@@ -2812,6 +2823,10 @@
    * Submit gate
    * ============================================================ */
   function updateSubmitGate() {
+    // Quickstart has no required-field gate: every question on it is optional
+    // except the partner email, and the elements this function inspects live in
+    // steps that quickstart removes.
+    if (IS_QUICKSTART) return;
     if (currentStep !== 6) return;
     var summary = document.getElementById('submit-summary');
     var summaryText = document.getElementById('submit-summary-text');
