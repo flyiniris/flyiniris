@@ -2430,6 +2430,14 @@
     // Back has nowhere to go from the only question step.
     var backBtn = host.querySelector('.btn-back');
     if (backBtn) backBtn.style.display = 'none';
+    // Next has nowhere to go either: step-2 onward no longer exist, and
+    // goToStep would throw on a missing element. Turn it into the submit.
+    var nextBtn = host.querySelector('.btn-next');
+    if (nextBtn) {
+      nextBtn.removeAttribute('data-action');
+      nextBtn.textContent = 'Send these over';
+      nextBtn.addEventListener('click', function () { submitForm(); });
+    }
     // The welcome step is about a 15 minute questionnaire and a timeline
     // upload, neither of which applies here.
     var start = document.getElementById('step-0');
