@@ -1663,8 +1663,9 @@
 
     <div class="field" data-field="partner_access" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label">What should they get from us?</label>
+      <label class="field-label">What should they get from us? <span style="color:#9A958A; font-weight:400; text-transform:none; letter-spacing:0;">Check all that apply.</span></label>
       <div class="checkbox-group" data-checkbox-group="partner_access">
+        <label class="checkbox-card"><input type="checkbox" value="Everything" data-exclusive="true" /><span class="checkbox-card-label">Everything</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
@@ -1700,8 +1701,9 @@
         </div>
         <div class="field" data-field="planner_access" data-state="user_entered" style="margin-bottom:0;">
           <span class="field-badge"></span>
-          <label class="field-label">What should your planner get from us?</label>
+          <label class="field-label">What should your planner get from us? <span style="color:#9A958A; font-weight:400; text-transform:none; letter-spacing:0;">Check all that apply.</span></label>
           <div class="checkbox-group" data-checkbox-group="planner_access">
+        <label class="checkbox-card"><input type="checkbox" value="Everything" data-exclusive="true" /><span class="checkbox-card-label">Everything</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
@@ -1728,8 +1730,9 @@
 
     <div class="field" data-field="other_contact_access" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label">What should they get from us?</label>
+      <label class="field-label">What should they get from us? <span style="color:#9A958A; font-weight:400; text-transform:none; letter-spacing:0;">Check all that apply.</span></label>
       <div class="checkbox-group" data-checkbox-group="other_contact_access">
+        <label class="checkbox-card"><input type="checkbox" value="Everything" data-exclusive="true" /><span class="checkbox-card-label">Everything</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Planning updates and general emails" /><span class="checkbox-card-label">Planning updates and general emails</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Timeline and day-of logistics" /><span class="checkbox-card-label">Timeline and day-of logistics</span></label>
         <label class="checkbox-card"><input type="checkbox" value="Questionnaire and consultation scheduling" /><span class="checkbox-card-label">Questionnaire and consultation scheduling</span></label>
@@ -2528,7 +2531,14 @@
       var wt = start.querySelector('h1');
       if (wt) wt.textContent = 'Two quick things';
       var wi = start.querySelector('.step-intro');
-      if (wi) wi.textContent = 'About a minute. It makes sure nothing about your wedding goes to the wrong person.';
+      if (wi) {
+        wi.innerHTML = 'About a minute, and it is worth doing now rather than the week of your wedding.'
+          + '<br><br>Right now everything we send goes to one inbox, whichever of you filled out our very '
+          + 'first form. Telling us who else should be in the loop means your partner, your planner and '
+          + 'anyone else helping never miss a timeline, a payment reminder, or a question we need answered '
+          + 'to film your day properly. Sorting it out early is the whole point: in the final few weeks '
+          + 'there is too much moving to go chasing the right person.';
+      }
       var sb = start.querySelector('#btn-start');
       if (sb) {
         sb.textContent = 'Start';
