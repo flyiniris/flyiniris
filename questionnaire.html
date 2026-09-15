@@ -1262,7 +1262,7 @@
   <div class="step" id="step-3">
     <div class="step-eyebrow">Section 3 of 6</div>
     <h1 class="step-title">The People</h1>
-    <p class="step-intro">Eight short questions, around 4 minutes.</p>
+    <p class="step-intro">Eleven short questions, around 5 minutes.</p>
 
     <div class="field" data-field="wedding_party_names" data-state="user_entered">
       <span class="field-badge"></span>
@@ -1290,8 +1290,34 @@
 
     <div class="field" data-field="planner_name" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="planner_name">Planner or day-of coordinator name and contact info</label>
+      <label class="field-label" for="planner_name">Planner or day-of coordinator name</label>
       <input type="text" id="planner_name" />
+    </div>
+
+    <div class="field" data-field="planner_email" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="planner_email">Planner or coordinator email address</label>
+      <input type="email" id="planner_email" />
+    </div>
+
+    <div class="field" data-field="planner_contact_permission_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Can we contact them directly?</label>
+      <div class="yn-row" data-yn-group="planner_contact_permission_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="field-hint">Only about your wedding day: timeline, arrival times, logistics.</div>
+    </div>
+
+    <div class="field" data-field="planner_file_access_yn" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Can they see your wedding details with us?</label>
+      <div class="yn-row" data-yn-group="planner_file_access_yn">
+        <button type="button" class="yn-btn" data-val="yes">Yes</button>
+        <button type="button" class="yn-btn" data-val="no">No</button>
+      </div>
+      <div class="field-hint">Your timeline, your questionnaire answers, and our notes for your film. Payment and billing information is never included, and we never share it with anyone but the two of you.</div>
     </div>
 
     <div class="field" data-field="dj_band_name" data-state="user_entered">
@@ -1569,6 +1595,19 @@
       <input type="email" id="partners_email" />
     </div>
 
+    <div class="field" data-field="instagram_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="instagram_username">Your Instagram handle</label>
+      <input type="text" id="instagram_username" placeholder="@yourhandle" />
+      <div class="field-hint">So we can tag you in anything we post, and so our Instagram auto-replies know you are already booked with us.</div>
+    </div>
+
+    <div class="field" data-field="partners_instagram_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="partners_instagram_username">Your partner's Instagram handle</label>
+      <input type="text" id="partners_instagram_username" placeholder="@theirhandle" />
+    </div>
+
     <div class="field" data-field="consultation_call_topics" data-state="user_entered">
       <span class="field-badge"></span>
       <label class="field-label" for="consultation_call_topics">Comments, thoughts, or questions you'd like us to talk about on our call (optional)</label>
@@ -1696,7 +1735,9 @@
   var API_BASE = 'https://api.flyiniris.com';
 
   /* ============================================================
-   * Field registry: all 66 canonical fields
+   * Field registry: all 79 canonical fields
+   * (the old "66" in this comment was already stale by 8 fields before the
+   * 2026-09-14 planner / Instagram additions; count is from FIELD_NAMES)
    * Each entry: { name, requiredOnSection2: bool? }
    * ============================================================ */
   var FIELD_NAMES = [
@@ -1718,6 +1759,7 @@
     // Section 3
     'wedding_party_names', 'couple_parents_names', 'officiant_name_relationship',
     'photographer_name', 'planner_name', 'dj_band_name', 'hair_makeup_artists', 'other_vendors',
+    'planner_email', 'planner_contact_permission_yn', 'planner_file_access_yn',
     // Section 4
     'dress_code_for_filming_yn', 'dress_code_for_filming_detail', 'color_scheme', 'guest_count',
     'wedding_hashtag', 'detail_items_yn', 'family_heirlooms', 'accessibility_yn',
@@ -1727,7 +1769,8 @@
     'film_style_multi_select', 'film_feeling', 'music_preferences', 'music_specifications',
     'bloopers_preference', 'reference_films',
     // Section 6
-    'home_address', 'partners_phone', 'partners_email', 'consultation_call_topics'
+    'home_address', 'partners_phone', 'partners_email', 'consultation_call_topics',
+    'instagram_username', 'partners_instagram_username'
   ];
 
   // Section 2 fields (used to gate submit on review)
@@ -2021,7 +2064,8 @@
     'couple_welcome_speech_yn', 'other_special_dances_yn',
     'dress_code_for_filming_yn', 'detail_items_yn', 'accessibility_yn',
     'family_dynamics_yn', 'pets_yn', 'other_special_events_yn',
-    'timeline_sent_yn'
+    'timeline_sent_yn',
+    'planner_contact_permission_yn', 'planner_file_access_yn'
   ];
   // first_look_yn is a UI-only group (combined into first_look field)
   var ynState = {};
@@ -2186,6 +2230,7 @@
     'officiant_name_relationship': 'officiant_name_relationship',
     'photographer_name': 'photographer_name',
     'planner_name': 'planner_name',
+    'planner_email': 'planner_email',
     'dj_band_name': 'dj_band_name',
     'hair_makeup_artists': 'hair_makeup_artists',
     'other_vendors': 'other_vendors',
@@ -2204,7 +2249,9 @@
     'home_address': 'home_address',
     'partners_phone': 'partners_phone',
     'partners_email': 'partners_email',
-    'consultation_call_topics': 'consultation_call_topics'
+    'consultation_call_topics': 'consultation_call_topics',
+    'instagram_username': 'instagram_username',
+    'partners_instagram_username': 'partners_instagram_username'
   };
   Object.keys(DIRECT_INPUT_FIELDS).forEach(function (k) {
     bindInput(DIRECT_INPUT_FIELDS[k], k);
@@ -2668,7 +2715,7 @@
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
-    // Build body with all 66 canonical fields + identity
+    // Build body with all 79 canonical fields + identity
     var body = { contact_id: contactId, email: prefillEmail, first_name: prefillFirstName };
     var totalPopulated = 0, autofilledCount = 0, confirmedCount = 0, editedCount = 0;
     FIELD_NAMES.forEach(function (n) {
