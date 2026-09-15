@@ -1972,11 +1972,12 @@
       }
       return checked.value;
     }
-    if (name === 'film_style_multi_select') {
-      return readCheckboxGroup('film_style_multi_select');
-    }
-    if (name === 'music_preferences') {
-      return readCheckboxGroup('music_preferences');
+    // ANY checkbox group, found by its own attribute. This used to name
+    // film_style_multi_select and music_preferences explicitly, so every group
+    // added later read as empty and silently never saved: the field fell
+    // through to getElementById(name), which is null for a group.
+    if (document.querySelector('[data-checkbox-group="' + name + '"]')) {
+      return readCheckboxGroup(name);
     }
     if (name === 'bloopers_preference') {
       var b = document.querySelector('input[name="bloopers_preference"]:checked');
@@ -2048,7 +2049,9 @@
       }
       return;
     }
-    if (name === 'film_style_multi_select' || name === 'music_preferences') {
+    // Same generic rule on the prefill side, so a saved or pre-filled group
+    // comes back to the couple ticked.
+    if (document.querySelector('[data-checkbox-group="' + name + '"]')) {
       writeCheckboxGroup(name, value);
       return;
     }
