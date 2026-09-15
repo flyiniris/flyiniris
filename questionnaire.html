@@ -1317,7 +1317,18 @@
         <button type="button" class="yn-btn" data-val="yes">Yes</button>
         <button type="button" class="yn-btn" data-val="no">No</button>
       </div>
-      <div class="field-hint">Your timeline, your questionnaire answers, and our notes for your film. Payment and billing information is never included, and we never share it with anyone but the two of you.</div>
+      <div class="field-hint">Your timeline, your questionnaire answers, and our notes for your film, up until your film is delivered. Payment and billing information is never included, and we never share it with anyone but the two of you.</div>
+    </div>
+
+    <div class="field" data-field="planning_email_recipients" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Who should we email about planning?</label>
+      <div class="checkbox-group" data-checkbox-group="planning_email_recipients">
+        <label class="checkbox-card"><input type="checkbox" value="You" /><span class="checkbox-card-label">You</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Your partner" /><span class="checkbox-card-label">Your partner</span></label>
+        <label class="checkbox-card"><input type="checkbox" value="Your planner or coordinator" /><span class="checkbox-card-label">Your planner or coordinator</span></label>
+      </div>
+      <div class="field-hint">Tick everyone who should be on planning emails from here on. Right now we email whoever filled out our first form, which is not always the right person.</div>
     </div>
 
     <div class="field" data-field="dj_band_name" data-state="user_entered">
@@ -1760,6 +1771,7 @@
     'wedding_party_names', 'couple_parents_names', 'officiant_name_relationship',
     'photographer_name', 'planner_name', 'dj_band_name', 'hair_makeup_artists', 'other_vendors',
     'planner_email', 'planner_contact_permission_yn', 'planner_file_access_yn',
+    'planning_email_recipients',
     // Section 4
     'dress_code_for_filming_yn', 'dress_code_for_filming_detail', 'color_scheme', 'guest_count',
     'wedding_hashtag', 'detail_items_yn', 'family_heirlooms', 'accessibility_yn',
