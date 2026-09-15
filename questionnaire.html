@@ -2513,29 +2513,15 @@
 
   function applyQuickstart() {
     if (!IS_QUICKSTART) return;
-    // MOVE the real submit button into this step before removing the step it
-    // lives in. Deleting it broke two things: the init-time
-    // getElementById('btn-submit').addEventListener threw and aborted the rest
-    // of the script, and submitForm itself sets btn-submit.disabled, so the
-    // form could never send. Reusing the real button keeps all of that working
-    // (disabled state, in-flight label, success handling) instead of
-    // reimplementing it.
-    var realSubmit = document.getElementById('btn-submit');
-    var placeholder = document.getElementById('btn-qs-submit');
-    if (realSubmit && placeholder && placeholder.parentNode) {
-      realSubmit.textContent = 'Send these over';
-      placeholder.parentNode.replaceChild(realSubmit, placeholder);
-    }
-    Array.prototype.forEach.call(document.querySelectorAll('.step'), function (el) {
-      if (el.id !== 'step-0' && el.id !== 'step-qs' && el.id !== 'step-7') el.remove();
-    });
-    // The welcome step sells a 15 minute questionnaire and a timeline upload,
-    // neither of which applies here. Remove the box BEFORE renaming the start
-    // button, or the rename lands on the upload button inside it.
+    // HIDE, never REMOVE. Two rounds of bugs came from deleting steps: init
+    // code later does getElementById(x).addEventListener unconditionally, and
+    // submitForm sets btn-submit.disabled. Every one of those elements has to
+    // still exist. Steps are already invisible unless they carry .active, so
+    // leaving them in the DOM costs nothing and keeps the whole page wired.
     var start = document.getElementById('step-0');
     if (start) {
       var tl = start.querySelector('.timeline-box');
-      if (tl) tl.remove();
+      if (tl) tl.style.display = 'none';
       var wt = start.querySelector('h1');
       if (wt) wt.textContent = 'Two quick things';
       var wi = start.querySelector('.step-intro');
@@ -2543,16 +2529,19 @@
       var sb = start.querySelector('#btn-start');
       if (sb) {
         sb.textContent = 'Start';
+        // Capture phase plus stopImmediatePropagation so the normal
+        // goToStep(1) handler never runs and send us into Section 1.
         sb.addEventListener('click', function (e) {
           e.stopImmediatePropagation();
-          document.getElementById('step-0').classList.remove('active');
+          start.classList.remove('active');
           document.getElementById('step-qs').classList.add('active');
           updateProgress();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }, true);
       }
     }
-    // Planner "no" gets a warm note instead of a dead end.
+    var qsSubmit = document.getElementById('btn-qs-submit');
+    if (qsSubmit) qsSubmit.addEventListener('click', function () { submitForm(); });
     var plannerField = document.querySelector('.field[data-field="planner_has"]');
     if (plannerField) {
       plannerField.addEventListener('click', function (e) {
@@ -2927,10 +2916,11 @@
   document.getElementById('btn-submit').addEventListener('click', submitForm);
 
   function submitForm() {
-    if (!validateStep(6)) return;
-    var btn = document.getElementById('btn-submit');
-    btn.disabled = true;
-    btn.textContent = 'Sending...';
+    // validateStep(6) and btn-submit both belong to the long form. Quickstart
+    // has its own button and no required-field gate beyond the partner email.
+    if (!IS_QUICKSTART && !validateStep(6)) return;
+    var btn = document.getElementById(IS_QUICKSTART ? 'btn-qs-submit' : 'btn-submit');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
     // Build body with all 79 canonical fields + identity
     var body = { contact_id: contactId, email: prefillEmail, first_name: prefillFirstName };
@@ -2965,8 +2955,12 @@
       try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
       goToStep(7);
     }).catch(function () {
-      btn.disabled = false;
-      btn.textContent = 'Submit questionnaire';
+      // Same button reference as above: quickstart uses its own, and its label
+      // on failure must not say "Submit questionnaire".
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = IS_QUICKSTART ? 'Send these over' : 'Submit questionnaire';
+      }
       alert('Something went wrong sending your answers. Please try again, or email us at sean@flyiniris.com.');
     });
   }
