@@ -80,3 +80,29 @@
 # experience; nothing read ?v=b). Redirects cover any stale ad or saved link.
 /b                         /  301
 /b/*                       /  301
+
+# /watch is the new name for the personalised FILM PLAYER (yours.html), renamed
+# 2026-09-15 because THREE different things were called "yours" and it caused a
+# real mix-up (someone nearly retired the wrong page):
+#   /watch          this film player, showing an example film. Renamed.
+#   /yours/<slug>   per-couple package pages in the yours/ DIRECTORY
+#                   (taylor-justin, taylor-neil). Untouched.
+#   prep.flyiniris.com/yours/<slug>   the personal package page. Untouched.
+#
+# This is a 200 REWRITE, not a 301, and deliberately so:
+#   - /yours must keep working PERMANENTLY. Those links are in nurture emails
+#     already sitting in real couples' inboxes, and email links are forever.
+#     A rewrite leaves /yours serving exactly as it does today, zero hops.
+#   - Renaming yours.html to watch.html would risk a clean-URL strip conflict
+#     with the /yours/ DIRECTORY above, the same hazard that forced the
+#     agreement shells into /_shells/.
+#   - yours.html is noindex,nofollow and absent from sitemap.xml, so two paths
+#     serving it costs nothing in search.
+# Target is /yours, NOT /yours.html. Pages strips .html as a clean-URL
+# normalisation, and a rewrite pointed at /yours.html comes back out as a 308
+# redirect to /yours, which would bounce the visitor off /watch entirely and
+# defeat the rename. Measured 2026-09-15 with wrangler pages dev.
+# Query string is preserved by Cloudflare Pages since the destination has no
+# ? clause, same as the /contract.html and /payment rules above. That matters:
+# the page reads fn, vn, wd, film, fc and fv, and Sean attributes on utm_*.
+/watch                     /yours       200
