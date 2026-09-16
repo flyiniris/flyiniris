@@ -9,6 +9,32 @@
   <meta name="theme-color" content="#0A0A0A">
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
+  <script>
+  // SEC-1. The inquiry session token arrives as ?session=TOKEN and it returns
+  // the couple's name, email and phone. GA4 sends page_location and the Meta
+  // pixel sends dl, both defaulting to the FULL href, and Clarity records the
+  // URL too, so leaving the token in the address bar hands a live credential
+  // to Google, Meta and Microsoft. Read the token (and the rest of the query)
+  // into JS first, then strip session/token from the visible URL, all of it
+  // ABOVE the tag snippets so every tag reads the already-cleaned URL.
+  (function () {
+    window.__fi_query = window.location.search;
+    window.__fi_session_token = '';
+    try {
+      var p = new URLSearchParams(window.location.search);
+      window.__fi_session_token = p.get('session') || p.get('token') || '';
+      if (window.__fi_session_token) {
+        try { localStorage.setItem('fi_session_token', window.__fi_session_token); } catch (e) { /* storage blocked */ }
+      }
+      if ((p.has('session') || p.has('token')) && window.history && history.replaceState) {
+        p.delete('session'); p.delete('token');
+        var q = p.toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+      }
+    } catch (e) { /* leave the URL alone rather than break the page */ }
+  })();
+  </script>
+
   <!-- GA4 (same direct pattern as /calculator; this page has no GTM) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
   <script>
@@ -28,7 +54,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
     fbq('track', 'ViewContent', { content_name: 'thank_you_router' });
@@ -62,7 +88,8 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      /* was rgba(200,195,185,0.5), 3.48:1 on #0A0A0A. #8C8880 is 5.61:1. */
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -71,6 +98,19 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+
+    /* A11Y-8: honour reduced-motion, matching index.html. Fill-forwards
+       animations still land on their end state, so nothing stays invisible;
+       the delay is collapsed too so staggered reveals paint immediately. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     body {
       font-family: 'Outfit', sans-serif;
@@ -342,6 +382,15 @@
     .footer-legal { font-size: 0.6875rem; color: var(--text-muted); margin-top: 4px; }
     .footer-legal a { color: var(--text-muted); text-decoration: underline; }
 
+    /* A11Y: 44x44 minimum touch targets. Done with transparent ::before
+       overlays so nothing about the visual design moves. */
+    .footer-brand { position: relative; display: inline-block; }
+    .footer-brand::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: -12px; right: -12px; z-index: 1; }
+    .footer-legal a { position: relative; display: inline-block; }
+    .footer-legal a::before { content: ''; position: absolute; top: -15px; bottom: -15px; left: -8px; right: -8px; z-index: 1; }
+    .cal-fallback a { position: relative; display: inline-block; }
+    .cal-fallback a::before { content: ''; position: absolute; top: -14px; bottom: -14px; left: -8px; right: -8px; z-index: 1; }
+
     @media (max-width: 640px) {
       .confirm-head { padding: 56px 16px 8px; }
       .router { padding: 0 12px 24px; }
@@ -349,6 +398,7 @@
   </style>
 </head>
 <body>
+<main>
 
   <!-- Confirmation -->
   <section class="confirm-head">
@@ -403,6 +453,7 @@
   </section>
 
   <!-- Footer -->
+  </main>
   <footer class="footer">
     <a href="/" class="footer-brand">Flyin' Iris</a>
     <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC</p>
@@ -433,12 +484,13 @@
         'sarah-cody': { couple: 'Sarah & Cody', venue: 'The Bowery' }
       };
 
-      var params = new URLSearchParams(window.location.search);
-      var sessionToken = params.get('session') || params.get('token') || '';
+      // The head script captured the original query and the session token
+      // before stripping session/token off the visible URL (SEC-1), so read
+      // from there, not from window.location.search (already cleaned).
+      var params = new URLSearchParams(window.__fi_query || window.location.search);
+      var sessionToken = window.__fi_session_token || '';
       if (!sessionToken) {
         try { sessionToken = localStorage.getItem('fi_session_token') || ''; } catch (e) { /* ignore */ }
-      } else {
-        try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
       }
 
       function setBooking(prefill) {
@@ -568,7 +620,7 @@
       }
 
       if (sessionToken) {
-        fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+        fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken) + '?source=thanks')
           .then(function(r) { return r.ok ? r.json() : null; })
           .then(function(s) {
             if (s && s.success) renderFromSession(s);

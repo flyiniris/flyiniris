@@ -59,6 +59,14 @@ check_contains() { # file, needle, label
     status=1
   fi
 }
+# The mirror of check_contains: some strings must never come back.
+# Added 2026-09-15 after the pixel outage described below.
+check_absent() { # file, needle, label
+  if git show "$TIP:$1" 2>/dev/null | grep -q "$2"; then
+    echo "PUSH BLOCKED: tracking invariant failed: $1 contains $3" >&2
+    status=1
+  fi
+}
 # CSP must allow the analytics endpoints (bare apex, not just the wildcard)
 check_contains "_headers" " analytics.google.com "               "bare analytics.google.com in CSP"
 check_contains "_headers" "static.cloudflareinsights.com"        "Cloudflare beacon origin in CSP"
@@ -73,8 +81,17 @@ check_contains "calculator/index.html" "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "quiz/index.html"       "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "start.html"            "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "404.html"              "G-XGSWD6JW3E"  "GA4 tag"
+# 2026-09-15: this check used to assert only that the page contained the string
+# "fbq(". That string is present inside a BROKEN snippet too, so from 2026-02-20
+# to 2026-09-15 the pixel loaded connect.facebook.net/en_US/fbq.js, which does
+# not exist (HTTP 500, blocked by ORB), and this guard passed every push for
+# seven months while zero browser events reached Meta. Presence of a token is
+# not proof a tag works. So we now assert the LIBRARY URL is the real one, and
+# that the dead one can never come back.
 for pg in index.html thanks.html films.html experience.html saved.html venues/index.html start.html 404.html; do
   check_contains "$pg" "fbq(" "Meta pixel"
+  check_contains "$pg" "en_US/fbevents\.js" "the real Meta pixel library (en_US/fbevents.js)"
+  check_absent   "$pg" "en_US/fbq\.js"      "en_US/fbq.js, which does not exist: use en_US/fbevents.js"
 done
 # Microsoft Clarity (2026-07-08): CSP in both directives + snippet on both
 # pages. The official snippet concatenates the tag URL, so the pages are

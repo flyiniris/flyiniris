@@ -42,12 +42,12 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView', {}, { eventID: window.__fi_pv_event_id });
   }, 3000);
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=518972926490365&ev=PageView&noscript=1"/></noscript>
 
   <!-- Microsoft Clarity (project xj2t05exbz; session recordings + heatmaps) -->
@@ -66,7 +66,20 @@
   <link rel="dns-prefetch" href="https://cdn.vidstack.io">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Vidstack Player (deferred - loads when films section is near viewport) -->
+  <!-- Vidstack Player (deferred: loads only on the first play click) -->
+
+  <!-- No-JS fallback. Scroll reveal starts everything at opacity 0, so without
+       JavaScript (Instagram and Facebook in-app browsers are the usual
+       offenders) the whole page below the hero would be invisible. -->
+  <noscript>
+    <style>
+      .reveal, .reveal-child,
+      .why-headline, .why-body, .why-quote, .why-divider, .why-cta {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
 
   <!-- JSON-LD Schema -->
   <script type="application/ld+json">
@@ -234,6 +247,16 @@
       overflow-x: hidden;
     }
 
+    /* Default link colour. Without this any link that misses a component rule
+       renders browser-default blue on near black. Inline links get the warm
+       text tone plus an underline so they read as links; the gold stays
+       reserved for calls to action. */
+    a {
+      color: var(--text-primary);
+      text-decoration-color: var(--accent);
+      text-underline-offset: 3px;
+    }
+
     /* ========== KEYFRAMES ========== */
 
     @keyframes fadeUp {
@@ -352,6 +375,10 @@
       letter-spacing: 0.05em;
       color: var(--text-primary);
       text-decoration: none;
+      /* 44px tap target. The negative margin cancels the added padding so the
+         nav lays out exactly as before. */
+      padding: 6px 0;
+      margin: -6px 0;
     }
 
     .nav-links {
@@ -383,7 +410,10 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 4px;
+      /* 44px tap target: the only mobile nav control on the site. The negative
+         margin cancels the added padding so the bars do not move. */
+      padding: 16px 12px;
+      margin: -12px -8px;
       z-index: 1001;
     }
 
@@ -762,6 +792,19 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.25s ease;
+      /* Clickable so the player script can be deferred until play intent. */
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .video-play-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    /* Once the film is rolling the overlay fades and must stop eating clicks. */
+    .video-play-btn.is-hidden {
+      opacity: 0;
       pointer-events: none;
     }
 
@@ -1480,7 +1523,7 @@
     .footer-social {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       margin-top: 24px;
     }
 
@@ -1489,6 +1532,13 @@
       transition: color 0.3s ease;
       display: flex;
       align-items: center;
+      /* 44x44 tap target around a 20px icon. The negative margin keeps the
+         icons where they were and the 24px gap keeps the targets from
+         overlapping each other. */
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      margin: -12px;
     }
 
     .footer-social a:hover,
@@ -1637,7 +1687,7 @@
     .quiz-option-desc { font-size: 0.75rem; color: #A8A29A; line-height: 1.4; margin-top: 1px; }
     .quiz-option.selected .quiz-option-desc { color: var(--text-secondary); }
     .quiz-option-check { width: 20px; height: 20px; border-radius: 50%; background-color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .quiz-option-check span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 800; }
+    .quiz-option-check span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 700; }
     .quiz-price-tag { font-size: 0.625rem; color: var(--accent-dark); font-family: 'Outfit', sans-serif; font-weight: 700; background-color: rgba(255,189,29,0.07); padding: 2px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.3px; white-space: nowrap; }
     .quiz-value-msg { background-color: #1a1700; border: 1px solid rgba(217,158,10,0.2); border-radius: 10px; padding: 13px 16px; margin-top: 10px; }
     .quiz-value-msg p { font-size: 0.875rem; color: var(--accent-light); font-family: 'Outfit', sans-serif; line-height: 1.6; margin: 0; }
@@ -1663,7 +1713,7 @@
     .quiz-form-input, .quiz-form-textarea { width: 100%; padding: 13px 14px; border-radius: 8px; border: 2px solid #1a1a1a; background-color: #0f0f0f; color: var(--text-primary); font-size: 0.875rem; font-family: 'Outfit', sans-serif; outline: none; box-sizing: border-box; }
     .quiz-form-input:focus, .quiz-form-textarea:focus { border-color: var(--accent); }
     .quiz-form-input.error, .quiz-form-textarea.error { border-color: #e74c3c; }
-    .quiz-form-input::placeholder, .quiz-form-textarea::placeholder { color: #6B6B6B; }
+    .quiz-form-input::placeholder, .quiz-form-textarea::placeholder { color: #8C8880; }
     .quiz-form-textarea { resize: vertical; min-height: 80px; }
     .quiz-form-error { font-size: 0.75rem; color: #e74c3c; font-family: 'Outfit', sans-serif; margin-top: 4px; }
     select.quiz-form-input {
@@ -1684,12 +1734,12 @@
     .quiz-checkbox-wrap { display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer; background: none; border: none; padding: 0; }
     .quiz-checkbox { width: 20px; height: 20px; border-radius: 4px; border: 2px solid #333; background-color: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; }
     .quiz-checkbox.checked { border-color: var(--accent); background-color: var(--accent); }
-    .quiz-checkbox.checked span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 800; }
+    .quiz-checkbox.checked span { color: var(--bg-primary); font-size: 0.75rem; font-weight: 700; }
     .quiz-checkbox-label { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
     .quiz-checkbox.checked + .quiz-checkbox-label { color: var(--text-primary); }
     .quiz-submit-btn { background-color: var(--accent); color: var(--bg-primary); border: none; padding: 15px 40px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9375rem; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: background-color 0.3s ease, filter 0.3s ease; }
     .quiz-submit-btn:hover { background-color: var(--accent-dark); }
-    .quiz-form-hint { font-size: 0.625rem; color: #6B6B6B; text-align: center; font-family: 'Outfit', sans-serif; }
+    .quiz-form-hint { font-size: 0.75rem; color: #8C8880; text-align: center; font-family: 'Outfit', sans-serif; }
     .quiz-form-submit-error { font-size: 0.75rem; color: #e74c3c; text-align: center; font-family: 'Outfit', sans-serif; }
     .quiz-box { background-color: #0f0f0f; border-radius: 12px; padding: 20px 16px; border: 1px solid #1a1a1a; margin-bottom: 16px; }
     .quiz-gold-box { background-color: #1a1700; border: 1px solid rgba(255,189,29,0.2); border-radius: 12px; padding: 24px 20px; text-align: center; margin-bottom: 16px; }
@@ -1712,7 +1762,7 @@
     .calc-estimate-label { font-size: 0.625rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; font-family: 'Outfit', sans-serif; margin-bottom: 8px; }
     .calc-estimate-amount { font-family: 'Cormorant Garamond', serif; font-size: 2.625rem; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
     .calc-estimate-note { font-size: 0.875rem; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
-    .calc-tier-badge { display: inline-block; background-color: var(--accent); color: var(--bg-primary); padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+    .calc-tier-badge { display: inline-block; background-color: var(--accent); color: var(--bg-primary); padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; font-family: 'Outfit', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
     .calc-tier-desc { font-size: 0.875rem; color: var(--text-primary); font-family: 'Outfit', sans-serif; line-height: 1.6; margin-top: 12px; }
     .calc-deliverable { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .calc-deliverable-icon { color: var(--accent); font-size: 0.875rem; }
@@ -1874,8 +1924,8 @@
     /* Footer contact info line */
     .footer-contact {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.625rem;
-      color: rgba(200,195,185,0.5);
+      font-size: 0.75rem;
+      color: #A39E95;
       margin-bottom: 12px;
     }
     .footer-contact a {
@@ -1916,12 +1966,12 @@
 
     .footer-legal {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.625rem;
-      color: rgba(200,195,185,0.4);
+      font-size: 0.75rem;
+      color: #8C8880;
       margin-top: 16px;
     }
     .footer-legal a {
-      color: rgba(200,195,185,0.4);
+      color: #8C8880;
       text-decoration: none;
     }
     .footer-legal a:hover {
@@ -2182,13 +2232,15 @@
               title="A Wisconsin Love Story"
               crossorigin
               playsinline
+              load="play"
+              preload="none"
               style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
             >
               <media-provider></media-provider>
               <media-video-layout></media-video-layout>
             </media-player>
             <img src="/thumbs/Taylor-Austin_thumb.webp" alt="A Wisconsin Love Story" class="video-poster" width="900" height="506" loading="lazy" />
-            <div class="video-play-btn">
+            <div class="video-play-btn" role="button" tabindex="0" aria-label="Play the film: A Wisconsin Love Story">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
               </svg>
@@ -2205,13 +2257,15 @@
                 title="Main Characters at The Green Bay Country Club"
                 crossorigin
                 playsinline
+                load="play"
+                preload="none"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
                 <media-video-layout></media-video-layout>
               </media-player>
               <img src="/thumbs/Taylor-Kane_thumb.webp" alt="Main Characters at The Green Bay Country Club" class="video-poster" width="900" height="506" loading="lazy" />
-              <div class="video-play-btn">
+              <div class="video-play-btn" role="button" tabindex="0" aria-label="Play the film: Main Characters at The Green Bay Country Club">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
                 </svg>
@@ -2226,13 +2280,15 @@
                 title="A Marine Marries His Duchess"
                 crossorigin
                 playsinline
+                load="play"
+                preload="none"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;--media-brand:#FFBD1D;"
               >
                 <media-provider></media-provider>
                 <media-video-layout></media-video-layout>
               </media-player>
               <img src="/thumbs/Olivia-Austin_thumb.webp" alt="A Marine Marries His Duchess" class="video-poster" width="900" height="506" loading="lazy" />
-              <div class="video-play-btn">
+              <div class="video-play-btn" role="button" tabindex="0" aria-label="Play the film: A Marine Marries His Duchess">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
                 </svg>
@@ -2493,15 +2549,70 @@
     (function() {
       'use strict';
 
-      // ========== LAZY-LOAD VIDSTACK WHEN FILMS SECTION IS NEAR ==========
+      // ========== LOAD VIDSTACK ON FIRST PLAY INTENT ==========
+      // Each film renders as a static poster plus a play overlay, so the player
+      // script, its two stylesheets and every byte of HLS video stay off the
+      // wire until a visitor actually asks for a film. Scrolling past costs
+      // nothing. The section looks identical either way.
       (function() {
-        var filmsSection = document.getElementById('films');
-        if (!filmsSection) return;
-        var loaded = false;
-        var observer = new IntersectionObserver(function(entries) {
-          if (entries[0].isIntersecting && !loaded) {
-            loaded = true;
-            observer.disconnect();
+        if (!document.querySelector('media-player')) return;
+        var loading = false;
+        var bound = false;
+
+        function hideOverlay(player) {
+          var parent = player.parentElement;
+          if (!parent) return;
+          var poster = parent.querySelector('.video-poster');
+          var btn = parent.querySelector('.video-play-btn');
+          if (poster) poster.style.opacity = '0';
+          if (btn) btn.classList.add('is-hidden');
+        }
+
+        // Poster fade lives here so it is wired no matter how late the
+        // player script arrives.
+        function bindOverlayFade() {
+          if (bound) return;
+          bound = true;
+          document.querySelectorAll('media-player').forEach(function(player) {
+            player.addEventListener('playing', function() { hideOverlay(this); });
+          });
+        }
+
+        function whenReady(fn) {
+          if (window.customElements && customElements.whenDefined) {
+            customElements.whenDefined('media-player').then(fn);
+          } else {
+            setTimeout(fn, 800);
+          }
+        }
+
+        function startPlayback(player) {
+          if (typeof player.startLoading === 'function') {
+            try { player.startLoading(); } catch (err) {}
+          }
+          (function attempt(tries) {
+            if (typeof player.play !== 'function') {
+              if (tries < 30) setTimeout(function() { attempt(tries + 1); }, 150);
+              return;
+            }
+            var p;
+            try { p = player.play(); } catch (err) { p = null; }
+            if (p && typeof p.catch === 'function') {
+              p.catch(function() {
+                if (tries < 30) setTimeout(function() { attempt(tries + 1); }, 250);
+              });
+            }
+          })(0);
+          player.addEventListener('can-play', function() {
+            if (this.paused && typeof this.play === 'function') {
+              try { this.play(); } catch (err) {}
+            }
+          }, { once: true });
+        }
+
+        function loadPlayer(player) {
+          if (!loading) {
+            loading = true;
             var css1 = document.createElement('link');
             css1.rel = 'stylesheet';
             css1.href = 'https://cdn.vidstack.io/player/theme.css';
@@ -2513,21 +2624,32 @@
             var script = document.createElement('script');
             script.type = 'module';
             script.src = 'https://cdn.vidstack.io/player';
+            script.addEventListener('load', bindOverlayFade);
             document.head.appendChild(script);
-            // Bind poster fade once Vidstack loads
-            script.addEventListener('load', function() {
-              document.querySelectorAll('media-player').forEach(function(player) {
-                player.addEventListener('playing', function() {
-                  var poster = this.parentElement.querySelector('.video-poster');
-                  var playBtn = this.parentElement.querySelector('.video-play-btn');
-                  if (poster) poster.style.opacity = '0';
-                  if (playBtn) playBtn.style.opacity = '0';
-                });
-              });
-            });
+            whenReady(bindOverlayFade);
           }
-        }, { rootMargin: '500px 0px' });
-        observer.observe(filmsSection);
+          whenReady(function() { startPlayback(player); });
+        }
+
+        function playIntent(target) {
+          if (!target || !target.closest) return;
+          var btn = target.closest('.video-play-btn');
+          var player = btn && btn.parentElement
+            ? btn.parentElement.querySelector('media-player')
+            : target.closest('media-player');
+          if (!player || player.dataset.fiStarted === '1') return;
+          player.dataset.fiStarted = '1';
+          loadPlayer(player);
+        }
+
+        document.addEventListener('click', function(e) { playIntent(e.target); });
+        document.addEventListener('keydown', function(e) {
+          if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+          var el = document.activeElement;
+          if (!el || !el.classList || !el.classList.contains('video-play-btn')) return;
+          e.preventDefault();
+          playIntent(el);
+        });
       })();
 
       // ========== LAZY-LOAD TESTIMONIALS BACKGROUND ==========
@@ -2724,19 +2846,43 @@
               localStorage.setItem('fi_tracking_ts', String(Date.now()));
             }
           } catch (e) { /* storage blocked: tracking degrades gracefully */ }
-          // Fire server-side PageView for CAPI when fbclid is present, using
-          // the SAME event id as the browser pixel PageView so Meta dedups.
+          // Fire the server-side CAPI PageView using the SAME event id as the
+          // browser pixel PageView so Meta dedups the pair instead of counting
+          // two.
+          //
+          // 2026-09-15 audit (site-audit, TRACK-5): this used to be wrapped in
+          // `if (fbclid)`, so the server only heard about a visit that arrived
+          // on an ad click. Measured result: 14 PageView events in September
+          // 2026 for the whole site. It now fires for every visit, and fbclid
+          // is just one of several optional signals sent along with it.
           var fbclid = '';
           try {
             fbclid = new URLSearchParams(window.location.search).get('fbclid') || localStorage.getItem('fi_fbclid') || sessionStorage.getItem('fi_fbclid') || '';
           } catch (e) { /* ignore */ }
-          if (fbclid) {
-            fetch(WORKER_URL + '/api/pageview', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fbclid: fbclid, event_id: window.__fi_pv_event_id })
-            }).catch(function() {});
-          }
+          // A stable per-browser id so the server can tell two visitors apart.
+          // The Worker has kept a visitor_tracking table keyed on this for a
+          // long time, but nothing on the client had ever sent one, so every
+          // anonymous event shared a single identity (TRACK-3).
+          var fiVisitorId = '';
+          try {
+            fiVisitorId = localStorage.getItem('fi_visitor_id') || '';
+            if (!fiVisitorId) {
+              fiVisitorId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+              localStorage.setItem('fi_visitor_id', fiVisitorId);
+            }
+          } catch (e) { /* storage blocked: the server falls back to _fbp */ }
+          fetch(WORKER_URL + '/api/pageview', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fbclid: fbclid,
+              event_id: window.__fi_pv_event_id,
+              visitor_id: fiVisitorId,
+              fbp: getCookie('_fbp'),
+              fbc: getCookie('_fbc'),
+              page_url: window.location.href.split('#')[0]
+            })
+          }).catch(function() {});
         })();
         function getCookie(name) {
           var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -2758,6 +2904,14 @@
           var fbc = getCookie('_fbc');
           if (fbp) data.fbp = fbp;
           if (fbc) data.fbc = fbc;
+          // 2026-09-15 audit (site-audit, TRACK-3/TRACK-4): send the stable
+          // visitor id and the page the inquiry was submitted from, so the
+          // server CAPI Lead carries a real identity and a real source URL.
+          try {
+            var vid = localStorage.getItem('fi_visitor_id');
+            if (vid) data.visitor_id = vid;
+          } catch (e) { /* ignore */ }
+          try { data.page_url = window.location.href.split('#')[0]; } catch (e) { /* ignore */ }
           return data;
         }
         function generateEventId() {
@@ -3011,7 +3165,7 @@
           h += '<button class="quiz-submit-btn" data-action="submit-inquiry">Check My Date →</button>';
           if (t && !(nOk && paOk && eOk && pOk && dOk)) h += '<p class="quiz-form-submit-error">↑ Just need a few more details!</p>';
           h += '<p class="quiz-form-hint">No spam ever. Real pricing, real availability, and a real conversation about your day.</p>';
-          h += '<p style="font-size:0.5625rem;color:rgba(200,195,185,0.4);text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:rgba(200,195,185,0.4);text-decoration:underline">Terms & Conditions</a></p>';
+          h += '<p style="font-size:0.75rem;color:#8C8880;text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:#8C8880;text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:#8C8880;text-decoration:underline">Terms & Conditions</a></p>';
           h += '</div></div>';
           return h;
         }

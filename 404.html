@@ -28,7 +28,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -73,6 +73,18 @@
       padding: 24px;
       -webkit-font-smoothing: antialiased;
     }
+
+    /* Respect reduced-motion preferences: stop the grain and the reveal
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     .wrap { max-width: 480px; }
     .brand {
       font-family: 'Cormorant Garamond', serif;
@@ -82,7 +94,8 @@
       color: var(--text-primary);
       text-decoration: none;
       display: inline-block;
-      margin-bottom: 40px;
+      padding: 12px 4px;
+      margin-bottom: 28px;
     }
     .brand:hover { color: var(--accent); }
     h1 {
@@ -98,6 +111,18 @@
       font-size: 0.95rem;
       margin-bottom: 36px;
     }
+    .help {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 28px;
+      margin-bottom: 0;
+    }
+    .help a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 189, 29, 0.35);
+    }
+    .help a:hover { border-color: var(--accent); }
     .links {
       display: flex;
       flex-wrap: wrap;
@@ -127,15 +152,17 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main class="wrap">
     <a class="brand" href="/">FLYIN' IRIS</a>
     <h1>This page seems to have <em>wandered off</em>.</h1>
     <p>The link you followed doesn't exist anymore (or never did). The good stuff is still right here.</p>
     <div class="links">
-      <a class="primary" href="/">Home</a>
+      <a class="primary" href="/#inquiry">Check Your Date</a>
       <a href="/films">Watch Films</a>
+      <a href="/venues/">Venue Films</a>
       <a href="/calculator/">Build Your Package</a>
     </div>
-  </div>
+    <p class="help">Looking for something specific? Email <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a> and we will send you the right link.</p>
+  </main>
 </body>
 </html>

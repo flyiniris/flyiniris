@@ -12,16 +12,31 @@
   // from localStorage (same-device return visit). Anonymous hits go to the
   // inquiry form. Runs first in head so pricing never paints for anonymous
   // visitors.
+  //
+  // SEC-1: the token returns the couple's name, email and phone, and this page
+  // runs GA4 and the Meta pixel (gtag sends page_location, the pixel sends dl,
+  // both defaulting to the FULL href). The token is read into JS here and then
+  // stripped from the visible URL, above the tag snippets, so no tag ever sees
+  // it. The gate itself is unchanged: anonymous hits still redirect.
   (function() {
     var t = '';
+    var p = null;
     try {
-      var p = new URLSearchParams(window.location.search);
+      p = new URLSearchParams(window.location.search);
       t = p.get('session') || p.get('token') || '';
       if (!t) { try { t = localStorage.getItem('fi_session_token') || ''; } catch (e) { /* storage blocked */ } }
     } catch (e) { /* fall through to redirect */ }
     if (!t) { window.location.replace('/?src=calculator#inquiry'); return; }
     window.__fi_session_token = t;
+    window.__fi_query = window.location.search;
     try { localStorage.setItem('fi_session_token', t); } catch (e) { /* ignore */ }
+    try {
+      if (p && (p.has('session') || p.has('token')) && window.history && history.replaceState) {
+        p.delete('session'); p.delete('token');
+        var q = p.toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+      }
+    } catch (e) { /* leave the URL alone rather than break the gate */ }
   })();
   </script>
 
@@ -61,7 +76,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -77,7 +92,9 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.6);
+      /* was rgba(200,195,185,0.6), 4.46:1 on the card surface. #8C8880 is
+         5.61:1 on #0A0A0A and 5.13:1 on #161615. */
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -91,6 +108,19 @@
     }
 
     html { scroll-behavior: smooth; }
+
+    /* A11Y-8: honour reduced-motion, matching index.html. Fill-forwards
+       animations still land on their end state, so nothing stays invisible;
+       the delay is collapsed too so staggered reveals paint immediately. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     body {
       font-family: 'Outfit', sans-serif;
@@ -787,6 +817,15 @@
 
     .footer-legal a:hover { color: var(--accent); }
 
+    /* A11Y: 44x44 minimum touch targets. Done with transparent ::before
+       overlays so nothing about the visual design moves. */
+    .nav-brand { position: relative; }
+    .nav-brand::before { content: ''; position: absolute; top: -7px; bottom: -7px; left: -8px; right: -8px; z-index: 1; }
+    .nav-cta { position: relative; }
+    .nav-cta::before { content: ''; position: absolute; top: -4px; bottom: -4px; left: 0; right: 0; z-index: 1; }
+    .footer-legal a { position: relative; display: inline-block; }
+    .footer-legal a::before { content: ''; position: absolute; top: -15px; bottom: -15px; left: -8px; right: -8px; z-index: 1; }
+
     /* ========== RESPONSIVE ========== */
     @media (max-width: 500px) {
       .hero { padding: 100px 20px 36px; }
@@ -809,6 +848,7 @@
     <a href="https://www.flyiniris.com" class="nav-brand">Flyin<span>'</span> Iris</a>
     <a href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" class="nav-cta" id="navBookLink">Book a Call</a>
   </nav>
+<main>
 
   <!-- Hero -->
   <section class="hero">
@@ -972,6 +1012,7 @@
   </div>
 
   <!-- Footer -->
+  </main>
   <footer class="site-footer">
     <p class="footer-brand">FLYIN' IRIS</p>
     <p class="footer-location">Milwaukee, Wisconsin</p>
@@ -1212,7 +1253,7 @@
     }
 
     if (sessionToken) {
-      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken) + '?source=calculator')
         .then(function(r) { return r.ok ? r.json() : null; })
         .then(function(s) {
           if (s && s.success) {

@@ -42,7 +42,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -63,7 +63,7 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -121,6 +121,17 @@
       90% { transform: translate(-10%, 10%); }
     }
 
+    /* Respect reduced-motion preferences: stop the grain and the reveal
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -137,6 +148,121 @@
       to { opacity: 1; }
     }
 
+
+    /* ========== NAVIGATION (same pattern as /venues/) ========== */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background-color 0.4s ease, padding 0.4s ease;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      opacity: 0;
+    }
+
+    .nav.scrolled {
+      background-color: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 40px;
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      font-variant: all-small-caps;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background-color: var(--accent);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-hamburger.active span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,10,0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 2rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .mobile-menu a:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav { padding: 20px 24px; }
+      .nav.scrolled { padding: 14px 24px; }
+    }
+
     /* ========== LAYOUT ========== */
 
     .page-wrapper {
@@ -148,29 +274,10 @@
     /* ========== HERO ========== */
 
     .hero {
-      padding-top: 48px;
+      padding-top: 112px;
       padding-bottom: 40px;
       text-align: center;
       border-top: 2px solid var(--accent);
-    }
-
-    .hero-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 0.15em;
-      color: var(--accent);
-      text-decoration: none;
-      text-transform: uppercase;
-      display: inline-block;
-      margin-bottom: 40px;
-      transition: color 0.25s ease;
-      opacity: 0;
-      animation: fadeIn 0.6s ease 0.2s forwards;
-    }
-
-    .hero-brand:hover {
-      color: var(--accent-light);
     }
 
     .hero-heading {
@@ -389,7 +496,9 @@
     }
 
     .cta-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.9rem;
@@ -486,7 +595,7 @@
       }
 
       .hero {
-        padding-top: 64px;
+        padding-top: 136px;
         padding-bottom: 48px;
       }
 
@@ -515,11 +624,36 @@
 </head>
 <body>
 
+  <!-- NAV (same pattern as /venues/) -->
+  <header>
+    <nav class="nav" id="main-nav" aria-label="Main navigation">
+      <a href="https://www.flyiniris.com/" class="nav-brand">FLYIN' IRIS</a>
+      <ul class="nav-links">
+        <li><a href="https://www.flyiniris.com/#films">Films</a></li>
+        <li><a href="https://www.flyiniris.com/#why">About</a></li>
+        <li><a href="https://www.flyiniris.com/#investment">Investment</a></li>
+        <li><a href="https://www.flyiniris.com/#quiz">Let's Talk</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation">
+      <a href="https://www.flyiniris.com/#films">Films</a>
+      <a href="https://www.flyiniris.com/#why">About</a>
+      <a href="https://www.flyiniris.com/#investment">Investment</a>
+      <a href="https://www.flyiniris.com/#quiz">Let's Talk</a>
+    </div>
+  </header>
+
   <div class="page-wrapper">
+
+    <main id="main">
 
     <!-- Hero -->
     <section class="hero">
-      <a href="https://www.flyiniris.com" class="hero-brand">FLYIN' IRIS</a>
       <h1 class="hero-heading">Films That Hit Different.</h1>
       <p class="hero-sub">Every love story we tell is completely unique. Here are a few of our favorites.</p>
       <p class="hero-venue-match" id="venueMatch" style="display:none;"></p>
@@ -612,6 +746,8 @@
       <p class="sign-off-location">Flyin' Iris &middot; Milwaukee, Wisconsin</p>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer class="site-footer">
       <p class="footer-brand">FLYIN' IRIS</p>
@@ -624,6 +760,32 @@
   </div>
 
   <script>
+    // NAV: scroll state and the mobile menu, same behaviour as /venues/.
+    (function() {
+      var nav = document.getElementById('main-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+      }, { passive: true });
+
+      var hamburger = document.getElementById('hamburger');
+      var mobileMenu = document.getElementById('mobile-menu');
+      hamburger.addEventListener('click', function() {
+        var isOpen = mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active', isOpen);
+        hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+          hamburger.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        });
+      });
+    })();
+
     (function() {
       var params = new URLSearchParams(window.location.search);
       var vn = params.get('vn');

@@ -23,7 +23,7 @@
   n.queue=[];t=b.createElement(e);t.async=!0;
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbq.js');
+  'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '518972926490365');
   fbq('track', 'PageView');
   </script>
@@ -38,7 +38,7 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -85,6 +85,17 @@
       70% { transform: translate(0%, 15%); }
       80% { transform: translate(3%, 35%); }
       90% { transform: translate(-10%, 10%); }
+    }
+
+    /* Respect reduced-motion preferences: stop the grain and the reveal
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     @keyframes fadeUp {
@@ -738,7 +749,7 @@
 
     .b-hour-price {
       font-weight: 300;
-      font-size: 0.6875rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 2px;
     }
@@ -776,7 +787,7 @@
 
     .b-hl-price {
       font-weight: 300;
-      font-size: 0.6875rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
 
@@ -1299,6 +1310,9 @@
     }
 
     .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.8125rem;
@@ -1388,12 +1402,14 @@
   <!-- Fallback State -->
   <div class="fallback-screen" id="fallback-screen">
     <h1>This link has expired.</h1>
-    <p>Your experience page is available for 7 days after your inquiry. Tell us about your wedding and we'll create a new one.</p>
+    <p>Your experience page is available for 30 days after your inquiry. Tell us about your wedding and we'll create a new one.</p>
     <a href="https://www.flyiniris.com/" class="btn-primary">Start Over</a>
   </div>
 
   <!-- Main Content -->
   <div class="experience-content" id="experience-content">
+
+    <main id="main">
 
     <!-- Act 1: Intro (Greeting + Availability) -->
     <section class="act-recognition" id="act-recognition">
@@ -1511,6 +1527,8 @@
       </button>
       <p class="share-subtitle" id="share-subtitle" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:0.75rem;color:var(--text-muted);margin-top:10px;line-height:1.5;">Send them this page so you can watch together and decide.</p>
     </section>
+
+    </main>
 
     <!-- Footer -->
     <footer class="experience-footer">
@@ -1752,7 +1770,7 @@
         return;
       }
 
-      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken))
+      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken) + '?source=experience')
         .then(function(res) {
           if (!res.ok) throw new Error('Session expired');
           return res.json();

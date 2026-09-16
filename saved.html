@@ -19,7 +19,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -40,7 +40,8 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      /* was rgba(200,195,185,0.5), 3.48:1 on #0A0A0A. #8C8880 is 5.61:1. */
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -49,6 +50,19 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+
+    /* A11Y-8: honour reduced-motion, matching index.html. Fill-forwards
+       animations still land on their end state, so nothing stays invisible;
+       the delay is collapsed too so staggered reveals paint immediately. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     body {
       font-family: 'Outfit', sans-serif;
@@ -301,9 +315,17 @@
     .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
     .footer-legal { font-size: 0.6875rem; color: var(--text-muted); margin-top: 4px; }
     .footer-legal a { color: var(--text-muted); text-decoration: underline; }
+
+    /* A11Y: 44x44 minimum touch targets. Done with transparent ::before
+       overlays so nothing about the visual design moves. */
+    .footer-brand { position: relative; display: inline-block; }
+    .footer-brand::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: -12px; right: -12px; z-index: 1; }
+    .footer-legal a { position: relative; display: inline-block; }
+    .footer-legal a::before { content: ''; position: absolute; top: -15px; bottom: -15px; left: -8px; right: -8px; z-index: 1; }
   </style>
 </head>
 <body>
+<main>
 
   <div class="page" id="page-main">
     <!-- Loading -->
@@ -332,6 +354,8 @@
       <a href="/" class="cta-btn">Start Fresh &#10038;</a>
     </div>
   </div>
+
+  </main>
 
   <footer class="footer">
     <a href="/" class="footer-brand">Flyin' Iris</a>

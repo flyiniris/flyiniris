@@ -40,7 +40,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
     fbq('trackCustom', 'VenueExplorerViewed');
@@ -196,7 +196,7 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -245,6 +245,17 @@
       90% { transform: translate(-10%, 10%); }
     }
 
+    /* Respect reduced-motion preferences: stop the grain and the reveal
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
@@ -277,6 +288,9 @@
     }
 
     .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 1.25rem;
@@ -307,7 +321,11 @@
     .nav-hamburger {
       display: none;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 5px;
+      width: 44px;
+      height: 44px;
       background: none;
       border: none;
       cursor: pointer;
@@ -438,6 +456,8 @@
     }
 
     .filter-chip {
+      display: inline-flex;
+      align-items: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.75rem;
@@ -687,6 +707,8 @@
 
     .sound-overlay-inner {
       display: flex;
+      font: inherit;
+      cursor: pointer;
       align-items: center;
       gap: 12px;
       background: rgba(10, 10, 10, 0.75);
@@ -701,6 +723,12 @@
     .sound-overlay-inner:hover {
       background: rgba(255, 189, 29, 0.12);
       border-color: var(--accent);
+    }
+
+    .sound-overlay-inner:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      background: rgba(255, 189, 29, 0.12);
     }
 
     .sound-overlay-inner svg {
@@ -864,16 +892,26 @@
     }
 
     .seo-film-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Outfit', sans-serif;
       font-weight: 500;
       font-size: 0.875rem;
       color: var(--accent);
       text-decoration: none;
+      background: none;
+      border: 0;
       border-bottom: 1px solid rgba(255,189,29,0.3);
+      border-radius: 0;
+      padding: 0;
+      text-align: left;
+      cursor: pointer;
       transition: border-color 0.2s ease;
     }
 
     .seo-film-link:hover { border-color: var(--accent); }
+    .seo-film-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
     /* General CTA section */
     .cta-section {
@@ -963,15 +1001,29 @@
     .footer-social {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       margin-top: 24px;
     }
 
+    /* The icon stays 20px; the ::before gives it a 44x44 tap target without
+       changing the look. Gap 24 plus icon 20 puts the centres 44 apart, so
+       neighbouring targets touch but never overlap. */
     .footer-social a {
       color: var(--text-secondary);
       transition: color 0.3s ease;
       display: flex;
       align-items: center;
+      position: relative;
+    }
+
+    .footer-social a::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
     }
 
     .footer-social a:hover { color: var(--accent); }
@@ -1009,7 +1061,7 @@
     .footer-services {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 16px;
       letter-spacing: 0.04em;
@@ -1018,7 +1070,7 @@
     .footer-legal {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 12px;
     }
@@ -1030,6 +1082,7 @@
     }
 
     .footer-legal a:hover { color: var(--text-secondary); }
+    .footer-legal a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
 
     /* ========== RESPONSIVE ========== */
     @media (max-width: 768px) {
@@ -1039,6 +1092,8 @@
       .nav.scrolled { padding: 14px 24px; }
       .hero { padding: 120px 20px 60px; }
       .filters-section { top: 60px; padding: 16px 20px; }
+      .filter-chips { gap: 8px; }
+      .filter-chip { min-height: 44px; min-width: 44px; padding: 10px 16px; justify-content: center; }
       .filter-label { display: none; }
       .venues-section { padding: 32px 16px; }
       .venue-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
@@ -1055,7 +1110,7 @@
       .card-venue-name { font-size: 0.95rem; }
       .card-couple-name { font-size: 0.75rem; margin-bottom: 10px; }
       .card-tags { gap: 4px; }
-      .card-tag { font-size: 0.65rem; padding: 2px 8px; }
+      .card-tag { font-size: 0.75rem; padding: 3px 8px; }
     }
   </style>
 </head>
@@ -1084,6 +1139,8 @@
       <a href="https://www.flyiniris.com/#quiz">Let's Talk</a>
     </div>
   </header>
+
+  <main id="main">
 
   <!-- HERO -->
   <section class="hero" aria-label="Hero">
@@ -1151,10 +1208,10 @@
         <div class="video-aspect">
           <video id="detail-video" controls playsinline muted loop preload="metadata"></video>
           <div class="sound-overlay" id="sound-overlay">
-            <div class="sound-overlay-inner">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <button type="button" class="sound-overlay-inner" id="sound-overlay-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
               <span>Tap for Sound</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -1178,23 +1235,23 @@
         <h3 class="seo-venue-title">Westmoor Country Club Wedding Videographer</h3>
         <p class="seo-venue-text">Westmoor Country Club in Waukesha is one of Wisconsin's most refined wedding settings, and it photographs and films beautifully. The classic architecture, manicured grounds, and elegant ballroom create a backdrop that's effortlessly cinematic. Natural light floods through the venue's large windows during the ceremony, and the outdoor spaces offer sweeping green vistas that look stunning in summer and at golden hour.</p>
         <p class="seo-venue-text">For couples planning their wedding at Westmoor Country Club, we recommend scheduling key portraits in the late afternoon when the light wraps around the exterior in the most flattering way. The ballroom's high ceilings and warm tones are especially gorgeous during the reception. If you're looking for a Westmoor Country Club wedding videographer who knows how to capture that blend of country club elegance and genuine emotion, you've found us.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('marie-matt'); return false;">Watch Marie &amp; Matt's film at Westmoor Country Club →</a>
+        <button type="button" class="seo-film-link" data-film="marie-matt">Watch Marie &amp; Matt's film at Westmoor Country Club →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-covenant-murray-mansion">
         <h3 class="seo-venue-title">The Covenant at Murray Mansion Wedding Videographer</h3>
         <p class="seo-venue-text">The Covenant at Murray Mansion in Racine is an intimate, estate-style venue that feels like a private world unto itself. The Victorian architecture, lush grounds, and ornate interior details create an incredibly layered visual palette: every room offers something new for the camera. It's the kind of venue where the building itself becomes a character in your wedding film.</p>
         <p class="seo-venue-text">Filming at The Covenant at Murray Mansion requires a videographer who knows how to move through tight, detail-rich spaces without losing the intimacy of the moment. We've filmed here and love how the natural light interacts with the historic interior. Couples who choose this venue often describe their day as feeling like a fairytale, and their films look exactly like that.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('kayla-jason'); return false;">Watch Kayla &amp; Jason's film at The Covenant at Murray Mansion →</a>
+        <button type="button" class="seo-film-link" data-film="kayla-jason">Watch Kayla &amp; Jason's film at The Covenant at Murray Mansion →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-10-south">
         <h3 class="seo-venue-title">10 South Janesville Wedding Videographer</h3>
         <p class="seo-venue-text">10 South in Janesville is a grand ballroom venue that consistently delivers breathtaking wedding films. The soaring ceilings, dramatic drapery, and wide-open floor plan create a cinematic scale that few venues in Wisconsin can match. Whether you're going for modern and sleek or romantic and timeless, 10 South adapts beautifully to your vision. We've filmed three weddings here: each one completely different, all of them stunning.</p>
         <p class="seo-venue-text">The venue's flexible lighting setup and spacious layout give our team room to capture every angle, from sweeping wide shots of your first dance to intimate close-ups during the ceremony. If you're searching for a 10 South Janesville wedding videographer, we know this venue inside and out: the best light, the best angles, and exactly how to make your day feel as epic as the space itself.</p>
-        <a href="/venues/10-south/" class="seo-film-link" onclick="openFilmById('allie-matt'); return false;">Watch Matt &amp; Allie's film at 10 South →</a>
-        &nbsp;&nbsp;<a href="/venues/10-south/" class="seo-film-link" onclick="openFilmById('sally-aj'); return false;">Watch Sally &amp; AJ's film at 10 South →</a>
-        &nbsp;&nbsp;<a href="/venues/10-south/" class="seo-film-link" onclick="openFilmById('rachel-michael-street'); return false;">Watch Rachel &amp; Michael S.'s winter film at 10 South →</a>
+        <a href="/venues/10-south/" class="seo-film-link" data-film="allie-matt">Watch Matt &amp; Allie's film at 10 South →</a>
+        &nbsp;&nbsp;<a href="/venues/10-south/" class="seo-film-link" data-film="sally-aj">Watch Sally &amp; AJ's film at 10 South →</a>
+        &nbsp;&nbsp;<a href="/venues/10-south/" class="seo-film-link" data-film="rachel-michael-street">Watch Rachel &amp; Michael S.'s winter film at 10 South →</a>
         &nbsp;&nbsp;<a href="/venues/10-south/" class="seo-film-link">Read our full 10 South film guide →</a>
       </div>
 
@@ -1202,7 +1259,7 @@
         <h3 class="seo-venue-title">Green Bay Country Club Wedding Videographer</h3>
         <p class="seo-venue-text">Green Bay Country Club brings a Midwestern elegance that films with warmth and polish. The club's beautifully maintained grounds and classic reception spaces offer the perfect blend of sophistication and relaxed Wisconsin charm. The exterior landscape is especially striking in summer: green fairways, mature trees, and golden afternoon light that makes every outdoor portrait feel effortless.</p>
         <p class="seo-venue-text">For couples planning a wedding at Green Bay Country Club, the mix of indoor grandeur and outdoor beauty gives your videographer a lot to work with across the entire day. We captured Taylor and Kane's summer wedding here and came away with one of our favorite films. The light, the elegance, and the genuine joy of their celebration made it a film we're incredibly proud of.</p>
-        <a href="/venues/green-bay-country-club/" class="seo-film-link" onclick="openFilmById('taylor-kane'); return false;">Watch Taylor &amp; Kane's film at Green Bay Country Club →</a>
+        <a href="/venues/green-bay-country-club/" class="seo-film-link" data-film="taylor-kane">Watch Taylor &amp; Kane's film at Green Bay Country Club →</a>
         &nbsp;&nbsp;<a href="/venues/green-bay-country-club/" class="seo-film-link">Read our full Green Bay Country Club film guide →</a>
       </div>
 
@@ -1210,35 +1267,35 @@
         <h3 class="seo-venue-title">Peck &amp; Bushel Milwaukee Wedding Videographer</h3>
         <p class="seo-venue-text">Peck & Bushel is one of Milwaukee's most charming outdoor wedding venues: a hidden gem that photographs and films with a warmth you simply can't manufacture. The vine-covered walls, garden setting, and intimate atmosphere create a romantic, rustic visual language that feels entirely its own. It's the kind of place where you forget you're in the middle of a city.</p>
         <p class="seo-venue-text">Filming outdoor weddings at Peck & Bushel means working with natural light and the beautiful organic texture of the garden setting. We've filmed here in summer when the greenery is lush and everything glows. Couples who love an intimate, nature-forward aesthetic will absolutely fall in love with how their film looks when captured at this venue. It's small, it's personal, and it films beautifully.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('kate-thomas'); return false;">Watch Kate &amp; Thomas's film at Peck &amp; Bushel →</a>
+        <button type="button" class="seo-film-link" data-film="kate-thomas">Watch Kate &amp; Thomas's film at Peck &amp; Bushel →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-terrace-167">
         <h3 class="seo-venue-title">Terrace 167 Milwaukee Wedding Videographer</h3>
         <p class="seo-venue-text">Terrace 167 is a sleek, modern Milwaukee ballroom that lends itself to clean, polished wedding films. The venue's contemporary design, city views, and versatile event space make it a blank canvas that can be dressed up in virtually any direction. It's particularly stunning when lit for an evening reception: the room transforms into something genuinely dramatic.</p>
         <p class="seo-venue-text">We filmed Sandra and Chas's multicultural celebration at Terrace 167 and were blown away by how the space elevated every moment. The venue's layout allowed us to capture wide, sweeping shots alongside intimate close-ups without ever getting in the way of the celebration. If you're looking for a Terrace 167 wedding videographer, we know exactly how to make this modern space look extraordinary on film.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('sandra-chas'); return false;">Watch Sandra &amp; Chas's film at Terrace 167 →</a>
+        <button type="button" class="seo-film-link" data-film="sandra-chas">Watch Sandra &amp; Chas's film at Terrace 167 →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-mercantile-hall">
         <h3 class="seo-venue-title">Mercantile Hall Wedding Videographer (Racine)</h3>
         <p class="seo-venue-text">Mercantile Hall in Racine is one of Wisconsin's most visually compelling wedding venues: a converted industrial space where exposed brick, warm Edison lighting, and intimate proportions create an atmosphere that feels cinematic before a single camera is turned on. The rawness of the industrial architecture paired with carefully curated décor makes for wedding films with incredible depth and texture.</p>
         <p class="seo-venue-text">For couples who want their wedding film to feel like a movie rather than a documentary, Mercantile Hall delivers. Every surface tells a story: the aged brick, the worn wood, the soft glow of carefully placed lights. We captured Amanda and Boris's celebration here and the film is stunning. If you're looking for a Mercantile Hall wedding videographer in Racine, we've been there and we know exactly how to make this space sing on camera.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('amanda-boris'); return false;">Watch Amanda &amp; Boris's film at Mercantile Hall →</a>
+        <button type="button" class="seo-film-link" data-film="amanda-boris">Watch Amanda &amp; Boris's film at Mercantile Hall →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-the-gage">
         <h3 class="seo-venue-title">The Gage Milwaukee Wedding Videographer</h3>
         <p class="seo-venue-text">The Gage in Milwaukee is a grand industrial venue with a scale and drama that's hard to match. Soaring ceilings, sweeping open spaces, and a bold industrial aesthetic make it one of the most cinematic wedding venues in the state. Fall weddings here are particularly special: the cooler tones and moody atmosphere play beautifully against the warm glow of the interior lighting.</p>
         <p class="seo-venue-text">We filmed Izzy and Hunter's fall wedding at The Gage and came away with a film that still makes us stop and stare. The venue's sheer size allows for dramatic wide-angle shots that few spaces in Wisconsin can deliver. If you're planning a wedding at The Gage and want a videographer who understands how to work with industrial spaces at scale, we're the team you're looking for.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('izzy-hunter'); return false;">Watch Izzy &amp; Hunter's film at The Gage →</a>
+        <button type="button" class="seo-film-link" data-film="izzy-hunter">Watch Izzy &amp; Hunter's film at The Gage →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-monona-terrace">
         <h3 class="seo-venue-title">Monona Terrace Madison Wedding Videographer</h3>
         <p class="seo-venue-text">Monona Terrace is Madison's most iconic wedding venue: a Frank Lloyd Wright-designed landmark perched on the shores of Lake Monona. The sweeping lakefront views, architectural grandeur, and golden Wisconsin light create conditions that are almost unfairly beautiful to film. It's one of those venues where no matter where you point a camera, something stunning fills the frame.</p>
         <p class="seo-venue-text">A fall wedding at Monona Terrace, with the colors turning and the lake shimmering in the late afternoon light, is something truly special to capture. Emily and Bobby's film here is one of our most requested: the venue at dusk is breathtaking on camera. If you're looking for a Monona Terrace wedding videographer in Madison who can do justice to this iconic space, we'd love to tell your story here.</p>
-        <a href="/venues/monona-terrace/" class="seo-film-link" onclick="openFilmById('emily-bobby'); return false;">Watch Emily &amp; Bobby's film at Monona Terrace →</a>
+        <a href="/venues/monona-terrace/" class="seo-film-link" data-film="emily-bobby">Watch Emily &amp; Bobby's film at Monona Terrace →</a>
         &nbsp;&nbsp;<a href="/venues/monona-terrace/" class="seo-film-link">Read our full Monona Terrace film guide →</a>
       </div>
 
@@ -1246,28 +1303,28 @@
         <h3 class="seo-venue-title">Thyme Restaurant Door County Wedding Videographer</h3>
         <p class="seo-venue-text">Thyme Restaurant in Door County is the definition of an intimate, rustic outdoor wedding experience. Nestled in the natural beauty of the peninsula, it offers a setting that feels completely removed from the ordinary, surrounded by trees, wildflowers, and the magic of Door County in fall. For couples who value intimacy and authenticity over scale, there's nowhere quite like it.</p>
         <p class="seo-venue-text">Filming in Door County requires a videographer who understands how to work with organic outdoor settings: the ever-changing light, the natural textures, and the quiet intimacy of a smaller gathering. Rachel and Michael's film at Thyme Restaurant is a beautiful example of what this venue can look like when every element comes together. If you're planning a Door County wedding and want a videographer who loves this part of Wisconsin, we're your team.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('rachel-michael-woolf'); return false;">Watch Rachel &amp; Michael's film at Thyme Restaurant →</a>
+        <button type="button" class="seo-film-link" data-film="rachel-michael-woolf">Watch Rachel &amp; Michael's film at Thyme Restaurant →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-fields-reserve">
         <h3 class="seo-venue-title">The Fields Reserve Stoughton Wedding Videographer</h3>
         <p class="seo-venue-text">The Fields Reserve in Stoughton is a stunning barn venue that captures the romantic spirit of a Wisconsin winter wedding like nowhere else. The weathered wood, fairy lights, and wide-open countryside setting create a cozy, timeless atmosphere that films with extraordinary warmth. Winter barn weddings here have a magical quality: intimate, candle-lit, and endlessly cinematic.</p>
         <p class="seo-venue-text">We filmed Taylor and Austin's winter wedding at The Fields Reserve and the film has a painterly quality that we absolutely love. The barn's architecture is beautiful in every season, but there's something about the winter light filtering through the wooden slats that creates an atmosphere you simply can't replicate elsewhere. If you're looking for a Fields Reserve or Stoughton wedding videographer, we know this venue and we love it.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('taylor-austin'); return false;">Watch Taylor &amp; Austin's film at The Fields Reserve →</a>
+        <button type="button" class="seo-film-link" data-film="taylor-austin">Watch Taylor &amp; Austin's film at The Fields Reserve →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-oakbrook-church">
         <h3 class="seo-venue-title">Oakbrook Church Milwaukee Wedding Videographer</h3>
         <p class="seo-venue-text">Oakbrook Church in Milwaukee offers a unique blend of industrial architecture and deeply personal ceremony that makes for incredibly cinematic wedding films. The soaring ceilings, dramatic lighting, and large-format spaces create a stage for ceremonies that feel genuinely epic, while the warmth and emotion of the day keeps everything grounded and real.</p>
         <p class="seo-venue-text">Filming Olivia and Austin's wedding at Oakbrook Church was a reminder of how powerful the right space can be for a ceremony. The combination of architectural drama and genuine emotion: that's the sweet spot for a wedding film. If you're planning your wedding at Oakbrook Church and want a videographer who can honor both the grandeur of the space and the intimacy of your story, let's talk.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('olivia-austin'); return false;">Watch Olivia &amp; Austin's film at Oakbrook Church →</a>
+        <button type="button" class="seo-film-link" data-film="olivia-austin">Watch Olivia &amp; Austin's film at Oakbrook Church →</button>
       </div>
 
       <div class="seo-venue-block" id="seo-the-bowery">
         <h3 class="seo-venue-title">The Bowery Milwaukee Wedding Videographer</h3>
         <p class="seo-venue-text">The Bowery in Milwaukee is built for couples who want their wedding to feel like a party: big, bold, and unforgettable. This barn-style venue in the heart of the city brings rustic character together with an energy and scale that makes for incredibly dynamic wedding films. If you want a film that pulses with life and joy, The Bowery delivers every time.</p>
         <p class="seo-venue-text">Sarah and Cody's film at The Bowery is pure fun. It captures exactly the kind of celebration this venue was built for. The high ceilings, open floor plan, and incredible energy of the crowd create a film that's as much about the experience as it is about the couple. Looking for a Bowery Milwaukee wedding videographer who can match that energy? That's what we do.</p>
-        <a href="#venue-grid" class="seo-film-link" onclick="openFilmById('sarah-cody'); return false;">Watch Sarah &amp; Cody's film at The Bowery →</a>
+        <button type="button" class="seo-film-link" data-film="sarah-cody">Watch Sarah &amp; Cody's film at The Bowery →</button>
       </div>
     </div>
   </section>
@@ -1279,6 +1336,8 @@
     <p class="cta-text">We're Sierra and Sean, a husband-and-wife wedding film team based in Wisconsin. With 5.0 stars across 100+ weddings, we've built a reputation for cinematic films that feel as real as the moments they capture. We film across all of Wisconsin and would love to be part of your day.</p>
     <a href="https://www.flyiniris.com/#quiz" class="cta-btn">Start Your Film Inquiry</a>
   </div>
+
+  </main>
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -1624,6 +1683,17 @@
     }
 
     // ========== OPEN DETAIL ==========
+    // A11Y-6: the element that opened the dialog, so focus returns to it.
+    var lastFocused = null;
+
+    function focusablesInDialog() {
+      var panel = document.getElementById('detail-panel');
+      return Array.prototype.filter.call(
+        panel.querySelectorAll('a[href], button:not([disabled]), video[controls], [tabindex]:not([tabindex="-1"])'),
+        function(el) { return el.offsetWidth > 0 || el.offsetHeight > 0; }
+      );
+    }
+
     function openFilm(film) {
       var overlay = document.getElementById('detail-overlay');
       var venueNameEl = document.getElementById('detail-venue-name');
@@ -1658,8 +1728,14 @@
       soundOverlay.classList.remove('hidden');
       video.muted = true;
 
+      lastFocused = document.activeElement;
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
+
+      // A11Y-6: move focus into the dialog, onto the sound control that a
+      // visitor most likely wants first.
+      var firstStop = document.getElementById('sound-overlay-btn') || document.getElementById('detail-close');
+      if (firstStop) firstStop.focus();
 
       setupVideo(film.slug);
 
@@ -1694,6 +1770,10 @@
       }
       video.src = '';
       video.load();
+
+      // A11Y-6: hand focus back to whatever opened the dialog.
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+      lastFocused = null;
     }
 
     document.getElementById('detail-close').addEventListener('click', closeDetail);
@@ -1702,15 +1782,52 @@
     });
 
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeDetail();
+      var overlay = document.getElementById('detail-overlay');
+      if (!overlay.classList.contains('open')) return;
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        e.preventDefault();
+        closeDetail();
+        return;
+      }
+      // A11Y-6: keep Tab inside the dialog while it is open.
+      if (e.key !== 'Tab') return;
+      var items = focusablesInDialog();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !overlay.contains(document.activeElement))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
     });
 
     // ========== SOUND OVERLAY ==========
+    // A11Y-7: the overlay holds a real <button>, so Enter and Space reach it
+    // from the keyboard. The click handler stays on the overlay because the
+    // button's click bubbles up to it.
     document.getElementById('sound-overlay').addEventListener('click', function() {
       var video = document.getElementById('detail-video');
       video.muted = false;
       video.play().catch(function() {});
       this.classList.add('hidden');
+      // The button just became unreachable; do not strand focus on it.
+      var closeBtn = document.getElementById('detail-close');
+      if (this.contains(document.activeElement) && closeBtn) closeBtn.focus();
+    });
+
+    // ========== SEO FILM CONTROLS ==========
+    // OFF-8: these used to be <a href="#venue-grid">, which jumped a visitor
+    // back to the grid they were already looking at (and to an empty div with
+    // JavaScript off). The ones with no venue page of their own are buttons
+    // that open the film; the ones with a page keep the real link.
+    document.querySelectorAll('.seo-film-link[data-film]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.openFilmById(el.dataset.film);
+      });
     });
 
     // ========== CARD CLICKS ==========

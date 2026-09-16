@@ -38,7 +38,7 @@
   n.queue=[];t=b.createElement(e);t.async=!0;
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbq.js');
+  'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '518972926490365');
   fbq('track', 'PageView');
   </script>
@@ -141,9 +141,11 @@
       margin: 0 auto;
     }
 
-    .section-label {
+    /* Scoped so it outranks .privacy-content p, which otherwise wins on
+       specificity and flattens the label back to body text. */
+    .privacy-content .section-label {
       font-family: 'Outfit', sans-serif;
-      font-variant: all-small-caps;
+      font-weight: 400;
       text-transform: uppercase;
       letter-spacing: 0.2em;
       font-size: 0.75rem;
@@ -159,7 +161,7 @@
       margin-bottom: 12px;
     }
 
-    .last-updated {
+    .privacy-content .last-updated {
       font-family: 'Outfit', sans-serif;
       font-weight: 300;
       font-size: 0.875rem;
@@ -192,12 +194,17 @@
 
     .privacy-content a {
       color: inherit;
-      text-decoration: none;
-      transition: text-decoration 0.3s ease;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255, 189, 29, 0.55);
+      transition: color 0.3s ease, text-decoration-color 0.3s ease;
     }
 
-    .privacy-content a:hover {
-      text-decoration: underline;
+    .privacy-content a:hover,
+    .privacy-content a:focus {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
     }
 
     .privacy-content ul {
@@ -217,11 +224,15 @@
       color: var(--text-secondary);
     }
 
+    /* Brand list marker: the same 1px accent rule used across the site. */
     .privacy-content ul li::before {
-      content: "\2014";
+      content: "";
       position: absolute;
       left: 0;
-      color: var(--accent);
+      top: 0.85em;
+      width: 14px;
+      height: 1px;
+      background-color: var(--accent);
     }
 
     .contact-block {
@@ -273,7 +284,7 @@
     .footer-social {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       margin-top: 24px;
     }
 
@@ -303,18 +314,21 @@
       margin-top: 24px;
     }
 
-    /* Footer contact info line */
+    /* Footer contact info line. Colour raised to #8C8880 (5.61:1 on #0A0A0A)
+       and size raised to 12px for WCAG AA legibility. */
     .footer-contact {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.625rem;
-      color: rgba(200,195,185,0.5);
+      font-size: 0.75rem;
+      color: #8C8880;
       margin-bottom: 12px;
     }
     .footer-contact a {
       color: inherit;
       text-decoration: none;
     }
-    .footer-contact a:hover {
+    .footer-contact a:hover,
+    .footer-contact a:focus {
+      color: var(--accent);
       text-decoration: underline;
     }
 
@@ -329,19 +343,65 @@
       opacity: 0.7;
     }
 
-    /* Footer legal links */
+    /* Footer legal links. Was 10px at rgba(200,195,185,0.4), which composites
+       to #565450 (2.62:1). Now #8C8880 at 12px (5.61:1). */
     .footer-legal {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.625rem;
-      color: rgba(200,195,185,0.4);
+      font-size: 0.75rem;
+      color: #8C8880;
       margin-top: 16px;
     }
     .footer-legal a {
-      color: rgba(200,195,185,0.4);
+      color: #8C8880;
       text-decoration: none;
     }
-    .footer-legal a:hover {
+    .footer-legal a:hover,
+    .footer-legal a:focus {
+      color: var(--accent);
       text-decoration: underline;
+    }
+
+    /* ========== TOUCH TARGETS ==========
+       Every standalone link gets a 44x44 hit area via an invisible ::before
+       overlay, so the visual design is unchanged. */
+    .nav-brand,
+    .nav-back,
+    .footer-social a,
+    .footer-contact a,
+    .footer-legal a,
+    .contact-block a {
+      position: relative;
+    }
+
+    .nav-brand::before,
+    .nav-back::before,
+    .footer-contact a::before,
+    .footer-legal a::before,
+    .contact-block a::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 44px;
+      min-width: 44px;
+    }
+
+    .footer-social a::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+    }
+
+    /* Opens the contact block's line boxes to 44px so the overlays above do
+       not spill into the neighbouring line. */
+    .contact-block p {
+      line-height: 2.75;
     }
 
     /* ========== RESPONSIVE ========== */
@@ -382,7 +442,7 @@
     <div class="privacy-content">
       <p class="section-label">Privacy Policy</p>
       <h1>Privacy Policy</h1>
-      <p class="last-updated">Last updated: April 12, 2026</p>
+      <p class="last-updated">Last updated: September 15, 2026</p>
 
       <!-- Section 1 -->
       <h2>1. Introduction</h2>
@@ -409,6 +469,15 @@
         <li>The date and time of your messages</li>
       </ul>
       <p>This information is collected automatically when you initiate a conversation with us through these platforms.</p>
+      <p>Separately, when you simply visit flyiniris.com, the analytics and advertising tools described in Section 7 collect the following automatically, as soon as the page loads:</p>
+      <ul>
+        <li>Your IP address, and the approximate city or region it points to</li>
+        <li>Your device type, operating system, browser, and screen size</li>
+        <li>Which pages you view, how long you stay, and which links you click</li>
+        <li>How you arrived here (a search, an ad, a social post, or a direct visit)</li>
+        <li>A recording of how you moved through and interacted with the page (see Section 8)</li>
+      </ul>
+      <p>None of that requires you to fill in a form or tell us who you are. Sections 7, 8, and 9 explain exactly which services receive it and why.</p>
 
       <!-- Section 3 -->
       <h2>3. How We Use Your Information</h2>
@@ -439,35 +508,65 @@
       <div class="sms-callout">
         <p>No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. Information sharing to subcontractors in support services, such as customer service, is permitted. All other use case categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.</p>
       </div>
+      <p>This section is about your mobile phone number and your SMS consent specifically. For how our website itself handles analytics and advertising data, which is a different question, see Sections 7, 8, and 9.</p>
 
       <!-- Section 6 -->
       <h2>6. No Selling or Buying of Leads</h2>
-      <p>We do not sell, buy, rent, trade, or share your personal information or phone number with third parties or affiliates for their marketing or promotional purposes. We do not participate in affiliate lead programs, lead reselling, or any form of lead trading. Your information is used solely by Flyin&rsquo; Iris Media Productions LLC to provide you with our wedding videography services and related communications.</p>
+      <p>We do not sell, buy, rent, or trade your personal information or your phone number, and we do not hand it to other businesses so they can market to you. We do not participate in affiliate lead programs, lead reselling, or any form of lead trading. Nobody pays us for your contact details, and we do not pay anyone for theirs.</p>
+      <p>The information you send us directly (your name, email address, phone number, wedding date, venue, and anything else you choose to tell us) is used by Flyin&rsquo; Iris Media Productions LLC to provide our wedding videography services and the communications that go with them. We pass it only to the service providers listed in Section 7 that we need in order to run the business, such as our CRM and our email provider.</p>
+      <p>We want to be straight with you about one thing that is easy to gloss over: that promise is about your contact details. It is not a claim that nothing leaves this website. Our site runs ordinary analytics and advertising measurement tools, and those tools do receive information about your visit. Sections 7, 8, and 9 name every one of them and describe exactly what they get.</p>
 
       <!-- Section 7 -->
-      <h2>7. Third-Party Services</h2>
-      <p>We use the following third-party services to operate our business and deliver our services:</p>
+      <h2>7. Third-Party Services, Analytics, and Advertising</h2>
+      <p>We use the following third-party services to run our business, serve this website, and measure our advertising. The first group handles information you give us on purpose. The second group collects information about your visit automatically.</p>
+      <p><strong>Services that handle information you give us:</strong></p>
       <ul>
-        <li><strong>LeadConnector (via GoHighLevel):</strong> Customer relationship management and SMS messaging delivery</li>
-        <li><strong>Google Workspace:</strong> Email, calendar scheduling, and data storage</li>
-        <li><strong>Cloudflare:</strong> Website hosting and security</li>
-        <li><strong>Vimeo:</strong> Video hosting and delivery</li>
-        <li><strong>Meta (Facebook/Instagram):</strong> Advertising, analytics, and direct messaging. When you message us on Instagram or Facebook, Meta processes your messages and delivers our replies. We also use Meta&rsquo;s Conversions API to measure advertising effectiveness</li>
-        <li><strong>Google:</strong> Advertising and analytics</li>
+        <li><strong>LeadConnector (via GoHighLevel):</strong> Customer relationship management and SMS messaging delivery. This is where your inquiry and your contact details are stored.</li>
+        <li><strong>Google Workspace:</strong> Email, calendar scheduling, and file storage. This holds our correspondence with you and your booking details.</li>
+        <li><strong>Vimeo:</strong> Video hosting and playback for the films embedded on our site and delivered to our couples.</li>
       </ul>
-      <p>These service providers may process your data solely to support the delivery of our services. They are bound by their own privacy policies and do not have permission to use your data for their own marketing purposes.</p>
+      <p><strong>Services that collect information about your visit automatically:</strong></p>
+      <ul>
+        <li><strong>Google Analytics 4 and Google Tag Manager:</strong> Website analytics. These record which pages you visit, how long you stay, how you found us, your approximate location from your IP address, and your device and browser. Google Tag Manager is the container that loads our other tags.</li>
+        <li><strong>Microsoft Clarity:</strong> Website analytics and session recording. This one records how you move through and interact with the page, and it is described on its own in Section 8.</li>
+        <li><strong>Meta (Facebook and Instagram):</strong> Advertising, advertising measurement, and direct messaging. Two separate things happen here, and both are worth stating plainly. First, the Meta Pixel runs in your browser on our pages and reports page views and actions such as submitting an inquiry form. Second, when an inquiry comes in, our own server separately sends Meta a matching event through the Conversions API, which can include a hashed (scrambled) form of the email address and phone number you gave us, so that Meta can connect the inquiry back to an ad you clicked. Meta also processes your messages and delivers our replies when you contact us on Instagram or Facebook Messenger.</li>
+        <li><strong>Cloudflare:</strong> Website hosting, security, and basic traffic analytics. As the service that delivers this page to you, Cloudflare sees your IP address and request details.</li>
+      </ul>
+      <p>The providers in the first group process your information to support the delivery of our services, under their own privacy policies and terms.</p>
+      <p>The second group is different, and we are not going to pretend otherwise. Google, Microsoft, Meta, and Cloudflare receive information about your visit directly from your browser. That is simply how website analytics and advertising measurement work. Each of them operates under its own terms and its own privacy policy, and those terms allow them to use data collected this way for their own purposes as well as ours, including improving their products and their advertising systems. We do not control that, and we are not in a position to promise you otherwise.</p>
+      <p>What we do not do is give any of them a list of our couples, sell your contact information, or share it with unrelated businesses so they can market to you.</p>
+      <p>You can read how these companies handle data in their own policies: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>, <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener noreferrer">Microsoft Privacy Statement</a>, <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">Meta Privacy Policy</a>, and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy Policy</a>.</p>
 
       <!-- Section 8 -->
-      <h2>8. Data Security</h2>
-      <p>We implement reasonable technical and organizational safeguards to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of electronic transmission or storage is completely secure, and we cannot guarantee absolute security.</p>
+      <h2>8. Session Recording</h2>
+      <p>Our website uses <strong>Microsoft Clarity</strong>, an analytics tool from Microsoft that does more than count visits. Clarity records how visitors move through and interact with our pages: mouse movement, scrolling, taps, clicks, and which parts of a page hold attention. Those recordings can be replayed afterwards, like a video of the session, and they are combined into heatmaps that show where people click and how far down a page they read.</p>
+      <p>We use this for one reason: to find the places where the website confuses people, so we can fix them. We are a husband and wife team, not a marketing department, and these recordings are reviewed occasionally, not monitored.</p>
+      <p>Microsoft Clarity masks the text typed into form fields by default, so what you type into our inquiry form is not meant to appear in the replay. Even so, please treat anything you type on this site as something that could be recorded, and do not enter sensitive information you would not want stored. The recordings are hosted and processed by Microsoft, not by us, under Microsoft&rsquo;s own privacy terms.</p>
+      <p>You can read more in the <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener noreferrer">Microsoft Privacy Statement</a>. If you would rather not be recorded, you can block cookies from clarity.ms in your browser, or use a browser or extension that blocks analytics scripts. The site works normally either way.</p>
 
       <!-- Section 9 -->
-      <h2>9. Data Retention</h2>
+      <h2>9. Cookies and Similar Technologies</h2>
+      <p>A cookie is a small file that a website stores in your browser. A first visit to flyiniris.com sets about thirteen of them, some by us and most by the analytics and advertising services named in Section 7. We do not currently show a cookie consent banner, so they are set when the page loads. They fall into three groups.</p>
+      <ul>
+        <li><strong>Analytics:</strong> Google Analytics cookies (their names begin with _ga) tell us whether you are a new or returning visitor and which pages you viewed. They last up to about 13 months.</li>
+        <li><strong>Advertising measurement:</strong> a Google Ads cookie (_gcl_au) plus Microsoft and Bing cookies (MUID, MR, SRM_B, SM, ANONCHK) connect a later inquiry back to an ad or a search, so we can tell which advertising is actually worth paying for. These last from the length of a single browsing session up to about 13 months.</li>
+        <li><strong>Session replay:</strong> Microsoft Clarity cookies (_clck, _clsk, CLID) tie the parts of one visit together into a single recording, as described in Section 8. These last from one day up to about a year.</li>
+      </ul>
+      <p>None of the cookies listed above stores your name, email address, or phone number. We do not read them ourselves to identify you personally; what we see is the reports these services build from them.</p>
+      <p><strong>How to control them.</strong> Every major browser lets you block or delete cookies. In Chrome, Edge, Safari, and Firefox, open Settings and look for Privacy, then Cookies or Tracking. You can block third-party cookies entirely, delete the cookies already stored for flyiniris.com, or browse in a private or incognito window, which discards them when you close it. Blocking them will not stop you using this website: nothing here depends on them.</p>
+      <p>You can also opt out of Google Analytics on every website at once using the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>, and adjust Microsoft advertising preferences at the <a href="https://account.microsoft.com/privacy/ad-settings" target="_blank" rel="noopener noreferrer">Microsoft ad settings page</a>. Most browsers also send a Do Not Track or Global Privacy Control signal; note that our site does not currently act on those signals.</p>
+
+      <!-- Section 10 -->
+      <h2>10. Data Security</h2>
+      <p>We implement reasonable technical and organizational safeguards to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of electronic transmission or storage is completely secure, and we cannot guarantee absolute security.</p>
+
+      <!-- Section 11 -->
+      <h2>11. Data Retention</h2>
       <p>We retain your personal information for as long as necessary to fulfill the purposes described in this policy, comply with legal obligations, resolve disputes, and enforce our agreements. If you opt out of our SMS program, we will retain a record of your opt-out preference for a minimum of 10 years as required by applicable state regulations.</p>
       <p>Instagram and Facebook message history is retained for the duration of your project relationship with us, or until you request deletion. If you do not become a client, your message data is retained for up to 12 months after your last interaction, after which it is deleted.</p>
 
-      <!-- Section 10 -->
-      <h2>10. Your Rights</h2>
+      <!-- Section 12 -->
+      <h2>12. Your Rights</h2>
       <p>You may request to:</p>
       <ul>
         <li>Access the personal information we hold about you</li>
@@ -477,20 +576,20 @@
       </ul>
       <p>To exercise these rights, contact us at sierra@flyiniris.com.</p>
 
-      <!-- Section 11 -->
-      <h2>11. Children&rsquo;s Privacy</h2>
+      <!-- Section 13 -->
+      <h2>13. Children&rsquo;s Privacy</h2>
       <p>Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children.</p>
 
-      <!-- Section 12 -->
-      <h2>12. Changes to This Policy</h2>
+      <!-- Section 14 -->
+      <h2>14. Changes to This Policy</h2>
       <p>We may update this Privacy Policy from time to time. The &ldquo;Last updated&rdquo; date at the top of this page reflects the most recent revision. Continued use of our website or services after changes constitutes acceptance of the updated policy.</p>
 
-      <!-- Section 13 -->
-      <h2>13. Contact Us</h2>
+      <!-- Section 15 -->
+      <h2>15. Contact Us</h2>
       <div class="contact-block">
         <p>Flyin&rsquo; Iris Media Productions LLC (DBA Flyin&rsquo; Iris)<br>
         758 Hillside Ct, Cedarburg, WI 53012<br>
-        Email: sierra@flyiniris.com<br>
+        Email: <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a><br>
         Phone: <a href="tel:+12623845079">(262) 384-5079</a><br>
         Website: <a href="https://www.flyiniris.com">https://www.flyiniris.com</a></p>
       </div>

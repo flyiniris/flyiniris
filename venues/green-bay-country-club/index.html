@@ -34,7 +34,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -65,7 +65,8 @@
         "name": "Taylor & Kane at Green Bay Country Club | Wedding Film",
         "description": "Real wedding film at Green Bay Country Club in Green Bay, Wisconsin, by Flyin' Iris. Featured on the Flyin' Iris homepage.",
         "thumbnailUrl": "https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/taylor-kane/thumbs/thumb.jpg",
-        "contentUrl": "https://video.flyiniris.com/couples/taylor-kane/hls/teaser/master.m3u8"
+        "contentUrl": "https://video.flyiniris.com/couples/taylor-kane/hls/teaser/master.m3u8",
+        "uploadDate": "2025-07-19T12:00:00-05:00"
       }
     ]
   }
@@ -79,7 +80,7 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -128,6 +129,17 @@
       90% { transform: translate(-10%, 10%); }
     }
 
+    /* Respect reduced-motion preferences: stop the grain and the scroll
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
@@ -145,6 +157,9 @@
     }
 
     .top-nav-brand {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 1.1rem;
@@ -166,6 +181,11 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      min-width: 44px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-secondary);
@@ -179,7 +199,7 @@
       background: var(--accent);
       color: var(--bg-primary) !important;
       font-weight: 600 !important;
-      padding: 10px 18px;
+      padding: 12px 18px;
       border-radius: 8px;
       transition: background-color 0.25s ease !important;
     }
@@ -381,6 +401,9 @@
     }
 
     .cross-links-list a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-weight: 400;
       font-size: 0.9rem;
       color: var(--accent);
@@ -497,6 +520,22 @@
       .cross-links-list { flex-direction: row; justify-content: center; flex-wrap: wrap; gap: 24px; }
       .prose-card { padding: 36px 40px; }
     }
+
+    /* Phone header: the wordmark and the CTA never break mid-word, and the
+       row stacks instead of wrapping awkwardly under about 560px. */
+    .top-nav-brand { white-space: nowrap; }
+    .top-nav-cta { white-space: nowrap; }
+
+    @media (max-width: 560px) {
+      .top-nav { flex-direction: column; gap: 10px; padding: 16px; }
+      .top-nav-links { gap: 14px; }
+    }
+
+    @media (max-width: 390px) {
+      .top-nav-links { gap: 10px; }
+      .top-nav-links a { font-size: 0.7rem; }
+      .top-nav-cta { padding: 12px 14px; }
+    }
   </style>
 </head>
 <body>
@@ -512,6 +551,8 @@
   </nav>
 
   <div class="page-wrapper">
+
+    <main id="main">
 
     <!-- HERO -->
     <header class="hero">
@@ -593,6 +634,8 @@
       <p>Tell us about your day in a short inquiry and we will send back exact pricing and whether your date is still open, usually within a few hours.</p>
       <a href="https://www.flyiniris.com/#inquiry" class="cta-button">Check Your Date</a>
     </section>
+
+    </main>
 
     <!-- FOOTER -->
     <footer class="site-footer">

@@ -33,7 +33,7 @@
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbq.js');
+    'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '518972926490365');
     fbq('track', 'PageView');
   }, 3000);
@@ -54,7 +54,7 @@
       --bg-elevated: #1A1A19;
       --text-primary: #F5F0EB;
       --text-secondary: #C8C3B9;
-      --text-muted: rgba(200, 195, 185, 0.5);
+      --text-muted: #8C8880;
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
@@ -112,6 +112,17 @@
       90% { transform: translate(-10%, 10%); }
     }
 
+    /* Respect reduced-motion preferences: stop the grain and the reveal
+       animations for visitors who ask their OS for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -153,8 +164,11 @@
       color: var(--accent);
       text-decoration: none;
       text-transform: uppercase;
-      display: inline-block;
-      margin-bottom: 40px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 8px;
+      margin-bottom: 29px;
       transition: color 0.25s ease;
       opacity: 0;
       animation: fadeIn 0.6s ease 0.2s forwards;
@@ -243,7 +257,13 @@
       cursor: pointer;
       transition: all 0.25s ease;
       pointer-events: none;
+      padding: 0;
     }
+
+    /* The ring over the player is the play control itself, so it takes
+       clicks and keyboard focus. The ring inside the still-image fallback
+       stays decorative, because the whole thumbnail is the link. */
+    button.video-play-btn { pointer-events: auto; }
 
     .video-play-btn svg {
       width: 28px;
@@ -254,6 +274,48 @@
     .video-play-btn:hover {
       background: rgba(0, 0, 0, 0.7);
       transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    button.video-play-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    /* MEDIA-4b: shown when a film slug has no playable media behind it. */
+    .film-missing {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .film-missing p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .film-missing a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 189, 29, 0.35);
+      transition: color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .film-missing a:hover {
+      color: var(--accent-light);
+      border-color: var(--accent);
     }
 
     .film-thumb-link {
@@ -383,7 +445,9 @@
     }
 
     .cta-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-family: 'Outfit', sans-serif;
       font-weight: 400;
       font-size: 0.9rem;
@@ -506,6 +570,8 @@
 
   <div class="page-wrapper">
 
+    <main id="main">
+
     <!-- Hero -->
     <section class="hero">
       <a href="https://www.flyiniris.com" class="hero-brand">FLYIN' IRIS</a>
@@ -515,18 +581,18 @@
 
     <!-- Featured Film (dynamic: reads ?film=slug from URL) -->
     <section class="featured-film" id="filmSection">
-      <p class="section-label">A FILM WE THINK YOU'LL LOVE</p>
+      <p class="section-label" id="filmSectionLabel">A FILM WE THINK YOU'LL LOVE</p>
       <div class="film-player-wrap" id="filmPlayer" style="display:none;">
-        <video id="filmVideo" controls playsinline preload="metadata" poster=""></video>
-        <div class="video-play-btn" id="videoPlayBtn">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <video id="filmVideo" playsinline preload="metadata" poster=""></video>
+        <button type="button" class="video-play-btn" id="videoPlayBtn" aria-label="Play this film">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
           </svg>
-        </div>
+        </button>
       </div>
       <div id="filmFallback">
         <a href="https://www.flyiniris.com/#films" class="film-thumb-link" id="filmThumbLink">
-          <img src="" alt="Wedding film" class="film-thumb" id="filmThumbImg" loading="lazy">
+          <img alt="" class="film-thumb" id="filmThumbImg" loading="lazy">
           <div class="video-play-btn">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -534,8 +600,12 @@
           </div>
         </a>
       </div>
+      <div class="film-missing" id="filmMissing" style="display:none;">
+        <p>We could not load that film, but every film we have made is in one place.</p>
+        <a href="https://www.flyiniris.com/films">Watch our films</a>
+      </div>
       <h3 class="film-title" id="filmTitle"></h3>
-      <p class="film-caption">Every couple, every venue, every love story is completely different. Here's one that reminded us of yours.</p>
+      <p class="film-caption" id="filmCaption">Every couple, every venue, every love story is completely different. Here's one that reminded us of yours.</p>
     </section>
 
     <!-- Here's What We're Thinking -->
@@ -572,6 +642,8 @@
       <p class="sign-off-location">Flyin' Iris &middot; Milwaukee, Wisconsin</p>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer class="site-footer">
       <p class="footer-brand">FLYIN' IRIS</p>
@@ -594,6 +666,10 @@
       var fc = params.get('fc'); // film couple name (e.g., "Izzy & Hunter")
       var fv = params.get('fv'); // film venue name (e.g., "The Gage")
 
+      // URLSearchParams has already percent-decoded these. Decoding a second
+      // time is what cost couples their ampersand and would throw outright on
+      // a name containing a literal % sign, so it does not happen here.
+
       // Film data for R2 URLs
       var R2_THUMB = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/couples/';
       var R2_HLS = 'https://video.flyiniris.com/couples/';
@@ -612,6 +688,19 @@
         var day = parseInt(parts[2], 10);
         if (monthIndex < 0 || monthIndex > 11 || isNaN(day)) return dateStr;
         return months[monthIndex] + ' ' + day + ', ' + year;
+      }
+
+      // A couple slug is "first-second": the hyphen stands in for the
+      // ampersand. Title-casing the slug without putting the ampersand back
+      // is what rendered "Taylor Kane" instead of "Taylor & Kane".
+      function coupleFromSlug(slug) {
+        var parts = String(slug || '').split('-').filter(Boolean).map(function(p) {
+          return p.charAt(0).toUpperCase() + p.slice(1);
+        });
+        if (parts.length === 0) return '';
+        if (parts.length === 1) return parts[0];
+        var second = parts.slice(1).join(' ');
+        return parts[0] + ' & ' + second;
       }
 
       // Set hero heading
@@ -645,21 +734,51 @@
       if (film) {
         var thumbUrl = R2_THUMB + film + '/thumbs/thumb.jpg';
         var hlsUrl = R2_HLS + film + '/hls/teaser/master.m3u8';
-        var coupleDisplay = fc ? decodeURIComponent(fc) : film.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        var venueDisplay = fv ? decodeURIComponent(fv) : '';
+        var coupleDisplay = fc ? fc : coupleFromSlug(film);
+        var venueDisplay = fv ? fv : '';
 
         // Set title
         filmTitle.textContent = coupleDisplay + (venueDisplay ? ' at ' + venueDisplay : '');
 
-        // Try HLS video playback
-        // Hide play button when video starts playing
+        // MEDIA-4b: a wrong or retired slug must never leave a broken image
+        // icon and a default-blue link on the page a couple is asked to pay
+        // from. Show a real invitation instead.
+        var filmMissing = document.getElementById('filmMissing');
+        var filmCaption = document.getElementById('filmCaption');
+        function showMissingFilm() {
+          var label = document.getElementById('filmSectionLabel');
+          if (label) label.style.display = 'none';
+          filmPlayer.style.display = 'none';
+          filmFallback.style.display = 'none';
+          filmTitle.style.display = 'none';
+          if (filmCaption) filmCaption.style.display = 'none';
+          if (filmMissing) filmMissing.style.display = 'block';
+        }
+        filmThumbImg.addEventListener('error', showMissingFilm);
+
+        function showThumbFallback() {
+          filmPlayer.style.display = 'none';
+          filmFallback.style.display = 'block';
+          filmThumbImg.src = thumbUrl;
+          filmThumbImg.alt = coupleDisplay + ' wedding film';
+          filmThumbLink.href = 'https://www.flyiniris.com/films';
+        }
+
+        // MEDIA-4a: the gold ring is the play control, and the native
+        // controls only appear once the film is running, so they never sit
+        // half-hidden underneath it.
+        var playBtn = document.getElementById('videoPlayBtn');
+        if (playBtn) {
+          playBtn.addEventListener('click', function() {
+            filmVideo.play().catch(function() {});
+          });
+        }
         filmVideo.addEventListener('play', function() {
-          var playBtn = document.getElementById('videoPlayBtn');
-          if (playBtn) playBtn.style.opacity = '0';
+          if (playBtn) playBtn.style.display = 'none';
+          filmVideo.controls = true;
         });
-        filmVideo.addEventListener('pause', function() {
-          var playBtn = document.getElementById('videoPlayBtn');
-          if (playBtn) playBtn.style.opacity = '1';
+        filmVideo.addEventListener('click', function() {
+          if (!filmVideo.controls) filmVideo.play().catch(function() {});
         });
 
         if (Hls.isSupported()) {
@@ -671,12 +790,9 @@
           hls.attachMedia(filmVideo);
           hls.on(Hls.Events.ERROR, function(event, data) {
             if (data.fatal) {
-              // HLS failed: fall back to thumbnail
-              filmPlayer.style.display = 'none';
-              filmFallback.style.display = 'block';
-              filmThumbImg.src = thumbUrl;
-              filmThumbImg.alt = coupleDisplay + ' wedding film';
-              filmThumbLink.href = 'https://www.flyiniris.com/#films';
+              // HLS failed: fall back to the still, and if that 404s too
+              // (an unknown slug), to the missing-film card.
+              showThumbFallback();
             }
           });
         } else if (filmVideo.canPlayType('application/vnd.apple.mpegurl')) {
@@ -684,14 +800,11 @@
           filmFallback.style.display = 'none';
           filmPlayer.style.display = 'block';
           filmVideo.poster = thumbUrl;
+          filmVideo.addEventListener('error', showThumbFallback);
           filmVideo.src = hlsUrl;
         } else {
-          // No HLS support: show thumbnail
-          filmFallback.style.display = 'block';
-          filmPlayer.style.display = 'none';
-          filmThumbImg.src = thumbUrl;
-          filmThumbImg.alt = coupleDisplay + ' wedding film';
-          filmThumbLink.href = 'https://www.flyiniris.com/#films';
+          // No HLS support: show the still image instead
+          showThumbFallback();
         }
       } else {
         // No film param: hide the whole section or show generic

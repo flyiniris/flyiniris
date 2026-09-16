@@ -30,7 +30,7 @@
   n.queue=[];t=b.createElement(e);t.async=!0;
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbq.js');
+  'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '518972926490365');
   fbq('track', 'PageView', {}, { eventID: window.__fi_pv_event_id });
   </script>
@@ -402,11 +402,35 @@
     .date-card .v { font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--text-primary); display: block; margin-top: 4px; }
     .date-card .ring { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-gold-tint); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
+    /* Legal bar. /start is the declared Meta ads destination and it captures a
+       first name, an email, a phone and an SMS consent, so the privacy policy
+       and the terms have to be reachable from the page itself (Meta reviews
+       landing pages for exactly this). Fixed so it is present on every screen
+       of the flow, not just the last one. #8C8880 is 5.61:1 on #0A0A0A. */
+    .legal-bar {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 520px; z-index: 47;
+      text-align: center; pointer-events: none;
+      font-size: 12px; font-weight: 400; line-height: 1;
+      color: #8C8880;
+    }
+    .legal-bar a {
+      position: relative; display: inline-block;
+      color: #8C8880; text-decoration: underline;
+      text-underline-offset: 2px; pointer-events: auto;
+    }
+    .legal-bar a:hover, .legal-bar a:focus-visible { color: var(--accent); }
+    /* 44x44 touch target without changing the visual size of the link,
+       biased upward so the whole target stays inside the viewport (the bar
+       sits at the very bottom of the screen). */
+    .legal-bar a::before { content: ''; position: absolute; top: -24px; bottom: -8px; left: -10px; right: -10px; z-index: 1; }
+    .legal-bar .sep { padding: 0 12px; }
+
     /* Persistent Sierra & Sean bubble, centered at the bottom of the column
        (photo stacked above the label, matching the page's centered sections).
        The img is a placeholder until the 60-second intro film exists. */
     .bubble-wrap {
-      position: fixed; bottom: 22px; z-index: 47;
+      position: fixed; bottom: 40px; z-index: 47;
       left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
       text-align: center; pointer-events: none;
@@ -507,6 +531,10 @@
     </div>
   </div>
 
+  <footer class="legal-bar">
+    <a href="/privacy">Privacy Policy</a><span class="sep" aria-hidden="true">&middot;</span><a href="/terms">Terms &amp; Conditions</a>
+  </footer>
+
   <div id="turnstile-slot">
     <div class="cf-turnstile" data-sitekey="0x4AAAAAADvOdsuYXSLWQi9-" data-callback="fiTsCb" data-refresh-expired="auto" data-appearance="interaction-only"></div>
   </div>
@@ -562,17 +590,38 @@
       } catch (e) { /* storage blocked: tracking degrades gracefully */ }
       // Server-side CAPI PageView with the SAME event id as the browser pixel
       // PageView so Meta dedups the pair (index.html pattern).
+      //
+      // 2026-09-15 audit (site-audit, TRACK-5): was gated on `if (fbclid)`, so
+      // the server only heard about ad-click visits. This page is the declared
+      // Meta ads destination, so that gate was costing the most on exactly the
+      // page it mattered most. Fires for every visit now.
       var fbclid = '';
       try {
         fbclid = new URLSearchParams(window.location.search).get('fbclid') || localStorage.getItem('fi_fbclid') || sessionStorage.getItem('fi_fbclid') || '';
       } catch (e) { /* ignore */ }
-      if (fbclid) {
-        fetch(WORKER_URL + '/api/pageview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fbclid: fbclid, event_id: window.__fi_pv_event_id })
-        }).catch(function() {});
-      }
+      // Stable per-browser id, shared with index.html under the same key so a
+      // visitor who lands on /start and later hits the home page is one person
+      // to the server, not two (TRACK-3).
+      var fiVisitorId = '';
+      try {
+        fiVisitorId = localStorage.getItem('fi_visitor_id') || '';
+        if (!fiVisitorId) {
+          fiVisitorId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+          localStorage.setItem('fi_visitor_id', fiVisitorId);
+        }
+      } catch (e) { /* storage blocked: the server falls back to _fbp */ }
+      fetch(WORKER_URL + '/api/pageview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fbclid: fbclid,
+          event_id: window.__fi_pv_event_id,
+          visitor_id: fiVisitorId,
+          fbp: getCookie('_fbp'),
+          fbc: getCookie('_fbc'),
+          page_url: window.location.href.split('#')[0]
+        })
+      }).catch(function() {});
     })();
 
     function getCookie(name) {
