@@ -1,0 +1,15 @@
+{
+  "slug": "sign-effectz",
+  "mode": "lineitems",
+  "apiBase": "https://api.flyiniris.com",
+  "bannedWords": [],
+  "title": "Your Flyin' Iris Proposal",
+  "metaDescription": "A private proposal from Flyin' Iris.",
+  "eyebrow": "Prepared for you",
+  "headline": "Your Flyin' Iris Proposal",
+  "contactEmail": "sierra@flyiniris.com",
+  "defaultIncludedNotes": [
+    "Travel is included.",
+    "Licensed and insured."
+  ]
+}

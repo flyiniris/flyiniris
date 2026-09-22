@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{META_DESC}}">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111110;
+      --bg-card: #161615;
+      --bg-elevated: #1A1A19;
+      --text-primary: #F5F0EB;
+      --text-secondary: #C8C3B9;
+      --text-muted: rgba(200, 195, 185, 0.6);
+      --accent: #FFBD1D;
+      --accent-dark: #D99E0A;
+      --accent-light: #FFF0C9;
+      --border: #2A2A28;
+      --error: #E8A0A0;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: grain 8s steps(10) infinite;
+      z-index: 9999;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before { animation: none; }
+      .hero-eyebrow, .hero h1, .hero-sub, .included { animation: none !important; opacity: 1 !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .nav-brand span { color: var(--accent); }
+
+    .nav-phone {
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    .nav-brand:hover, .nav-phone:hover { text-decoration: none; }
+    .nav-phone:hover { color: var(--accent); }
+
+    .hero {
+      padding: 130px 20px 34px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(2.3rem, 8vw, 4.2rem);
+      line-height: 1.08;
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    .hero-sub {
+      font-size: 1.02rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.75;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    }
+
+    .included {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 820px;
+      margin: 26px auto 0;
+      padding: 0 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
+    .hero-sub:empty, .included:empty { display: none; }
+
+    .included li {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 14px 7px 30px;
+      position: relative;
+      line-height: 1.45;
+    }
+
+    .included li::before {
+      content: '';
+      position: absolute;
+      left: 13px; top: 50%;
+      width: 7px; height: 7px;
+      margin-top: -3.5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 20px 48px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    @media (min-width: 960px) {
+      .layout { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
+    }
+
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+
+    /* Loading and error */
+    .loading, .load-error {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .load-error {
+      display: none;
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 26px;
+    }
+
+    .load-error h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255, 189, 29, 0.25);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: -3px;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .btn-spinner {
+      border-color: rgba(20, 20, 20, 0.3);
+      border-top-color: #141414;
+      width: 14px; height: 14px;
+      margin-right: 8px;
+      vertical-align: -2px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Day groups */
+    .group {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 20px 12px;
+      margin-bottom: 22px;
+    }
+
+    .group-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .group-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(1.35rem, 3.6vw, 1.7rem);
+      line-height: 1.2;
+    }
+
+    .group-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .group-delivery {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .group-note {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .group-warn {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--error);
+      margin: 8px 0 4px;
+    }
+
+    .group-items { margin-top: 16px; }
+
+    .group-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      text-align: left;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 189, 29, 0.45);
+      border-radius: 10px;
+      padding: 18px 18px;
+      margin: 14px 0 4px;
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .group-toggle:hover { border-color: var(--accent); }
+
+    .group-toggle[aria-pressed="true"] {
+      border-color: var(--accent);
+      background: rgba(255, 189, 29, 0.08);
+    }
+
+    .group-toggle-text { flex: 1; min-width: 0; }
+
+    .group-toggle-label {
+      display: block;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .group-toggle-price {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .group.off .group-items { opacity: 0.42; }
+    .group.off .item-detail, .group.off .item-math { display: none; }
+    .group.off .item { cursor: default; padding-top: 12px; padding-bottom: 12px; }
+    .group.off .item:hover { border-color: var(--border); }
+    .group.off .group-sub { color: var(--text-muted); }
+
+    /* Item rows, same look as the /yours add-on toggles */
+    .item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 0 14px;
+      -webkit-tap-highlight-color: transparent;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+    }
+
+    .item.fixed { cursor: default; }
+    .item:hover { border-color: rgba(255, 189, 29, 0.4); }
+    .item.fixed:hover { border-color: var(--border); }
+
+    .item.active {
+      border-color: rgba(255, 189, 29, 0.65);
+      background: rgba(255, 189, 29, 0.04);
+    }
+
+    .item.removed .item-label, .item.removed .item-price { color: var(--text-muted); }
+    .item.removed .item-price { text-decoration: line-through; }
+
+    .item-info { min-width: 0; }
+
+    .item-label {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    .item-detail {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+
+    .item-math {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .item-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .item-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .included-badge {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(255, 189, 29, 0.45);
+      border-radius: 100px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+      margin: 0;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      transition: all 0.25s ease;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 2px;
+      top: 2px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: all 0.25s ease;
+    }
+
+    .toggle-switch input:checked + .toggle-slider,
+    .group-toggle[aria-pressed="true"] .toggle-slider {
+      background: rgba(255, 189, 29, 0.2);
+      border-color: var(--accent);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before,
+    .group-toggle[aria-pressed="true"] .toggle-slider::before {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+
+    .toggle-switch input:focus-visible + .toggle-slider { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .toggle-switch input:disabled { cursor: default; }
+
+    /* Summary box: sticky on desktop */
+    .summary {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255, 189, 29, 0.3);
+      border-top: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 24px 22px;
+    }
+
+    @media (min-width: 960px) {
+      .summary { position: sticky; top: 92px; }
+    }
+
+    .summary h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+    }
+
+    .totals {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .totals-row span:last-child { white-space: nowrap; }
+    .totals-row.muted { font-size: 0.82rem; color: var(--text-muted); }
+
+    .totals-row.sub {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .totals-row.grand {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      margin-top: 4px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .totals-row.grand span:last-child { color: var(--accent); font-weight: 600; }
+
+    .summary-notes {
+      list-style: none;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-notes li {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .summary-notes li::before {
+      content: '';
+      position: absolute;
+      left: 2px; top: 7px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.8;
+    }
+
+    .summary-cta {
+      display: none;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 960px) {
+      .summary-cta { display: block; }
+    }
+
+    /* Mobile bottom bar */
+    .bottom-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(17, 17, 16, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 189, 29, 0.35);
+    }
+
+    .bottom-bar.show { display: flex; }
+
+    @media (min-width: 960px) {
+      .bottom-bar.show { display: none; }
+    }
+
+    .bottom-total { min-width: 0; }
+
+    .bottom-total small {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .bottom-total strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bottom-btn {
+      flex-shrink: 0;
+      padding: 12px 16px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent);
+      color: #141414;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    body.has-bar { padding-bottom: 84px; }
+
+    @media (min-width: 960px) {
+      body.has-bar { padding-bottom: 0; }
+    }
+
+    /* Accept section */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 26px 20px;
+      margin-bottom: 22px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .field-label .req { color: var(--accent); }
+
+    .check-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .check-row input {
+      margin-top: 4px;
+      width: 18px; height: 18px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .check-row strong { color: var(--text-primary); font-weight: 500; }
+
+    .exempt-note {
+      display: none;
+      margin-top: 12px;
+      font-size: 0.84rem;
+      color: var(--accent-light);
+      line-height: 1.6;
+      background: rgba(255, 189, 29, 0.06);
+      border: 1px solid rgba(255, 189, 29, 0.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
+    legend { padding: 0; }
+
+    .methods {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      border: none;
+    }
+
+    @media (min-width: 700px) {
+      .methods { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    .method {
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 16px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .method:hover { border-color: rgba(255, 189, 29, 0.45); }
+
+    .method input {
+      position: absolute;
+      opacity: 0;
+      width: 1px; height: 1px;
+    }
+
+    .method.selected {
+      border-color: var(--accent);
+      background: rgba(255, 189, 29, 0.08);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .method:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .method-name {
+      display: block;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .method-desc {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .method-tag {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #141414;
+      background: var(--accent);
+      border-radius: 100px;
+      padding: 3px 8px;
+    }
+
+    .method-note {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px 16px;
+    }
+
+    @media (min-width: 700px) {
+      .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .field input[type="text"], .field input[type="email"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .field input:focus { outline: none; border-color: var(--accent); }
+    .field input.invalid { border-color: var(--error); }
+
+    .field-hint {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .agreement {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 20px;
+      max-height: 460px;
+      overflow-y: auto;
+      margin-bottom: 18px;
+    }
+
+    .agreement h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+
+    .agreement ol {
+      padding-left: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .agreement li {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .agreement li strong { color: var(--text-primary); font-weight: 500; }
+    .agreement li::marker { color: var(--accent); }
+
+    .accept-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 17px 20px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent);
+      color: #141414;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.15s ease;
+    }
+
+    .accept-btn:hover:not(:disabled) { background: var(--accent-light); }
+    .accept-btn:active:not(:disabled) { transform: scale(0.99); }
+    .accept-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .accept-note {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .flow-error {
+      display: none;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--error);
+      line-height: 1.6;
+    }
+
+    /* Status panels */
+    .status {
+      display: none;
+      max-width: 680px;
+      margin: 0 auto 26px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255, 189, 29, 0.08) 0%, rgba(255, 189, 29, 0.02) 100%);
+      border: 1px solid rgba(255, 189, 29, 0.35);
+      border-radius: 12px;
+      padding: 40px 26px;
+    }
+
+    .status h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(1.7rem, 5vw, 2.1rem);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .status p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .status .doc-link { display: inline-block; margin-top: 8px; font-size: 1rem; }
+
+    .status.quiet {
+      background: var(--bg-secondary);
+      border-color: var(--border);
+      padding: 24px 22px;
+    }
+
+    .status.quiet h2 { font-size: 1.35rem; }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 24px 46px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .footer-brand span { color: var(--accent); }
+
+    .footer p { font-size: 0.8rem; color: var(--text-muted); }
+
+    @media (max-width: 480px) {
+      .nav { padding: 16px 16px; }
+      .hero { padding-left: 16px; padding-right: 16px; }
+      .wrap { padding-left: 14px; padding-right: 14px; }
+      .group { padding: 20px 14px 8px; }
+      .item { padding: 14px 12px; gap: 10px; }
+      .panel { padding: 22px 14px; }
+      .agreement { padding: 18px 14px; }
+      .hero-eyebrow { letter-spacing: 0.1em; }
+      .hero-eyebrow::before, .hero-eyebrow::after { width: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="https://flyiniris.com" class="nav-brand">Flyin' <span>Iris</span></a>
+    <a href="tel:+12623845079" class="nav-phone">(262) 384-5079</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-eyebrow" id="heroEyebrow">{{EYEBROW}}</div>
+    <h1 id="heroHeadline">{{HEADLINE}}</h1>
+    <p class="hero-sub" id="heroSub"></p>
+  </header>
+  <ul class="included" id="includedNotes" aria-label="Always included"></ul>
+
+  <div class="wrap">
+    <section class="status" id="statusPanel" role="status" aria-live="polite"></section>
+
+    <div class="loading" id="loading"><span class="spinner"></span>Loading your proposal...</div>
+
+    <div class="load-error" id="noToken" role="alert">
+      <h2>Please open the link from your email.</h2>
+      <p>This proposal is private, so it opens from the personal link we sent you. Can't find it? Email Sierra at <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> and we will send it again right away.</p>
+    </div>
+
+    <div class="load-error" id="loadError" role="alert">
+      <h2>We could not load your proposal just now.</h2>
+      <p>Please refresh in a minute. If it still will not load, email Sierra at <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> or text (262) 384-5079 and we will send everything over right away.</p>
+    </div>
+
+    <div class="layout" id="layout" hidden>
+      <main id="mainFlow">
+        <div class="section-eyebrow">Build Your Coverage</div>
+        <h2 class="section-title">Pick What You Need</h2>
+        <div id="groups"></div>
+
+        <section id="accept" aria-labelledby="acceptTitle">
+          <div class="section-eyebrow">Accept and Book</div>
+          <h2 class="section-title" id="acceptTitle">Lock It In</h2>
+
+          <div class="panel">
+            <span class="field-label">Sales tax</span>
+            <label class="check-row" for="taxExempt">
+              <input type="checkbox" id="taxExempt">
+              <span><strong>This purchase is tax exempt.</strong> We will need a completed Wisconsin exemption certificate (Form S-211).</span>
+            </label>
+            <p class="exempt-note" id="exemptNote">Tax exempt status claimed. Please send a completed Wisconsin Sales and Use Tax Exemption Certificate (Form S-211). If it is not received by final delivery, <span id="exemptRate">5.9%</span> Wisconsin sales tax will be invoiced.</p>
+          </div>
+
+          <div class="panel">
+            <fieldset>
+              <legend class="field-label">How you'd like to pay</legend>
+              <div class="methods" id="methods"></div>
+            </fieldset>
+            <p class="method-note" id="methodNote">Same price whichever way you pay. Bank transfer and check skip card fees.</p>
+          </div>
+
+          <div class="panel">
+            <span class="field-label">Who is signing</span>
+            <div class="fields">
+              <div class="field">
+                <label class="field-label" for="signerName">Full name <span class="req">*</span></label>
+                <input type="text" id="signerName" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label class="field-label" for="signerTitle">Title</label>
+                <input type="text" id="signerTitle" autocomplete="organization-title">
+              </div>
+              <div class="field">
+                <label class="field-label" for="signerCompany">Company</label>
+                <input type="text" id="signerCompany" autocomplete="organization">
+              </div>
+              <div class="field">
+                <label class="field-label" for="signerEmail">Email <span class="req">*</span></label>
+                <input type="email" id="signerEmail" autocomplete="email" required>
+                <p class="field-hint">Your invoice and signed agreement go here.</p>
+              </div>
+              <div class="field">
+                <label class="field-label" for="poNumber">PO number <span class="req" id="poReq" hidden>* required for check</span></label>
+                <input type="text" id="poNumber" autocomplete="off">
+                <p class="field-hint" id="poHint">Optional. It will print on your invoice.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="agreement" id="agreementBox" tabindex="0" aria-labelledby="agreementTitle">
+            <h3 id="agreementTitle">Production Agreement</h3>
+            <ol id="clauses"></ol>
+          </div>
+
+          <label class="check-row" for="agreeBox">
+            <input type="checkbox" id="agreeBox">
+            <span>I have read and accept the Production Agreement above on behalf of the company named, and my typed name is my electronic signature.</span>
+          </label>
+
+          <button type="button" class="accept-btn" id="acceptBtn">Accept and continue</button>
+          <p class="accept-note" id="acceptNote"></p>
+          <p class="flow-error" id="flowError" role="alert"></p>
+        </section>
+      </main>
+
+      <aside class="summary" id="summary" aria-label="Your total">
+        <h3>Your Total</h3>
+        <div class="totals" id="totals" aria-live="polite"></div>
+        <ul class="summary-notes">
+          <li>Pay in full at acceptance by card or bank transfer, or by check with a PO.</li>
+        </ul>
+        <div class="summary-cta">
+          <button type="button" class="accept-btn" id="summaryJump" style="margin-top: 0;">Review and accept</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <div class="bottom-total"><small>Total with tax</small><strong id="bottomTotal">$0.00</strong></div>
+    <button type="button" class="bottom-btn" id="bottomJump">Review and accept</button>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-brand">Flyin' <span>Iris</span></div>
+    <p>Sierra &amp; Sean &middot; <a href="https://flyiniris.com">flyiniris.com</a></p>
+  </footer>
+
+  <script>
+    var CFG = {{RUNTIME_CONFIG}};
+    var API = CFG.apiBase + '/api/commercial/' + CFG.slug;
+    var STORE_KEY = 'fi_commercial_' + CFG.slug;
+    var TOKEN_KEY = 'fi_prop_token_' + CFG.slug;
+
+    // The page carries no token. The emailed link ends in #t=TOKEN; we keep it
+    // in sessionStorage (so the Stripe return, which has no fragment, still
+    // works) and strip it from the address bar right away.
+    var TOKEN = (function () {
+      var t = '';
+      var m = /(?:^#|&)t=([^&]+)/.exec(window.location.hash || '');
+      if (m) {
+        try { t = decodeURIComponent(m[1]); } catch (e) { t = m[1]; }
+        try { sessionStorage.setItem(TOKEN_KEY, t); } catch (e) { /* private mode: in-memory only */ }
+        try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* fine */ }
+      } else {
+        try { t = sessionStorage.getItem(TOKEN_KEY) || ''; } catch (e) { t = ''; }
+      }
+      return t;
+    })();
+
+    var METHOD_INFO = {
+      card: { name: 'Card', desc: 'Pay in full now through secure Stripe checkout.', tag: '' },
+      ach: { name: 'Bank transfer (ACH)', desc: 'Pay in full now from your bank account through Stripe. Clears in about 4 business days.', tag: 'No card fees' },
+      check: { name: 'Check with PO', desc: 'Accept now with your PO number. Check due within 15 days after final delivery.', tag: 'No card fees' },
+    };
+
+    var model = null;      // { groups, items, terms, clauses, taxRateBps }
+    var state = { groupOn: {}, itemOn: {}, method: 'card', taxExempt: false };
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function fmtCents(c) {
+      return '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtDollars(c) {
+      var whole = c % 100 === 0;
+      return '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 });
+    }
+
+    function lineCents(it) {
+      return it.hours * it.rateCents * (it.people || 1);
+    }
+
+    function mathLine(it) {
+      var hrs = it.hours + (it.hours === 1 ? ' hr' : ' hrs');
+      var rate = fmtDollars(it.rateCents) + '/hr';
+      if (it.kind === 'coverage') {
+        var ppl = (it.people || 1) + ((it.people || 1) === 1 ? ' person' : ' people');
+        return ppl + ' x ' + hrs + ' x ' + rate + ' = ' + fmtDollars(lineCents(it));
+      }
+      var ed = it.hours + (it.hours === 1 ? ' editing hr' : ' editing hrs');
+      return ed + ' x ' + rate + ' = ' + fmtDollars(lineCents(it));
+    }
+
+    function taxPct() {
+      var p = model.taxRateBps / 100;
+      return (Math.round(p * 100) / 100) + '%';
+    }
+
+    function groupActive(g) { return !g.optional || !!state.groupOn[g.id]; }
+
+    function itemIncluded(it) {
+      var g = model.groupById[it.group];
+      if (!g || !groupActive(g)) return false;
+      return !it.removable || !!state.itemOn[it.id];
+    }
+
+    function selectedIds() {
+      return model.items.filter(itemIncluded).map(function (it) { return it.id; });
+    }
+
+    function groupSubtotal(g, ignoreActive) {
+      return model.items.reduce(function (sum, it) {
+        if (it.group !== g.id) return sum;
+        var on = ignoreActive ? (!it.removable || !!state.itemOn[it.id]) : itemIncluded(it);
+        return on ? sum + lineCents(it) : sum;
+      }, 0);
+    }
+
+    function totals() {
+      var subtotal = model.items.reduce(function (s, it) { return itemIncluded(it) ? s + lineCents(it) : s; }, 0);
+      var tax = state.taxExempt ? 0 : Math.round(subtotal * model.taxRateBps / 10000);
+      return { subtotal: subtotal, tax: tax, total: subtotal + tax };
+    }
+
+    function deliverablesOn(g) {
+      return model.items.filter(function (it) {
+        return it.group === g.id && it.kind !== 'coverage' && (!it.removable || !!state.itemOn[it.id]);
+      }).length;
+    }
+
+    // ---------- rendering ----------
+
+    function renderGroups() {
+      var host = document.getElementById('groups');
+      host.innerHTML = '';
+      model.groups.forEach(function (g) {
+        var extras = ((model.page.groups || {})[g.id]) || {};
+        var delivery = g.delivery || extras.delivery || '';
+        var note = g.note || extras.note || '';
+        var sec = document.createElement('section');
+        sec.className = 'group';
+        sec.id = 'group-' + g.id;
+        sec.setAttribute('aria-labelledby', 'gt-' + g.id);
+        var html = '<div class="group-head"><h3 class="group-title" id="gt-' + esc(g.id) + '">' + esc(g.label) + '</h3>' +
+          '<span class="group-sub" id="gs-' + esc(g.id) + '"></span></div>';
+        if (delivery) html += '<p class="group-delivery">' + esc(delivery) + '</p>';
+        if (note) html += '<p class="group-note">' + esc(note) + '</p>';
+        if (g.optional) {
+          var tl = extras.toggleLabel || ('Add ' + g.label);
+          html += '<button type="button" class="group-toggle" id="gtog-' + esc(g.id) + '" aria-pressed="false" aria-controls="gi-' + esc(g.id) + '">' +
+            '<span class="group-toggle-text"><span class="group-toggle-label">' + esc(tl) + '</span>' +
+            '<span class="group-toggle-price" id="gtp-' + esc(g.id) + '"></span></span>' +
+            '<span class="toggle-switch" aria-hidden="true"><span class="toggle-slider"></span></span></button>';
+        }
+        html += '<p class="group-warn" id="gw-' + esc(g.id) + '">Keep at least one edited piece for this day.</p>';
+        html += '<div class="group-items" id="gi-' + esc(g.id) + '"></div>';
+        sec.innerHTML = html;
+        host.appendChild(sec);
+
+        var itemsHost = sec.querySelector('.group-items');
+        model.items.filter(function (it) { return it.group === g.id; }).forEach(function (it) {
+          itemsHost.appendChild(renderItem(it));
+        });
+
+        if (g.optional) {
+          sec.querySelector('.group-toggle').addEventListener('click', function () {
+            state.groupOn[g.id] = !state.groupOn[g.id];
+            firePing();
+            refresh();
+          });
+        }
+      });
+    }
+
+    function renderItem(it) {
+      var row = document.createElement('div');
+      row.className = 'item' + (it.removable ? '' : ' fixed');
+      row.id = 'item-' + it.id;
+      var side = '<div class="item-side"><div class="item-price">' + fmtDollars(lineCents(it)) + '</div>';
+      if (it.removable) {
+        side += '<label class="toggle-switch"><input type="checkbox" id="chk-' + esc(it.id) + '" aria-label="Include ' + esc(it.label) + '">' +
+          '<span class="toggle-slider"></span></label>';
+      } else {
+        side += '<span class="included-badge">Included</span>';
+      }
+      side += '</div>';
+      row.innerHTML = '<div class="item-info"><div class="item-label">' + esc(it.label) + '</div>' +
+        (it.detail ? '<div class="item-detail">' + esc(it.detail) + '</div>' : '') +
+        '</div>' + side + '<div class="item-math">' + esc(mathLine(it)) + '</div>';
+
+      if (it.removable) {
+        var chk = row.querySelector('input');
+        chk.addEventListener('change', function () { setItem(it, chk.checked); });
+        row.addEventListener('click', function (e) {
+          if (e.target.closest('.toggle-switch')) return;
+          if (chk.disabled) return;
+          setItem(it, !chk.checked);
+        });
+      }
+      return row;
+    }
+
+    function setItem(it, on) {
+      var g = model.groupById[it.group];
+      var warn = document.getElementById('gw-' + g.id);
+      if (!on && it.kind !== 'coverage' && deliverablesOn(g) <= 1 && state.itemOn[it.id]) {
+        warn.style.display = 'block';
+        document.getElementById('chk-' + it.id).checked = true;
+        return;
+      }
+      warn.style.display = 'none';
+      state.itemOn[it.id] = on;
+      firePing();
+      refresh();
+    }
+
+    function renderMethods() {
+      var host = document.getElementById('methods');
+      var offered = model.methods;
+      if (offered.indexOf(state.method) < 0) state.method = offered[0];
+      host.innerHTML = '';
+      offered.forEach(function (m) {
+        var info = METHOD_INFO[m];
+        if (!info) return;
+        var desc = info.desc;
+        if (m === 'check') {
+          desc += ' Payable to Flyin\' Iris Media Productions LLC' +
+            (model.terms.checkMailingAddress ? ', mailed to ' + model.terms.checkMailingAddress : '') + '.';
+        }
+        var lab = document.createElement('label');
+        lab.className = 'method';
+        lab.innerHTML = '<input type="radio" name="payMethod" value="' + esc(m) + '">' +
+          '<span class="method-name">' + esc(info.name) + '</span>' +
+          '<span class="method-desc">' + esc(desc) + '</span>' +
+          (info.tag ? '<span class="method-tag">' + esc(info.tag) + '</span>' : '');
+        var input = lab.querySelector('input');
+        input.checked = state.method === m;
+        input.addEventListener('change', function () {
+          if (input.checked) { state.method = m; refresh(); }
+        });
+        host.appendChild(lab);
+      });
+      var hasAlt = offered.some(function (m) { return m !== 'card'; });
+      document.getElementById('methodNote').style.display = hasAlt && offered.length > 1 ? 'block' : 'none';
+    }
+
+    function renderClauses() {
+      var ol = document.getElementById('clauses');
+      ol.innerHTML = '';
+      model.clauses.forEach(function (c) {
+        var li = document.createElement('li');
+        if (typeof c === 'string') {
+          li.textContent = c;
+        } else {
+          var lead = c.lead || c.title || c.heading || '';
+          var text = c.text || c.body || '';
+          li.innerHTML = (lead ? '<strong>' + esc(lead.replace(/[:.]?\s*$/, '')) + ':</strong> ' : '') + esc(text);
+        }
+        ol.appendChild(li);
+      });
+    }
+
+    function refresh() {
+      model.groups.forEach(function (g) {
+        var active = groupActive(g);
+        var sec = document.getElementById('group-' + g.id);
+        sec.classList.toggle('off', !active);
+        var sub = groupSubtotal(g, true);
+        document.getElementById('gs-' + g.id).textContent = fmtDollars(sub);
+        if (g.optional) {
+          var btn = document.getElementById('gtog-' + g.id);
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+          document.getElementById('gtp-' + g.id).textContent = active
+            ? 'Added: ' + fmtDollars(sub) + '. Tap to remove this day.'
+            : '+' + fmtDollars(sub) + ' for this day';
+        }
+        if (!active) document.getElementById('gw-' + g.id).style.display = 'none';
+      });
+
+      model.items.forEach(function (it) {
+        var row = document.getElementById('item-' + it.id);
+        var g = model.groupById[it.group];
+        var active = groupActive(g);
+        var on = itemIncluded(it);
+        row.classList.toggle('active', on);
+        row.classList.toggle('removed', active && !on);
+        var chk = document.getElementById('chk-' + it.id);
+        if (chk) {
+          chk.checked = !!state.itemOn[it.id];
+          chk.disabled = !active;
+        }
+      });
+
+      Array.prototype.forEach.call(document.querySelectorAll('.method'), function (lab) {
+        var input = lab.querySelector('input');
+        lab.classList.toggle('selected', input.value === state.method);
+      });
+
+      var t = totals();
+      var rows = '';
+      model.groups.forEach(function (g) {
+        if (!groupActive(g)) return;
+        rows += '<div class="totals-row muted"><span>' + esc(shortGroupLabel(g)) + '</span><span>' + fmtCents(groupSubtotal(g, false)) + '</span></div>';
+      });
+      rows += '<div class="totals-row sub"><span>Subtotal</span><span>' + fmtCents(t.subtotal) + '</span></div>';
+      if (state.taxExempt) {
+        rows += '<div class="totals-row"><span>Tax exempt: certificate required</span><span>' + fmtCents(0) + '</span></div>';
+      } else {
+        rows += '<div class="totals-row"><span>WI sales tax (' + taxPct() + ')</span><span>' + fmtCents(t.tax) + '</span></div>';
+      }
+      rows += '<div class="totals-row grand"><span>Total</span><span id="grandTotal">' + fmtCents(t.total) + '</span></div>';
+      document.getElementById('totals').innerHTML = rows;
+      document.getElementById('bottomTotal').textContent = fmtCents(t.total);
+
+      document.getElementById('exemptNote').style.display = state.taxExempt ? 'block' : 'none';
+
+      var isCheck = state.method === 'check';
+      document.getElementById('poReq').hidden = !isCheck;
+      document.getElementById('poHint').textContent = isCheck
+        ? 'Required for check payment. It will print on your invoice.'
+        : 'Optional. It will print on your invoice.';
+      document.getElementById('acceptNote').textContent = isCheck
+        ? 'Next: your invoice and signed agreement, ready to print or forward to accounts payable.'
+        : 'Next: secure payment through Stripe. You will land right back here when it is done.';
+    }
+
+    function shortGroupLabel(g) {
+      var i = g.label.indexOf(':');
+      return i > 0 ? g.label.slice(0, i) : g.label;
+    }
+
+    // ---------- data ----------
+
+    function normalize(data) {
+      var ij = data.items_json || data.itemsJson || data.items;
+      if (typeof ij === 'string') ij = JSON.parse(ij);
+      if (!ij || !Array.isArray(ij.groups) || !Array.isArray(ij.items)) throw new Error('bad items_json');
+      var terms = data.terms || data.terms_json || {};
+      if (typeof terms === 'string') terms = JSON.parse(terms);
+      var clauses = data.agreementClauses || terms.agreementClauses || [];
+      var methods = (terms.paymentMethods || ['card', 'ach', 'check']).filter(function (m) { return METHOD_INFO[m]; });
+      if (!methods.length) methods = ['card'];
+      var m = {
+        groups: ij.groups,
+        items: ij.items.map(function (it) {
+          return {
+            id: it.id, group: it.group, kind: it.kind, label: it.label, detail: it.detail || '',
+            people: Number(it.people) || 1, hours: Number(it.hours) || 0, rateCents: Number(it.rateCents) || 0,
+            removable: !!it.removable, defaultOn: it.defaultOn !== false,
+          };
+        }),
+        terms: terms,
+        clauses: clauses,
+        methods: methods,
+        page: terms.page || data.page || {},
+        taxRateBps: Number(data.taxRateBps != null ? data.taxRateBps : 590),
+        status: data.status || '',
+        latest: data.latestAcceptance || null,
+        groupById: {},
+      };
+      m.groups.forEach(function (g) { m.groupById[g.id] = g; });
+      return m;
+    }
+
+    function docLink(url) {
+      if (!url) return '';
+      var full = /^https?:\/\//.test(url) ? url : CFG.apiBase + (url.charAt(0) === '/' ? '' : '/') + url;
+      if (!/[?&]token=/.test(full)) full += (full.indexOf('?') < 0 ? '?' : '&') + 'token=' + encodeURIComponent(TOKEN);
+      return full;
+    }
+
+    function saved() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch (e) { return null; }
+    }
+
+    // ---------- status panels ----------
+
+    function showStatus(title, paras, opts) {
+      var el = document.getElementById('statusPanel');
+      var html = '<h2>' + esc(title) + '</h2>';
+      paras.forEach(function (p) { html += '<p>' + esc(p) + '</p>'; });
+      if (opts && opts.doc) {
+        html += '<a class="doc-link" href="' + esc(opts.doc) + '" target="_blank" rel="noopener">View your invoice and agreement</a>';
+      }
+      el.innerHTML = html;
+      el.classList.toggle('quiet', !!(opts && opts.quiet));
+      el.style.display = 'block';
+    }
+
+    function hideForm() {
+      document.getElementById('accept').style.display = 'none';
+      document.getElementById('summaryJump').parentNode.style.display = 'none';
+      document.getElementById('bottomBar').classList.remove('show');
+      document.body.classList.remove('has-bar');
+      model.groups.forEach(function (g) {
+        var btn = document.getElementById('gtog-' + g.id);
+        if (btn) btn.disabled = true;
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.item input'), function (i) { i.disabled = true; });
+      Array.prototype.forEach.call(document.querySelectorAll('.item'), function (r) { r.classList.add('fixed'); });
+    }
+
+    function applySnapshot(snap) {
+      // Show what was actually accepted rather than the page defaults.
+      if (!snap) return;
+      var ids = snap.items || snap.itemIds;
+      if (typeof ids === 'string') { try { ids = JSON.parse(ids); } catch (e) { ids = null; } }
+      if (ids && ids.items) ids = ids.items;
+      if (!Array.isArray(ids)) return;
+      ids = ids.map(function (x) { return typeof x === 'string' ? x : x && x.id; });
+      model.groups.forEach(function (g) {
+        if (g.optional) state.groupOn[g.id] = model.items.some(function (it) { return it.group === g.id && ids.indexOf(it.id) >= 0; });
+      });
+      model.items.forEach(function (it) { if (it.removable) state.itemOn[it.id] = ids.indexOf(it.id) >= 0; });
+      if (snap.taxExempt != null) state.taxExempt = !!snap.taxExempt;
+    }
+
+    function methodOf(latest, local) {
+      return (latest && (latest.paymentMethod || latest.payment_method)) || (local && local.method) || '';
+    }
+
+    function handleStatus() {
+      var params = new URLSearchParams(window.location.search);
+      var ret = params.get('status');
+      var st = String(model.status || '').toLowerCase();
+      var latest = model.latest;
+      var local = saved();
+      var doc = docLink((latest && (latest.documentUrl || latest.document_url)) || (local && local.documentUrl));
+      var method = methodOf(latest, local);
+      var paid = st === 'paid' || st === 'paid_in_full';
+
+      if (paid) {
+        applySnapshot(latest); refresh(); hideForm();
+        showStatus('Paid in full. Thank you!', ['Your payment is complete. Sierra & Sean will be in touch about the install day schedule.'], { doc: doc });
+        return;
+      }
+      if (st === 'accepted_check_pending') {
+        applySnapshot(latest); refresh(); hideForm();
+        showStatus('Accepted. Thank you!', [checkCopy()], { doc: doc });
+        return;
+      }
+      if (ret === 'success') {
+        applySnapshot(latest); refresh(); hideForm();
+        if (method === 'ach') {
+          showStatus('Your bank transfer is on its way.', ['Bank transfers take about 4 business days to clear. We will confirm the moment it lands, and nothing else is needed from you.'], { doc: doc });
+        } else {
+          showStatus('You are all set.', ['Payment received. Sierra & Sean will be in touch about the install day schedule.'], { doc: doc });
+        }
+        return;
+      }
+      if (st === 'payment_failed') {
+        showStatus('Your last payment did not go through.', ['Nothing was charged. Pick a payment method below and accept again, or reach out and we will sort it out together.'], { quiet: true });
+        return;
+      }
+      if (ret === 'cancelled') {
+        showStatus('No charge was made.', ['Take your time. Everything here stays ready, and you can accept again whenever you are ready.'], { quiet: true });
+      }
+    }
+
+    function checkCopy() {
+      var addr = model.terms.checkMailingAddress;
+      return 'Your invoice and signed agreement are ready. The check is due within 15 days after final delivery, payable to Flyin\' Iris Media Productions LLC' +
+        (addr ? ', mailed to ' + addr : '') + '.';
+    }
+
+    // ---------- accept flow ----------
+
+    function showError(msg) {
+      var el = document.getElementById('flowError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function markInvalid(id, bad) {
+      document.getElementById(id).classList.toggle('invalid', bad);
+    }
+
+    var HICCUP = 'Something hiccuped on our end. Give it another try, or text Sierra & Sean at (262) 384-5079 and we will take care of it.';
+
+    function postJson(url, body) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (data) {
+          return { ok: r.ok, status: r.status, data: data || {} };
+        });
+      });
+    }
+
+    function onAccept() {
+      var btn = document.getElementById('acceptBtn');
+      document.getElementById('flowError').style.display = 'none';
+
+      var name = document.getElementById('signerName').value.trim();
+      var title = document.getElementById('signerTitle').value.trim();
+      var company = document.getElementById('signerCompany').value.trim();
+      var email = document.getElementById('signerEmail').value.trim();
+      var po = document.getElementById('poNumber').value.trim();
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      var poOk = state.method !== 'check' || po.length > 0;
+
+      markInvalid('signerName', !name);
+      markInvalid('signerEmail', !emailOk);
+      markInvalid('poNumber', !poOk);
+
+      var missingGroup = model.groups.filter(function (g) { return groupActive(g) && deliverablesOn(g) < 1; });
+      if (missingGroup.length) { showError('Each day needs at least one edited piece.'); return; }
+      if (!name) { showError('Please type your full name to sign.'); document.getElementById('signerName').focus(); return; }
+      if (!emailOk) { showError('Please enter a valid email for your invoice.'); document.getElementById('signerEmail').focus(); return; }
+      if (!poOk) { showError('A PO number is required to pay by check.'); document.getElementById('poNumber').focus(); return; }
+      if (!document.getElementById('agreeBox').checked) { showError('Please check the agreement box first.'); return; }
+
+      var payload = {
+        token: TOKEN,
+        items: selectedIds(),
+        paymentMethod: state.method,
+        taxExempt: state.taxExempt,
+        poNumber: po,
+        signer: { name: name, title: title, company: company, email: email },
+        agree: true,
+      };
+      // Each optional group rides along as a boolean keyed by its id
+      // (the v2 accept contract), so no group id is hardcoded here.
+      model.groups.forEach(function (g) { if (g.optional) payload[g.id] = groupActive(g); });
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner btn-spinner"></span>' + (state.method === 'check' ? 'Preparing your invoice...' : 'Opening secure payment...');
+
+      function reset() {
+        btn.disabled = false;
+        btn.textContent = 'Accept and continue';
+      }
+
+      postJson(API + '/accept', payload).then(function (res) {
+        if (res.status === 409) {
+          reset();
+          showError('This proposal has already been paid. Refresh the page to see your invoice, or reach out and we will help.');
+          return null;
+        }
+        if (!res.ok || !res.data.ok) {
+          reset();
+          var msg = res.status === 400 && typeof res.data.error === 'string' ? res.data.error : HICCUP;
+          showError(msg);
+          return null;
+        }
+        var acc = res.data;
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify({
+            invoiceNumber: acc.invoiceNumber, documentUrl: acc.documentUrl, method: state.method,
+            total: acc.totals && acc.totals.totalCents, items: payload.items, taxExempt: state.taxExempt,
+          }));
+        } catch (e) { /* private mode, fine */ }
+
+        if (acc.next === 'check') {
+          hideForm();
+          showStatus('Accepted. Thank you!', [
+            'Invoice ' + (acc.invoiceNumber || '') + ' for ' + fmtCents((acc.totals && acc.totals.totalCents) || totals().total) + ' is on its way to ' + email + '.',
+            checkCopy(),
+          ], { doc: docLink(acc.documentUrl) });
+          window.scrollTo(0, 0);
+          return null;
+        }
+        return postJson(API + '/checkout', { token: TOKEN, invoiceNumber: acc.invoiceNumber }).then(function (co) {
+          if (!co.ok || !co.data.url) { reset(); showError(HICCUP); return; }
+          window.location.href = co.data.url;
+        });
+      }).catch(function () {
+        reset();
+        showError(HICCUP);
+      });
+    }
+
+    // ---------- open ping ----------
+    // Fires on first meaningful interaction only (first scroll or a tap on a
+    // toggle), never on raw page load, so email link scanners cannot fake an
+    // open. Once per browser session; the Worker also throttles per slug.
+    var pinged = false;
+    function firePing() {
+      if (pinged || !TOKEN) return;
+      pinged = true;
+      if (new URLSearchParams(window.location.search).get('status')) return;
+      try {
+        if (sessionStorage.getItem('fi_opened_' + CFG.slug)) return;
+        sessionStorage.setItem('fi_opened_' + CFG.slug, '1');
+      } catch (e) { /* private mode still pings; the Worker throttles */ }
+      var body = JSON.stringify({ token: TOKEN });
+      var url = API + '/opened';
+      var sent = false;
+      try { sent = navigator.sendBeacon(url, new Blob([body], { type: 'text/plain' })); } catch (e) { /* fall through */ }
+      if (!sent) {
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: body, keepalive: true }).catch(function () {});
+      }
+    }
+    window.addEventListener('scroll', firePing, { once: true, passive: true });
+    window.addEventListener('touchmove', firePing, { once: true, passive: true });
+
+    // ---------- boot ----------
+
+    function jumpToAccept() {
+      document.getElementById('accept').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function boot(data) {
+      model = normalize(data);
+      model.groups.forEach(function (g) { state.groupOn[g.id] = !g.optional || !!g.defaultOn; });
+      model.items.forEach(function (it) { if (it.removable) state.itemOn[it.id] = it.defaultOn; });
+      state.method = model.methods[0];
+
+      var t = model.terms;
+      var pg = model.page;
+      if (pg.title) document.title = pg.title;
+      if (pg.eyebrow) document.getElementById('heroEyebrow').textContent = pg.eyebrow;
+      if (pg.headline) document.getElementById('heroHeadline').textContent = pg.headline;
+      document.getElementById('heroSub').textContent = pg.subhead || '';
+      if (pg.agreementTitle) document.getElementById('agreementTitle').textContent = pg.agreementTitle;
+      var notes = Array.isArray(pg.includedNotes) ? pg.includedNotes : (CFG.defaultIncludedNotes || []);
+      var notesHost = document.getElementById('includedNotes');
+      notes.forEach(function (n) {
+        var li = document.createElement('li');
+        li.textContent = n;
+        notesHost.appendChild(li);
+      });
+      document.getElementById('signerCompany').value = t.defaultCompany || data.businessName || '';
+      document.getElementById('exemptRate').textContent = taxPct();
+
+      renderGroups();
+      renderMethods();
+      renderClauses();
+
+      document.getElementById('taxExempt').addEventListener('change', function () {
+        state.taxExempt = this.checked;
+        refresh();
+      });
+      document.getElementById('acceptBtn').addEventListener('click', onAccept);
+      document.getElementById('summaryJump').addEventListener('click', jumpToAccept);
+      document.getElementById('bottomJump').addEventListener('click', jumpToAccept);
+      ['signerName', 'signerEmail', 'poNumber'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', function () { this.classList.remove('invalid'); });
+      });
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('layout').hidden = false;
+      document.getElementById('bottomBar').classList.add('show');
+      document.body.classList.add('has-bar');
+
+      refresh();
+      handleStatus();
+    }
+
+    function fail() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('loadError').style.display = 'block';
+    }
+
+    if (!TOKEN) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('noToken').style.display = 'block';
+    } else {
+      fetch(API + '/proposal?token=' + encodeURIComponent(TOKEN), { headers: { Accept: 'application/json' } })
+        .then(function (r) { if (!r.ok) throw new Error('proposal ' + r.status); return r.json(); })
+        .then(function (data) {
+          try { boot(data); } catch (e) { if (window.console) console.error(e); fail(); }
+        })
+        .catch(fail);
+    }
+  </script>
+</body>
+</html>
