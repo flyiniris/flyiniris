@@ -1021,7 +1021,7 @@
               <input type="checkbox" id="taxExempt">
               <span><strong>This purchase is tax exempt.</strong> We will need a completed Wisconsin exemption certificate (Form S-211).</span>
             </label>
-            <p class="exempt-note" id="exemptNote">Tax exempt status claimed. Please send a completed Wisconsin Sales and Use Tax Exemption Certificate (Form S-211). If it is not received by final delivery, <span id="exemptRate">5.9%</span> Wisconsin sales tax will be invoiced.</p>
+            <p class="exempt-note" id="exemptNote">Tax exempt status claimed. Please send a completed Wisconsin Sales and Use Tax Exemption Certificate (Form S-211). If it is not received by final delivery, <span id="exemptRate"></span> Wisconsin sales tax will be invoiced.</p>
           </div>
 
           <div class="panel">
@@ -1403,6 +1403,8 @@
       var ij = data.items_json || data.itemsJson || data.items;
       if (typeof ij === 'string') ij = JSON.parse(ij);
       if (!ij || !Array.isArray(ij.groups) || !Array.isArray(ij.items)) throw new Error('bad items_json');
+      // The tax rate is per proposal (Worker tax_rate_bps); never guess one.
+      if (!Number.isInteger(data.taxRateBps)) throw new Error('missing taxRateBps');
       var terms = data.terms || data.terms_json || {};
       if (typeof terms === 'string') terms = JSON.parse(terms);
       var clauses = data.agreementClauses || terms.agreementClauses || [];
@@ -1421,7 +1423,7 @@
         clauses: clauses,
         methods: methods,
         page: terms.page || data.page || {},
-        taxRateBps: Number(data.taxRateBps != null ? data.taxRateBps : 590),
+        taxRateBps: Number(data.taxRateBps),
         status: data.status || '',
         latest: data.latestAcceptance || null,
         groupById: {},
