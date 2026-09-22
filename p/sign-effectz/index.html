@@ -1053,7 +1053,7 @@
                 <p class="field-hint">Your invoice and signed agreement go here.</p>
               </div>
               <div class="field">
-                <label class="field-label" for="poNumber">PO number <span class="req" id="poReq" hidden>* required for check</span></label>
+                <label class="field-label" for="poNumber">PO number <span class="req" id="poReq">(optional, if your company uses one)</span></label>
                 <input type="text" id="poNumber" autocomplete="off">
                 <p class="field-hint" id="poHint">Optional. It will print on your invoice.</p>
               </div>
@@ -1080,7 +1080,7 @@
         <h3>Your Total</h3>
         <div class="totals" id="totals" aria-live="polite"></div>
         <ul class="summary-notes">
-          <li>Pay in full at acceptance by card or bank transfer, or by check with a PO.</li>
+          <li>Pay in full at acceptance by card or bank transfer, or by check.</li>
         </ul>
         <div class="summary-cta">
           <button type="button" class="accept-btn" id="summaryJump" style="margin-top: 0;">Review and accept</button>
@@ -1124,7 +1124,7 @@
     var METHOD_INFO = {
       card: { name: 'Card', desc: 'Pay in full now through secure Stripe checkout.', tag: '' },
       ach: { name: 'Bank transfer (ACH)', desc: 'Pay in full now from your bank account through Stripe. Clears in about 4 business days.', tag: 'No card fees' },
-      check: { name: 'Check with PO', desc: 'Accept now with your PO number. Check due within 15 days after final delivery.', tag: 'No card fees' },
+      check: { name: 'Check', desc: 'Accept now. Check due within 15 days after final delivery. Add your PO number if your company uses one.', tag: 'No card fees' },
     };
 
     var model = null;      // { groups, items, terms, clauses, taxRateBps }
@@ -1383,9 +1383,8 @@
       document.getElementById('exemptNote').style.display = state.taxExempt ? 'block' : 'none';
 
       var isCheck = state.method === 'check';
-      document.getElementById('poReq').hidden = !isCheck;
       document.getElementById('poHint').textContent = isCheck
-        ? 'Required for check payment. It will print on your invoice.'
+        ? 'Optional. If your company uses one, it will print on your invoice.'
         : 'Optional. It will print on your invoice.';
       document.getElementById('acceptNote').textContent = isCheck
         ? 'Next: your invoice and signed agreement, ready to print or forward to accounts payable.'
@@ -1574,17 +1573,14 @@
       var email = document.getElementById('signerEmail').value.trim();
       var po = document.getElementById('poNumber').value.trim();
       var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      var poOk = state.method !== 'check' || po.length > 0;
 
       markInvalid('signerName', !name);
       markInvalid('signerEmail', !emailOk);
-      markInvalid('poNumber', !poOk);
 
       var missingGroup = model.groups.filter(function (g) { return groupActive(g) && deliverablesOn(g) < 1; });
       if (missingGroup.length) { showError('Each day needs at least one edited piece.'); return; }
       if (!name) { showError('Please type your full name to sign.'); document.getElementById('signerName').focus(); return; }
       if (!emailOk) { showError('Please enter a valid email for your invoice.'); document.getElementById('signerEmail').focus(); return; }
-      if (!poOk) { showError('A PO number is required to pay by check.'); document.getElementById('poNumber').focus(); return; }
       if (!document.getElementById('agreeBox').checked) { showError('Please check the agreement box first.'); return; }
 
       var payload = {
