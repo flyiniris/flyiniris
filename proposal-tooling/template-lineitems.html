@@ -1507,6 +1507,11 @@
         showStatus('Accepted. Thank you!', [checkCopy()], { doc: doc });
         return;
       }
+      if (st === 'ach_pending') {
+        applySnapshot(latest); refresh(); hideForm();
+        showStatus('Your bank transfer is on its way.', ['Bank transfers take about 4 business days to clear. We will confirm the moment it lands, and nothing else is needed from you.'], { doc: doc });
+        return;
+      }
       if (ret === 'success') {
         applySnapshot(latest); refresh(); hideForm();
         if (method === 'ach') {
@@ -1604,7 +1609,7 @@
       postJson(API + '/accept', payload).then(function (res) {
         if (res.status === 409) {
           reset();
-          showError('This proposal has already been paid. Refresh the page to see your invoice, or reach out and we will help.');
+          showError('This proposal is already paid or a payment is in progress. Refresh the page to see your invoice, or reach out and we will help.');
           return null;
         }
         if (!res.ok || !res.data.ok) {
