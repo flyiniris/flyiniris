@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
+  <script src="/fi-attribution.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>What's Your Wedding Film Style? | Free Quiz | Flyin' Iris</title>
   <meta name="description" content="Take our 60-second quiz to discover your wedding film style. Cinematic Romance? Electric Energy? Intimate Poetry? Find out and see real films that match.">
@@ -621,6 +623,18 @@
       border-color: rgba(255, 189, 29, 0.5);
     }
 
+    /* "How did you find us?" select (2026-09-23): .form-input strips the
+       native arrow, so draw a gold caret and keep the options dark. */
+    select.form-input {
+      cursor: pointer;
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FFBD1D' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+    select.form-input:invalid { color: var(--text-muted); }
+    select.form-input option { background: var(--bg-elevated); color: var(--text-primary); }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1047,6 +1061,25 @@
         <div class="form-group">
           <input type="email" class="form-input" id="input-email" placeholder="Your email address *" required autocomplete="email">
         </div>
+        <div class="form-group">
+          <select class="form-input" id="input-found" required aria-label="How did you find us?" onchange="onFoundChange()">
+            <option value="">How did you find us? *</option>
+            <option>Instagram</option>
+            <option>Google search</option>
+            <option>ChatGPT or AI search</option>
+            <option>Venue recommendation</option>
+            <option>Friend or family</option>
+            <option>Wedding planner</option>
+            <option>Another vendor</option>
+            <option>The Knot or WeddingWire</option>
+            <option>TikTok</option>
+            <option>Facebook</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group hidden" id="referral-group">
+          <input type="text" class="form-input" id="input-referral" placeholder="Who sent you our way? (optional)" autocomplete="off">
+        </div>
         <button class="btn-submit" id="submit-btn" onclick="submitEmail()">
           Send Me Films &rarr;
         </button>
@@ -1353,11 +1386,27 @@ function showResult() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ========== HOW DID YOU FIND US ==========
+// The four answers that reveal the optional referral-name field.
+const FOUND_REFERRAL = ['Friend or family', 'Venue recommendation', 'Wedding planner', 'Another vendor'];
+function onFoundChange() {
+  const found = document.getElementById('input-found').value;
+  const group = document.getElementById('referral-group');
+  if (FOUND_REFERRAL.indexOf(found) !== -1) {
+    group.classList.remove('hidden');
+  } else {
+    group.classList.add('hidden');
+    document.getElementById('input-referral').value = '';
+  }
+}
+
 // ========== EMAIL SUBMIT ==========
 async function submitEmail() {
   const email = document.getElementById('input-email').value.trim();
   const name = document.getElementById('input-name').value.trim();
   const date = document.getElementById('input-date').value;
+  const found = document.getElementById('input-found').value;
+  const referralName = FOUND_REFERRAL.indexOf(found) !== -1 ? document.getElementById('input-referral').value.trim() : '';
 
   if (!name) {
     showToast('Please enter your first name.');
@@ -1368,6 +1417,12 @@ async function submitEmail() {
   if (!email || !email.includes('@')) {
     showToast('Please enter a valid email address.');
     document.getElementById('input-email').focus();
+    return;
+  }
+
+  if (!found) {
+    showToast('Let us know how you found us!');
+    document.getElementById('input-found').focus();
     return;
   }
 
@@ -1392,6 +1447,10 @@ async function submitEmail() {
     if (v) tracking[k] = v;
   });
   try { tracking.landing_page = localStorage.getItem('fi_landing_page') || window.location.href.split('#')[0]; } catch (e) { /* ignore */ }
+  // 2026-09-23: visitor id plus first-touch and latest external referrer
+  // (from /fi-attribution.js, loaded in the head).
+  try { const vid = localStorage.getItem('fi_visitor_id'); if (vid) tracking.visitor_id = vid; } catch (e) { /* ignore */ }
+  if (window.fiReferrerData) Object.assign(tracking, window.fiReferrerData());
   const fbp = qGetCookie('_fbp');
   const fbc = qGetCookie('_fbc');
   if (fbp) tracking.fbp = fbp;
@@ -1409,6 +1468,8 @@ async function submitEmail() {
       firstName: name || undefined,
       weddingDate: date || undefined,
       submissionType: 'quiz',
+      found,
+      referralName: referralName || undefined,
       filmVibe: [style.name],
       variant: 'quiz',
       event_id: leadEventId

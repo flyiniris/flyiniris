@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
+  <script src="/fi-attribution.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Here | Flyin' Iris</title>
   <meta name="description" content="Check your date, see the films that match your day, and get your exact wedding film pricing from Sierra &amp; Sean at Flyin' Iris.">
@@ -184,6 +186,14 @@
       color: var(--text-primary); font-size: 16px; transition: border-color .2s ease;
     }
     .field input:focus { border-color: var(--accent); }
+    .field select {
+      width: 100%; padding: 13px 14px; background: var(--surface-input);
+      border: 2px solid var(--border-input); border-radius: 8px;
+      color: var(--text-primary); font-size: 16px; font-family: inherit;
+      transition: border-color .2s ease; accent-color: var(--accent);
+    }
+    .field select:focus { border-color: var(--accent); outline: none; }
+    .field select option { background: var(--surface-input); color: var(--text-primary); }
 
     /* Calendar */
     .cal { width: 100%; max-width: 320px; margin: 22px auto 0; }
@@ -610,17 +620,19 @@
           localStorage.setItem('fi_visitor_id', fiVisitorId);
         }
       } catch (e) { /* storage blocked: the server falls back to _fbp */ }
+      // 2026-09-23: first_referrer / referrer come from /fi-attribution.js
+      // (loaded in the head). Omitted when that file did not load.
       fetch(WORKER_URL + '/api/pageview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: JSON.stringify(Object.assign({
           fbclid: fbclid,
           event_id: window.__fi_pv_event_id,
           visitor_id: fiVisitorId,
           fbp: getCookie('_fbp'),
           fbc: getCookie('_fbc'),
           page_url: window.location.href.split('#')[0]
-        })
+        }, window.fiReferrerData ? window.fiReferrerData() : {}))
       }).catch(function() {});
     })();
 
@@ -643,6 +655,13 @@
       var fbc = getCookie('_fbc');
       if (fbp) data.fbp = fbp;
       if (fbc) data.fbc = fbc;
+      // 2026-09-23: the visitor id (so the Worker can join this inquiry to
+      // the pageview row) and the first-touch + latest external referrer.
+      try {
+        var vid = localStorage.getItem('fi_visitor_id');
+        if (vid) data.visitor_id = vid;
+      } catch (e) { /* ignore */ }
+      if (window.fiReferrerData) Object.assign(data, window.fiReferrerData());
       return data;
     }
     function generateEventId() {
@@ -850,6 +869,13 @@
       ]
     };
 
+    // "How did you find us?" (required on the capture screen, 2026-09-23).
+    // The four keys in FOUND_REFERRAL reveal the optional referral-name field.
+    var FOUND_OPTIONS = ['Instagram', 'Google search', 'ChatGPT or AI search', 'Venue recommendation', 'Friend or family', 'Wedding planner', 'Another vendor', 'The Knot or WeddingWire', 'TikTok', 'Facebook', 'Other'];
+    var FOUND_REFERRAL = { 'Friend or family': 'Their name', 'Venue recommendation': 'Venue name', 'Wedding planner': 'Planner or company name', 'Another vendor': 'Vendor name' };
+    function foundOk() { return FOUND_OPTIONS.indexOf(state.found) !== -1; }
+    function captureOk() { return !!(state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim()) && foundOk()); }
+
     var now = new Date();
     var state = {
       screen: 'welcome',
@@ -862,6 +888,7 @@
       vibes: [],
       name1: '', name2: '', venue: '',
       email: '', phone: '', sms: false,
+      found: '', referralName: '',
       teamTrack: false,
       checkFailed: false,
       noDate: false,
@@ -889,6 +916,7 @@
           v: 1, ts: Date.now(),
           selectedDate: state.selectedDate, noDate: state.noDate, venue: state.venue,
           name1: state.name1, name2: state.name2, email: state.email,
+          found: state.found, referralName: state.referralName,
           vibes: state.vibes, teamTrack: state.teamTrack
         }));
       } catch (e) { /* ignore */ }
@@ -1002,6 +1030,8 @@
         partnerFirstName: state.name2.trim(),
         partnerLastName: '',
         weddingDate: state.selectedDate || '',
+        found: state.found,
+        referralName: FOUND_REFERRAL[state.found] ? state.referralName.trim() : '',
         vibe: state.vibes.map(function(i) { return VIBE_LABELS[i]; }).join(', '),
         variant: 'unified',
         variant_source: 'unified'
@@ -1047,6 +1077,9 @@
       // Already submitted (e.g. a retry click racing the render): never
       // double-post, just move along to the phone screen.
       if (state.sessionToken) { goForward('contact'); return; }
+      // A restored draft can reach vibe without an answer to "How did you
+      // find us?"; send the couple back to the capture screen to pick one.
+      if (!foundOk()) { state.history.push(state.screen); setScreen('capture'); return; }
       state.submitBusy = true;
       state.submitError = false;
       render();
@@ -1379,7 +1412,17 @@
       },
 
       capture: function() {
-        var can = state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim());
+        var can = captureOk();
+        var foundHtml = '<div class="field" style="margin-top:18px"><label for="f-found">How did you find us?</label>' +
+          '<select id="f-found" data-field="found"><option value="">Pick one</option>';
+        FOUND_OPTIONS.forEach(function(o) {
+          foundHtml += '<option value="' + esc(o) + '"' + (state.found === o ? ' selected' : '') + '>' + esc(o) + '</option>';
+        });
+        foundHtml += '</select></div>';
+        if (FOUND_REFERRAL[state.found]) {
+          foundHtml += '<div class="field" style="margin-top:14px"><label for="f-referral">Who sent you our way? (optional, so we can thank them)</label>' +
+            '<input id="f-referral" type="text" autocomplete="off" placeholder="' + esc(FOUND_REFERRAL[state.found]) + '" data-field="referralName" value="' + esc(state.referralName) + '"></div>';
+        }
         return '<div class="screen">' +
           '<span class="eyebrow">Your details</span>' +
           '<h1 class="headline">Let\'s get your pricing ready.</h1>' +
@@ -1393,6 +1436,7 @@
           '</div>' +
           '<div class="field" style="margin-top:18px"><label for="f-email">Email</label>' +
           '<input id="f-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
+          foundHtml +
           '<button type="button" class="cta" data-action="submit-capture"' + (can ? '' : ' disabled') + '>Continue</button>' +
           '<p class="form-hint">Takes about a minute. We promise.</p>' +
           (OFFER_DOC
@@ -1628,7 +1672,7 @@
       if (btn) {
         var ok = true;
         if (btn.getAttribute('data-action') === 'continue-venue') ok = !!state.venue.trim();
-        if (btn.getAttribute('data-action') === 'submit-capture') ok = !!(state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim()));
+        if (btn.getAttribute('data-action') === 'submit-capture') ok = captureOk();
         if (btn.getAttribute('data-action') === 'submit-contact') ok = isValidPhone(state.phone.trim());
         if (btn.getAttribute('data-action') === 'submit-waitlist') ok = isValidEmail(state.email.trim()) && !state.waitlistBusy;
         btn.disabled = !ok;
@@ -1636,6 +1680,15 @@
     });
 
     app.addEventListener('change', function(e) {
+      if (e.target.getAttribute && e.target.getAttribute('data-field') === 'found') {
+        state.found = e.target.value;
+        if (!FOUND_REFERRAL[state.found]) state.referralName = '';
+        saveDraft();
+        render();
+        var sel = document.getElementById('f-found');
+        if (sel) sel.focus();
+        return;
+      }
       var action = e.target.getAttribute && e.target.getAttribute('data-action');
       if (action !== 'cal-month-select' && action !== 'cal-year-select') return;
       var today = new Date(); today.setHours(0, 0, 0, 0);
@@ -1717,7 +1770,7 @@
         return;
       }
       if (action === 'submit-capture') {
-        if (state.name1.trim() && state.name2.trim() && isValidEmail(state.email.trim())) {
+        if (captureOk()) {
           clearTimers();
           goForward('saved');
           savedTimer = setTimeout(function() { afterSaved(); }, 1800);
@@ -1763,6 +1816,7 @@
         clearDraft();
         state.selectedDate = null; state.noDate = false; state.venue = ''; state.name1 = ''; state.name2 = '';
         state.email = ''; state.phone = ''; state.sms = false; state.vibes = []; state.teamTrack = false;
+        state.found = ''; state.referralName = '';
         state.smsSent = false; state.submitError = false;
         state.history = [];
         setScreen('welcome'); return;
@@ -1780,6 +1834,8 @@
       state.name1 = draft.name1 || '';
       state.name2 = draft.name2 || '';
       state.email = draft.email || '';
+      state.found = FOUND_OPTIONS.indexOf(draft.found) !== -1 ? draft.found : '';
+      state.referralName = FOUND_REFERRAL[state.found] ? (draft.referralName || '') : '';
       state.vibes = Array.isArray(draft.vibes) ? draft.vibes : [];
       state.teamTrack = !!draft.teamTrack;
       if (draft.selectedDate) {

@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
+  <script src="/fi-attribution.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Milwaukee Wedding Videographer | Cinematic Wedding Films | Flyin' Iris</title>
   <meta name="description" content="Milwaukee husband-and-wife wedding videographers crafting cinematic wedding films across Wisconsin. 5.0 stars, 100+ love stories filmed. Now booking 2026 & 2027.">
@@ -2871,17 +2873,19 @@
               localStorage.setItem('fi_visitor_id', fiVisitorId);
             }
           } catch (e) { /* storage blocked: the server falls back to _fbp */ }
+          // 2026-09-23: first_referrer / referrer come from /fi-attribution.js
+          // (loaded in the head). Omitted when that file did not load.
           fetch(WORKER_URL + '/api/pageview', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            body: JSON.stringify(Object.assign({
               fbclid: fbclid,
               event_id: window.__fi_pv_event_id,
               visitor_id: fiVisitorId,
               fbp: getCookie('_fbp'),
               fbc: getCookie('_fbc'),
               page_url: window.location.href.split('#')[0]
-            })
+            }, window.fiReferrerData ? window.fiReferrerData() : {}))
           }).catch(function() {});
         })();
         function getCookie(name) {
@@ -2912,6 +2916,8 @@
             if (vid) data.visitor_id = vid;
           } catch (e) { /* ignore */ }
           try { data.page_url = window.location.href.split('#')[0]; } catch (e) { /* ignore */ }
+          // 2026-09-23: first-touch + latest external referrer (fi-attribution.js)
+          if (window.fiReferrerData) Object.assign(data, window.fiReferrerData());
           return data;
         }
         function generateEventId() {
@@ -2993,6 +2999,11 @@
           var phone = (ci.phone || '').replace(/\D/g, '');
           return base + '?first_name=' + encodeURIComponent(first) + '&last_name=' + encodeURIComponent(last) + '&email=' + encodeURIComponent(ci.email || '') + '&phone=' + encodeURIComponent(phone);
         }
+
+        // "How did you find us?" options. The four keys in FOUND_REFERRAL
+        // reveal the optional referral-name field, with its placeholder.
+        var FOUND_OPTIONS = ['Instagram', 'Google search', 'ChatGPT or AI search', 'Venue recommendation', 'Friend or family', 'Wedding planner', 'Another vendor', 'The Knot or WeddingWire', 'TikTok', 'Facebook', 'Other'];
+        var FOUND_REFERRAL = { 'Friend or family': 'Their name', 'Venue recommendation': 'Venue name', 'Wedding planner': 'Planner or company name', 'Another vendor': 'Vendor name' };
 
         // --- STATE ---
         // mode starts at "inquiry": the short form IS the funnel entry now.
@@ -3113,7 +3124,7 @@
         // 2026-07-04: "Start with your date."
         function renderInquiryForm() {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = FOUND_OPTIONS.indexOf(f.found) !== -1;
           var h = '<div class="quiz-step">';
           h += '<p class="quiz-intro-label" style="text-align:center">Flyin’ Iris ✦ Milwaukee, WI</p>';
           h += '<h2 class="quiz-question" tabindex="-1" style="outline:none;text-align:center">Start with your date.</h2>';
@@ -3161,9 +3172,26 @@
           h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--text-secondary);font-weight:300;font-size:0.6875rem">(optional)</span></label>';
           h += '<input type="text" id="qf-venue" class="quiz-form-input" data-field="venue" placeholder="Venue Name · City (or leave blank)">';
           h += '</div>';
+          // How did you find us? (required, 2026-09-23). Dropped by the
+          // 2026-07-03 short-form rewrite; restored because 46 of 47
+          // inquiries since then arrived with no source at all.
+          h += '<div><label class="quiz-form-label" for="qf-found">How did you find us? <span style="color:var(--accent)">*</span></label>';
+          h += '<select id="qf-found" class="quiz-form-input' + (t && !fOk ? ' error' : '') + '" data-field="found">';
+          h += '<option value="">Pick one</option>';
+          FOUND_OPTIONS.forEach(function(o) {
+            h += '<option value="' + o + '"' + (f.found === o ? ' selected' : '') + '>' + o + '</option>';
+          });
+          h += '</select>';
+          if (t && !fOk) h += '<p class="quiz-form-error">Let us know how you found us!</p>';
+          if (FOUND_REFERRAL[f.found]) {
+            h += '<div style="margin-top:8px"><label class="quiz-form-label" for="qf-referral">Who sent you our way? <span style="color:var(--text-secondary);font-weight:300;font-size:0.6875rem">(optional, so we can thank them)</span></label>';
+            h += '<input type="text" id="qf-referral" class="quiz-form-input" data-field="referralName" placeholder="' + FOUND_REFERRAL[f.found] + '">';
+            h += '</div>';
+          }
+          h += '</div>';
           // Submit
           h += '<button class="quiz-submit-btn" data-action="submit-inquiry">Check My Date →</button>';
-          if (t && !(nOk && paOk && eOk && pOk && dOk)) h += '<p class="quiz-form-submit-error">↑ Just need a few more details!</p>';
+          if (t && !(nOk && paOk && eOk && pOk && dOk && fOk)) h += '<p class="quiz-form-submit-error">↑ Just need a few more details!</p>';
           h += '<p class="quiz-form-hint">No spam ever. Real pricing, real availability, and a real conversation about your day.</p>';
           h += '<p style="font-size:0.75rem;color:#8C8880;text-align:center;font-family:\'Outfit\',sans-serif;margin-top:12px"><a href="/privacy" target="_blank" style="color:#8C8880;text-decoration:underline">Privacy Policy</a> | <a href="/terms" target="_blank" style="color:#8C8880;text-decoration:underline">Terms & Conditions</a></p>';
           h += '</div></div>';
@@ -3349,7 +3377,7 @@
           if (f === "found") {
             saveFormFields();
             state.contactForm.found = e.target.value;
-            if (e.target.value !== "Referral" && e.target.value !== "Wedding Planner") state.referralName = "";
+            if (!FOUND_REFERRAL[e.target.value]) state.referralName = "";
             render();
           }
         });
@@ -3364,7 +3392,7 @@
             saveFormFields();
             state.contactFormTried = true;
             var fi = state.contactForm;
-            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && fi.weddingDate && fi.weddingDate.length > 0;
+            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && fi.weddingDate && fi.weddingDate.length > 0 && FOUND_OPTIONS.indexOf(fi.found) !== -1;
             if (!okToSend) { render(); return; }
             var dateEl = document.getElementById('quiz-date');
             if (dateEl && dateEl.value) state.contactForm.weddingDate = dateEl.value;
@@ -3387,6 +3415,8 @@
               partnerFirstName: fi.partner.trim().split(' ')[0] || '',
               partnerLastName: fi.partner.trim().split(' ').slice(1).join(' ') || '',
               weddingDate: fi.weddingDate || '',
+              found: fi.found,
+              referralName: FOUND_REFERRAL[fi.found] ? state.referralName.trim() : '',
               variant: 'unified',
               variant_source: 'unified'
             }, inqTracking);
