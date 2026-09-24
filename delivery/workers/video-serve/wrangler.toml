@@ -1,4 +1,15 @@
 name = "fi-video-serve"
+# Flyin' Iris Cloudflare account, pinned 2026-09-16.
+# This machine's wrangler login is a Global API Key that can see TWO accounts:
+# this one and MKE Web Labs (7c0cb7ab). Nothing else bound this repo to an
+# account, so the target came from the interactive picker or from a gitignored
+# .wrangler cache, and MKE work has already landed in this account once.
+# This repo is PUBLIC, so the full account id is not written here (pre-push
+# hook). With no account_id and a login that sees two accounts, wrangler
+# refuses to run non-interactively, which is the fail-loud we want. Deploy
+# with CLOUDFLARE_ACCOUNT_ID set to the Flyin' Iris account (last-4 f369; the
+# full value is pinned in the private iris-automation wrangler.toml).
+
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 

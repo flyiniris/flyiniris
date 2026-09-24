@@ -1,6 +1,8 @@
 <!-- token-budget: 3000 (estimate = file bytes / 4; enforced by .githooks/pre-push claude-md-checks) -->
 # CLAUDE.md: Flyin' Iris website, film delivery, video infrastructure
 
+**VENTURE: Flyin' Iris.** Cloudflare account `...f369 (full value in wrangler.toml)`. This machine's wrangler login also sees the MKE Web Labs account `7c0cb7ab`, and MKE work has landed in the Flyin' Iris account before, so every wrangler.toml here pins `account_id`. Never run a command in this repo against the MKE account, and never let MKE Web Labs work, docs, branding or credentials into it.
+
 Source of truth precedence: live code, then generated docs (iris-automation docs/knowledge/atlas/generated/), then docs/knowledge/, then everything older; when two disagree, the higher one wins.
 
 Machine-wide invariants (copy rules, commit hygiene, secrets, pre-build validation) live in the global `~/.claude/CLAUDE.md` and are not restated here.

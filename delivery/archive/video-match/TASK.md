@@ -82,7 +82,7 @@ Get list of films this couple has already seen.
 ## Existing Infrastructure
 - Video serve worker: C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\workers\video-serve\
 - Use same wrangler patterns and Cloudflare account
-- Account ID: b3269400156817c0292ea7f07141f369
+- Account ID: ...f369 (full value in the private iris-automation wrangler.toml)
 - Wrangler already authenticated
 
 ## Film Index (hardcode in worker for now)
