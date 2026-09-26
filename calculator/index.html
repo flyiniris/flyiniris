@@ -1252,8 +1252,17 @@
       });
     }
 
+    // Which button sent the couple here (start_confirm, thanks, ...),
+    // forwarded so the Worker can log it. Read from the query the head gate
+    // captured before it stripped the token; sanitized to [a-z0-9_-], max 32.
+    var fromParam = '';
+    try {
+      fromParam = (new URLSearchParams(window.__fi_query || window.location.search).get('from') || '')
+        .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32);
+    } catch (e) { fromParam = ''; }
+
     if (sessionToken) {
-      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken) + '?source=calculator')
+      fetch(WORKER_URL + '/api/session/' + encodeURIComponent(sessionToken) + '?source=calculator' + (fromParam ? '&from=' + encodeURIComponent(fromParam) : ''))
         .then(function(r) { return r.ok ? r.json() : null; })
         .then(function(s) {
           if (s && s.success) {

@@ -404,7 +404,7 @@
   <section class="confirm-head">
     <div class="confirm-check">&#10003;</div>
     <h1 id="confirm-heading">We got your inquiry!</h1>
-    <p class="subtitle" id="confirm-sub">Your pricing is on its way to your inbox right now, and everything you need is right here on this page.</p>
+    <p class="subtitle" id="confirm-sub">Your personal pricing page is on its way to your inbox, and everything you need is right here.</p>
     <p class="availability-line" id="availability-line"></p>
   </section>
 
@@ -435,8 +435,8 @@
 
   <!-- Router: PRIMARY book the call -->
   <section class="router">
-    <h2>Lock in your date on a quick call.</h2>
-    <p class="router-sub">15 to 20 minutes with Sierra &amp; Sean. No pitch, no pressure. We'll walk through your day, your pricing, and make sure we're the right fit.</p>
+    <h2>Talk it through on a quick call.</h2>
+    <p class="router-sub">15 minutes with Sierra &amp; Sean. No pitch, no pressure. We'll walk through your day, your pricing, and make sure we're the right fit.</p>
     <p class="pricing-first-line" id="pricing-first-line" style="display:none">Want to see your pricing first? <a href="#build-package">Build your package below</a> and get your exact number in about a minute.</p>
 
     <div class="cal-wrap" id="cal-wrap">
@@ -491,6 +491,10 @@
       var sessionToken = window.__fi_session_token || '';
       if (!sessionToken) {
         try { sessionToken = localStorage.getItem('fi_session_token') || ''; } catch (e) { /* ignore */ }
+      }
+
+      function storedFor(key) {
+        try { return localStorage.getItem(key) || ''; } catch (e) { return ''; }
       }
 
       function setBooking(prefill) {
@@ -578,6 +582,13 @@
         if (first) {
           document.getElementById('confirm-heading').textContent = first + ", you're in!";
         }
+        // Homepage waitlist route (date fully booked for Sierra & Sean and
+        // Team): the Worker sends no pricing email on that path, so the
+        // subtitle must not promise one.
+        if (storedFor('fi_waitlist_for') === sessionToken) {
+          document.getElementById('confirm-heading').textContent = first ? first + ", you're on our list." : "You're on our list.";
+          document.getElementById('confirm-sub').textContent = "Your date is fully booked right now, but if anything opens up, we'll reach out.";
+        }
         if (s.availabilityMessage) {
           var av = document.getElementById('availability-line');
           av.textContent = s.availabilityMessage;
@@ -592,11 +603,24 @@
           email: s.email || '',
           phone: (s.phone || '').replace(/\D/g, '')
         });
-        // Unlock the token-gated calculator path
+        // Unlock the pricing path: the couple's personal /yours page when
+        // /start or the homepage stored one for THIS session, else the
+        // token-gated calculator (from=thanks tells the Worker which button
+        // sent them; the calculator strips the token before tags run).
         var box = document.getElementById('build-package');
         var line = document.getElementById('pricing-first-line');
         var link = document.getElementById('build-package-link');
-        link.href = '/calculator/?session=' + encodeURIComponent(sessionToken);
+        var yoursUrl = storedFor('fi_yours_url_for') === sessionToken ? storedFor('fi_yours_url') : '';
+        if (!/^https:\/\/([a-z0-9-]+\.)*flyiniris\.com\//i.test(yoursUrl)) yoursUrl = '';
+        link.href = yoursUrl || ('/calculator/?session=' + encodeURIComponent(sessionToken) + '&from=thanks');
+        if (yoursUrl) {
+          // Their page is more than a calculator (films, tiers, hours), so the
+          // box names what they will actually find there.
+          box.querySelector('h3').textContent = 'Or look at your pricing first.';
+          box.querySelector('p').textContent = 'Your films, your pricing, and the two ways we film, all on your personal page. Build your package, sleep on it, bring it to the call.';
+          link.innerHTML = 'See My Pricing &#10022;';
+          line.innerHTML = 'Want to see your pricing first? <a href="#build-package">Your personal page is below</a>, whenever you want it.';
+        }
         box.style.display = 'block';
         line.style.display = 'block';
       }

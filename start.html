@@ -899,6 +899,7 @@
       submitBusy: false,
       submitError: false,
       sessionToken: '',
+      yoursUrl: '',
       submitResult: null,
       pricing: null
     };
@@ -1098,6 +1099,12 @@
         if (state.sessionToken) {
           try { localStorage.setItem('fi_session_token', state.sessionToken); } catch (e) {}
         }
+        // The couple's personal /yours page (optional field; older Workers or
+        // a failed mint leave it out, and the calculator link is the
+        // fallback). fi_yours_url_for pins it to this session so /thanks never
+        // hands one couple's page to a different session on a shared browser.
+        state.yoursUrl = safeYoursUrl(result && result.yours_url);
+        storeYoursUrl(state.yoursUrl, state.sessionToken);
         // The confirm screen renders ENTIRELY from this response. Never call
         // GET /api/session/{token} here: that endpoint fires
         // experience_page_opened, which the funnel reads as "clicked through
@@ -1118,6 +1125,29 @@
         state.submitError = true;
         render();
       });
+    }
+
+    // Only an https URL on a flyiniris.com host is accepted as the couple's
+    // page link; anything else falls back to the calculator.
+    function safeYoursUrl(u) {
+      if (typeof u !== 'string' || !u) return '';
+      try {
+        var parsed = new URL(u);
+        if (parsed.protocol !== 'https:') return '';
+        if (!/(^|\.)flyiniris\.com$/.test(parsed.hostname)) return '';
+        return parsed.href;
+      } catch (e) { return ''; }
+    }
+    function storeYoursUrl(u, token) {
+      try {
+        if (u && token) {
+          localStorage.setItem('fi_yours_url', u);
+          localStorage.setItem('fi_yours_url_for', token);
+        } else {
+          localStorage.removeItem('fi_yours_url');
+          localStorage.removeItem('fi_yours_url_for');
+        }
+      } catch (e) { /* storage blocked */ }
     }
 
     // Fire-and-forget phone enrichment after the optional phone screen.
@@ -1313,7 +1343,7 @@
         return '<div class="screen">' +
           '<span class="eyebrow" style="margin-bottom:14px">One moment</span>' +
           '<h1 class="headline">We couldn\'t check that just now.</h1>' +
-          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Our calendar didn\'t answer. Keep going and we\'ll confirm your availability by email, usually within the hour.</p>' +
+          '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Our calendar didn\'t answer. Keep going and we\'ll confirm your date with you personally.</p>' +
           '<button type="button" class="cta" data-action="continue-open">Keep going</button>' +
           '</div>';
       },
@@ -1485,7 +1515,7 @@
         return '<div class="screen">' +
           '<span class="eyebrow">One last thing, optional</span>' +
           '<h1 class="headline" style="font-size:32px;line-height:1.18">Want your pricing by text, too?</h1>' +
-          '<p class="subcopy">Add a number and we\'ll text your pricing and a few film matches the moment they\'re ready.</p>' +
+          '<p class="subcopy">Add a number and we\'ll text you a link to your films and pricing.</p>' +
           '<div class="field" style="margin-top:22px"><label for="f-phone" style="position:absolute;left:-9999px">Phone number</label>' +
           '<input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone number" data-field="phone" value="' + esc(state.phone) + '"></div>' +
           '<div class="consent-row" data-action="toggle-sms">' +
@@ -1502,7 +1532,12 @@
 
       confirm: function() {
         var bookHref = state.sessionToken ? '/thanks?session=' + encodeURIComponent(state.sessionToken) : 'https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR';
-        var calcHref = state.sessionToken ? '/calculator/?session=' + encodeURIComponent(state.sessionToken) : '';
+        // Pricing button: the couple's personal /yours page when the Worker
+        // returned one, else the token-gated calculator (from= tells the
+        // Worker which button sent them; the calculator strips the token
+        // from the URL before any tag runs).
+        var calcHref = state.yoursUrl ? state.yoursUrl
+          : (state.sessionToken ? '/calculator/?session=' + encodeURIComponent(state.sessionToken) + '&from=start_confirm' : '');
         var res = state.submitResult || {};
         var film = res.film;
         // Availability line comes from the server's own check at submit time;
@@ -1513,7 +1548,7 @@
         var namePart = state.name1.trim() ? ', ' + esc(state.name1.trim()) : '';
         var eyebrowHtml = '<span class="eyebrow">You\'re in' + namePart + '</span>';
         var availLine = esc(res.availabilityMessage ||
-          "We're confirming your date now and will email you shortly.");
+          "We'll confirm your date with you personally.");
         if (state.noDate) {
           eyebrowHtml = '';
           availLine = 'You\'re in' + namePart + '. Whenever you pick your date, popular dates go first, so you\'ll want to be early.';
@@ -1585,17 +1620,18 @@
           if (!offerLineSeen) { offerLineSeen = true; ga('start_offer_line_view', { spots: spots }); }
         }
 
-        // Booking is the one loud action on this screen
+        // Booking is the one loud action on this screen. Booking the call
+        // holds nothing (Sean rule): no pre-call copy may promise a hold.
         h += '<a class="cta" style="display:block;text-decoration:none;color:var(--bg-primary);margin-top:' + ((fomo && fomo.fomoFreeSpot === true && fomo.fomoSpotsRemaining >= 1) ? '14px' : '26px') + '" href="' + bookHref + '" data-book-call>Book your call</a>' +
-          '<p class="form-hint">A quick 15-minute call, zero pressure. Booking holds your date for 7 days while you decide.</p>';
+          '<p class="form-hint">A quick 15-minute call, zero pressure. Dates go to whoever locks them in first, so sooner is better.</p>';
         if (calcHref) {
           h += '<a class="cta-ghost" style="display:inline-block;text-decoration:none" href="' + calcHref + '">See your full pricing</a>';
         }
         // Receipt line stays email-only unless the Worker confirmed the
-        // pricing text actually went out (smsSent true); never claim a text
-        // was sent otherwise.
+        // text actually went out (smsSent true); never claim a text was sent
+        // otherwise.
         h += '<p class="form-hint" style="margin-top:18px;color:#6B6B6B">All of this is in your inbox too' + (state.email.trim() ? ' at ' + esc(state.email.trim()) : '') +
-          (state.smsSent && state.phone.trim() ? ', and your pricing is on its way by text to ' + esc(state.phone.trim()) : '') + '.</p>' +
+          (state.smsSent && state.phone.trim() ? ', and a link to your films and pricing is on its way by text to ' + esc(state.phone.trim()) : '') + '.</p>' +
           '</div>';
         return h;
       }

@@ -2924,6 +2924,12 @@
           return crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
         }
 
+        // The date (YYYY-MM-DD) the inline check last reported fully booked
+        // (Sierra & Sean AND Team both unavailable). Submitting that exact
+        // date goes out as submissionType 'waitlist', mirroring /start's
+        // both-booked route, so the couple skips pricing nurture.
+        var fullyBookedDate = '';
+
         function checkAvailability(dateStr) {
           var msgEl = document.getElementById('availability-msg');
           if (!msgEl || !dateStr) return;
@@ -2932,6 +2938,8 @@
           fetch(AVAILABILITY_URL + '?date=' + dateStr)
             .then(function(r) { return r.json(); })
             .then(function(data) {
+              if (data && data.ss_available === false && data.team_available === false) fullyBookedDate = dateStr;
+              else if (fullyBookedDate === dateStr) fullyBookedDate = '';
               var color, icon, msg;
               if (data.status === 'available') {
                 color = '#4CAF50'; icon = '\u2705'; msg = data.message;
@@ -3420,6 +3428,13 @@
               variant: 'unified',
               variant_source: 'unified'
             }, inqTracking);
+            // Both-booked date: same waitlist labeling /start sends
+            // (submissionType 'waitlist' plus the explanatory note).
+            var isWaitlist = !!fi.weddingDate && fi.weddingDate === fullyBookedDate;
+            if (isWaitlist) {
+              shortInquiry.submissionType = 'waitlist';
+              shortInquiry.note = 'Waitlist request from the homepage form: ' + formatDateForSheet(fi.weddingDate) + ' came back fully booked (Sierra & Sean and Team both committed). Reach out if anything opens up.';
+            }
             state.mode = "experience-loading";
             render();
             scrollToQuiz();
@@ -3434,6 +3449,21 @@
               if (sessionToken) {
                 try { localStorage.setItem('fi_session_token', sessionToken); } catch (e) { /* ignore */ }
               }
+              // Personal /yours page link (optional field; missing means
+              // /thanks falls back to the calculator) and the waitlist
+              // marker /thanks reads, both pinned to this session token.
+              var yoursUrl = (result && typeof result.yours_url === 'string' && /^https:\/\/([a-z0-9-]+\.)*flyiniris\.com\//i.test(result.yours_url)) ? result.yours_url : '';
+              try {
+                if (yoursUrl && sessionToken) {
+                  localStorage.setItem('fi_yours_url', yoursUrl);
+                  localStorage.setItem('fi_yours_url_for', sessionToken);
+                } else {
+                  localStorage.removeItem('fi_yours_url');
+                  localStorage.removeItem('fi_yours_url_for');
+                }
+                if (isWaitlist && sessionToken) localStorage.setItem('fi_waitlist_for', sessionToken);
+                else localStorage.removeItem('fi_waitlist_for');
+              } catch (e) { /* storage blocked */ }
               setTimeout(function() {
                 if (sessionToken) {
                   window.location.href = '/thanks?session=' + sessionToken;
