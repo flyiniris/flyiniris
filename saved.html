@@ -9,6 +9,42 @@
   <meta name="theme-color" content="#0A0A0A">
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
+  <script>
+  // DI-5 / SEC-1 (2026-09-26): the saved-package token arrives as ?token=
+  // and GA4 and the Meta pixel below both report the FULL page URL. Read the
+  // token into JS first, then strip it from the visible URL before any tag
+  // runs, the same pattern as calculator/index.html. The token also goes to
+  // localStorage so a reload or a bookmark of the stripped URL on this
+  // device still opens the package.
+  (function() {
+    var t = '';
+    var p = null;
+    try {
+      p = new URLSearchParams(window.location.search);
+      t = p.get('token') || p.get('session') || '';
+      if (t) { try { localStorage.setItem('fi_saved_token', t); } catch (e) { /* storage blocked */ } }
+      else { try { t = localStorage.getItem('fi_saved_token') || ''; } catch (e) { /* storage blocked */ } }
+    } catch (e) { /* no token: the page shows its expired state */ }
+    window.__fi_saved_token = t;
+    try {
+      if (p && (p.has('token') || p.has('session')) && window.history && history.replaceState) {
+        p.delete('token'); p.delete('session');
+        var q = p.toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+      }
+    } catch (e) { /* leave the URL alone rather than break the page */ }
+  })();
+  </script>
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XGSWD6JW3E');
+  </script>
+
   <!-- Meta Pixel (deferred 3s for page speed) -->
   <script>
   setTimeout(function() {
@@ -392,8 +428,8 @@
       return d.innerHTML;
     }
 
-    var params = new URLSearchParams(window.location.search);
-    var token = params.get('token');
+    // Read by the head script before it stripped ?token= off the URL.
+    var token = window.__fi_saved_token || '';
 
     if (!token) {
       showExpired();

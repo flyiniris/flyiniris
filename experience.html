@@ -14,6 +14,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <script>
+  // DI-5 / SEC-1 (2026-09-26): the inquiry session token arrives as
+  // ?session= (or ?token=) and returns the couple's name, email and phone.
+  // GA4 and the Meta pixel below both report the FULL page URL, so read the
+  // token into JS first, then strip it from the visible URL before any tag
+  // runs, the same pattern as calculator/index.html. The original href is
+  // kept for the share button, which has always shared the personalised link.
+  (function() {
+    window.__fi_session_token = '';
+    window.__fi_share_href = window.location.href;
+    try {
+      var p = new URLSearchParams(window.location.search);
+      window.__fi_session_token = p.get('session') || p.get('token') || '';
+      if ((p.has('session') || p.has('token')) && window.history && history.replaceState) {
+        p.delete('session'); p.delete('token');
+        var q = p.toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+      }
+    } catch (e) { /* leave the URL alone rather than break the page */ }
+  })();
+  </script>
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XGSWD6JW3E');
+  </script>
+
   <!-- Meta Pixel -->
   <script>
   !function(f,b,e,v,n,t,s)
@@ -1713,8 +1744,8 @@
     var sessionData = null;
 
     // ========== URL PARAMS ==========
-    var params = new URLSearchParams(window.location.search);
-    var sessionToken = params.get('session') || params.get('token') || '';
+    // Read by the head script before it stripped session/token off the URL.
+    var sessionToken = window.__fi_session_token || '';
     // Persist for the token-gated /calculator/ so an email-link visitor can
     // open the package builder later on this device without re-inquiring.
     if (sessionToken) {
@@ -2422,7 +2453,7 @@
         var shareData = {
           title: 'Check out our wedding film match',
           text: 'Look what I found for our wedding!',
-          url: window.location.href
+          url: window.__fi_share_href || window.location.href
         };
 
         if (navigator.share) {
@@ -2430,7 +2461,7 @@
         } else {
           // Desktop fallback: copy to clipboard
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(window.location.href).then(function() {
+            navigator.clipboard.writeText(window.__fi_share_href || window.location.href).then(function() {
               showToast('Link copied!');
             }).catch(function() {
               showToast('Link copied!');
@@ -2438,7 +2469,7 @@
           } else {
             // Fallback for older browsers
             var ta = document.createElement('textarea');
-            ta.value = window.location.href;
+            ta.value = window.__fi_share_href || window.location.href;
             ta.style.position = 'fixed';
             ta.style.left = '-9999px';
             document.body.appendChild(ta);

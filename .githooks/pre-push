@@ -81,6 +81,19 @@ check_contains "calculator/index.html" "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "quiz/index.html"       "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "start.html"            "G-XGSWD6JW3E"  "GA4 tag"
 check_contains "404.html"              "G-XGSWD6JW3E"  "GA4 tag"
+# 2026-09-26 (DI-5): these pages ran the Meta pixel with no GA4 at all.
+# saved.html and experience.html strip their token from the URL in head
+# before either tag runs, so the strip is guarded here too. Every per-venue
+# page (venues/<slug>/index.html) is enumerated from the tree, so a new venue
+# page that ships without GA4 blocks the push. venues/index.html itself gets
+# GA4 through GTM (checked above) and is excluded.
+VENUE_PAGES=$(git ls-tree -r --name-only "$TIP" venues/ 2>/dev/null | grep -E '^venues/[^/]+/index\.html$')
+for pg in saved.html experience.html yours.html $VENUE_PAGES; do
+  check_contains "$pg" "G-XGSWD6JW3E" "GA4 tag"
+done
+for pg in saved.html experience.html; do
+  check_contains "$pg" "history.replaceState" "the token strip that runs before the tags"
+done
 # 2026-09-15: this check used to assert only that the page contained the string
 # "fbq(". That string is present inside a BROKEN snippet too, so from 2026-02-20
 # to 2026-09-15 the pixel loaded connect.facebook.net/en_US/fbq.js, which does
