@@ -896,6 +896,7 @@
       modulesDone: [],
       waitlisted: false,
       waitlistBusy: false,
+      waitlistError: false,
       submitBusy: false,
       submitError: false,
       sessionToken: '',
@@ -1042,9 +1043,12 @@
       return { payload: payload, eventId: eventId };
     }
 
+    function waitlistOk() { return !!(state.name1.trim() && isValidEmail(state.email.trim())); }
+
     function submitWaitlist() {
-      if (state.waitlistBusy || !isValidEmail(state.email.trim())) return;
+      if (state.waitlistBusy || !waitlistOk()) return;
       state.waitlistBusy = true;
+      state.waitlistError = false;
       render();
       // submissionType 'waitlist' labels the GHL Submission Type field honestly.
       // The Worker does not yet branch on it: this contact still enters
@@ -1066,6 +1070,7 @@
         render();
       }).catch(function() {
         state.waitlistBusy = false;
+        state.waitlistError = true;
         render();
       });
     }
@@ -1327,9 +1332,14 @@
           '<p class="subcopy" style="font-size:15px;line-height:1.7;margin-top:16px">Leave your email and we\'ll reach out if anything opens up.</p>';
         if (!state.waitlisted) {
           h += '<div class="plain-card"><span class="kicker">If a spot opens up</span>' +
+            '<div class="field" style="margin-top:10px"><label for="wl-name1" style="position:absolute;left:-9999px">Your first name</label>' +
+            '<input id="wl-name1" type="text" autocomplete="given-name" placeholder="First name" data-field="name1" value="' + esc(state.name1) + '"></div>' +
             '<div class="field" style="margin-top:10px"><label for="wl-email" style="position:absolute;left:-9999px">Email</label>' +
             '<input id="wl-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" data-field="email" value="' + esc(state.email) + '"></div>' +
-            '<button type="button" class="cta" style="margin-top:14px" data-action="submit-waitlist"' + (isValidEmail(state.email.trim()) && !state.waitlistBusy ? '' : ' disabled') + '>' +
+            (state.waitlistError
+              ? '<div class="error-row" role="alert"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#e74c3c" stroke-width="1.4"/><path d="M8 4.5v4.2M8 11.2v.2" stroke="#e74c3c" stroke-width="1.6" stroke-linecap="round"/></svg><span>That didn\'t go through. Tap the button again, or text us at <a href="sms:+12623845079" style="color:inherit">(262) 384-5079</a>.</span></div>'
+              : '') +
+            '<button type="button" class="cta" style="margin-top:14px" data-action="submit-waitlist"' + (waitlistOk() && !state.waitlistBusy ? '' : ' disabled') + '>' +
             (state.waitlistBusy ? 'One moment...' : 'Tell me if anything opens up') + '</button></div>';
         } else {
           h += '<div class="confirm-strip">' + SMALL_CHECK_SVG.replace('width="9" height="7"', 'width="18" height="14" style="flex-shrink:0;margin-top:4px"') +
@@ -1710,7 +1720,7 @@
         if (btn.getAttribute('data-action') === 'continue-venue') ok = !!state.venue.trim();
         if (btn.getAttribute('data-action') === 'submit-capture') ok = captureOk();
         if (btn.getAttribute('data-action') === 'submit-contact') ok = isValidPhone(state.phone.trim());
-        if (btn.getAttribute('data-action') === 'submit-waitlist') ok = isValidEmail(state.email.trim()) && !state.waitlistBusy;
+        if (btn.getAttribute('data-action') === 'submit-waitlist') ok = waitlistOk() && !state.waitlistBusy;
         btn.disabled = !ok;
       }
     });
@@ -1776,7 +1786,7 @@
       }
       if (action === 'flexible') {
         clearTimers();
-        state.selectedDate = null; state.checking = false; state.waitlisted = false;
+        state.selectedDate = null; state.checking = false; state.waitlisted = false; state.waitlistError = false;
         state.history.pop();
         setScreen('date'); return;
       }
