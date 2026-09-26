@@ -94,6 +94,10 @@ done
 for pg in saved.html experience.html; do
   check_contains "$pg" "history.replaceState" "the token strip that runs before the tags"
 done
+# yours.html (/watch) carries fn/vn/wd (a couple's first name, venue, date)
+# in email links; its head strips them before GA4 and the pixel run.
+check_contains "yours.html" "history.replaceState" "the PII param strip that runs before the tags"
+check_contains "yours.html" "__fi_watch_params"    "the PII param strip that runs before the tags"
 # 2026-09-15: this check used to assert only that the page contained the string
 # "fbq(". That string is present inside a BROKEN snippet too, so from 2026-02-20
 # to 2026-09-15 the pixel loaded connect.facebook.net/en_US/fbq.js, which does

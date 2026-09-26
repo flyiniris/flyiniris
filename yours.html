@@ -23,6 +23,46 @@
 
   <link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
 
+  <script>
+  // PII strip (2026-09-26): email links land here as
+  // /watch?fn=NAME&vn=VENUE&wd=DATE&film=SLUG&fc=...&fv=... and GA4 and the
+  // Meta pixel below both report the FULL page URL. A first name in GA4
+  // breaks Google's PII policy. Read every query param into
+  // window.__fi_watch_params first, then rewrite the visible URL to keep
+  // only film and utm_* (attribution, not PII) before any tag runs, the same
+  // pattern as saved.html and calculator/index.html. A sessionStorage copy
+  // keeps a reload in the same tab personalised; without it the page falls
+  // back to its generic heading and the film slug still plays.
+  (function() {
+    var out = {};
+    try {
+      var p = new URLSearchParams(window.location.search);
+      var dirty = false;
+      var keep = new URLSearchParams();
+      p.forEach(function(v, k) {
+        if (!(k in out)) out[k] = v;
+        if (k === 'film' || k.indexOf('utm_') === 0) keep.append(k, v);
+        else dirty = true;
+      });
+      if (dirty) {
+        try { sessionStorage.setItem('fi_watch_params', JSON.stringify(out)); } catch (e) { /* storage blocked */ }
+        if (window.history && history.replaceState) {
+          var q = keep.toString();
+          history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+        }
+      } else {
+        try {
+          var saved = JSON.parse(sessionStorage.getItem('fi_watch_params') || 'null');
+          if (saved && typeof saved === 'object' && (!out.film || saved.film === out.film)) {
+            for (var k in saved) { if (!(k in out) && typeof saved[k] === 'string') out[k] = saved[k]; }
+          }
+        } catch (e) { /* storage blocked or bad JSON: generic page */ }
+      }
+    } catch (e) { /* leave the URL alone rather than break the page */ }
+    window.__fi_watch_params = out;
+  })();
+  </script>
+
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGSWD6JW3E"></script>
   <script>
@@ -667,13 +707,15 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
   <script>
     (function() {
-      var params = new URLSearchParams(window.location.search);
-      var fn = params.get('fn');
-      var vn = params.get('vn');
-      var wd = params.get('wd');
-      var film = params.get('film');
-      var fc = params.get('fc'); // film couple name (e.g., "Izzy & Hunter")
-      var fv = params.get('fv'); // film venue name (e.g., "The Gage")
+      // Read by the head script before it stripped the personal params off
+      // the URL (fn, vn, wd, fc, fv never reach GA4 or the pixel).
+      var params = window.__fi_watch_params || {};
+      var fn = params.fn || null;
+      var vn = params.vn || null;
+      var wd = params.wd || null;
+      var film = params.film || null;
+      var fc = params.fc || null; // film couple name (e.g., "Izzy & Hunter")
+      var fv = params.fv || null; // film venue name (e.g., "The Gage")
 
       // URLSearchParams has already percent-decoded these. Decoding a second
       // time is what cost couples their ampersand and would throw outright on
