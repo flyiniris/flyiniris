@@ -2170,6 +2170,43 @@
     // intentionally NOT mirrored: it needs internal cost data that must never
     // ship in page source (audit entry 11), and it is unreachable with the
     // current canonical constants. The Worker recomputes on save regardless.
+    // Untrimmed pre-tax total for a shape, same math as calculateTotal() below.
+    function expPre(tier, x) {
+      var sub = tier.base + (tier.hours[x.h] || 0) + (tier.highlight[x.hl] || 0)
+        + (x.t ? tier.addons.teaser : 0) + (x.st ? tier.addons.storySession : 0) + (fomoFreeSpot ? 0 : 1000);
+      var n = (parseInt(x.h, 10) >= 9 ? 1 : 0) + ((tier.highlight[x.hl] || 0) > 0 ? 1 : 0) + (x.t ? 1 : 0) + (x.st ? 1 : 0);
+      return sub - Math.round(sub * tier.bundleDiscounts[Math.min(n, tier.bundleDiscounts.length - 1)]);
+    }
+
+    // Upgrade guard: mirrors upgradeGuardMinTotal in iris-automation
+    // src/pricing.ts (Sean 2026-09-28). Adding any upgrade (one more hour, the
+    // next highlight length, teaser, Story Session) raises the pre-tax total by
+    // at least $50; when the plain bundle math would not, the bundle discount is
+    // trimmed just enough. pre(x) is this page's untrimmed pre-tax total for
+    // x = { h: hours key, hl: highlight key, t: teaser, st: story session }.
+    function upgradeGuardMin(s, pre, hoursList, hlList) {
+      var memo = {};
+      function downs(x) {
+        var out = [], hi = hoursList.indexOf(String(x.h)), li = hlList.indexOf(x.hl);
+        if (hi > 0) out.push({ h: hoursList[hi - 1], hl: x.hl, t: x.t, st: x.st });
+        if (li > 0) out.push({ h: x.h, hl: hlList[li - 1], t: x.t, st: x.st });
+        if (x.t) out.push({ h: x.h, hl: x.hl, t: false, st: x.st });
+        if (x.st) out.push({ h: x.h, hl: x.hl, t: x.t, st: false });
+        return out;
+      }
+      function g(x) {
+        var k = x.h + '|' + x.hl + '|' + (x.t ? 1 : 0) + '|' + (x.st ? 1 : 0);
+        if (memo[k] !== undefined) return memo[k];
+        var v = pre(x), d = downs(x);
+        for (var i = 0; i < d.length; i++) v = Math.max(v, g(d[i]) + 50);
+        memo[k] = v;
+        return v;
+      }
+      var min = -Infinity, ds = downs(s);
+      for (var j = 0; j < ds.length; j++) min = Math.max(min, g(ds[j]) + 50);
+      return min;
+    }
+
     function calculateTotal() {
       var tier = PRICING[builderState.tier];
       var subtotal = tier.base;
@@ -2194,6 +2231,11 @@
       var discountPct = tier.bundleDiscounts[Math.min(bundleCount, tier.bundleDiscounts.length - 1)];
       var discount = Math.round(subtotal * discountPct);
       var preTax = subtotal - discount;
+      var guardMin = upgradeGuardMin(
+        { h: String(builderState.hours), hl: builderState.highlight, t: !!builderState.addons.teaser, st: !!builderState.addons.storySession },
+        function (x) { return expPre(tier, x); }, ['6', '7', '8', '9', '10', '11', '12'], ['5 min', '6-8 min', '9-12 min', '13-15 min', '15-20 min']);
+      var discountTrimmed = false;
+      if (preTax < guardMin) { preTax = guardMin; discount = subtotal - preTax; discountTrimmed = true; }
       var tax = Math.round(preTax * SALES_TAX_RATE * 100) / 100;
 
       return {
@@ -2202,6 +2244,7 @@
         totalWithTax: Math.round((preTax + tax) * 100) / 100,
         discount: discount,
         discountPct: discountPct,
+        discountTrimmed: discountTrimmed,
         subtotal: subtotal,
       };
     }
@@ -2318,7 +2361,7 @@
       h += '<div class="price-divider"></div>';
 
       if (calc.discount > 0) {
-        h += '<div class="price-discount"><span>Bundle Discount (' + Math.round(calc.discountPct * 100) + '%)</span><span>-' + formatPrice(calc.discount) + '</span></div>';
+        h += '<div class="price-discount"><span>Bundle Discount' + (calc.discountTrimmed ? '' : ' (' + Math.round(calc.discountPct * 100) + '%)') + '</span><span>-' + formatPrice(calc.discount) + '</span></div>';
       }
 
       h += '<div class="price-line"><span>Sales Tax (5.5% Wisconsin)</span><span class="price-line-value">+' + formatMoney(calc.tax) + '</span></div>';
