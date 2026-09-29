@@ -614,6 +614,13 @@
         gap: 24px;
       }
 
+      /* An odd last card sits centered at column width instead of orphaned left. */
+      .film-grid-secondary > .film-grid-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: calc(50% - 12px);
+      }
+
       .quote-text {
         font-size: 1.5rem;
       }
@@ -677,8 +684,8 @@
       <div id="film-grid-curated">
       <!-- Featured Film (full-width) -->
       <div class="film-featured">
-        <a href="https://www.flyiniris.com/yours?film=taylor-kane&amp;fc=Taylor%20%26%20Kane&amp;fv=The%20Green%20Bay%20Country%20Club" class="film-thumb-link">
-          <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.webp" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+        <a href="https://www.flyiniris.com/yours?film=natalie-elias&amp;fc=Natalie%20%26%20Elias&amp;fv=Horticultural%20Hall" class="film-thumb-link">
+          <img src="https://www.flyiniris.com/thumbs/Natalie-Elias_thumb.webp" alt="Natalie &amp; Elias wedding film" class="film-thumb" loading="lazy">
           <div class="video-play-btn">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
@@ -686,13 +693,28 @@
           </div>
         </a>
         <div class="film-info">
-          <h3 class="film-title">Taylor &amp; Kane</h3>
-          <p class="film-subtitle">The Green Bay Country Club</p>
+          <h3 class="film-title">Natalie &amp; Elias</h3>
+          <p class="film-subtitle">Timeless in Lake Geneva</p>
         </div>
       </div>
 
       <!-- Secondary Films Grid -->
       <div class="film-grid-secondary">
+        <div class="film-grid-item">
+          <a href="https://www.flyiniris.com/yours?film=taylor-kane&amp;fc=Taylor%20%26%20Kane&amp;fv=The%20Green%20Bay%20Country%20Club" class="film-thumb-link">
+            <img src="https://www.flyiniris.com/thumbs/Taylor-Kane_thumb.webp" alt="Taylor &amp; Kane wedding film" class="film-thumb" loading="lazy">
+            <div class="video-play-btn">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>
+              </svg>
+            </div>
+          </a>
+          <div class="film-info">
+            <h3 class="film-title">Taylor &amp; Kane</h3>
+            <p class="film-subtitle">Main Characters at The Green Bay Country Club</p>
+          </div>
+        </div>
+
         <div class="film-grid-item">
           <a href="https://www.flyiniris.com/yours?film=taylor-austin&amp;fc=Taylor%20%26%20Austin" class="film-thumb-link">
             <img src="https://www.flyiniris.com/thumbs/Taylor-Austin_thumb.webp" alt="Taylor &amp; Austin wedding film" class="film-thumb" loading="lazy">
