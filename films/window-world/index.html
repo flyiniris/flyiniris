@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{COUPLE_NAMES}} | Flyin' Iris</title>
-  <meta name="description" content="{{META_DESCRIPTION}}">
+  <title>Window World | Flyin' Iris</title>
+  <meta name="description" content="Watch Window World's films, streamed in cinematic quality by Flyin' Iris.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0A0A0A">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="{{COUPLE_NAMES}} | Flyin' Iris">
-  <meta property="og:description" content="{{OG_DESCRIPTION}}">
+  <meta property="og:title" content="Window World | Flyin' Iris">
+  <meta property="og:description" content="Watch Window World's films by Flyin' Iris">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.flyiniris.com/films/{{SLUG}}/">
-  <meta property="og:image" content="{{WORKER_BASE}}/couples/{{SLUG}}/thumbs/{{FEATURED_VIDEO_ID}}.jpg">
+  <meta property="og:url" content="https://www.flyiniris.com/films/window-world/">
+  <meta property="og:image" content="https://video.flyiniris.com/couples/window-world/thumbs/teaser.jpg">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- PWA -->
@@ -864,15 +864,15 @@
   <!-- ========== Navbar ========== -->
   <nav class="navbar" id="navbar">
     <span class="nav-logo">Flyin' Iris</span>
-    <span class="nav-couple">{{COUPLE_NAMES}}</span>
-    <span class="nav-date">{{DATE_SHORT}}</span>
+    <span class="nav-couple">Window World</span>
+    <span class="nav-date"></span>
   </nav>
 
   <!-- ========== Hero ========== -->
   <section class="hero" id="hero">
-    <h1 class="hero-names">{{COUPLE_NAMES}}</h1>
-    <p class="hero-date">{{HERO_SUBTITLE}}</p>
-    <button class="hero-cta" id="hero-cta">{{HERO_CTA}}</button>
+    <h1 class="hero-names">Window World</h1>
+    <p class="hero-date">Films by Flyin' Iris</p>
+    <button class="hero-cta" id="hero-cta">View Your Films</button>
     <div class="hero-scroll-hint" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -959,7 +959,7 @@
           </svg>
         </a>
       </div>
-      <p class="footer-copy">&copy; {{YEAR}} Flyin' Iris Media Productions LLC. All rights reserved.</p>
+      <p class="footer-copy">&copy; 2026 Flyin' Iris Media Productions LLC. All rights reserved.</p>
     </div>
   </footer>
 
@@ -995,12 +995,12 @@
     // shells the baked values are the empty defaults ([] / '' ); once a
     // couple's video is attached in Studio, the load-time fetch fills these.
     // They are var (mutable) so bootstrap can overwrite them before render.
-    var VIDEOS = {{VIDEOS_JSON}};
-    var PLAYLIST = {{PLAYLIST_JSON}};
-    var HERO = {{HERO_JSON}};
-    var CONFIG_API_BASE = '{{CONFIG_API_BASE}}';
-    var WORKER_BASE = '{{WORKER_BASE}}';
-    var SLUG = '{{SLUG}}';
+    var VIDEOS = [];
+    var PLAYLIST = [];
+    var HERO = [];
+    var CONFIG_API_BASE = 'https://api.flyiniris.com';
+    var WORKER_BASE = 'https://video.flyiniris.com';
+    var SLUG = 'window-world';
 
     // Hero entries (sorted by order) play as full-width inline players above
     // the Collection grid. Collection grid excludes them to avoid duplicate
@@ -1330,7 +1330,7 @@
         grid.innerHTML =
           '<div class="films-pending">' +
           '  <p class="films-pending-title">Your films are on the way.</p>' +
-          '  <p class="films-pending-sub">{{PENDING_SUB_JS}}</p>' +
+          '  <p class="films-pending-sub">We are putting the finishing touches on your films. Check back soon.</p>' +
           '</div>';
       }
     }

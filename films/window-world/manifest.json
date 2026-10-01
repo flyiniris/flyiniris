@@ -1,0 +1,16 @@
+{
+  "name": "Window World | Flyin' Iris",
+  "short_name": "Window World",
+  "start_url": "/films/window-world/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 // storage is origin-wide while each SW is scoped to /films/<slug>/, so a
 // shared name let couples at different template versions delete each
 // other's caches during staggered rollouts (audit 2026-06-09).
-const CACHE_NAME = 'fi-shell-{{SLUG}}-v27';
+const CACHE_NAME = 'fi-shell-window-world-v27';
 const SHELL_ASSETS = [
   './',
   // Pinned to match the couple-page.html Vidstack pin. Precaching the
@@ -28,7 +28,7 @@ self.addEventListener('activate', (event) => {
           // fi-shell-vNN names. Never touch other couples' caches.
           .filter((key) =>
             key !== CACHE_NAME &&
-            (key.indexOf('fi-shell-{{SLUG}}-') === 0 || /^fi-shell-v\d+$/.test(key))
+            (key.indexOf('fi-shell-window-world-') === 0 || /^fi-shell-v\d+$/.test(key))
           )
           .map((key) => caches.delete(key))
       )

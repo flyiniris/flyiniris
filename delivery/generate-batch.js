@@ -23,8 +23,13 @@
  * One couple, no file (the one-command shell for a new slug):
  *   node delivery/generate-batch.js --slug jessica-tyler --names "Jessica & Tyler" --date "September 25, 2026"
  *
+ * One business (client) page: --client switches to kind business; --subtitle
+ * and --date are optional (subtitle defaults to "Films by Flyin' Iris"):
+ *   node delivery/generate-batch.js --slug window-world --client "Window World" --subtitle "Films by Flyin' Iris"
+ *
  * couples.json schema: an array of
  *   { "slug": "amanda-boris", "coupleNames": "Amanda & Boris", "weddingDate": "August 31, 2025" }
+ * or for a client: { "kind": "business", "slug": "window-world", "clientName": "Window World", "subtitle": "...", "eventDate": "..." }
  */
 
 const fs = require('fs');
@@ -40,7 +45,7 @@ function parseArgs(argv) {
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--force') {
       out.force = true;
-    } else if ((args[i] === '--slug' || args[i] === '--names' || args[i] === '--date') && args[i + 1] != null) {
+    } else if ((args[i] === '--slug' || args[i] === '--names' || args[i] === '--date' || args[i] === '--client' || args[i] === '--subtitle') && args[i + 1] != null) {
       out.single[args[i].slice(2)] = args[i + 1];
       i++;
     } else if ((args[i] === '--output-root' || args[i] === '--config-api-base' || args[i] === '--worker-base') && args[i + 1]) {
@@ -57,6 +62,7 @@ function printUsageAndExit() {
   console.error('Usage: node generate-batch.js <couples.json> [--output-root <dir>] [--config-api-base <url>] [--worker-base <url>]');
   console.error('Add --force to replace an existing page that still has baked videos.');
   console.error('   or: node generate-batch.js --slug <slug> --names "Name1 & Name2" --date "Month D, YYYY" [same flags]');
+  console.error('   or: node generate-batch.js --slug <slug> --client "Client Name" [--subtitle "..."] [--date "Month D, YYYY"] [same flags]');
   console.error('');
   console.error('couples.json: an array of { slug, coupleNames, weddingDate }');
   console.error(JSON.stringify([
@@ -89,7 +95,11 @@ function main() {
 
   let couples;
   if (singleMode) {
-    couples = [{ slug: single.slug, coupleNames: single.names, weddingDate: single.date }];
+    couples = single.client !== undefined
+      ? [{ kind: 'business', slug: single.slug, clientName: single.client,
+           ...(single.subtitle ? { subtitle: single.subtitle } : {}),
+           ...(single.date ? { eventDate: single.date } : {}) }]
+      : [{ slug: single.slug, coupleNames: single.names, weddingDate: single.date }];
   } else {
     const absPath = path.resolve(couplesPath);
     try {
@@ -114,12 +124,22 @@ function main() {
 
     // Build a video-empty shell config. The generator validates slug,
     // coupleNames, and weddingDate; let it own those error messages.
-    const shellConfig = {
-      slug: c.slug,
-      coupleNames: c.coupleNames,
-      weddingDate: c.weddingDate,
-      videos: [],
-    };
+    const shellConfig = c.kind === 'business'
+      ? {
+          kind: 'business',
+          slug: c.slug,
+          clientName: c.clientName,
+          ...(c.subtitle !== undefined ? { subtitle: c.subtitle } : {}),
+          ...(c.eventDate !== undefined ? { eventDate: c.eventDate } : {}),
+          videos: [],
+        }
+      : {
+          ...(c.kind !== undefined ? { kind: c.kind } : {}),
+          slug: c.slug,
+          coupleNames: c.coupleNames,
+          weddingDate: c.weddingDate,
+          videos: [],
+        };
 
     // Never overwrite a live page that has baked videos with an empty shell:
     // that would blank the page for any couple whose videos are not yet in

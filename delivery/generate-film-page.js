@@ -25,6 +25,11 @@ const SLUG_RE = /^[a-z0-9-]+$/;
 const CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
 const DEPRECATED_FIELDS = ['names', 'date', 'date_short', 'photos', 'customMessage', 'venueDisplay', 'filmSlug'];
 const HERO_MAX = 5;
+// Page kinds. 'couple' (default) is the wedding delivery page. 'business' is a
+// client film page: clientName in place of couple names, a subtitle in place
+// of the wedding date, and no "wedding" anywhere in the output.
+const KINDS = ['couple', 'business'];
+const BUSINESS_DEFAULT_SUBTITLE = "Films by Flyin' Iris";
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -65,6 +70,10 @@ function printUsageAndExit() {
       { id: 'highlight', title: "Jessica & Tyler's Wedding", category: 'highlight', duration: '', order: 1, hero: true },
     ],
   }, null, 2));
+  console.error('');
+  console.error('Business (client) page: kind "business" with clientName instead of coupleNames;');
+  console.error('subtitle and eventDate are optional, videos as above:');
+  console.error(JSON.stringify({ kind: 'business', slug: 'window-world', clientName: 'Window World', subtitle: BUSINESS_DEFAULT_SUBTITLE }));
   process.exit(1);
 }
 
@@ -85,16 +94,35 @@ function validateConfig(config, configPath) {
     errors.push(`'slug' must match /^[a-z0-9-]+$/ (got "${config.slug}")`);
   }
 
-  // coupleNames
-  if (!config.coupleNames || typeof config.coupleNames !== 'string' || !config.coupleNames.trim()) {
-    errors.push("'coupleNames' is required and must be a non-empty string (e.g., \"Amanda & Boris\")");
+  const kind = config.kind === undefined ? 'couple' : config.kind;
+  if (!KINDS.includes(kind)) {
+    errors.push(`'kind' must be one of ${KINDS.join(', ')} (got "${config.kind}")`);
   }
 
-  // weddingDate
-  if (!config.weddingDate || typeof config.weddingDate !== 'string' || !config.weddingDate.trim()) {
-    errors.push("'weddingDate' is required and must be a non-empty string (e.g., \"August 31, 2025\")");
-  } else if (!/\b(\d{4})\b/.test(config.weddingDate)) {
-    errors.push(`'weddingDate' must contain a 4-digit year (got "${config.weddingDate}")`);
+  if (kind === 'business') {
+    // clientName replaces coupleNames; the date is optional for a client.
+    if (!config.clientName || typeof config.clientName !== 'string' || !config.clientName.trim()) {
+      errors.push("'clientName' is required for kind business (e.g., \"Window World\")");
+    }
+    if (config.subtitle !== undefined && (typeof config.subtitle !== 'string' || !config.subtitle.trim())) {
+      errors.push("'subtitle' must be a non-empty string when set");
+    }
+    if (config.eventDate !== undefined && config.eventDate !== '' &&
+        (typeof config.eventDate !== 'string' || !/\b(\d{4})\b/.test(config.eventDate))) {
+      errors.push(`'eventDate' must contain a 4-digit year when set (got "${config.eventDate}")`);
+    }
+  } else {
+    // coupleNames
+    if (!config.coupleNames || typeof config.coupleNames !== 'string' || !config.coupleNames.trim()) {
+      errors.push("'coupleNames' is required and must be a non-empty string (e.g., \"Amanda & Boris\")");
+    }
+
+    // weddingDate
+    if (!config.weddingDate || typeof config.weddingDate !== 'string' || !config.weddingDate.trim()) {
+      errors.push("'weddingDate' is required and must be a non-empty string (e.g., \"August 31, 2025\")");
+    } else if (!/\b(\d{4})\b/.test(config.weddingDate)) {
+      errors.push(`'weddingDate' must contain a 4-digit year (got "${config.weddingDate}")`);
+    }
   }
 
   // videos
@@ -298,7 +326,26 @@ function main() {
     ? heroArray[0].id
     : (videosArray.length > 0 ? videosArray[0].id : 'teaser');
 
-  const dateShort = dateToShort(config.weddingDate);
+  // Display copy per page kind. Couple output is byte-identical to before the
+  // business kind existed (same strings through the new tokens).
+  const isBusiness = config.kind === 'business';
+  const displayName = isBusiness ? config.clientName.trim() : config.coupleNames;
+  const eventDate = isBusiness ? (config.eventDate || '') : config.weddingDate;
+  const dateShort = eventDate ? dateToShort(eventDate) : '';
+  const heroSubtitle = isBusiness
+    ? (config.subtitle ? config.subtitle.trim() : BUSINESS_DEFAULT_SUBTITLE)
+    : config.weddingDate;
+  const metaDescription = isBusiness
+    ? `Watch ${displayName}'s films, streamed in cinematic quality by Flyin' Iris.`
+    : `Watch ${config.coupleNames}'s wedding films, streamed in cinematic quality by Flyin' Iris.`;
+  const ogDescription = isBusiness
+    ? (eventDate ? `Watch ${displayName}'s films, ${eventDate}` : `Watch ${displayName}'s films by Flyin' Iris`)
+    : `Watch ${config.coupleNames}'s wedding films, ${config.weddingDate}`;
+  const pendingSub = isBusiness
+    ? 'We are putting the finishing touches on your films. Check back soon.'
+    : 'We are putting the finishing touches on your wedding films. Check back soon.';
+  // The pending line is stamped inside a single-quoted JS string in the template.
+  const jsString = (v) => v.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/</g, '\\u003c');
   const year = new Date().getFullYear().toString();
   const heroCta = deriveHeroCta(heroArray);
 
@@ -328,8 +375,12 @@ function main() {
   // or JSON corrupt the output silently (audit 2026-06-09, corr-eff low #6).
   const stamp = (value) => () => value;
   let html = htmlTemplate
-    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(config.coupleNames))
-    .replace(/\{\{DATE_LONG\}\}/g, stamp(config.weddingDate))
+    .replace(/\{\{META_DESCRIPTION\}\}/g, stamp(metaDescription))
+    .replace(/\{\{OG_DESCRIPTION\}\}/g, stamp(ogDescription))
+    .replace(/\{\{HERO_SUBTITLE\}\}/g, stamp(heroSubtitle))
+    .replace(/\{\{PENDING_SUB_JS\}\}/g, stamp(jsString(pendingSub)))
+    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
+    .replace(/\{\{DATE_LONG\}\}/g, stamp(eventDate))
     .replace(/\{\{DATE_SHORT\}\}/g, stamp(dateShort))
     .replace(/\{\{SLUG\}\}/g, stamp(config.slug))
     .replace(/\{\{WORKER_BASE\}\}/g, stamp(workerBase))
@@ -342,7 +393,7 @@ function main() {
     .replace(/\{\{YEAR\}\}/g, stamp(year));
 
   let manifest = manifestTemplate
-    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(config.coupleNames))
+    .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
     .replace(/\{\{SLUG\}\}/g, stamp(config.slug));
 
   // Per-slug service worker cache name (audit 2026-06-09, corr-eff low #7:

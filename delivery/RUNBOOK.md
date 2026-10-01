@@ -187,6 +187,23 @@ node "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\generate-ba
 - Many couples at once: `node delivery/generate-batch.js couples.json`
   with an array of `{ slug, coupleNames, weddingDate }`.
 
+### Business (client) pages
+
+Same template in business mode: the client name replaces couple names, the
+subtitle replaces the wedding date, and the page never says "wedding".
+`--subtitle` defaults to "Films by Flyin' Iris"; `--date` is optional.
+
+```powershell
+node "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\generate-batch.js" --slug window-world --client "Window World" --subtitle "Films by Flyin' Iris"
+```
+
+In a couples.json list the entry is
+`{ "kind": "business", "slug", "clientName", "subtitle", "eventDate" }`.
+The film intake Worker accepts a client film with no contact or date
+(couple_names = the client name, slug = the client slug), but the phone form
+only offers booked couples, so a client film is submitted by Claude for now
+(how Window World went in, 2026-10-01).
+
 ## When the template changes
 
 If you edit `delivery/templates/couple-page.html` (layout, player, etc.):
