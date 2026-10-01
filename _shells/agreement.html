@@ -2202,7 +2202,7 @@
   // in agreement-signed.html and iris-automation src/lib/sms-clause.ts).
   // Signed before it, or no signed time on record:
   // the clause stays hidden so the signed agreement never changes.
-  const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T05:00:00Z');
+  const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T00:53:00Z');
   function signedUnderSmsClause(signedAtMs) {
     const t = Number(signedAtMs);
     return !!t && t >= SMS_CLAUSE_SINCE;
