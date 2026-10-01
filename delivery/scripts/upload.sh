@@ -78,7 +78,7 @@ has_errors=false
 
 # --- Upload HLS (exclude thumbs) ---
 echo "[1/3] Uploading HLS files..."
-if rclone sync "$OUTPUT_DIR" "$BASE_REMOTE/hls/" --exclude "thumbs/**" --progress; then
+if rclone copy "$OUTPUT_DIR" "$BASE_REMOTE/hls/" --exclude "thumbs/**" --progress; then
     echo "      HLS upload complete."
 else
     echo "      HLS upload FAILED."
@@ -87,7 +87,7 @@ fi
 
 # --- Upload originals ---
 echo "[2/3] Uploading original MP4s..."
-if rclone sync "$ORIGINAL_DIR" "$BASE_REMOTE/originals/" --progress; then
+if rclone copy "$ORIGINAL_DIR" "$BASE_REMOTE/originals/" --progress; then
     echo "      Originals upload complete."
 else
     echo "      Originals upload FAILED."
@@ -98,7 +98,7 @@ fi
 THUMBS_DIR="$OUTPUT_DIR/thumbs"
 if [[ -d "$THUMBS_DIR" ]]; then
     echo "[3/3] Uploading thumbnails..."
-    if rclone sync "$THUMBS_DIR" "$BASE_REMOTE/thumbs/" --progress; then
+    if rclone copy "$THUMBS_DIR" "$BASE_REMOTE/thumbs/" --progress; then
         echo "      Thumbnails upload complete."
     else
         echo "      Thumbnails upload FAILED."
@@ -115,18 +115,18 @@ echo "Verifying uploads..."
 verify_failed=false
 
 echo "  Checking HLS..."
-if ! rclone check "$OUTPUT_DIR" "$BASE_REMOTE/hls/" --exclude "thumbs/**" 2>&1; then
+if ! rclone check "$OUTPUT_DIR" "$BASE_REMOTE/hls/" --exclude "thumbs/**" --one-way 2>&1; then
     verify_failed=true
 fi
 
 echo "  Checking originals..."
-if ! rclone check "$ORIGINAL_DIR" "$BASE_REMOTE/originals/" 2>&1; then
+if ! rclone check "$ORIGINAL_DIR" "$BASE_REMOTE/originals/" --one-way 2>&1; then
     verify_failed=true
 fi
 
 if [[ -d "$THUMBS_DIR" ]]; then
     echo "  Checking thumbnails..."
-    if ! rclone check "$THUMBS_DIR" "$BASE_REMOTE/thumbs/" 2>&1; then
+    if ! rclone check "$THUMBS_DIR" "$BASE_REMOTE/thumbs/" --one-way 2>&1; then
         verify_failed=true
     fi
 fi
