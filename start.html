@@ -742,14 +742,14 @@
     function loadVidstack() {
       if (vidstackPromise) return vidstackPromise;
       vidstackPromise = new Promise(function(resolve, reject) {
-        ['https://cdn.vidstack.io/player/theme.css', 'https://cdn.vidstack.io/player/video.css'].forEach(function(href) {
+        ['https://cdn.vidstack.io/player/theme.css@1.15.4', 'https://cdn.vidstack.io/player/video.css@1.15.4'].forEach(function(href) {
           var l = document.createElement('link');
           l.rel = 'stylesheet'; l.href = href;
           document.head.appendChild(l);
         });
         var s = document.createElement('script');
         s.type = 'module';
-        s.src = 'https://cdn.vidstack.io/player';
+        s.src = 'https://cdn.vidstack.io/player@1.15.4';
         s.addEventListener('load', function() { resolve(); });
         s.addEventListener('error', function() { reject(new Error('vidstack load failed')); });
         document.head.appendChild(s);
