@@ -1,0 +1,16 @@
+{
+  "name": "Madison & Jacob | Flyin' Iris",
+  "short_name": "Madison & Jacob",
+  "start_url": "/films/madison-jacob/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

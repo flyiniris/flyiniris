@@ -1,0 +1,16 @@
+{
+  "name": "Emma & Kashe | Flyin' Iris",
+  "short_name": "Emma & Kashe",
+  "start_url": "/films/emma-kashe/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

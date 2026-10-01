@@ -1,0 +1,16 @@
+{
+  "name": "Elias & Natalie | Flyin' Iris",
+  "short_name": "Elias & Natalie",
+  "start_url": "/films/elias-natalie/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Natalie & Dawson | Flyin' Iris",
+  "short_name": "Natalie & Dawson",
+  "start_url": "/films/natalie-dawson/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
