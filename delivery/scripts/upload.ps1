@@ -3,8 +3,10 @@
     Uploads transcoded HLS files, originals, and thumbnails to Cloudflare R2 via rclone.
 
 .DESCRIPTION
-    Syncs the HLS output directory, source MP4 originals, and generated thumbnails
+    Copies the HLS output directory, source MP4 originals, and generated thumbnails
     to the Flyin' Iris R2 bucket using rclone (pre-configured remote: r2fi).
+    Uses rclone copy, never sync: sync deletes every R2 file that is not in the
+    local folder, which would wipe a couple's earlier films when uploading one new one.
 
 .PARAMETER CoupleSlug
     The couple's URL slug (e.g., "amanda-boris").
@@ -69,8 +71,8 @@ $hasErrors = $false
 # --- Upload HLS (exclude thumbs) ---
 Write-Host "[1/3] Uploading HLS files..." -ForegroundColor Yellow
 try {
-    & rclone sync "$OutputDir" "$baseRemote/hls/" --exclude "thumbs/**" --progress
-    if ($LASTEXITCODE -ne 0) { throw "rclone sync HLS failed with exit code $LASTEXITCODE" }
+    & rclone copy "$OutputDir" "$baseRemote/hls/" --exclude "thumbs/**" --progress
+    if ($LASTEXITCODE -ne 0) { throw "rclone copy HLS failed with exit code $LASTEXITCODE" }
     Write-Host "      HLS upload complete." -ForegroundColor Green
 } catch {
     Write-Host "      HLS upload FAILED: $_" -ForegroundColor Red
@@ -80,8 +82,8 @@ try {
 # --- Upload originals ---
 Write-Host "[2/3] Uploading original MP4s..." -ForegroundColor Yellow
 try {
-    & rclone sync "$OriginalDir" "$baseRemote/originals/" --progress
-    if ($LASTEXITCODE -ne 0) { throw "rclone sync originals failed with exit code $LASTEXITCODE" }
+    & rclone copy "$OriginalDir" "$baseRemote/originals/" --progress
+    if ($LASTEXITCODE -ne 0) { throw "rclone copy originals failed with exit code $LASTEXITCODE" }
     Write-Host "      Originals upload complete." -ForegroundColor Green
 } catch {
     Write-Host "      Originals upload FAILED: $_" -ForegroundColor Red
@@ -93,8 +95,8 @@ $thumbsDir = Join-Path $OutputDir "thumbs"
 if (Test-Path $thumbsDir -PathType Container) {
     Write-Host "[3/3] Uploading thumbnails..." -ForegroundColor Yellow
     try {
-        & rclone sync "$thumbsDir" "$baseRemote/thumbs/" --progress
-        if ($LASTEXITCODE -ne 0) { throw "rclone sync thumbs failed with exit code $LASTEXITCODE" }
+        & rclone copy "$thumbsDir" "$baseRemote/thumbs/" --progress
+        if ($LASTEXITCODE -ne 0) { throw "rclone copy thumbs failed with exit code $LASTEXITCODE" }
         Write-Host "      Thumbnails upload complete." -ForegroundColor Green
     } catch {
         Write-Host "      Thumbnails upload FAILED: $_" -ForegroundColor Red
@@ -113,21 +115,21 @@ $verifyFailed = $false
 Write-Host "  Checking HLS..."
 $oldEap = $ErrorActionPreference
 $ErrorActionPreference = "Continue"
-& rclone check "$OutputDir" "$baseRemote/hls/" --exclude "thumbs/**" 2>&1 | ForEach-Object {
+& rclone check "$OutputDir" "$baseRemote/hls/" --one-way --exclude "thumbs/**" 2>&1 | ForEach-Object {
     if ($_ -match "ERROR") { $verifyFailed = $true }
     Write-Host "    $_"
 }
 $ErrorActionPreference = $oldEap
 
 Write-Host "  Checking originals..."
-& rclone check "$OriginalDir" "$baseRemote/originals/" 2>&1 | ForEach-Object {
+& rclone check "$OriginalDir" "$baseRemote/originals/" --one-way 2>&1 | ForEach-Object {
     if ($_ -match "ERROR") { $verifyFailed = $true }
     Write-Host "    $_"
 }
 
 if (Test-Path $thumbsDir -PathType Container) {
     Write-Host "  Checking thumbnails..."
-    & rclone check "$thumbsDir" "$baseRemote/thumbs/" 2>&1 | ForEach-Object {
+    & rclone check "$thumbsDir" "$baseRemote/thumbs/" --one-way 2>&1 | ForEach-Object {
         if ($_ -match "ERROR") { $verifyFailed = $true }
         Write-Host "    $_"
     }
