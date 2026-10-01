@@ -510,6 +510,13 @@
       </p>
       <h4>Limit of Liability</h4>
       <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
+      <!-- SMS consent clause (Sean, 2026-09-30). Hidden by default; shown only
+           for agreements signed at or after SMS_CLAUSE_SINCE (script below),
+           so agreements signed before it never change. -->
+      <div id="sms-terms-clause" style="display:none;">
+        <h4>Text Messages and Calls</h4>
+        <p>Client agrees that Videographer may contact Client, and Client's partner, by text message (including photos and video links), phone call and email at the numbers and addresses provided, including through automated systems. Messages may include booking and payment reminders, scheduling, questionnaire and timeline requests, wedding day coordination, film delivery, and requests for reviews or referrals, before and after the wedding. Client confirms each number provided belongs to Client or Client's partner. Message frequency varies. Message and data rates may apply. Reply STOP at any time to opt out, or HELP for help.</p>
+      </div>
       <h4>General Provisions</h4>
       <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between Parties. Amendment: Only by written consent via proper notice.</p>
     </div>
@@ -640,6 +647,15 @@
     const csEl = document.getElementById('client-signed-at');
     if (csEl) {
       csEl.textContent = DATA.client_signed_at ? formatDateTime(DATA.client_signed_at) : 'pending';
+    }
+
+    // Show the SMS clause only when this agreement was signed under it. Keep
+    // SMS_CLAUSE_SINCE identical to the value in agreement.html.
+    const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T05:00:00Z');
+    const signedAtMs = Number(DATA.client_signed_at);
+    if (signedAtMs && signedAtMs >= SMS_CLAUSE_SINCE) {
+      const smsClause = document.getElementById('sms-terms-clause');
+      if (smsClause) smsClause.style.display = '';
     }
 
     // Populate event-specific text in the legal body sections.
