@@ -650,7 +650,8 @@
     }
 
     // Show the SMS clause only when this agreement was signed under it. Keep
-    // SMS_CLAUSE_SINCE identical to the value in agreement.html.
+    // SMS_CLAUSE_SINCE identical to agreement.html and iris-automation
+    // src/lib/sms-clause.ts.
     const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T05:00:00Z');
     const signedAtMs = Number(DATA.client_signed_at);
     if (signedAtMs && signedAtMs >= SMS_CLAUSE_SINCE) {

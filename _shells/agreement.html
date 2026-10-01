@@ -558,6 +558,12 @@
       line-height: 1.5;
       cursor: pointer;
     }
+    .sms-optin-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 4px 0 0;
+      line-height: 1.5;
+    }
     .signature-section.locked .sms-optin { display: none; }
 
     .sig-footer-note {
@@ -1303,7 +1309,10 @@
              sms_marketing_opt_in only when ticked. Hidden once signed. -->
         <div class="sms-optin" id="sms-optin">
           <input type="checkbox" id="sms-marketing-checkbox">
-          <label for="sms-marketing-checkbox">Yes, also text me occasional offers and anniversary updates.</label>
+          <div>
+            <label for="sms-marketing-checkbox">Yes, also text me occasional offers and anniversary updates.</label>
+            <p class="sms-optin-note">Not required to book.</p>
+          </div>
         </div>
 
         <p class="sig-footer-note">
@@ -2190,7 +2199,8 @@
 
   // Moment the "Text Messages and Calls" clause joined the agreement. Set to
   // when the D1 clause SQL ran and this shell went live (keep the same value
-  // in agreement-signed.html). Signed before it, or no signed time on record:
+  // in agreement-signed.html and iris-automation src/lib/sms-clause.ts).
+  // Signed before it, or no signed time on record:
   // the clause stays hidden so the signed agreement never changes.
   const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T05:00:00Z');
   function signedUnderSmsClause(signedAtMs) {
