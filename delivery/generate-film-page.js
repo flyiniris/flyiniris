@@ -16,7 +16,11 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULT_WORKER_BASE = 'https://video.flyiniris.com';
-const DEFAULT_CONFIG_API_BASE = 'https://prep.flyiniris.com';
+// api.flyiniris.com, not prep.flyiniris.com: both route to the same Worker,
+// but only api.flyiniris.com is in the site CSP connect-src (_headers). A page
+// pointed at prep.flyiniris.com has its load-time fetch blocked by CSP and
+// silently falls back to the baked videos (found 2026-09-30 on matt-haley).
+const DEFAULT_CONFIG_API_BASE = 'https://api.flyiniris.com';
 const SLUG_RE = /^[a-z0-9-]+$/;
 const CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
 const DEPRECATED_FIELDS = ['names', 'date', 'date_short', 'photos', 'customMessage', 'venueDisplay', 'filmSlug'];
@@ -288,10 +292,11 @@ function main() {
   // OG image source: first hero entry by order, else first video in catalog.
   // The legacy {{FEATURED_VIDEO_ID}} token name is retained for template
   // backward-compat; the value now points to the hero/lead thumbnail.
-  // Empty-shell safe: with no videos there is no OG thumbnail to point at.
+  // Empty shells point og:image at the teaser thumb: the standard film id
+  // every delivery ships first, so link previews resolve once it lands.
   const ogVideoId = heroArray.length > 0
     ? heroArray[0].id
-    : (videosArray.length > 0 ? videosArray[0].id : '');
+    : (videosArray.length > 0 ? videosArray[0].id : 'teaser');
 
   const dateShort = dateToShort(config.weddingDate);
   const year = new Date().getFullYear().toString();

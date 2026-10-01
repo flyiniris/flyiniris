@@ -162,6 +162,31 @@ Avoids over-building before knowing what Sierra actually wants.
 | `delivery/workers/video-serve/` | The Cloudflare Worker at video.flyiniris.com. Serves HLS, thumbnails, password-gated downloads. |
 | `films/<slug>/` | Generated couple pages. Auto-deploys via Cloudflare Pages on push to main. |
 
+## API-driven shell for a new couple (drop-folder pipeline)
+
+One command makes a video-empty page that fills itself from
+`https://api.flyiniris.com/api/delivery/<slug>/videos` at load time:
+
+```powershell
+node "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\generate-batch.js" --slug jessica-tyler --names "Jessica & Tyler" --date "September 25, 2026"
+```
+
+- Until the slug has a `delivery_video_config` row with videos, the page
+  shows "Your films are on the way." Every approved film merged into that
+  row appears on the next page load. No regeneration, no push.
+- The API base must stay `api.flyiniris.com`: it is in the site CSP
+  `connect-src`. `prep.flyiniris.com` is not, so a page pointed there is
+  silently blocked and only ever shows its baked videos.
+- The page drops API entries it cannot play (category outside highlight,
+  teaser, archival, bonus, or `comingSoon: true`) and defaults empty titles
+  the same way the generator does ("Teaser Film", "Highlight Film",
+  "Story Session Film").
+- The command refuses to overwrite a page that still has baked videos.
+  Seed that slug's API row first, then rerun with `--force`.
+- Downloads still need the password in the PASSWORDS KV (the `wrangler kv key put` line in the happy path).
+- Many couples at once: `node delivery/generate-batch.js couples.json`
+  with an array of `{ slug, coupleNames, weddingDate }`.
+
 ## When the template changes
 
 If you edit `delivery/templates/couple-page.html` (layout, player, etc.):

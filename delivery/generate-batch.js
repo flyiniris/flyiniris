@@ -19,6 +19,10 @@
  *   node delivery/generate-batch.js <couples.json> --config-api-base https://prep.flyiniris.com
  *   node delivery/generate-batch.js <couples.json> --worker-base https://video.flyiniris.com
  *
+ *
+ * One couple, no file (the one-command shell for a new slug):
+ *   node delivery/generate-batch.js --slug jessica-tyler --names "Jessica & Tyler" --date "September 25, 2026"
+ *
  * couples.json schema: an array of
  *   { "slug": "amanda-boris", "coupleNames": "Amanda & Boris", "weddingDate": "August 31, 2025" }
  */
@@ -32,9 +36,14 @@ const GENERATOR = path.join(__dirname, 'generate-film-page.js');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
-  const out = { couplesPath: null, passthrough: [] };
+  const out = { couplesPath: null, passthrough: [], single: {}, force: false };
   for (let i = 0; i < args.length; i++) {
-    if ((args[i] === '--output-root' || args[i] === '--config-api-base' || args[i] === '--worker-base') && args[i + 1]) {
+    if (args[i] === '--force') {
+      out.force = true;
+    } else if ((args[i] === '--slug' || args[i] === '--names' || args[i] === '--date') && args[i + 1] != null) {
+      out.single[args[i].slice(2)] = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output-root' || args[i] === '--config-api-base' || args[i] === '--worker-base') && args[i + 1]) {
       out.passthrough.push(args[i], args[i + 1]);
       i++;
     } else if (!out.couplesPath) {
@@ -46,6 +55,8 @@ function parseArgs(argv) {
 
 function printUsageAndExit() {
   console.error('Usage: node generate-batch.js <couples.json> [--output-root <dir>] [--config-api-base <url>] [--worker-base <url>]');
+  console.error('Add --force to replace an existing page that still has baked videos.');
+  console.error('   or: node generate-batch.js --slug <slug> --names "Name1 & Name2" --date "Month D, YYYY" [same flags]');
   console.error('');
   console.error('couples.json: an array of { slug, coupleNames, weddingDate }');
   console.error(JSON.stringify([
@@ -55,17 +66,38 @@ function printUsageAndExit() {
   process.exit(1);
 }
 
-function main() {
-  const { couplesPath, passthrough } = parseArgs(process.argv);
-  if (!couplesPath) printUsageAndExit();
+function bakedVideoCount(indexPath) {
+  let html;
+  try { html = fs.readFileSync(indexPath, 'utf-8'); } catch (e) { return 0; }
+  const m = html.match(/(?:var|const) VIDEOS = (\[.*?\]);/);
+  if (!m) return 0;
+  try { return JSON.parse(m[1]).length; } catch (e) { return 1; }
+}
 
-  const absPath = path.resolve(couplesPath);
-  let couples;
-  try {
-    couples = JSON.parse(fs.readFileSync(absPath, 'utf-8'));
-  } catch (e) {
-    console.error(`Failed to read or parse couples file at ${absPath}: ${e.message}`);
+function main() {
+  const { couplesPath, passthrough, single, force } = parseArgs(process.argv);
+  const outIdx = passthrough.indexOf('--output-root');
+  const outputBase = outIdx >= 0
+    ? path.resolve(passthrough[outIdx + 1])
+    : path.resolve(__dirname, '..', 'films');
+  const singleMode = Object.keys(single).length > 0;
+  if (!couplesPath && !singleMode) printUsageAndExit();
+  if (couplesPath && singleMode) {
+    console.error('Pass either a couples.json file or --slug/--names/--date, not both.');
     process.exit(1);
+  }
+
+  let couples;
+  if (singleMode) {
+    couples = [{ slug: single.slug, coupleNames: single.names, weddingDate: single.date }];
+  } else {
+    const absPath = path.resolve(couplesPath);
+    try {
+      couples = JSON.parse(fs.readFileSync(absPath, 'utf-8'));
+    } catch (e) {
+      console.error(`Failed to read or parse couples file at ${absPath}: ${e.message}`);
+      process.exit(1);
+    }
   }
 
   if (!Array.isArray(couples) || couples.length === 0) {
@@ -88,6 +120,15 @@ function main() {
       weddingDate: c.weddingDate,
       videos: [],
     };
+
+    // Never overwrite a live page that has baked videos with an empty shell:
+    // that would blank the page for any couple whose videos are not yet in
+    // delivery_video_config. --force overrides once the API row is seeded.
+    if (!force && c.slug && bakedVideoCount(path.join(outputBase, c.slug, 'index.html')) > 0) {
+      results.failed.push(label);
+      console.error(`  SKIPPED: ${label} already has a page with baked videos. Seed its delivery_video_config row first, then rerun with --force.`);
+      continue;
+    }
 
     const tmpConfig = path.join(tmpDir, `${(c.slug || 'couple-' + i)}.json`);
     try {

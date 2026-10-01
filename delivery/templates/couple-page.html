@@ -37,6 +37,10 @@
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css@1.15.5" />
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css@1.15.5" />
   <script type="module" src="https://cdn.vidstack.io/player@1.15.5"></script>
+  <!-- hls.js drives the native <video> hero players (Matt & Haley fix,
+       commit 0374010: Vidstack heroes rendered empty frames and play did
+       nothing). The modal and Watch the Full Day still use Vidstack. -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 
   <style>
     /* ========== Reset & Base ========== */
@@ -259,6 +263,13 @@
       --media-brand: #FFBD1D;
       width: 100%;
       aspect-ratio: 16/9;
+    }
+    .hero-player-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #1A1A19;
     }
     /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
        treatment Featured era (commit 7621991) and re-styled to match the
@@ -1016,11 +1027,30 @@
       return '~' + minutes + ' min';
     }
 
+    // Start every stream on the 1080p rung (commit 0ce5034: starting on the
+    // 4K master stalled playback). Every ladder in the pipeline writes 1080p.
     function hlsUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/1080p/playlist.m3u8';
     }
+    // THUMB_VERSION is the delivery config updated_at from the API. The service
+    // worker caches thumbs cache-first, so a re-approved film that keeps its id
+    // but gets a new thumbnail would otherwise show the old image forever.
+    var THUMB_VERSION = '';
     function thumbUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg' +
+        (THUMB_VERSION ? '?v=' + encodeURIComponent(THUMB_VERSION) : '');
+    }
+    // Native <video> + hls.js for hero players; Safari plays HLS natively.
+    function attachHls(video, src) {
+      if (window.Hls && window.Hls.isSupported()) {
+        var hls = new window.Hls({ enableWorker: true, capLevelToPlayerSize: true });
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        return;
+      }
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+      }
     }
 
     // --- HLS Buffering Config ---
@@ -1149,21 +1179,11 @@
           // below, which are appropriate sub-fold reveal targets.
           '<div class="hero-card" data-hero-id="' + escapeAttr(h.id) + '">' +
           '  <div class="hero-player-wrap">' +
-          createPlayerHtml({
-            title: h.title,
-            src: hlsUrl(h.id),
-            poster: thumbUrl(h.id),
-            autoplay: false,
-            storage: 'fi-hero-' + h.id
-            // Eager load (default). Earlier polish commit 7426460 set
-            // load: 'visible' here to defer HLS provider attach until the
-            // hero card entered the viewport. That caused Vidstack to
-            // render a "click to load" affordance over the poster image
-            // for non-visible heroes, making the thumbnails look broken.
-            // Cost of reverting: each hero pulls its master.m3u8 (~500 bytes)
-            // on page load. With at most 5 hero entries that is under 3KB
-            // of manifest fetches, which is negligible.
-          }) +
+          // Native <video> + hls.js (attached below), ported from the Matt &
+          // Haley fix (commit 0374010). Vidstack hero players rendered empty
+          // frames and play did nothing. preload="metadata" keeps each hero
+          // to a small playlist fetch on load.
+          '    <video playsinline controls preload="metadata" poster="' + escapeAttr(thumbUrl(h.id)) + '" data-hls="' + escapeAttr(hlsUrl(h.id)) + '"></video>' +
           '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
           '      <div class="hero-play-btn">' +
           '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -1180,18 +1200,23 @@
       }
       stack.innerHTML = html;
 
+      var heroVideos = stack.querySelectorAll('video[data-hls]');
+      for (var hv = 0; hv < heroVideos.length; hv++) {
+        attachHls(heroVideos[hv], heroVideos[hv].getAttribute('data-hls'));
+      }
+
       // Wire overlay click + Enter/Space keyboard activation. Pattern from the
       // pre-hero-treatment Featured era (commit 7621991): clicking the
-      // thumb-as-overlay hides it and starts Vidstack playback. After hide,
-      // pointer-events: none lets all subsequent clicks reach Vidstack's
-      // controls bar naturally.
+      // thumb-as-overlay hides it and starts native video playback. After
+      // hide, pointer-events: none lets all subsequent clicks reach the
+      // native controls naturally.
       var overlays = stack.querySelectorAll('.hero-overlay');
       for (var o = 0; o < overlays.length; o++) {
         (function(overlay) {
           var activate = function() {
             if (overlay.classList.contains('hidden')) return;
             overlay.classList.add('hidden');
-            var player = overlay.parentElement.querySelector('media-player');
+            var player = overlay.parentElement.querySelector('video');
             if (player && typeof player.play === 'function') {
               var p = player.play();
               if (p && typeof p.catch === 'function') p.catch(function() {});
@@ -1206,10 +1231,6 @@
           });
         })(overlays[o]);
       }
-
-      // Wire HLS config on every hero player.
-      var players = stack.querySelectorAll('media-player');
-      for (var p = 0; p < players.length; p++) configureHls(players[p]);
     }
 
     // --- Collection Grid ---
@@ -1810,6 +1831,55 @@
         .map(function(v) { return { id: v.id, title: v.title, duration: v.duration }; });
     }
 
+    // The API stores whatever Studio or the pipeline approved, so apply the
+    // generator's rules here too: drop entries the page cannot play (no id,
+    // a category outside the standard enum, or comingSoon placeholders, which
+    // the May standard does not render), default empty titles the same way
+    // generate-film-page.js does, and keep duration a string. At most 5 heroes.
+    var CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
+    var HERO_TITLE_DEFAULTS = { 'teaser': 'Teaser Film', 'highlight': 'Highlight Film', 'story-session': 'Story Session Film' };
+    function normalizeLiveVideos(raw) {
+      var out = [];
+      var heroes = 0;
+      var sorted = raw.slice().sort(function(a, b) { return ((a && a.order) || 0) - ((b && b.order) || 0); });
+      for (var i = 0; i < sorted.length; i++) {
+        var v = sorted[i];
+        if (!v || typeof v.id !== 'string' || !/^[a-z0-9-]+$/.test(v.id)) continue;
+        if (CATEGORY_ENUM.indexOf(v.category) === -1) continue;
+        if (v.comingSoon === true) continue;
+        var title = (typeof v.title === 'string' && v.title.trim()) ? v.title.trim()
+          : (HERO_TITLE_DEFAULTS[v.id] || (v.id.charAt(0).toUpperCase() + v.id.slice(1).replace(/-/g, ' ')));
+        var entry = {
+          id: v.id,
+          title: title,
+          category: v.category,
+          duration: typeof v.duration === 'string' ? v.duration : '',
+          order: typeof v.order === 'number' ? v.order : i
+        };
+        if (v.hero === true && heroes < 5) { entry.hero = true; heroes++; }
+        if (v.playlist === false) entry.playlist = false;
+        out.push(entry);
+      }
+      return out;
+    }
+
+    // Mirrors deriveHeroCta() in generate-film-page.js. Shells bake the
+    // generic "View Your Films" because they have no heroes at generate time.
+    function updateHeroCta() {
+      var btn = document.getElementById('hero-cta');
+      if (!btn) return;
+      var label = 'View Your Films';
+      if (HERO.length >= 2) label = 'Watch the Films';
+      else if (HERO.length === 1) {
+        var only = HERO[0];
+        if (only.category === 'teaser') label = 'Watch the Teaser';
+        else if (only.category === 'highlight') label = 'Watch the Highlight';
+        else if (only.id === 'story-session') label = 'Watch the Story Session';
+        else label = 'Watch the Film';
+      }
+      btn.textContent = label;
+    }
+
     function resolveConfig() {
       // No API base baked (older generation): rely on the baked data alone.
       if (!CONFIG_API_BASE) return Promise.resolve();
@@ -1824,9 +1894,12 @@
           return res.json();
         })
         .then(function(data) {
-          if (data && Array.isArray(data.videos) && data.videos.length > 0) {
-            VIDEOS = data.videos;
+          var live = (data && Array.isArray(data.videos)) ? normalizeLiveVideos(data.videos) : [];
+          if (live.length > 0) {
+            VIDEOS = live;
             deriveFromVideos(VIDEOS);
+            if (data.updated_at) THUMB_VERSION = String(data.updated_at);
+            updateHeroCta();
           }
         })
         .catch(function() {
