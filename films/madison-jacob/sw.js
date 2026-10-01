@@ -2,7 +2,7 @@
 // storage is origin-wide while each SW is scoped to /films/<slug>/, so a
 // shared name let couples at different template versions delete each
 // other's caches during staggered rollouts (audit 2026-06-09).
-const CACHE_NAME = 'fi-shell-madison-jacob-v28';
+const CACHE_NAME = 'fi-shell-madison-jacob-v29';
 const SHELL_ASSETS = [
   './',
   // Pinned to match the couple-page.html Vidstack pin. Precaching the

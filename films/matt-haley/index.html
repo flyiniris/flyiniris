@@ -329,6 +329,89 @@
       color: #C8C3B9;
     }
 
+    /* ========== Quality picker ==========
+       Sits under the player (never over the picture), so it cannot cover
+       the film the way the May 2026 slotted Vidstack menu did. Used by the
+       native hero players, and by the pop-up only when the browser plays
+       HLS natively (old iOS); otherwise the pop-up uses Vidstack's own
+       Settings > Quality menu. */
+    .fi-quality-slot { margin-top: 12px; }
+    .fi-quality-slot:empty { display: none; }
+    .fi-quality {
+      position: relative;
+      display: inline-block;
+    }
+    .fi-quality-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 18px;
+      background: transparent;
+      border: 1px solid #2A2A28;
+      border-radius: 999px;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s ease;
+    }
+    .fi-quality-btn:hover,
+    .fi-quality-btn[aria-expanded="true"] { border-color: #FFBD1D; }
+    .fi-quality-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    .fi-quality-btn svg { width: 16px; height: 16px; fill: #FFBD1D; flex: none; }
+    .fi-quality-btn .fi-quality-key { color: #C8C3B9; }
+    .fi-quality-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      min-width: 180px;
+      padding: 6px;
+      background: #141413;
+      border: 1px solid #2A2A28;
+      border-radius: 8px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      text-align: left;
+    }
+    .fi-quality-menu[hidden] { display: none; }
+    .fi-quality.up .fi-quality-menu { top: auto; bottom: calc(100% + 6px); }
+    .fi-quality-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      text-align: left;
+      cursor: pointer;
+    }
+    .fi-quality-opt:hover,
+    .fi-quality-opt:focus-visible { background: rgba(255, 189, 29, 0.12); outline: none; }
+    .fi-quality-opt .fi-quality-check {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #5A5853;
+      border-radius: 50%;
+      flex: none;
+    }
+    .fi-quality-opt[aria-checked="true"] .fi-quality-check {
+      border-color: #FFBD1D;
+      background: radial-gradient(circle, #FFBD1D 0 45%, transparent 50%);
+    }
+    .fi-quality-modal { text-align: left; }
+    .fi-quality-modal .fi-quality-menu { left: 0; transform: none; }
+
     /* Brand-align Vidstack player UI typography (title, button text, etc.).
        SVG icons are unaffected by font changes. */
     media-player {
@@ -990,6 +1073,7 @@
         <span class="playlist-bar-next" id="playlist-bar-next"></span>
       </div>
       <p class="modal-title" id="modal-title"></p>
+      <div class="fi-quality-slot fi-quality-modal" id="modal-quality"></div>
     </div>
   </div>
 
@@ -1040,17 +1124,327 @@
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg?v=3';
     }
-    function attachHls(video, src) {
-      if (window.Hls && window.Hls.isSupported()) {
-        var hls = new window.Hls({ enableWorker: true, capLevelToPlayerSize: true });
-        hls.loadSource(src);
-        hls.attachMedia(video);
-        return;
+    // --- Quality picker (Auto / 4K / 1080p) ---
+    // Auto is the default and plays exactly what every page played before
+    // the picker existed: the 1080p rung. With hls.js the player loads the
+    // master playlist and Auto caps adaptive selection at the 1080p level;
+    // without hls.js (older iPhones, native HLS) Auto keeps the 1080p rung
+    // URL as the src. Choosing 4K or 1080p pins that level (hls.js) or
+    // swaps the src to that rung (native HLS), keeping position and play
+    // state. The choice is remembered per page in localStorage and applies
+    // to every player on the page. capLevelToPlayerSize stays off: it
+    // rewrites autoLevelCapping on every resize, which would undo both the
+    // Auto cap and a 4K pick in a small window.
+    var QUALITY_KEY = 'fi-quality:' + SLUG;
+    var qualityControls = [];
+    function readQualityPref() {
+      try {
+        var v = window.localStorage.getItem(QUALITY_KEY);
+        if (v === '2160' || v === '1080') return v;
+      } catch (e) { /* storage blocked: default to Auto */ }
+      return 'auto';
+    }
+    function writeQualityPref(v) {
+      try { window.localStorage.setItem(QUALITY_KEY, v); } catch (e) { /* ignore */ }
+    }
+    function masterUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
+    }
+    function canUseHlsJs() {
+      return !!(window.Hls && window.Hls.isSupported());
+    }
+    // Tier from the short side so vertical (1080x1920 / 2160x3840) films
+    // label the same as landscape ones.
+    function qualityTier(w, h) {
+      var s = (w && h) ? Math.min(w, h) : (h || w || 0);
+      if (s >= 2000) return '2160';
+      if (s >= 1000) return '1080';
+      return s ? String(s) : '';
+    }
+    function tierLabel(t) {
+      return t === '2160' ? '4K' : (t ? t + 'p' : '');
+    }
+    // Parse a master playlist into [{ tier, uri }] for the native-HLS path.
+    function parseMaster(text, baseUrl) {
+      var out = [];
+      var lines = String(text || '').split(/\r?\n/);
+      for (var i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf('#EXT-X-STREAM-INF') !== 0) continue;
+        var m = /RESOLUTION=(\d+)x(\d+)/.exec(lines[i]);
+        var uri = (lines[i + 1] || '').trim();
+        if (!m || !uri || uri.charAt(0) === '#') continue;
+        out.push({ tier: qualityTier(+m[1], +m[2]), uri: new URL(uri, baseUrl).href });
       }
-      if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = src;
+      return out;
+    }
+
+    // Pill button + radio menu. adapter: { has4k(), mode(), playing(), select(v) }.
+    var QUALITY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>';
+    function createQualityControl(slot, adapter) {
+      if (!slot) return null;
+      var wrap = document.createElement('div');
+      wrap.className = 'fi-quality';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'fi-quality-btn';
+      btn.setAttribute('aria-haspopup', 'menu');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.innerHTML = QUALITY_ICON + '<span class="fi-quality-key">Quality</span><span class="fi-quality-value"></span>';
+      var menu = document.createElement('div');
+      menu.className = 'fi-quality-menu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', 'Video quality');
+      menu.hidden = true;
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+      slot.innerHTML = '';
+      slot.appendChild(wrap);
+
+      function options() {
+        var o = [{ v: 'auto', label: 'Auto' }];
+        if (adapter.has4k()) o.push({ v: '2160', label: '4K' });
+        o.push({ v: '1080', label: '1080p' });
+        return o;
+      }
+      function currentText() {
+        var mode = adapter.mode();
+        if (mode !== 'auto') return tierLabel(mode);
+        var p = adapter.playing();
+        return 'Auto' + (p ? ' (' + tierLabel(p) + ')' : '');
+      }
+      function refresh() {
+        var text = currentText();
+        btn.querySelector('.fi-quality-value').textContent = text;
+        btn.setAttribute('aria-label', 'Video quality: ' + text);
+        var items = menu.querySelectorAll('.fi-quality-opt');
+        for (var i = 0; i < items.length; i++) {
+          items[i].setAttribute('aria-checked', items[i].getAttribute('data-v') === adapter.mode() ? 'true' : 'false');
+        }
+      }
+      function build() {
+        var html = '';
+        var o = options();
+        for (var i = 0; i < o.length; i++) {
+          html += '<button type="button" class="fi-quality-opt" role="menuitemradio" tabindex="-1" data-v="' + o[i].v + '">' +
+            '<span class="fi-quality-check" aria-hidden="true"></span>' + o[i].label + '</button>';
+        }
+        menu.innerHTML = html;
+        refresh();
+      }
+      function onDocDown(e) { if (!wrap.contains(e.target)) close(false); }
+      function open() {
+        build();
+        menu.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        wrap.classList.remove('up');
+        var r = menu.getBoundingClientRect();
+        if (r.bottom > window.innerHeight - 8) wrap.classList.add('up');
+        var checked = menu.querySelector('[aria-checked="true"]') || menu.querySelector('.fi-quality-opt');
+        if (checked) checked.focus();
+        document.addEventListener('pointerdown', onDocDown, true);
+      }
+      function close(focusBtn) {
+        if (menu.hidden) return;
+        menu.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('pointerdown', onDocDown, true);
+        if (focusBtn) btn.focus();
+      }
+      btn.addEventListener('click', function() {
+        if (menu.hidden) open(); else close(false);
+      });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); open(); }
+      });
+      menu.addEventListener('click', function(e) {
+        var opt = e.target.closest('.fi-quality-opt');
+        if (!opt) return;
+        var v = opt.getAttribute('data-v');
+        close(true);
+        setPageQuality(v);
+      });
+      menu.addEventListener('keydown', function(e) {
+        var items = Array.prototype.slice.call(menu.querySelectorAll('.fi-quality-opt'));
+        var idx = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+        else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+        else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+        else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); }
+        else if (e.key === 'Tab') { close(false); }
+      });
+      build();
+      var ctl = { refresh: refresh, adapter: adapter, slot: slot };
+      qualityControls.push(ctl);
+      return ctl;
+    }
+    function forgetQualityControls(slot) {
+      qualityControls = qualityControls.filter(function(c) { return c.slot !== slot; });
+      if (slot) slot.innerHTML = '';
+    }
+    // One page-wide setting: a pick on any player applies to every player
+    // on the page and is remembered for the next visit.
+    function setPageQuality(v) {
+      writeQualityPref(v);
+      for (var i = 0; i < qualityControls.length; i++) {
+        var c = qualityControls[i];
+        if (!c.slot.isConnected) continue;
+        try { c.adapter.select(v); } catch (e) { /* one player failing must not block the rest */ }
+        c.refresh();
+      }
+      var mp = modalPlayerWrap && modalPlayerWrap.querySelector('media-player');
+      if (mp && mp.__fiApplyQuality) mp.__fiApplyQuality(v);
+    }
+
+    // Native-HLS src swap that keeps position and play state.
+    function swapSrcKeepingTime(media, url) {
+      var t = media.currentTime || 0;
+      var wasPlaying = !media.paused && !media.ended;
+      var resume = function() {
+        media.removeEventListener('loadedmetadata', resume);
+        media.removeEventListener('loaded-metadata', resume);
+        if (t > 0) { try { media.currentTime = t; } catch (e) { /* ignore */ } }
+        if (wasPlaying) {
+          var p = media.play();
+          if (p && typeof p.catch === 'function') p.catch(function() {});
+        }
+      };
+      media.addEventListener('loadedmetadata', resume);
+      media.addEventListener('loaded-metadata', resume);
+      media.src = url;
+    }
+
+    // Native <video> hero player. hls.js where supported (Chrome, Edge,
+    // Firefox, Android, iOS 17.1+ via ManagedMediaSource); native HLS
+    // src switching otherwise.
+    function attachHeroPlayer(video, videoId, slot) {
+      if (!video) return;
+      var fallbackSrc = video.getAttribute('data-hls');
+      if (canUseHlsJs()) {
+        attachHeroHlsJs(video, videoId, slot, fallbackSrc);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        attachHeroNative(video, videoId, slot, fallbackSrc);
       }
     }
+
+    function attachHeroHlsJs(video, videoId, slot, fallbackSrc) {
+      var Hls = window.Hls;
+      var st = { mode: 'auto', tiers: {}, capIdx: -1, started: false, parsed: false, ctl: null, recovered: 0 };
+      var hls = new Hls({ enableWorker: true, capLevelToPlayerSize: false, autoStartLoad: false });
+      video.__fiHls = hls;
+      function start() {
+        if (st.started) return;
+        st.started = true;
+        hls.startLoad(-1);
+      }
+      function apply(v) {
+        var idx = v === 'auto' ? -1 : st.tiers[v];
+        if (idx == null) { idx = -1; v = 'auto'; }
+        st.mode = v;
+        if (idx === -1) {
+          // Auto: adaptive, capped at the 1080p rung (today's behaviour).
+          hls.autoLevelCapping = st.tiers['2160'] != null ? st.capIdx : -1;
+          if (st.started) hls.currentLevel = -1; else hls.loadLevel = -1;
+          start();
+        } else {
+          hls.autoLevelCapping = -1;
+          if (st.started) hls.currentLevel = idx; else hls.loadLevel = idx;
+          // A pinned level loads on play, so a remembered 4K pick never
+          // preloads 4K for every hero on the page.
+          if (!video.paused) start();
+        }
+      }
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        st.parsed = true;
+        var lv = hls.levels || [];
+        for (var i = 0; i < lv.length; i++) {
+          var t = qualityTier(lv[i].width, lv[i].height);
+          if (t && st.tiers[t] == null) st.tiers[t] = i;
+          if (t !== '2160') st.capIdx = i;
+        }
+        if (st.capIdx >= 0) hls.startLevel = st.capIdx;
+        if (st.tiers['2160'] != null && lv.length > 1) {
+          st.ctl = createQualityControl(slot, {
+            has4k: function() { return true; },
+            mode: function() { return st.mode; },
+            playing: function() {
+              var i = hls.currentLevel >= 0 ? hls.currentLevel : (hls.loadLevel >= 0 ? hls.loadLevel : st.capIdx);
+              var l = (hls.levels || [])[i];
+              return l ? qualityTier(l.width, l.height) : '';
+            },
+            select: apply
+          });
+        }
+        apply(readQualityPref());
+        if (st.ctl) st.ctl.refresh();
+      });
+      hls.on(Hls.Events.LEVEL_SWITCHED, function() { if (st.ctl) st.ctl.refresh(); });
+      hls.on(Hls.Events.ERROR, function(evt, data) {
+        if (!data || !data.fatal) return;
+        if (!st.parsed) {
+          // Master playlist missing or unreadable: fall back to exactly the
+          // pre-picker setup (1080p rung, no picker).
+          hls.destroy();
+          var legacy = new Hls({ enableWorker: true, capLevelToPlayerSize: true });
+          video.__fiHls = legacy;
+          legacy.loadSource(fallbackSrc);
+          legacy.attachMedia(video);
+          if (slot) slot.innerHTML = '';
+          return;
+        }
+        if (st.recovered >= 3) return;
+        st.recovered++;
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+      });
+      video.addEventListener('play', start);
+      hls.loadSource(masterUrl(videoId));
+      hls.attachMedia(video);
+    }
+
+    function attachHeroNative(video, videoId, slot, fallbackSrc) {
+      // Auto is exactly the old src; the picker appears only once the
+      // master playlist confirms a 4K rung exists.
+      video.src = fallbackSrc;
+      var st = { mode: 'auto', urls: { auto: fallbackSrc, '1080': fallbackSrc } };
+      function apply(v) {
+        if (!st.urls[v]) v = 'auto';
+        st.mode = v;
+        var url = st.urls[v];
+        if (video.src !== url) swapSrcKeepingTime(video, url);
+      }
+      fetch(masterUrl(videoId)).then(function(r) { return r.ok ? r.text() : ''; }).then(function(text) {
+        var variants = parseMaster(text, masterUrl(videoId));
+        for (var i = 0; i < variants.length; i++) {
+          if (variants[i].tier === '2160') st.urls['2160'] = variants[i].uri;
+        }
+        if (!st.urls['2160']) return;
+        var ctl = createQualityControl(slot, {
+          has4k: function() { return true; },
+          mode: function() { return st.mode; },
+          playing: function() { return qualityTier(video.videoWidth, video.videoHeight) || '1080'; },
+          select: apply
+        });
+        video.addEventListener('loadedmetadata', function() { ctl.refresh(); });
+        apply(readQualityPref());
+        ctl.refresh();
+      }).catch(function() { /* no master: keep the 1080p src, no picker */ });
+    }
+
+    // Page-wide mutual exclusion: when any video starts, pause every other
+    // one. Covers hero-on-hero and hero-vs-pop-up, which the Vidstack-only
+    // handler in configureHls could not see (heroes are native <video>).
+    document.addEventListener('play', function(e) {
+      var playing = e.target;
+      if (!playing || playing.tagName !== 'VIDEO') return;
+      var all = document.querySelectorAll('video');
+      for (var i = 0; i < all.length; i++) {
+        var v = all[i];
+        if (v === playing || v.paused) continue;
+        var mp = v.closest('media-player');
+        try { if (mp) mp.pause(); else v.pause(); } catch (err) { /* ignore */ }
+      }
+    }, true);
 
     // --- HLS Buffering Config ---
     var HLS_CONFIG = {
@@ -1059,9 +1453,147 @@
       maxBufferSize: 60000000,
       maxBufferHole: 0.5,
       startLevel: -1,
-      capLevelToPlayerSize: true,
+      // Off so the Auto cap and a 4K pick hold in any window size (see the
+      // quality picker notes above).
+      capLevelToPlayerSize: false,
       enableWorker: true
     };
+
+    // Pop-up src: hls.js browsers get the master playlist so Vidstack's own
+    // Settings > Quality menu lists Auto / 4K / 1080p. Native HLS keeps the
+    // 1080p rung (Auto = the old behaviour) and gets the pill picker below
+    // the player instead.
+    function modalSrc(videoId) {
+      return canUseHlsJs() ? masterUrl(videoId) : hlsUrl(videoId);
+    }
+
+    // Apply the page quality setting to a Vidstack pop-up player.
+    function applyModalQuality(playerEl, v) {
+      var provider = playerEl.provider;
+      var hls = provider && provider.type === 'hls' ? provider.instance : null;
+      if (!hls || !hls.levels || !hls.levels.length) return;
+      var tiers = {};
+      var capIdx = -1;
+      for (var i = 0; i < hls.levels.length; i++) {
+        var t = qualityTier(hls.levels[i].width, hls.levels[i].height);
+        if (t && tiers[t] == null) tiers[t] = i;
+        if (t !== '2160') capIdx = i;
+      }
+      // Auto: adaptive, capped at the 1080p rung (today's behaviour). A
+      // manual pick in Vidstack's menu is not affected by this cap.
+      hls.autoLevelCapping = tiers['2160'] != null ? capIdx : -1;
+      var q = playerEl.qualities;
+      var idx = v === 'auto' ? null : tiers[v];
+      if (idx != null && q && q[idx]) {
+        if (!q[idx].selected || q.auto) q[idx].selected = true;
+      } else if (q && !q.auto && typeof q.autoSelect === 'function') {
+        q.autoSelect();
+      }
+    }
+
+    function wireModalQuality(playerEl) {
+      playerEl.__fiQualityReady = false;
+      playerEl.__fiApplyQuality = function(v) {
+        if (playerEl.provider && playerEl.provider.type === 'hls') {
+          playerEl.__fiQualityReady = false;
+          applyModalQuality(playerEl, v);
+          playerEl.__fiQualityReady = true;
+        } else if (playerEl.__fiNativeSelect) {
+          playerEl.__fiNativeSelect(v);
+        }
+      };
+      playerEl.addEventListener('hls-manifest-parsed', function() {
+        playerEl.__fiApplyQuality(readQualityPref());
+      });
+      // Remember a pick made in Vidstack's Settings > Quality menu. Ignored
+      // while a source is (re)loading so list resets never overwrite it.
+      function remember() {
+        if (!playerEl.__fiQualityReady) return;
+        var q = playerEl.qualities;
+        if (!q || !q.length) return;
+        var sel = q.selected;
+        writeQualityPref(q.auto ? 'auto' : (sel ? qualityTier(sel.width, sel.height) : 'auto'));
+      }
+      var q = playerEl.qualities;
+      if (q && typeof q.addEventListener === 'function') {
+        q.addEventListener('change', function() {
+          if (playerEl.qualities && !playerEl.qualities.auto) remember();
+        });
+        q.addEventListener('auto-change', remember);
+      }
+      playerEl.addEventListener('source-change', function() { playerEl.__fiQualityReady = false; });
+      playerEl.addEventListener('provider-change', function(e) {
+        var provider = e.detail;
+        if (provider && provider.type === 'video') wireModalNativeQuality(playerEl);
+      });
+    }
+
+    // Pop-up on native HLS: pill picker under the title, src swap per rung.
+    function wireModalNativeQuality(playerEl) {
+      var slot = document.getElementById('modal-quality');
+      if (!slot) return;
+      slot.innerHTML = '';
+      var videoId = playerEl.__fiVideoId;
+      var src = playerEl.getAttribute('src') || '';
+      if (!videoId || src.indexOf('.m3u8') === -1) return;
+      var st = { mode: 'auto', urls: { auto: hlsUrl(videoId), '1080': hlsUrl(videoId) }, videoId: videoId, current: src };
+      playerEl.__fiNativeSelect = null;
+      fetch(masterUrl(videoId)).then(function(r) { return r.ok ? r.text() : ''; }).then(function(text) {
+        if (playerEl.__fiVideoId !== st.videoId || !playerEl.isConnected) return;
+        var variants = parseMaster(text, masterUrl(videoId));
+        for (var i = 0; i < variants.length; i++) {
+          if (variants[i].tier === '2160') st.urls['2160'] = variants[i].uri;
+        }
+        if (!st.urls['2160']) return;
+        var select = function(v) {
+          if (!st.urls[v]) v = 'auto';
+          st.mode = v;
+          var url = st.urls[v];
+          if (st.current !== url) {
+            st.current = url;
+            swapSrcKeepingTime(playerEl, url);
+          }
+        };
+        playerEl.__fiNativeSelect = select;
+        forgetQualityControls(slot);
+        var ctl = createQualityControl(slot, {
+          has4k: function() { return true; },
+          mode: function() { return st.mode; },
+          playing: function() {
+            var v = playerEl.querySelector('video');
+            return (v && qualityTier(v.videoWidth, v.videoHeight)) || '1080';
+          },
+          select: select
+        });
+        playerEl.addEventListener('loaded-metadata', function() { ctl.refresh(); });
+        select(readQualityPref());
+        ctl.refresh();
+      }).catch(function() { /* keep the 1080p rung, no picker */ });
+    }
+
+    // Vidstack names each quality by pixel height, so 4K reads "2160p" and
+    // vertical films read "3840p" / "1920p". Relabel its Settings > Quality
+    // menu to the 4K / 1080p names the hero picker uses.
+    function relabelVidstackQualities() {
+      var mp = modalPlayerWrap.querySelector('media-player');
+      var q = mp && mp.qualities;
+      if (!q || !q.length) return;
+      var names = {};
+      for (var i = 0; i < q.length; i++) {
+        names[q[i].height] = tierLabel(qualityTier(q[i].width, q[i].height));
+      }
+      var nodes = document.querySelectorAll('.vds-quality-menu .vds-radio-label, .vds-quality-menu > media-menu-button [data-part="hint"]');
+      for (var n = 0; n < nodes.length; n++) {
+        var before = nodes[n].textContent;
+        var after = before.replace(/(\d{3,4})p/g, function(m, h) { return names[h] || m; });
+        if (after !== before) nodes[n].textContent = after;
+      }
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(function() {
+        if (modalOverlay.classList.contains('active')) relabelVidstackQualities();
+      }).observe(document.body, { subtree: true, childList: true, characterData: true });
+    }
 
     function configureHls(playerEl) {
       playerEl.addEventListener('provider-change', function(e) {
@@ -1070,6 +1602,7 @@
           provider.config = HLS_CONFIG;
         }
       });
+      wireModalQuality(playerEl);
 
       // Mutual exclusion: when this player starts playing, pause every other
       // <media-player> on the page. Prevents audio overlap from a couple
@@ -1190,14 +1723,19 @@
           '  <div class="hero-info">' +
           '    <span class="hero-title">' + escapeHtml(h.title) + '</span>' +
           (h.duration ? '    <span class="hero-duration">' + escapeHtml(h.duration) + '</span>' : '') +
+          '    <div class="fi-quality-slot"></div>' +
           '  </div>' +
           '</div>';
       }
       stack.innerHTML = html;
 
-      var videos = stack.querySelectorAll('video[data-hls]');
-      for (var v = 0; v < videos.length; v++) {
-        attachHls(videos[v], videos[v].getAttribute('data-hls'));
+      var heroCards = stack.querySelectorAll('.hero-card');
+      for (var hv = 0; hv < heroCards.length; hv++) {
+        attachHeroPlayer(
+          heroCards[hv].querySelector('video[data-hls]'),
+          heroCards[hv].getAttribute('data-hero-id'),
+          heroCards[hv].querySelector('.fi-quality-slot')
+        );
       }
 
       // Wire overlay click + Enter/Space keyboard activation. Pattern from the
@@ -1354,14 +1892,18 @@
 
       modalPlayerWrap.innerHTML = createPlayerHtml({
         title: title,
-        src: hlsUrl(videoId),
+        src: modalSrc(videoId),
         poster: thumbUrl(videoId),
         autoplay: true,
         storage: 'fi-modal'
       });
 
+      forgetQualityControls(document.getElementById('modal-quality'));
       var player = modalPlayerWrap.querySelector('media-player');
-      if (player) configureHls(player);
+      if (player) {
+        player.__fiVideoId = videoId;
+        configureHls(player);
+      }
 
       modalTitle.textContent = title;
       modalOverlay.classList.add('active');
@@ -1389,7 +1931,7 @@
 
     function loadPlaylistVideo(index) {
       var item = PLAYLIST[index];
-      var newSrc = hlsUrl(item.id);
+      var newSrc = modalSrc(item.id);
       var newPoster = thumbUrl(item.id);
 
       var player = modalPlayerWrap.querySelector('media-player');
@@ -1415,6 +1957,9 @@
           posterEl.style.display = '';
         }
         player.setAttribute('title', item.title);
+        player.__fiQualityReady = false;
+        player.__fiVideoId = item.id;
+        forgetQualityControls(document.getElementById('modal-quality'));
         player.setAttribute('src', newSrc);
         modalTitle.textContent = item.title;
         return;
@@ -1429,8 +1974,10 @@
         storage: 'fi-playlist'
       });
 
+      forgetQualityControls(document.getElementById('modal-quality'));
       player = modalPlayerWrap.querySelector('media-player');
       if (player) {
+        player.__fiVideoId = item.id;
         configureHls(player);
 
         // Per-clip mutable state stored on the element. The reuse branch
@@ -1520,8 +2067,13 @@
         try { previousFocus.focus(); } catch (e) { /* element may have been replaced */ }
       }
       previousFocus = null;
+      var closing = modalPlayerWrap.querySelector('media-player');
+      if (closing) closing.__fiQualityReady = false;
+      forgetQualityControls(document.getElementById('modal-quality'));
       // Give transition time to finish before clearing
       setTimeout(function() {
+        // A film reopened inside the 300 ms window owns the wrap now.
+        if (modalOverlay.classList.contains('active')) return;
         modalPlayerWrap.innerHTML = '';
         modalPlayerWrap.classList.remove('has-playlist');
         playlistBar.classList.remove('visible');
