@@ -538,6 +538,34 @@
       margin-left: 8px;
     }
 
+    .sms-optin {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin: 18px 0 4px;
+    }
+    .sms-optin input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .sms-optin label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+    .sms-optin-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 4px 0 0;
+      line-height: 1.5;
+    }
+    .signature-section.locked .sms-optin { display: none; }
+
     .sig-footer-note {
       font-size: 13px;
       color: var(--text-muted);
@@ -1207,6 +1235,14 @@
         </p>
         <h4>Limit of Liability</h4>
         <p>Maximum damages shall not exceed the Total Cost of Services. In the event of lost product, Videographer shall refund a pro-rated portion based on Services completed. Client agrees to indemnify and hold harmless Videographer for any injury, property damage, or liability arising from Services provided. Claims must be brought to Videographer's attention within one (1) week of receiving the final product.</p>
+        <!-- SMS consent clause (Sean, 2026-09-30). Shown to every couple who
+             has not signed yet. applySignedState() hides it for couples who
+             signed before SMS_CLAUSE_SINCE, so an already-signed agreement
+             never changes. Mirrors D1 contract_templates 'wedding-filming'. -->
+        <div id="sms-terms-clause">
+          <h4>Text Messages and Calls</h4>
+          <p>Client agrees that Videographer may contact Client, and Client's partner, by text message (including photos and video links), phone call and email at the numbers and addresses provided, including through automated systems. Messages may include booking and payment reminders, scheduling, questionnaire and timeline requests, wedding day coordination, film delivery, and requests for reviews or referrals, before and after the wedding. Client confirms each number provided belongs to Client or Client's partner. Message frequency varies. Message and data rates may apply. Reply STOP at any time to opt out, or HELP for help.</p>
+        </div>
         <h4>General Provisions</h4>
         <p>Governing Law: State of Wisconsin. Severability: If any portion is deemed unenforceable, remaining provisions remain in force. Notice: Via email to addresses listed above. Merger: This Agreement is the final, exclusive agreement between Parties. Amendment: Only by written consent via proper notice.</p>
       </div>
@@ -1265,6 +1301,17 @@
               <button type="button" class="sig-clear" onclick="sigPad2 && sigPad2.clear(); updateSignButton();">Clear</button>
             </div>
             <p class="sig-type-legal" style="margin-top: 6px;">Use your finger or mouse to sign.</p>
+          </div>
+        </div>
+
+        <!-- Optional marketing SMS opt-in (Sean, 2026-09-30). Unchecked by
+             default, never required, never gates the sign button. Sent as
+             sms_marketing_opt_in only when ticked. Hidden once signed. -->
+        <div class="sms-optin" id="sms-optin">
+          <input type="checkbox" id="sms-marketing-checkbox">
+          <div>
+            <label for="sms-marketing-checkbox">Yes, also text me occasional offers and anniversary updates.</label>
+            <p class="sms-optin-note">Not required to book.</p>
           </div>
         </div>
 
@@ -2150,6 +2197,17 @@
     return !!(DATA && SIGNED_STATES.indexOf(DATA.agreement_state) !== -1);
   }
 
+  // Moment the "Text Messages and Calls" clause joined the agreement. Set to
+  // when the D1 clause SQL ran and this shell went live (keep the same value
+  // in agreement-signed.html and iris-automation src/lib/sms-clause.ts).
+  // Signed before it, or no signed time on record:
+  // the clause stays hidden so the signed agreement never changes.
+  const SMS_CLAUSE_SINCE = Date.parse('2026-10-01T00:53:00Z');
+  function signedUnderSmsClause(signedAtMs) {
+    const t = Number(signedAtMs);
+    return !!t && t >= SMS_CLAUSE_SINCE;
+  }
+
   function formatSignedDate(ms) {
     if (!ms) return '';
     try {
@@ -2191,6 +2249,13 @@
     // Great Vibes so the couple can see the signature they already gave.
     const sigSection = document.getElementById('signature-section');
     if (sigSection) sigSection.classList.add('locked');
+
+    // An agreement signed before the SMS clause went live keeps showing the
+    // terms it was signed under: hide the clause for those couples.
+    if (!signedUnderSmsClause(DATA.client_signed_at)) {
+      const smsClause = document.getElementById('sms-terms-clause');
+      if (smsClause) smsClause.style.display = 'none';
+    }
     const sig1 = document.getElementById('sig-type-1');
     const sig2 = document.getElementById('sig-type-2');
     if (sig1) {
@@ -2307,6 +2372,12 @@
           payload.signer2_signature_type = 'typed';
           payload.signer2_signature_data = name2;
         }
+      }
+
+      // Optional marketing SMS opt-in: sent only when ticked, never required.
+      const smsMarketingCheckbox = document.getElementById('sms-marketing-checkbox');
+      if (smsMarketingCheckbox && smsMarketingCheckbox.checked) {
+        payload.sms_marketing_opt_in = true;
       }
 
       const resp = await fetch(API_BASE + '/api/agreement/' + encodeURIComponent(TOKEN) + '/sign', {
