@@ -53,7 +53,7 @@ Operational truth lives inside `delivery/`: `delivery/README.md` (setup), `deliv
 
 - Quality ladder: 4k + 1080p HLS, NVENC (`delivery/scripts/transcode.ps1`), uploaded via rclone remote `r2fi` to bucket `fi-films` (`upload.ps1`).
 - Page generation: `delivery/generate-film-page.js` + `generate-batch.js` from the template `delivery/templates/couple-page.html`. Live sample config: `delivery/sample/avery-jordan.json` (field names there are canonical; older docs showing `names`/`date` arrays are dead).
-- Player: Vidstack, version-pinned in the template (currently @1.15.5). Container-only CSS; never `!important` or `aspect-ratio` on the player element (see delivery/RUNBOOK.md).
+- Player: Vidstack, version-pinned in the template (currently @1.15.4; the CDN build of 1.15.5 has a bare "fscreen" import and never defines the player, so never pin it). Container-only CSS; never `!important` or `aspect-ratio` on the player element (see delivery/RUNBOOK.md).
 - Streaming worker: `delivery/workers/video-serve/` serves video.flyiniris.com (HLS, thumbs, password auth, signed downloads).
 - Studio attaches delivery video on delivery day via a load-time D1 read (`delivery_video_config`); pages are batch pre-generated ahead of time and never redeployed for video attach.
 

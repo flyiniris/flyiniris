@@ -2,14 +2,14 @@
 // storage is origin-wide while each SW is scoped to /films/<slug>/, so a
 // shared name let couples at different template versions delete each
 // other's caches during staggered rollouts (audit 2026-06-09).
-const CACHE_NAME = 'fi-shell-matt-haley-v25';
+const CACHE_NAME = 'fi-shell-matt-haley-v26';
 const SHELL_ASSETS = [
   './',
   // Pinned to match the couple-page.html Vidstack pin. Precaching the
   // unversioned URLs cached assets the page never requests.
-  'https://cdn.vidstack.io/player/theme.css@1.15.5',
-  'https://cdn.vidstack.io/player/video.css@1.15.5',
-  'https://cdn.vidstack.io/player@1.15.5'
+  'https://cdn.vidstack.io/player/theme.css@1.15.4',
+  'https://cdn.vidstack.io/player/video.css@1.15.4',
+  'https://cdn.vidstack.io/player@1.15.4'
 ];
 
 self.addEventListener('install', (event) => {

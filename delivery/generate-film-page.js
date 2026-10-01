@@ -374,11 +374,20 @@ function main() {
   // second argument lets $-sequences ($&, $', $1...) in couple names, titles,
   // or JSON corrupt the output silently (audit 2026-06-09, corr-eff low #6).
   const stamp = (value) => () => value;
+  // Business pages hide the category tag (bonus, highlight, archival) on film
+  // cards; it is wedding-delivery vocabulary. Couple pages stamp nothing here,
+  // so their output is unchanged. Lines follow the template's line endings.
+  const eol = htmlTemplate.includes('\r\n') ? '\r\n' : '\n';
+  const kindCss = isBusiness
+    ? '    /* Business page: no category tag on film cards */' + eol +
+      '    .film-card-tag { display: none; }' + eol
+    : '';
   let html = htmlTemplate
     .replace(/\{\{META_DESCRIPTION\}\}/g, stamp(metaDescription))
     .replace(/\{\{OG_DESCRIPTION\}\}/g, stamp(ogDescription))
     .replace(/\{\{HERO_SUBTITLE\}\}/g, stamp(heroSubtitle))
     .replace(/\{\{PENDING_SUB_JS\}\}/g, stamp(jsString(pendingSub)))
+    .replace(/\{\{KIND_CSS\}\}/g, stamp(kindCss))
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
     .replace(/\{\{DATE_LONG\}\}/g, stamp(eventDate))
     .replace(/\{\{DATE_SHORT\}\}/g, stamp(dateShort))
