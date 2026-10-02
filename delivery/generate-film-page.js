@@ -466,7 +466,9 @@ function main() {
   // for every page without eventLinks, so their output is unchanged.
   const escHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const eventLinks = isBusiness && Array.isArray(config.eventLinks) ? config.eventLinks : [];
-  const eventLinksHtml = eventLinks.length === 0 ? '' : [
+  // Optional small note on a business page (e.g. "still a work in progress").
+  const notice = isBusiness && typeof config.notice === 'string' && config.notice.trim() ? config.notice.trim() : '';
+  const eventLinksHtml = eventLinks.length === 0 && !notice ? '' : [
     '  <!-- ========== Event Pages ========== -->',
     '  <style>',
     '    .event-links { padding: 0 24px 8px; }',
@@ -479,9 +481,11 @@ function main() {
     '    .event-link-title { font-family: \'Cormorant Garamond\', serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; margin: 0 0 6px; }',
     '    .event-link-sub { font-family: \'Outfit\', sans-serif; font-size: .95rem; color: rgba(245, 240, 235, .72); margin: 0; }',
     '    .event-link-cta { font-family: \'Outfit\', sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #FFBD1D; color: #0A0A0A; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }',
+    '    .client-notice { justify-self: center; text-align: center; font-family: \'Outfit\', sans-serif; font-size: .78rem; letter-spacing: .06em; color: rgba(245, 240, 235, .62); border: 1px dashed rgba(245, 240, 235, .28); border-radius: 999px; padding: 7px 16px; margin: 0 auto 6px; }',
     '  </style>',
     '  <section class="event-links" id="event-links">',
     '    <div class="container">',
+    ...(notice ? ['      <p class="client-notice">' + escHtml(notice) + '</p>'] : []),
     ...eventLinks.map((l) =>
       '      <a class="event-link reveal" href="' + escHtml(l.href) + '"' +
       (l.image ? ' style="background-image: url(&quot;' + escHtml(l.image) + '&quot;)"' : '') + '>' +
