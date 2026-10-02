@@ -128,6 +128,7 @@ check_contains "_headers" "connect-src[^;]*bzr\.openai\.com"    "bzr.openai.com 
 check_contains "_headers" "connect-src[^;]*bzrcdn\.openai\.com" "bzrcdn.openai.com in connect-src"
 check_contains "_headers" "img-src[^;]*bzr\.openai\.com"        "bzr.openai.com in img-src"
 check_contains "fi-oaiq.js" "bzrcdn\.openai\.com/sdk/oaiq\.min\.js" "OpenAI pixel SDK loader"
+check_contains "fi-oaiq.js" "\"page_viewed\"" "OpenAI pixel page_viewed event"
 for pg in index.html start.html quiz/index.html; do
   check_contains "$pg" "/fi-oaiq\.js"   "ChatGPT Ads pixel include"
   check_contains "$pg" "lead_created"   "ChatGPT Ads lead_created event"
