@@ -3,7 +3,7 @@
  * Loader + init per https://developers.openai.com/ads/measurement-pixel.
  * Included near the top of <head> on the three inquiry pages (index, /start, /quiz)
  * so the oppref click id from an ad landing is captured into the __oppref cookie.
- * The inquiry submit handlers call oaiq("measure", "lead_created", ...) next to the
+ * Every page load sends page_viewed. The inquiry submit handlers call oaiq("measure", "lead_created", ...) next to the
  * Meta Lead event, reusing the same event id.
  * CSP: bzrcdn.openai.com (script-src, connect-src) and bzr.openai.com (connect-src,
  * img-src) are in _headers. The pre-push tag manifest checks both.
@@ -26,3 +26,8 @@
 oaiq("init", {
   pixelId: "Dmmq7HbdA8e75N8dBSfWk7",
 });
+
+// 2026-10-02: init alone sends only an SDK lifecycle ping, never a page view,
+// so OpenAI saw no landing visits. page_viewed (type "contents") is the
+// documented standard event for a page load.
+oaiq("measure", "page_viewed", { type: "contents" });
