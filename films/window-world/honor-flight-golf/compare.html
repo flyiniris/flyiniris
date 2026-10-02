@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex"><title>Phone vs plain video | test</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<style>
+:root{--ease:cubic-bezier(.22,.61,.36,1);--royal:#0B2B90}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#0E1328;color:#F8F5EE;font-family:Montserrat,system-ui,sans-serif;padding:40px 16px}
+h1{text-align:center;font-size:1.4rem;margin:0 0 8px}
+p.sub{text-align:center;color:rgba(248,245,238,.68);margin:0 0 36px;font-size:.95rem}
+.row{display:flex;gap:48px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+figure{margin:0;width:300px}
+figcaption{text-align:center;margin-top:16px;font-weight:600}
+figcaption span{display:block;font-weight:400;font-size:.85rem;color:rgba(248,245,238,.68);margin-top:4px}
+.bare{width:100%;aspect-ratio:9/16;background:#000;display:block}
+.bare.rounded{border-radius:16px}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:62px;height:62px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:var(--royal);display:grid;place-items:center}
+.play svg{width:24px;height:24px;margin-left:4px;fill:#fff}
+/* ---------- Phone frame (adapted from the MKE Web Labs site) ---------- */
+    .phone {
+      position: relative; width: 100%; max-width: 300px; margin-inline: auto;
+      padding: 8px; border-radius: 40px;
+      background: linear-gradient(160deg, #4A4A4E 0%, #232326 18%, #1A1A1D 50%, #2E2E32 82%, #4A4A4E 100%);
+      box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 26px 50px -18px rgba(0,0,0,.85), 0 3px 10px rgba(0,0,0,.5);
+      transition: transform .35s var(--ease); cursor: pointer;
+    }
+    .phone:hover { transform: translateY(-5px); }
+    .phone::before, .phone::after { content: ""; position: absolute; left: -2px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, #3A3A3E, #1A1A1D); pointer-events: none; }
+    .phone::before { top: 23%; height: 5%; }
+    .phone::after { top: 32%; height: 9%; }
+    .phone-screen { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 32px; overflow: hidden; background: #000; }
+    .phone-status {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 3; height: 40px;
+      background: linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,0));
+      display: flex; align-items: center; justify-content: space-between; padding: 0 18px;
+      font: 600 11px/1 system-ui, sans-serif; color: #F2F2F4; font-variant-numeric: tabular-nums; pointer-events: none;
+    }
+    .phone-island { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 33%; height: 22px; border-radius: 99px; background: #000; }
+    .phone-bars { display: flex; align-items: center; gap: 3px; }
+    .phone-bars i { display: block; width: 3px; border-radius: 1px; background: #F2F2F4; }
+    .phone-bars i:nth-child(1) { height: 4px; } .phone-bars i:nth-child(2) { height: 6px; }
+    .phone-bars i:nth-child(3) { height: 8px; } .phone-bars i:nth-child(4) { height: 10px; }
+    .phone-batt { width: 19px; height: 10px; border: 1px solid rgba(242,242,244,.55); border-radius: 3px; position: relative; margin-left: 4px; box-sizing: content-box; }
+    .phone-batt::before { content: ""; position: absolute; inset: 1.5px; width: 11px; background: #F2F2F4; border-radius: 1px; }
+    .phone-media { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .phone-media video, .phone-media .cover { width: 100%; height: 100%; object-fit: cover; background: #000 center / cover no-repeat; }
+    .phone .play { width: 62px; height: 62px; }
+    .phone .dur { right: 50%; transform: translateX(50%); bottom: 16px; }
+    .phone-glare { position: absolute; inset: 8px; border-radius: 32px; pointer-events: none; z-index: 4; background: linear-gradient(125deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 32%); }
+    .playing .phone-glare { display: none; }
+    .phone-cap { text-align: center; margin-top: 20px; }
+    .phone-cap h3 { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin: 0 0 2px; }
+    .phone-cap p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+    .phone-cap .links { justify-content: center; gap: 6px; }
+    .phone-cap .links .chip:not(.chip-dl) { padding: 6px 10px; font-size: .72rem; gap: 5px; }
+    .phone-cap .links .chip-dl { flex-basis: 100%; justify-content: center; max-width: 220px; margin: 0 auto 2px; }
+
+    
+.phone-media video{width:100%;height:100%;object-fit:cover}
+</style></head><body>
+<h1>The What (Vertical): phone frame vs. plain video</h1>
+<p class="sub">All three play the same R2 stream at the same width. Tap any one to play.</p>
+<div class="row">
+  <figure>
+    <div class="phone"><div class="phone-screen">
+      <div class="phone-status" aria-hidden="true"><span>9:41</span><span class="phone-island"></span><span class="phone-bars"><i></i><i></i><i></i><i></i><span class="phone-batt"></span></span></div>
+      <div class="phone-media"><video id="v1" playsinline controls preload="metadata"></video></div>
+    </div><span class="phone-glare" aria-hidden="true"></span></div>
+    <figcaption>In the phone frame<span>What the event page shows now</span></figcaption>
+  </figure>
+  <figure>
+    <video class="bare" id="v2" playsinline controls preload="metadata"></video>
+    <figcaption>Plain video, square corners<span>The raw R2 video, nothing around it</span></figcaption>
+  </figure>
+  <figure>
+    <video class="bare rounded" id="v3" playsinline controls preload="metadata"></video>
+    <figcaption>Plain video, rounded corners<span>A middle option</span></figcaption>
+  </figure>
+</div>
+<script>
+var SRC='https://video.flyiniris.com/couples/window-world/hls/honor-flight-golf-the-what-vertical/master.m3u8';
+var POSTER='https://video.flyiniris.com/couples/window-world/thumbs/honor-flight-golf-the-what-vertical.poster.jpg?v=2';
+['v1','v2','v3'].forEach(function(id){
+  var v=document.getElementById(id); v.poster=POSTER;
+  if(window.Hls&&Hls.isSupported()){var h=new Hls();h.loadSource(SRC);h.attachMedia(v);}else{v.src=SRC;}
+  v.addEventListener('play',function(){document.querySelectorAll('video').forEach(function(o){if(o!==v)o.pause();});});
+});
+</script></body></html>
