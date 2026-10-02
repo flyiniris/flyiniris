@@ -1196,12 +1196,25 @@
     // Auto cap and a 4K pick in a small window.
     var QUALITY_KEY = 'fi-quality:' + SLUG;
     var qualityControls = [];
+    // Default with no saved choice: 4K on a computer (fine pointer, big
+    // screen, no data saver), Auto (1080p cap) on phones and tablets, where
+    // the screen cannot show 4K and the stream costs ~3x the data (Sean
+    // 2026-10-02). A saved choice, including Auto, always wins.
+    function defaultQuality() {
+      try {
+        var conn = navigator.connection || {};
+        if (conn.saveData) return 'auto';
+        var computer = window.matchMedia && window.matchMedia('(pointer: fine) and (hover: hover)').matches &&
+          Math.max(screen.width, screen.height) >= 1280;
+        return computer ? '2160' : 'auto';
+      } catch (e) { return 'auto'; }
+    }
     function readQualityPref() {
       try {
         var v = window.localStorage.getItem(QUALITY_KEY);
-        if (v === '2160' || v === '1080') return v;
-      } catch (e) { /* storage blocked: default to Auto */ }
-      return 'auto';
+        if (v === '2160' || v === '1080' || v === 'auto') return v;
+      } catch (e) { /* storage blocked: fall through to the default */ }
+      return defaultQuality();
     }
     function writeQualityPref(v) {
       try { window.localStorage.setItem(QUALITY_KEY, v); } catch (e) { /* ignore */ }
