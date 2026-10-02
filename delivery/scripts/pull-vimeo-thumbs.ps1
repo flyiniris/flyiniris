@@ -175,6 +175,12 @@ foreach ($entry in $VideoIdMap.GetEnumerator() | Sort-Object Key) {
     }
 
     $largest = $videoMeta.pictures.sizes | Sort-Object width -Descending | Select-Object -First 1
+    # Prefer the original upload (base_link): Vimeo lists only 16:9 sizes, so
+    # for a vertical video the largest listed size is a pillarboxed ~607px
+    # strip. base_link keeps Sierra's poster at native size and shape.
+    if ($videoMeta.pictures.base_link) {
+        $largest = [pscustomobject]@{ link = ($videoMeta.pictures.base_link -split '\?')[0] }
+    }
     if (-not $largest -or -not $largest.link) {
         Write-Host " FAILED (no usable size variant)" -ForegroundColor Red
         $failCount++
