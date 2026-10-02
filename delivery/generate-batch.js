@@ -133,6 +133,7 @@ function main() {
           ...(c.eventDate !== undefined ? { eventDate: c.eventDate } : {}),
           ...(c.eventLinks !== undefined ? { eventLinks: c.eventLinks } : {}),
           ...(c.theme !== undefined ? { theme: c.theme } : {}),
+          ...(c.notice !== undefined ? { notice: c.notice } : {}),
           videos: [],
         }
       : {
