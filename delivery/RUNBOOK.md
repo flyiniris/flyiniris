@@ -204,6 +204,15 @@ The film intake Worker accepts a client film with no contact or date
 only offers booked couples, so a client film is submitted by Claude for now
 (how Window World went in, 2026-10-01).
 
+Event pages for a client: a business config may carry `eventLinks`
+(`[{ "title", "href", "subtitle"?, "image"? }]`), rendered as cards between the
+hero and the hero films. Window World's config is `delivery/live/window-world.json`;
+regenerate it with
+`node delivery/generate-batch.js delivery/live/window-world.json`.
+The event page itself (films/window-world/honor-flight-golf/) is a static page
+built outside this repo (Claude Projects/window-world-honor-flight-golf/build-page.py);
+its photos live on the public fi-assets bucket under clients/<slug>/<event>/photos/.
+
 ## When the template changes
 
 If you edit `delivery/templates/couple-page.html` (layout, player, etc.):
