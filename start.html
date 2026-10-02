@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
   <script src="/fi-attribution.js"></script>
+  <!-- ChatGPT Ads measurement pixel (OpenAI); lead_created fires on inquiry submit -->
+  <script src="/fi-oaiq.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Here | Flyin' Iris</title>
   <meta name="description" content="Check your date, see the films that match your day, and get your exact wedding film pricing from Sierra &amp; Sean at Flyin' Iris.">
@@ -1065,6 +1067,7 @@
       }).then(function() {
         ga('inquiry_submitted', { form_name: 'start_flow_waitlist' });
         if (typeof fbq === 'function') { fbq('track', 'Lead', {}, { eventID: built.eventId }); }
+        try { if (typeof oaiq === 'function') { oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: built.eventId }); } } catch (e) {}
         state.waitlistBusy = false;
         state.waitlisted = true;
         clearDraft();
@@ -1101,6 +1104,7 @@
       }).then(function(result) {
         ga('inquiry_submitted', { form_name: 'start_flow' });
         if (typeof fbq === 'function') { fbq('track', 'Lead', {}, { eventID: built.eventId }); }
+        try { if (typeof oaiq === 'function') { oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: built.eventId }); } } catch (e) {}
         state.sessionToken = (result && result.session_token) || '';
         if (state.sessionToken) {
           try { localStorage.setItem('fi_session_token', state.sessionToken); } catch (e) {}

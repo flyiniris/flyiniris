@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
   <script src="/fi-attribution.js"></script>
+  <!-- ChatGPT Ads measurement pixel (OpenAI); lead_created fires on inquiry submit -->
+  <script src="/fi-oaiq.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Milwaukee Wedding Videographer | Cinematic Wedding Films | Flyin' Iris</title>
   <meta name="description" content="Milwaukee husband-and-wife wedding videographers crafting cinematic wedding films across Wisconsin. 5.0 stars, 100+ love stories filmed. Now booking 2026 & 2027.">
@@ -3452,6 +3454,7 @@
             }).then(function(result) {
               if (window.dataLayer) { dataLayer.push({ event: "inquiry_submitted", form_name: "short_inquiry" }); }
               if (typeof fbq === "function") { fbq("track", "Lead", {}, { eventID: inqEventId }); }
+              try { if (typeof oaiq === "function") { oaiq("measure", "lead_created", { type: "customer_action" }, { event_id: inqEventId }); } } catch (e) { /* ignore */ }
               clearInquiryDraft();
               var sessionToken = (result && result.session_token) || '';
               if (sessionToken) {
