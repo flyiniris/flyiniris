@@ -31,6 +31,58 @@ const HERO_MAX = 5;
 const KINDS = ['couple', 'business'];
 const BUSINESS_DEFAULT_SUBTITLE = "Films by Flyin' Iris";
 
+// Business theme: a client page wears the client's brand (colors, font,
+// logo); Flyin' Iris stays only as the footer signature. Colors are mapped
+// from the template's palette ({ "#FFBD1D": "#6EC1F8", ... }), rgba() forms
+// of the same colors included. Couple pages never take this path.
+function hexToRgbList(hex) {
+  const n = hex.replace('#', '');
+  return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
+}
+function applyBusinessTheme(html, theme, clientName) {
+  const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let out = html;
+  for (const [from, to] of Object.entries(theme.colors || {})) {
+    out = out.replace(new RegExp(from, 'gi'), () => to);
+    const [r, g, b] = hexToRgbList(from);
+    const [r2, g2, b2] = hexToRgbList(to);
+    out = out.replace(new RegExp('rgba\\(\\s*' + r + '\\s*,\\s*' + g + '\\s*,\\s*' + b + '\\s*,', 'g'), () => 'rgba(' + r2 + ', ' + g2 + ', ' + b2 + ',');
+  }
+  if (theme.font) {
+    const f = theme.font;
+    out = out
+      .replace(/'Cormorant Garamond', serif/g, () => "'" + f + "', sans-serif")
+      .replace(/'Outfit', sans-serif/g, () => "'" + f + "', sans-serif")
+      .replace(/https:\/\/fonts\.googleapis\.com\/css2\?[^"]*/, () =>
+        'https://fonts.googleapis.com/css2?family=' + f.replace(/ /g, '+') + ':wght@300;400;500;600;700;800&amp;family=Cormorant+Garamond:wght@500;600&amp;display=swap');
+  }
+  // Title and share title carry the client, not the studio.
+  out = out.replace(/(<title>[^<]*?) \| Flyin' Iris<\/title>/, (m, a) => a + ' | Films</title>')
+    .replace(/(<meta property="og:title" content="[^"]*?) \| Flyin' Iris"/, (m, a) => a + ' | Films"');
+  if (theme.logo) {
+    const logo = esc(theme.logo);
+    const alt = esc(theme.logoAlt || clientName);
+    out = out.replace(/<span class="nav-logo">Flyin' Iris<\/span>/, () => '<span class="nav-logo"><img src="' + logo + '" alt="' + alt + '"></span>')
+      .replace(/<h1 class="hero-names">([^<]*)<\/h1>/, (m, name) => '<h1 class="hero-names"><img class="hero-logo" src="' + logo + '" alt="' + alt + '"><span class="visually-hidden">' + name + '</span></h1>');
+  }
+  // Footer: the studio signature, in the studio's own type and gold.
+  out = out.replace(/<p class="footer-logo">Flyin' Iris<\/p>/, () => '<p class="footer-by">Films by</p><p class="footer-logo">Flyin\' Iris</p>');
+  const css = [
+    '  <style>',
+    '    /* Business theme overrides (generated) */',
+    '    .nav-logo img { height: 30px; width: auto; display: block; }',
+    '    .hero-names .hero-logo { width: min(340px, 72vw); height: auto; display: block; margin: 0 auto; }',
+    '    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }',
+    '    .section-title, .event-link-title { font-weight: 700; letter-spacing: -0.01em; }',
+    '    .footer-by { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; opacity: .7; margin: 0 0 4px; }',
+    "    .footer-logo { font-family: 'Cormorant Garamond', serif; color: #FFBD1D; }",
+    '  </style>',
+    '</head>',
+  ].join('\n');
+  out = out.replace('</head>', () => css);
+  return out;
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   const out = {
@@ -191,6 +243,18 @@ function validateConfig(config, configPath) {
     }
     if (legacyFeaturedCount > 0) {
       console.warn(`  warning: ${legacyFeaturedCount} video(s) still carry the deprecated 'featured: true' field. Migrate to 'hero: true' per delivery-page-standard.md Section 4.5. The field is preserved in the output but no longer drives rendering.`);
+    }
+  }
+
+  if (config.theme !== undefined) {
+    if (kind !== 'business') errors.push("'theme' is only supported for kind business");
+    else if (!config.theme || typeof config.theme !== 'object') errors.push("'theme' must be an object");
+    else {
+      Object.entries(config.theme.colors || {}).forEach(([a, b]) => {
+        if (!/^#[0-9a-fA-F]{6}$/.test(a) || !/^#[0-9a-fA-F]{6}$/.test(b)) errors.push(`theme.colors entries must be #RRGGBB pairs (got ${a}: ${b})`);
+      });
+      if (config.theme.logo !== undefined && !/^(\/|https:\/\/)/.test(config.theme.logo)) errors.push('theme.logo must start with / or https://');
+      if (config.theme.font !== undefined && !/^[A-Za-z ]+$/.test(config.theme.font)) errors.push('theme.font must be a Google Font family name');
     }
   }
 
@@ -449,6 +513,8 @@ function main() {
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, stamp(ogVideoId))
     .replace(/\{\{CONFIG_API_BASE\}\}/g, stamp(configApiBase))
     .replace(/\{\{YEAR\}\}/g, stamp(year));
+
+  if (isBusiness && config.theme) html = applyBusinessTheme(html, config.theme, displayName);
 
   let manifest = manifestTemplate
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Window World | Flyin' Iris</title>
+  <title>Window World | Films</title>
   <meta name="description" content="Watch Window World's films, streamed in cinematic quality by Flyin' Iris.">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#0E1328">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Window World | Flyin' Iris">
+  <meta property="og:title" content="Window World | Films">
   <meta property="og:description" content="Watch Window World's films by Flyin' Iris">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.flyiniris.com/films/window-world/">
@@ -25,7 +25,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;family=Cormorant+Garamond:wght@500;600&amp;display=swap" rel="stylesheet">
 
   <!-- Google Cast SDK (for Chromecast support). async: the sender library
        is built for async load (it announces readiness via the
@@ -47,9 +47,9 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: #0A0A0A;
-      color: #F5F0EB;
-      font-family: 'Outfit', sans-serif;
+      background: #0E1328;
+      color: #F8F5EE;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       line-height: 1.6;
       overflow-x: hidden;
@@ -77,7 +77,7 @@
 
     /* ========== Typography ========== */
     h1, h2, h3 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       line-height: 1.2;
     }
@@ -104,21 +104,21 @@
       transition: background 0.25s ease, padding 0.25s ease;
     }
     .navbar.scrolled {
-      background: rgba(10, 10, 10, 0.92);
+      background: rgba(14, 19, 40, 0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 14px 32px;
     }
     .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.1rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: #F5F0EB;
+      color: #F8F5EE;
     }
     .nav-couple {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1rem;
       letter-spacing: 0.08em;
@@ -130,10 +130,10 @@
     }
     .navbar.scrolled .nav-couple { opacity: 1; }
     .nav-date {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 0.85rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
       letter-spacing: 0.05em;
     }
 
@@ -154,34 +154,34 @@
       margin-bottom: 16px;
     }
     .hero-date {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 1.1rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 48px;
     }
     .hero-cta {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #F5F0EB;
+      color: #F8F5EE;
       background: transparent;
-      border: 1px solid #FFBD1D;
+      border: 1px solid #6EC1F8;
       border-radius: 8px;
       padding: 16px 40px;
       cursor: pointer;
       transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
     }
     .hero-cta:hover {
-      background: #FFBD1D;
-      color: #0A0A0A;
+      background: #6EC1F8;
+      color: #0E1328;
       transform: translateY(-2px);
     }
-    .hero-cta:active { transform: translateY(0); background: #D99E0A; }
+    .hero-cta:active { transform: translateY(0); background: #0099F3; }
     .hero-scroll-hint {
       position: absolute;
       bottom: 40px;
@@ -190,7 +190,7 @@
       opacity: 0.4;
       animation: float 2s ease-in-out infinite;
     }
-    .hero-scroll-hint svg { width: 24px; height: 24px; stroke: #C8C3B9; }
+    .hero-scroll-hint svg { width: 24px; height: 24px; stroke: #C9CFDF; }
     @keyframes float {
       0%, 100% { transform: translateX(-50%) translateY(0); }
       50% { transform: translateX(-50%) translateY(8px); }
@@ -203,12 +203,12 @@
     .section-label {
       display: block;
       text-align: center;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.75rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #FFBD1D;
+      color: #6EC1F8;
       margin-bottom: 12px;
     }
     .section-title {
@@ -219,7 +219,7 @@
 
     /* ========== Hero Row ========== */
     .hero-row {
-      background: #111110;
+      background: #121830;
     }
     .hero-stack {
       display: flex;
@@ -232,7 +232,7 @@
     .hero-player-wrap {
       border-radius: 8px;
       overflow: hidden;
-      border: 1px solid #2A2A28;
+      border: 1px solid #2A3358;
       position: relative;
       /* Lock the wrap shape so it does not inherit the un-upgraded
          media-player's intrinsic poster dimensions before first play.
@@ -249,18 +249,18 @@
     }
     .hero-card:hover .hero-player-wrap,
     .hero-card:focus-within .hero-player-wrap {
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+      border-color: #6EC1F8;
+      box-shadow: 0 8px 32px rgba(110, 193, 248, 0.08);
     }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
          theme.css source. --media-brand was a phantom (no effect). Set both
          names so the page works regardless of which Vidstack version the CDN
          bundle is serving. */
-      --vds-primary: #FFBD1D;
-      --vds-primary-hover: #D99E0A;
-      --vds-contrast: #F5F0EB;
-      --media-brand: #FFBD1D;
+      --vds-primary: #6EC1F8;
+      --vds-primary-hover: #0099F3;
+      --vds-contrast: #F8F5EE;
+      --media-brand: #6EC1F8;
       width: 100%;
       aspect-ratio: 16/9;
     }
@@ -269,7 +269,7 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      background: #1A1A19;
+      background: #1A2140;
     }
     /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
        treatment Featured era (commit 7621991) and re-styled to match the
@@ -285,7 +285,7 @@
       z-index: 10;
       background-size: cover;
       background-position: center;
-      background-color: #1A1A19;
+      background-color: #1A2140;
       cursor: pointer;
       transition: opacity 0.25s ease;
     }
@@ -302,7 +302,7 @@
       width: 70px;
       height: 70px;
       background: rgba(0, 0, 0, 0.5);
-      border: 2px solid #FFBD1D;
+      border: 2px solid #6EC1F8;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -318,22 +318,22 @@
       width: 28px;
       height: 28px;
       margin-left: 3px;
-      fill: #FFBD1D;
+      fill: #6EC1F8;
     }
     .hero-info {
       text-align: center;
       padding: 20px 0 0;
     }
     .hero-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.6rem;
     }
     .hero-duration {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 0.9rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
     }
 
     /* ========== Quality picker ==========
@@ -355,10 +355,10 @@
       min-height: 44px;
       padding: 8px 18px;
       background: transparent;
-      border: 1px solid #2A2A28;
+      border: 1px solid #2A3358;
       border-radius: 999px;
-      color: #F5F0EB;
-      font-family: 'Outfit', sans-serif;
+      color: #F8F5EE;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.85rem;
       letter-spacing: 0.04em;
@@ -367,10 +367,10 @@
       transition: border-color 0.2s ease;
     }
     .fi-quality-btn:hover,
-    .fi-quality-btn[aria-expanded="true"] { border-color: #FFBD1D; }
-    .fi-quality-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
-    .fi-quality-btn svg { width: 16px; height: 16px; fill: #FFBD1D; flex: none; }
-    .fi-quality-btn .fi-quality-key { color: #C8C3B9; }
+    .fi-quality-btn[aria-expanded="true"] { border-color: #6EC1F8; }
+    .fi-quality-btn:focus-visible { outline: 2px solid #6EC1F8; outline-offset: 2px; }
+    .fi-quality-btn svg { width: 16px; height: 16px; fill: #6EC1F8; flex: none; }
+    .fi-quality-btn .fi-quality-key { color: #C9CFDF; }
     .fi-quality-menu {
       position: absolute;
       top: calc(100% + 6px);
@@ -379,8 +379,8 @@
       z-index: 30;
       min-width: 180px;
       padding: 6px;
-      background: #141413;
-      border: 1px solid #2A2A28;
+      background: #141A33;
+      border: 1px solid #2A3358;
       border-radius: 8px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
       text-align: left;
@@ -397,24 +397,24 @@
       background: none;
       border: none;
       border-radius: 6px;
-      color: #F5F0EB;
-      font-family: 'Outfit', sans-serif;
+      color: #F8F5EE;
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.9rem;
       text-align: left;
       cursor: pointer;
     }
     .fi-quality-opt:hover,
-    .fi-quality-opt:focus-visible { background: rgba(255, 189, 29, 0.12); outline: none; }
+    .fi-quality-opt:focus-visible { background: rgba(110, 193, 248, 0.12); outline: none; }
     .fi-quality-opt .fi-quality-check {
       width: 14px;
       height: 14px;
-      border: 1px solid #5A5853;
+      border: 1px solid #5A6385;
       border-radius: 50%;
       flex: none;
     }
     .fi-quality-opt[aria-checked="true"] .fi-quality-check {
-      border-color: #FFBD1D;
-      background: radial-gradient(circle, #FFBD1D 0 45%, transparent 50%);
+      border-color: #6EC1F8;
+      background: radial-gradient(circle, #6EC1F8 0 45%, transparent 50%);
     }
     .fi-quality-modal { text-align: left; }
     .fi-quality-modal .fi-quality-menu { left: 0; transform: none; }
@@ -422,8 +422,8 @@
     /* Brand-align Vidstack player UI typography (title, button text, etc.).
        SVG icons are unaffected by font changes. */
     media-player {
-      font-family: 'Outfit', sans-serif;
-      color: #F5F0EB;
+      font-family: 'Montserrat', sans-serif;
+      color: #F8F5EE;
     }
 
     /* ========== Archival Collection ========== */
@@ -436,28 +436,28 @@
       position: relative;
       border-radius: 8px;
       overflow: hidden;
-      background: #161615;
-      border: 1px solid #2A2A28;
+      background: #161D37;
+      border: 1px solid #2A3358;
       cursor: pointer;
       transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .film-card:hover {
       transform: scale(1.03);
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+      border-color: #6EC1F8;
+      box-shadow: 0 8px 32px rgba(110, 193, 248, 0.08);
     }
     .film-card-thumb {
       aspect-ratio: 16/9;
       background-size: cover;
       background-position: center;
-      background-color: #1A1A19;
+      background-color: #1A2140;
       position: relative;
     }
     .film-card-thumb::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+      background: linear-gradient(to top, rgba(14, 19, 40,0.7) 0%, transparent 50%);
     }
     .film-card-play {
       position: absolute;
@@ -468,7 +468,7 @@
       z-index: 2;
       opacity: 0;
       transition: opacity 0.25s ease;
-      background: rgba(10, 10, 10, 0.3);
+      background: rgba(14, 19, 40, 0.3);
     }
     .film-card:hover .film-card-play,
     .film-card:focus-visible .film-card-play { opacity: 1; }
@@ -478,7 +478,7 @@
     .film-card-play svg {
       width: 48px;
       height: 48px;
-      fill: #FFBD1D;
+      fill: #6EC1F8;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
     }
     .film-card-badge {
@@ -486,12 +486,12 @@
       top: 12px;
       right: 12px;
       z-index: 2;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.7rem;
-      background: rgba(10, 10, 10, 0.75);
+      background: rgba(14, 19, 40, 0.75);
       backdrop-filter: blur(4px);
-      color: #F5F0EB;
+      color: #F8F5EE;
       padding: 4px 10px;
       border-radius: 4px;
     }
@@ -500,13 +500,13 @@
       top: 12px;
       left: 12px;
       z-index: 2;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.65rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: rgba(255, 189, 29, 0.15);
-      color: #FFBD1D;
+      background: rgba(110, 193, 248, 0.15);
+      color: #6EC1F8;
       padding: 4px 10px;
       border-radius: 4px;
     }
@@ -514,7 +514,7 @@
       padding: 16px;
     }
     .film-card-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.15rem;
     }
@@ -526,15 +526,15 @@
       align-items: center;
       gap: 20px;
       padding: 28px 32px;
-      background: linear-gradient(135deg, #161615 0%, #1A1A19 100%);
-      border: 1px solid rgba(255, 189, 29, 0.25);
+      background: linear-gradient(135deg, #161D37 0%, #1A2140 100%);
+      border: 1px solid rgba(110, 193, 248, 0.25);
       border-radius: 8px;
       cursor: pointer;
       transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
     }
     .playlist-card:hover {
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.12);
+      border-color: #6EC1F8;
+      box-shadow: 0 8px 32px rgba(110, 193, 248, 0.12);
       transform: translateY(-2px);
     }
     .playlist-card-icon {
@@ -545,13 +545,13 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: rgba(255, 189, 29, 0.1);
-      border: 1px solid rgba(255, 189, 29, 0.2);
+      background: rgba(110, 193, 248, 0.1);
+      border: 1px solid rgba(110, 193, 248, 0.2);
     }
     .playlist-card-icon svg {
       width: 24px;
       height: 24px;
-      fill: #FFBD1D;
+      fill: #6EC1F8;
     }
     .playlist-card-info {
       flex: 1;
@@ -559,20 +559,20 @@
       text-align: center;
     }
     .playlist-card-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.3rem;
       margin-bottom: 4px;
     }
     .playlist-card-subtitle {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 0.85rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
     }
     .playlist-card-arrow {
       flex-shrink: 0;
-      color: #FFBD1D;
+      color: #6EC1F8;
       opacity: 0;
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
@@ -617,32 +617,32 @@
       right: 0;
       background: none;
       border: none;
-      color: #C8C3B9;
+      color: #C9CFDF;
       cursor: pointer;
       padding: 8px;
       transition: color 0.25s ease;
     }
-    .modal-close:hover { color: #FFBD1D; }
+    .modal-close:hover { color: #6EC1F8; }
     .modal-close svg { width: 28px; height: 28px; }
     .modal-player-wrap {
       border-radius: 8px;
       overflow: hidden;
-      border: 1px solid #2A2A28;
+      border: 1px solid #2A3358;
     }
     .modal-player-wrap.has-playlist {
       border-radius: 8px 8px 0 0;
       border-bottom: none;
     }
     .modal-player-wrap media-player {
-      --vds-primary: #FFBD1D;
-      --vds-primary-hover: #D99E0A;
-      --vds-contrast: #F5F0EB;
-      --media-brand: #FFBD1D;
+      --vds-primary: #6EC1F8;
+      --vds-primary-hover: #0099F3;
+      --vds-contrast: #F8F5EE;
+      --media-brand: #6EC1F8;
       width: 100%;
       aspect-ratio: 16/9;
     }
     .modal-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.3rem;
       margin-top: 16px;
@@ -654,8 +654,8 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 20px;
-      background: #161615;
-      border: 1px solid #2A2A28;
+      background: #161D37;
+      border: 1px solid #2A3358;
       border-top: none;
       border-radius: 0 0 8px 8px;
       gap: 12px;
@@ -670,27 +670,27 @@
       min-width: 0;
     }
     .playlist-bar-progress {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.75rem;
-      color: #FFBD1D;
+      color: #6EC1F8;
       white-space: nowrap;
       letter-spacing: 0.04em;
     }
     .playlist-bar-current {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.85rem;
-      color: #F5F0EB;
+      color: #F8F5EE;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .playlist-bar-next {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 0.8rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -702,7 +702,7 @@
       text-align: center;
     }
     .download-gate p {
-      color: #C8C3B9;
+      color: #C9CFDF;
       font-size: 0.95rem;
       margin-bottom: 28px;
     }
@@ -712,42 +712,42 @@
     }
     .download-input {
       flex: 1;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.9rem;
       padding: 14px 18px;
-      background: #111110;
-      border: 1px solid #2A2A28;
+      background: #121830;
+      border: 1px solid #2A3358;
       border-radius: 8px;
-      color: #F5F0EB;
+      color: #F8F5EE;
       outline: none;
       transition: border-color 0.25s ease;
     }
-    .download-input:focus { border-color: #FFBD1D; }
-    .download-input::placeholder { color: #8C8880; }
+    .download-input:focus { border-color: #6EC1F8; }
+    .download-input::placeholder { color: #8A93AD; }
     .download-btn {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 0.85rem;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       padding: 14px 28px;
       background: transparent;
-      border: 1px solid #FFBD1D;
+      border: 1px solid #6EC1F8;
       border-radius: 8px;
-      color: #F5F0EB;
+      color: #F8F5EE;
       cursor: pointer;
       transition: background 0.25s ease, color 0.25s ease;
       white-space: nowrap;
     }
-    .download-btn:hover { background: #FFBD1D; color: #0A0A0A; }
-    .download-btn:active { background: #D99E0A; }
+    .download-btn:hover { background: #6EC1F8; color: #0E1328; }
+    .download-btn:active { background: #0099F3; }
     .download-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      border-color: #3A3A38;
+      border-color: #3A4570;
     }
-    .download-btn:disabled:hover { background: transparent; color: #F5F0EB; }
+    .download-btn:disabled:hover { background: transparent; color: #F8F5EE; }
     .download-error {
       color: #E74C3C;
       font-size: 0.85rem;
@@ -766,21 +766,21 @@
       margin-bottom: 32px;
     }
     .download-all-btn {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 16px 48px;
       background: transparent;
-      border: 1px solid #FFBD1D;
+      border: 1px solid #6EC1F8;
       border-radius: 8px;
-      color: #F5F0EB;
+      color: #F8F5EE;
       cursor: pointer;
       transition: background 0.25s ease, color 0.25s ease;
     }
-    .download-all-btn:hover { background: #FFBD1D; color: #0A0A0A; }
-    .download-all-btn:active { background: #D99E0A; }
+    .download-all-btn:hover { background: #6EC1F8; color: #0E1328; }
+    .download-all-btn:active { background: #0099F3; }
     .download-list {
       display: grid;
       grid-template-columns: 1fr;
@@ -791,12 +791,12 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 20px;
-      background: #161615;
-      border: 1px solid #2A2A28;
+      background: #161D37;
+      border: 1px solid #2A3358;
       border-radius: 8px;
       transition: border-color 0.25s ease;
     }
-    .download-item:hover { border-color: #3A3A38; }
+    .download-item:hover { border-color: #3A4570; }
     .download-item-info {
       display: flex;
       align-items: center;
@@ -808,32 +808,32 @@
     }
     .download-item-duration {
       font-size: 0.8rem;
-      color: rgba(200, 195, 185, 0.5);
+      color: rgba(201, 207, 223, 0.5);
     }
     .download-item-btn {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       font-size: 0.8rem;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       padding: 8px 20px;
       background: transparent;
-      border: 1px solid #2A2A28;
+      border: 1px solid #2A3358;
       border-radius: 6px;
-      color: #C8C3B9;
+      color: #C9CFDF;
       cursor: pointer;
       transition: border-color 0.25s ease, color 0.25s ease;
     }
-    .download-item-btn:hover { border-color: #FFBD1D; color: #FFBD1D; }
+    .download-item-btn:hover { border-color: #6EC1F8; color: #6EC1F8; }
 
     /* ========== Footer ========== */
     .site-footer {
-      border-top: 1px solid #2A2A28;
+      border-top: 1px solid #2A3358;
       padding: 60px 0;
       text-align: center;
     }
     .footer-logo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 1.3rem;
       letter-spacing: 0.15em;
@@ -848,14 +848,14 @@
       margin-bottom: 24px;
     }
     .footer-socials a {
-      color: #C8C3B9;
+      color: #C9CFDF;
       transition: color 0.25s ease;
     }
-    .footer-socials a:hover { color: #FFBD1D; }
+    .footer-socials a:hover { color: #6EC1F8; }
     .footer-socials svg { width: 20px; height: 20px; }
     .footer-copy {
       font-size: 0.8rem;
-      color: rgba(200, 195, 185, 0.5);
+      color: rgba(201, 207, 223, 0.5);
     }
 
     /* ========== TV / Remote-Friendly ========== */
@@ -866,12 +866,12 @@
     .download-all-btn:focus-visible,
     .download-item-btn:focus-visible,
     .modal-close:focus-visible {
-      outline: 2px solid #FFBD1D;
+      outline: 2px solid #6EC1F8;
       outline-offset: 2px;
     }
     .film-card:focus-visible {
-      border-color: #FFBD1D;
-      box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
+      border-color: #6EC1F8;
+      box-shadow: 0 8px 32px rgba(110, 193, 248, 0.08);
     }
     .film-card { min-height: 48px; }
     .playlist-card { min-height: 48px; }
@@ -901,17 +901,17 @@
       padding: 80px 24px;
     }
     .films-pending-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: clamp(1.6rem, 4vw, 2.4rem);
-      color: #F5F0EB;
+      color: #F8F5EE;
       margin-bottom: 12px;
     }
     .films-pending-sub {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
       font-size: 1rem;
-      color: #C8C3B9;
+      color: #C9CFDF;
     }
 
     /* ========== Responsive ========== */
@@ -943,19 +943,28 @@
     /* Business page: no category tag on film cards */
     .film-card-tag { display: none; }
   </style>
+  <style>
+    /* Business theme overrides (generated) */
+    .nav-logo img { height: 30px; width: auto; display: block; }
+    .hero-names .hero-logo { width: min(340px, 72vw); height: auto; display: block; margin: 0 auto; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .section-title, .event-link-title { font-weight: 700; letter-spacing: -0.01em; }
+    .footer-by { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; opacity: .7; margin: 0 0 4px; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; color: #FFBD1D; }
+  </style>
 </head>
 <body>
 
   <!-- ========== Navbar ========== -->
   <nav class="navbar" id="navbar">
-    <span class="nav-logo">Flyin' Iris</span>
+    <span class="nav-logo"><img src="/films/window-world/assets/ww-logo-white.svg" alt="Window World of Southeastern Wisconsin"></span>
     <span class="nav-couple">Window World</span>
     <span class="nav-date"></span>
   </nav>
 
   <!-- ========== Hero ========== -->
   <section class="hero" id="hero">
-    <h1 class="hero-names">Window World</h1>
+    <h1 class="hero-names"><img class="hero-logo" src="/films/window-world/assets/ww-logo-white.svg" alt="Window World of Southeastern Wisconsin"><span class="visually-hidden">Window World</span></h1>
     <p class="hero-date">Films by Flyin' Iris</p>
     <button class="hero-cta" id="hero-cta">View Your Films</button>
     <div class="hero-scroll-hint" aria-hidden="true">
@@ -969,14 +978,14 @@
   <style>
     .event-links { padding: 0 24px 8px; }
     .event-links .container { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
-    .event-link { position: relative; display: flex; align-items: flex-end; min-height: 260px; border-radius: 16px; overflow: hidden; text-decoration: none; color: #F5F0EB; background: #14161c center / cover no-repeat; border: 1px solid rgba(255, 189, 29, 0.25); transition: transform .35s ease, border-color .35s ease; }
-    .event-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.88) 85%); }
-    .event-link:hover { transform: translateY(-3px); border-color: rgba(255, 189, 29, 0.7); }
+    .event-link { position: relative; display: flex; align-items: flex-end; min-height: 260px; border-radius: 16px; overflow: hidden; text-decoration: none; color: #F8F5EE; background: #14161c center / cover no-repeat; border: 1px solid rgba(110, 193, 248, 0.25); transition: transform .35s ease, border-color .35s ease; }
+    .event-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14, 19, 40,.15) 0%, rgba(14, 19, 40,.88) 85%); }
+    .event-link:hover { transform: translateY(-3px); border-color: rgba(110, 193, 248, 0.7); }
     .event-link-body { position: relative; padding: 26px 28px; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
-    .event-link-label { font-family: "Outfit", sans-serif; font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: #FFBD1D; margin: 0 0 8px; }
+    .event-link-label { font-family: "Outfit", sans-serif; font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: #6EC1F8; margin: 0 0 8px; }
     .event-link-title { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; margin: 0 0 6px; }
-    .event-link-sub { font-family: "Outfit", sans-serif; font-size: .95rem; color: rgba(245, 240, 235, .72); margin: 0; }
-    .event-link-cta { font-family: "Outfit", sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #FFBD1D; color: #0A0A0A; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }
+    .event-link-sub { font-family: "Outfit", sans-serif; font-size: .95rem; color: rgba(248, 245, 238, .72); margin: 0; }
+    .event-link-cta { font-family: "Outfit", sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #6EC1F8; color: #0E1328; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }
   </style>
   <section class="event-links" id="event-links">
     <div class="container">
@@ -1038,7 +1047,7 @@
   <!-- ========== Footer ========== -->
   <footer class="site-footer">
     <div class="container">
-      <p class="footer-logo">Flyin' Iris</p>
+      <p class="footer-by">Films by</p><p class="footer-logo">Flyin' Iris</p>
       <div class="footer-socials">
         <!-- Instagram -->
         <a href="https://www.instagram.com/flyin.iris/" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1739,7 +1748,7 @@
           '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
           '      <div class="hero-play-btn">' +
           '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>' +
+          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#6EC1F8"/>' +
           '        </svg>' +
           '      </div>' +
           '    </div>' +
