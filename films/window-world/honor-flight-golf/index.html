@@ -143,6 +143,27 @@
     .chip:hover { border-color: var(--gold); color: var(--gold); }
     .chip svg { width: 14px; height: 14px; fill: currentColor; }
     .chip b { font-weight: 500; color: var(--gold); }
+    .chip-dl { background: var(--cream); color: var(--navy-deep); border-color: var(--cream); font-weight: 600; cursor: pointer; font-family: var(--sans); }
+    .chip-dl:hover { background: #fff; color: var(--navy-deep); border-color: #fff; }
+    .chip-dl[disabled] { opacity: .75; cursor: progress; }
+    .chip-dl small { font-weight: 400; opacity: .7; }
+
+    /* Download list + password prompt */
+    .dl-list { display: grid; gap: 10px; margin-top: 8px; }
+    .dl-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.02); }
+    .dl-row .t { font-weight: 600; font-size: .95rem; }
+    .dl-row .m { color: var(--muted); font-size: .82rem; }
+    .dl-all { margin-top: 18px; }
+    .pw { position: fixed; inset: 0; z-index: 120; background: rgba(8,11,24,.86); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .pw.open { display: flex; }
+    .pw-box { width: 100%; max-width: 400px; background: var(--navy); border: 1px solid var(--line); border-radius: 16px; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+    .pw-box h3 { margin: 0 0 6px; font-size: 1.25rem; font-weight: 700; }
+    .pw-box p { margin: 0 0 16px; color: var(--muted); font-size: .92rem; }
+    .pw-box input { width: 100%; padding: 13px 14px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.25); color: var(--text); font: 500 1rem var(--sans); }
+    .pw-box input:focus { outline: 2px solid var(--sky); outline-offset: 1px; }
+    .pw-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .pw-actions .btn { flex: 1; justify-content: center; }
+    .pw-err { color: #ff8a8a; font-size: .85rem; margin-top: 10px; min-height: 1.2em; }
 
     /* Recap layout: widescreen + phone side by side */
     .recap-grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
@@ -150,8 +171,8 @@
 
     /* ---------- Phone frame (adapted from the MKE Web Labs site) ---------- */
     .phone {
-      position: relative; width: 100%; max-width: 270px; margin-inline: auto;
-      aspect-ratio: 390 / 844; padding: 9px; border-radius: 44px;
+      position: relative; width: 100%; max-width: 300px; margin-inline: auto;
+      padding: 8px; border-radius: 40px;
       background: linear-gradient(160deg, #4A4A4E 0%, #232326 18%, #1A1A1D 50%, #2E2E32 82%, #4A4A4E 100%);
       box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 26px 50px -18px rgba(0,0,0,.85), 0 3px 10px rgba(0,0,0,.5);
       transition: transform .35s var(--ease); cursor: pointer;
@@ -160,9 +181,10 @@
     .phone::before, .phone::after { content: ""; position: absolute; left: -2px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, #3A3A3E, #1A1A1D); pointer-events: none; }
     .phone::before { top: 23%; height: 5%; }
     .phone::after { top: 32%; height: 9%; }
-    .phone-screen { position: relative; height: 100%; width: 100%; border-radius: 36px; overflow: hidden; background: #000; }
+    .phone-screen { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 32px; overflow: hidden; background: #000; }
     .phone-status {
       position: absolute; top: 0; left: 0; right: 0; z-index: 3; height: 40px;
+      background: linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,0));
       display: flex; align-items: center; justify-content: space-between; padding: 0 18px;
       font: 600 11px/1 system-ui, sans-serif; color: #F2F2F4; font-variant-numeric: tabular-nums; pointer-events: none;
     }
@@ -174,10 +196,10 @@
     .phone-batt { width: 19px; height: 10px; border: 1px solid rgba(242,242,244,.55); border-radius: 3px; position: relative; margin-left: 4px; box-sizing: content-box; }
     .phone-batt::before { content: ""; position: absolute; inset: 1.5px; width: 11px; background: #F2F2F4; border-radius: 1px; }
     .phone-media { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-    .phone-media video, .phone-media .cover { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #000 center / cover no-repeat; }
+    .phone-media video, .phone-media .cover { width: 100%; height: 100%; object-fit: cover; background: #000 center / cover no-repeat; }
     .phone .play { width: 62px; height: 62px; }
-    .phone .dur { right: 50%; transform: translateX(50%); bottom: 22px; }
-    .phone-glare { position: absolute; inset: 9px; border-radius: 36px; pointer-events: none; z-index: 4; background: linear-gradient(125deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 32%); }
+    .phone .dur { right: 50%; transform: translateX(50%); bottom: 16px; }
+    .phone-glare { position: absolute; inset: 8px; border-radius: 32px; pointer-events: none; z-index: 4; background: linear-gradient(125deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 32%); }
     .playing .phone-glare { display: none; }
     .phone-cap { text-align: center; margin-top: 20px; }
     .phone-cap h3 { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin: 0 0 2px; }
@@ -351,19 +373,22 @@
   <section id="download">
     <div class="wrap">
       <div class="sec-head reveal">
-        <p class="eyebrow">Downloading</p>
-        <h2>Getting the <em>best quality.</em></h2>
+        <p class="eyebrow">Downloads</p>
+        <h2>Every film, <em>in full 4K.</em></h2>
+        <p>These are the master files, the best quality there is. Enter the download password from our email once, and every film saves straight to your computer or phone. Wifi is best for the bigger files.</p>
       </div>
-      <div class="help">
+      <div class="dl-list reveal" id="dl-list"></div>
+      <div class="dl-all reveal"><button class="btn btn-gold" type="button" id="dl-all">Download all 10 films</button></div>
+      <div class="help" style="margin-top:44px">
         <div class="help-card reveal">
           <div class="num">1</div>
-          <h3>Films from Vimeo</h3>
-          <p>Tap the <strong>Vimeo</strong> link under any film, click <strong>Download</strong> below the video, and pick the <strong>highest resolution (2160p / 4K)</strong>. That's the master quality file, and it looks best everywhere you post it.</p>
+          <h3>Downloading films</h3>
+          <p>Tap <strong>Download 4K</strong> under any film or in the list above. You only need the password once per visit.</p>
         </div>
         <div class="help-card reveal">
           <div class="num">2</div>
           <h3>Sharing a link</h3>
-          <p>The <strong>YouTube</strong> links are public and easy to share or embed on your website. Vertical films work great uploaded straight to Instagram and Facebook as Reels.</p>
+          <p>The <strong>YouTube</strong> and <strong>Vimeo</strong> links are public and easy to share or embed on your website. Vertical films work great uploaded straight to Instagram and Facebook as Reels.</p>
         </div>
         <div class="help-card reveal">
           <div class="num">3</div>
@@ -391,6 +416,19 @@
       <div><a href="/films/window-world/">All Window World films</a></div>
     </div>
   </footer>
+
+  <div class="pw" id="pw" role="dialog" aria-modal="true" aria-labelledby="pw-title">
+    <form class="pw-box" id="pw-form">
+      <h3 id="pw-title">Download password</h3>
+      <p>It is in the email we sent with this page.</p>
+      <input type="password" id="pw-input" autocomplete="off" placeholder="Enter password" aria-label="Download password">
+      <div class="pw-err" id="pw-err" role="alert"></div>
+      <div class="pw-actions">
+        <button class="btn btn-ghost" type="button" id="pw-cancel">Cancel</button>
+        <button class="btn btn-gold" type="submit" id="pw-go">Unlock</button>
+      </div>
+    </form>
+  </div>
 
   <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
     <img id="lb-img" alt="">
@@ -423,6 +461,7 @@
         h: { id: 'honor-flight-golf-the-fun', dur: '0:51', yt: 'mBo4dxpH0v4', vimeo: '1232206236' },
         v: { id: 'honor-flight-golf-the-fun-vertical', dur: '0:51', yt: 'SkdJ_NmWmVU', vimeo: '1232211679' } }
     ];
+    var SIZES = {"honor-flight-golf-outing-recap-vertical": 446, "honor-flight-golf-outing-recap": 454, "honor-flight-golf-the-donations-vertical": 97, "honor-flight-golf-the-donations": 111, "honor-flight-golf-the-fun-vertical": 172, "honor-flight-golf-the-fun": 150, "honor-flight-golf-the-what-vertical": 122, "honor-flight-golf-the-what": 160, "honor-flight-golf-the-why-vertical": 63, "honor-flight-golf-the-why": 44};
     var FALLBACK_POSTER = PHOTO_BASE + '/full/575A0192.jpg?v=' + PHOTO_V;
 
     var PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
@@ -432,10 +471,14 @@
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function thumb(id) { return VIDEO_BASE + '/thumbs/' + id + '.jpg'; }
     function hls(id) { return VIDEO_BASE + '/hls/' + id + '/master.m3u8'; }
+    var DL_ICON = '<svg viewBox="0 0 24 24"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4L12 16.4 6.3 10.7l1.4-1.4L11 12.6zM5 19h14v2H5z"/></svg>';
+    function dlButton(id, label) {
+      return '<button type="button" class="chip chip-dl" data-dl="' + esc(id) + '">' + DL_ICON + '<span>' + (label || 'Download 4K') + '</span> <small>' + (SIZES[id] ? SIZES[id] + ' MB' : '') + '</small></button>';
+    }
     function links(f) {
-      return '<div class="links">' +
+      return '<div class="links">' + dlButton(f.id) +
         '<a class="chip" href="https://youtu.be/' + f.yt + '" target="_blank" rel="noopener">' + YT_ICON + 'YouTube</a>' +
-        '<a class="chip" href="https://vimeo.com/' + f.vimeo + '" target="_blank" rel="noopener">' + VM_ICON + 'Vimeo <b>4K download</b></a>' +
+        '<a class="chip" href="https://vimeo.com/' + f.vimeo + '" target="_blank" rel="noopener">' + VM_ICON + 'Vimeo</a>' +
         '</div>';
     }
 
@@ -557,6 +600,93 @@
       if (tx === null) return;
       var dx = e.changedTouches[0].clientX - tx; tx = null;
       if (Math.abs(dx) > 45) show(idx + (dx < 0 ? 1 : -1));
+    });
+
+    // ---------- Downloads (password-gated 4K masters, same system as the Window World films page) ----------
+    var DL_ORDER = [[RECAP.id, 'Event Recap'], [RECAP_V.id, 'Event Recap (Vertical)']];
+    CUTS.forEach(function (c) { DL_ORDER.push([c.h.id, c.name]); DL_ORDER.push([c.v.id, c.name + ' (Vertical)']); });
+    var FILE_NAMES = {};
+    DL_ORDER.forEach(function (d) { FILE_NAMES[d[0]] = 'Window World Honor Flight Golf Outing - ' + d[1] + '.mp4'; });
+    document.getElementById('dl-list').innerHTML = DL_ORDER.map(function (d) {
+      return '<div class="dl-row"><div><div class="t">' + esc(d[1]) + '</div><div class="m">4K master, ' + (SIZES[d[0]] || '') + ' MB</div></div>' + dlButton(d[0], 'Download') + '</div>';
+    }).join('');
+
+    var TOKEN_KEY = 'ww-hf-dl-token';
+    var token = null;
+    try { token = sessionStorage.getItem(TOKEN_KEY); } catch (e) {}
+    var pw = document.getElementById('pw'), pwInput = document.getElementById('pw-input'), pwErr = document.getElementById('pw-err'), pwGo = document.getElementById('pw-go');
+    var pending = null;
+    function askPassword() {
+      return new Promise(function (resolve) {
+        pending = resolve; pwErr.textContent = ''; pwInput.value = '';
+        pw.classList.add('open'); setTimeout(function () { pwInput.focus(); }, 30);
+      });
+    }
+    function closePw(result) { pw.classList.remove('open'); if (pending) { var p = pending; pending = null; p(result); } }
+    document.getElementById('pw-cancel').onclick = function () { closePw(null); };
+    pw.addEventListener('click', function (e) { if (e.target === pw) closePw(null); });
+    document.getElementById('pw-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var val = pwInput.value.trim(); if (!val) return;
+      pwGo.disabled = true; pwGo.textContent = '...';
+      fetch(VIDEO_BASE + '/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: val }) })
+        .then(function (r) { if (r.status === 429) throw new Error('slow'); if (!r.ok) throw new Error('bad'); return r.json(); })
+        .then(function (d) {
+          if (!d || !d.token) throw new Error('bad');
+          token = d.token; try { sessionStorage.setItem(TOKEN_KEY, token); } catch (e2) {}
+          closePw(token);
+        })
+        .catch(function (err) { pwErr.textContent = err.message === 'slow' ? 'Too many tries. Wait a few minutes and try again.' : 'That password did not work. Check the email and try again.'; })
+        .then(function () { pwGo.disabled = false; pwGo.textContent = 'Unlock'; });
+    });
+    async function ensureToken() { if (token) return token; return await askPassword(); }
+
+    function setLabel(btn, text) { var s = btn.querySelector('span'); if (s) s.textContent = text; }
+    async function download(id, btn, retried) {
+      var t = await ensureToken(); if (!t) return false;
+      var span = btn.querySelector('span'), label = span ? span.getAttribute('data-label') || span.textContent : '';
+      if (span) span.setAttribute('data-label', label);
+      btn.disabled = true; setLabel(btn, 'Starting...');
+      try {
+        var res = await fetch(VIDEO_BASE + '/download/' + encodeURIComponent(id), { method: 'POST', headers: { 'Authorization': 'Bearer ' + t } });
+        if ((res.status === 401 || res.status === 403) && !retried) {
+          token = null; try { sessionStorage.removeItem(TOKEN_KEY); } catch (e) {}
+          btn.disabled = false; setLabel(btn, label); return download(id, btn, true);
+        }
+        if (!res.ok) throw new Error('failed');
+        var total = parseInt(res.headers.get('Content-Length') || '0', 10), blob;
+        if (res.body && res.body.getReader) {
+          var reader = res.body.getReader(), chunks = [], got = 0;
+          for (;;) {
+            var step = await reader.read(); if (step.done) break;
+            chunks.push(step.value); got += step.value.length;
+            setLabel(btn, total ? 'Downloading ' + Math.min(99, Math.floor(got / total * 100)) + '%' : 'Downloading ' + Math.round(got / 1048576) + ' MB');
+          }
+          blob = new Blob(chunks, { type: 'video/mp4' });
+        } else { blob = await res.blob(); }
+        var url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = FILE_NAMES[id] || (id + '.mp4');
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        // Delayed revoke: revoking right away can abort the save on iOS Safari.
+        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+        setLabel(btn, 'Saved'); setTimeout(function () { setLabel(btn, label); }, 4000);
+        return true;
+      } catch (e) {
+        setLabel(btn, 'Try again'); setTimeout(function () { setLabel(btn, label); }, 4000);
+        return false;
+      } finally { btn.disabled = false; }
+    }
+    // Capture phase so a tap on a download chip never also starts the player.
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-dl]'); if (!b) return;
+      e.preventDefault(); e.stopPropagation(); if (!b.disabled) download(b.getAttribute('data-dl'), b);
+    }, true);
+    document.getElementById('dl-all').addEventListener('click', async function () {
+      var all = this; if (!(await ensureToken())) return;
+      all.disabled = true; var orig = all.textContent;
+      var rows = document.querySelectorAll('#dl-list [data-dl]');
+      for (var i = 0; i < rows.length; i++) { all.textContent = 'Downloading ' + (i + 1) + ' of ' + rows.length + '...'; await download(rows[i].getAttribute('data-dl'), rows[i]); }
+      all.textContent = orig; all.disabled = false;
     });
 
     // ---------- Chrome ----------
