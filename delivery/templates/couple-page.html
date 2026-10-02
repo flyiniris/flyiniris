@@ -453,6 +453,22 @@
       background-color: #1A1A19;
       position: relative;
     }
+    .film-card-thumb.is-portrait { overflow: hidden; }
+    .film-card-thumb .thumb-blur,
+    .film-card-thumb .thumb-portrait {
+      position: absolute;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .film-card-thumb .thumb-blur {
+      inset: -24px;
+      background-size: cover;
+      filter: blur(18px) brightness(0.55);
+    }
+    .film-card-thumb .thumb-portrait {
+      inset: 0;
+      background-size: contain;
+    }
     .film-card-thumb::after {
       content: '';
       position: absolute;
@@ -641,6 +657,12 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
+    /* Vertical films play in a 9:16 frame sized to the screen, not letterboxed in 16:9. */
+    .modal-player-wrap.is-vertical {
+      width: min(100%, calc(78vh * 9 / 16));
+      margin: 0 auto;
+    }
+    .modal-player-wrap.is-vertical media-player { aspect-ratio: 9/16; }
     .modal-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
@@ -963,7 +985,7 @@
     </div>
   </section>
 
-  <!-- ========== Hero Row ========== -->
+{{EVENT_LINKS}}  <!-- ========== Hero Row ========== -->
   <section class="section hero-row" id="hero-row">
     <div class="container reveal">
       <p class="section-label">Your Films</p>
@@ -1120,6 +1142,12 @@
     // worker caches thumbs cache-first, so a re-approved film that keeps its id
     // but gets a new thumbnail would otherwise show the old image forever.
     var THUMB_VERSION = '';
+    // Films whose poster is portrait (set as card thumbs load). Their modal
+    // player switches to a 9:16 frame.
+    var PORTRAIT_IDS = {};
+    function isVerticalFilm(videoId, title) {
+      return !!PORTRAIT_IDS[videoId] || /\(vertical\)/i.test(title || '');
+    }
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg' +
         (THUMB_VERSION ? '?v=' + encodeURIComponent(THUMB_VERSION) : '');
@@ -1830,8 +1858,26 @@
       // the swap is invisible in practice. No-IO fallback loads eagerly.
       var thumbs = grid.querySelectorAll('.film-card-thumb[data-thumb]');
       function applyThumb(el) {
-        el.style.backgroundImage = "url('" + el.getAttribute('data-thumb') + "')";
+        var src = el.getAttribute('data-thumb');
         el.removeAttribute('data-thumb');
+        // Vertical films carry a true 9:16 poster. In the 16:9 card it sits
+        // whole and sharp over a blurred copy of itself instead of being
+        // cropped to a thin band. Landscape posters render as before.
+        var probe = new Image();
+        probe.onload = function() {
+          if (probe.naturalHeight > probe.naturalWidth) {
+            el.classList.add('is-portrait');
+            var card = el.closest('.film-card');
+            if (card && card.dataset.videoId) PORTRAIT_IDS[card.dataset.videoId] = true;
+            el.insertAdjacentHTML('afterbegin',
+              '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
+              '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
+          } else {
+            el.style.backgroundImage = "url('" + src + "')";
+          }
+        };
+        probe.onerror = function() { el.style.backgroundImage = "url('" + src + "')"; };
+        probe.src = src;
       }
       if ('IntersectionObserver' in window) {
         var thumbObserver = new IntersectionObserver(function(entries) {
@@ -1893,6 +1939,7 @@
       previousFocus = document.activeElement;
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
+      modalPlayerWrap.classList.toggle('is-vertical', isVerticalFilm(videoId, title));
 
       modalPlayerWrap.innerHTML = createPlayerHtml({
         title: title,
@@ -1919,6 +1966,7 @@
 
     function openPlaylist() {
       if (PLAYLIST.length === 0) return;
+      modalPlayerWrap.classList.remove('is-vertical');
       previousFocus = document.activeElement;
       playlistMode = true;
       playlistIndex = 0;

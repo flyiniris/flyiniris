@@ -131,6 +131,8 @@ function main() {
           clientName: c.clientName,
           ...(c.subtitle !== undefined ? { subtitle: c.subtitle } : {}),
           ...(c.eventDate !== undefined ? { eventDate: c.eventDate } : {}),
+          ...(c.eventLinks !== undefined ? { eventLinks: c.eventLinks } : {}),
+          ...(c.theme !== undefined ? { theme: c.theme } : {}),
           videos: [],
         }
       : {

@@ -31,6 +31,58 @@ const HERO_MAX = 5;
 const KINDS = ['couple', 'business'];
 const BUSINESS_DEFAULT_SUBTITLE = "Films by Flyin' Iris";
 
+// Business theme: a client page wears the client's brand (colors, font,
+// logo); Flyin' Iris stays only as the footer signature. Colors are mapped
+// from the template's palette ({ "#FFBD1D": "#6EC1F8", ... }), rgba() forms
+// of the same colors included. Couple pages never take this path.
+function hexToRgbList(hex) {
+  const n = hex.replace('#', '');
+  return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
+}
+function applyBusinessTheme(html, theme, clientName) {
+  const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let out = html;
+  for (const [from, to] of Object.entries(theme.colors || {})) {
+    out = out.replace(new RegExp(from, 'gi'), () => to);
+    const [r, g, b] = hexToRgbList(from);
+    const [r2, g2, b2] = hexToRgbList(to);
+    out = out.replace(new RegExp('rgba\\(\\s*' + r + '\\s*,\\s*' + g + '\\s*,\\s*' + b + '\\s*,', 'g'), () => 'rgba(' + r2 + ', ' + g2 + ', ' + b2 + ',');
+  }
+  if (theme.font) {
+    const f = theme.font;
+    out = out
+      .replace(/'Cormorant Garamond', serif/g, () => "'" + f + "', sans-serif")
+      .replace(/'Outfit', sans-serif/g, () => "'" + f + "', sans-serif")
+      .replace(/https:\/\/fonts\.googleapis\.com\/css2\?[^"]*/, () =>
+        'https://fonts.googleapis.com/css2?family=' + f.replace(/ /g, '+') + ':wght@300;400;500;600;700;800&amp;family=Cormorant+Garamond:wght@500;600&amp;display=swap');
+  }
+  // Title and share title carry the client, not the studio.
+  out = out.replace(/(<title>[^<]*?) \| Flyin' Iris<\/title>/, (m, a) => a + ' | Films</title>')
+    .replace(/(<meta property="og:title" content="[^"]*?) \| Flyin' Iris"/, (m, a) => a + ' | Films"');
+  if (theme.logo) {
+    const logo = esc(theme.logo);
+    const alt = esc(theme.logoAlt || clientName);
+    out = out.replace(/<span class="nav-logo">Flyin' Iris<\/span>/, () => '<span class="nav-logo"><img src="' + logo + '" alt="' + alt + '"></span>')
+      .replace(/<h1 class="hero-names">([^<]*)<\/h1>/, (m, name) => '<h1 class="hero-names"><img class="hero-logo" src="' + logo + '" alt="' + alt + '"><span class="visually-hidden">' + name + '</span></h1>');
+  }
+  // Footer: the studio signature, in the studio's own type and gold.
+  out = out.replace(/<p class="footer-logo">Flyin' Iris<\/p>/, () => '<p class="footer-by">Films by</p><p class="footer-logo">Flyin\' Iris</p>');
+  const css = [
+    '  <style>',
+    '    /* Business theme overrides (generated) */',
+    '    .nav-logo img { height: 30px; width: auto; display: block; }',
+    '    .hero-names .hero-logo { width: min(340px, 72vw); height: auto; display: block; margin: 0 auto; }',
+    '    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }',
+    '    .section-title, .event-link-title { font-weight: 700; letter-spacing: -0.01em; }',
+    '    .footer-by { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; opacity: .7; margin: 0 0 4px; }',
+    "    .footer-logo { font-family: 'Cormorant Garamond', serif; color: #FFBD1D; }",
+    '  </style>',
+    '</head>',
+  ].join('\n');
+  out = out.replace('</head>', () => css);
+  return out;
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   const out = {
@@ -191,6 +243,34 @@ function validateConfig(config, configPath) {
     }
     if (legacyFeaturedCount > 0) {
       console.warn(`  warning: ${legacyFeaturedCount} video(s) still carry the deprecated 'featured: true' field. Migrate to 'hero: true' per delivery-page-standard.md Section 4.5. The field is preserved in the output but no longer drives rendering.`);
+    }
+  }
+
+  if (config.theme !== undefined) {
+    if (kind !== 'business') errors.push("'theme' is only supported for kind business");
+    else if (!config.theme || typeof config.theme !== 'object') errors.push("'theme' must be an object");
+    else {
+      Object.entries(config.theme.colors || {}).forEach(([a, b]) => {
+        if (!/^#[0-9a-fA-F]{6}$/.test(a) || !/^#[0-9a-fA-F]{6}$/.test(b)) errors.push(`theme.colors entries must be #RRGGBB pairs (got ${a}: ${b})`);
+      });
+      if (config.theme.logo !== undefined && !/^(\/|https:\/\/)/.test(config.theme.logo)) errors.push('theme.logo must start with / or https://');
+      if (config.theme.font !== undefined && !/^[A-Za-z ]+$/.test(config.theme.font)) errors.push('theme.font must be a Google Font family name');
+    }
+  }
+
+  // eventLinks (business only): cards that link to dedicated event pages,
+  // e.g. films/window-world/honor-flight-golf/. Each { title, href, subtitle?, image? }.
+  if (config.eventLinks !== undefined) {
+    if (kind !== 'business') {
+      errors.push("'eventLinks' is only supported for kind business");
+    } else if (!Array.isArray(config.eventLinks)) {
+      errors.push("'eventLinks' must be an array of { title, href, subtitle?, image? }");
+    } else {
+      config.eventLinks.forEach((l, i) => {
+        if (!l || typeof l.title !== 'string' || !l.title.trim()) errors.push(`eventLinks[${i}].title is required`);
+        if (!l || typeof l.href !== 'string' || !/^(\/|https:\/\/)/.test(l.href)) errors.push(`eventLinks[${i}].href must start with / or https://`);
+        if (l && l.image !== undefined && (typeof l.image !== 'string' || !/^https:\/\//.test(l.image))) errors.push(`eventLinks[${i}].image must be an https URL`);
+      });
     }
   }
 
@@ -382,12 +462,45 @@ function main() {
     ? '    /* Business page: no category tag on film cards */' + eol +
       '    .film-card-tag { display: none; }' + eol
     : '';
+  // Business event links: rendered between the hero and the hero row. Empty
+  // for every page without eventLinks, so their output is unchanged.
+  const escHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const eventLinks = isBusiness && Array.isArray(config.eventLinks) ? config.eventLinks : [];
+  const eventLinksHtml = eventLinks.length === 0 ? '' : [
+    '  <!-- ========== Event Pages ========== -->',
+    '  <style>',
+    '    .event-links { padding: 0 24px 8px; }',
+    '    .event-links .container { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }',
+    '    .event-link { position: relative; display: flex; align-items: flex-end; min-height: 260px; border-radius: 16px; overflow: hidden; text-decoration: none; color: #F5F0EB; background: #14161c center / cover no-repeat; border: 1px solid rgba(255, 189, 29, 0.25); transition: transform .35s ease, border-color .35s ease; }',
+    '    .event-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.88) 85%); }',
+    '    .event-link:hover { transform: translateY(-3px); border-color: rgba(255, 189, 29, 0.7); }',
+    '    .event-link-body { position: relative; padding: 26px 28px; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }',
+    '    .event-link-label { font-family: \'Outfit\', sans-serif; font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: #FFBD1D; margin: 0 0 8px; }',
+    '    .event-link-title { font-family: \'Cormorant Garamond\', serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; margin: 0 0 6px; }',
+    '    .event-link-sub { font-family: \'Outfit\', sans-serif; font-size: .95rem; color: rgba(245, 240, 235, .72); margin: 0; }',
+    '    .event-link-cta { font-family: \'Outfit\', sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #FFBD1D; color: #0A0A0A; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }',
+    '  </style>',
+    '  <section class="event-links" id="event-links">',
+    '    <div class="container">',
+    ...eventLinks.map((l) =>
+      '      <a class="event-link reveal" href="' + escHtml(l.href) + '"' +
+      (l.image ? ' style="background-image: url(&quot;' + escHtml(l.image) + '&quot;)"' : '') + '>' +
+      '<div class="event-link-body"><div><p class="event-link-label">Event Page</p>' +
+      '<p class="event-link-title">' + escHtml(l.title) + '</p>' +
+      (l.subtitle ? '<p class="event-link-sub">' + escHtml(l.subtitle) + '</p>' : '') +
+      '</div><span class="event-link-cta">Open the event page</span></div></a>'),
+    '    </div>',
+    '  </section>',
+    '',
+  ].join(eol);
+
   let html = htmlTemplate
     .replace(/\{\{META_DESCRIPTION\}\}/g, stamp(metaDescription))
     .replace(/\{\{OG_DESCRIPTION\}\}/g, stamp(ogDescription))
     .replace(/\{\{HERO_SUBTITLE\}\}/g, stamp(heroSubtitle))
     .replace(/\{\{PENDING_SUB_JS\}\}/g, stamp(jsString(pendingSub)))
     .replace(/\{\{KIND_CSS\}\}/g, stamp(kindCss))
+    .replace(/\{\{EVENT_LINKS\}\}/g, stamp(eventLinksHtml))
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
     .replace(/\{\{DATE_LONG\}\}/g, stamp(eventDate))
     .replace(/\{\{DATE_SHORT\}\}/g, stamp(dateShort))
@@ -400,6 +513,8 @@ function main() {
     .replace(/\{\{FEATURED_VIDEO_ID\}\}/g, stamp(ogVideoId))
     .replace(/\{\{CONFIG_API_BASE\}\}/g, stamp(configApiBase))
     .replace(/\{\{YEAR\}\}/g, stamp(year));
+
+  if (isBusiness && config.theme) html = applyBusinessTheme(html, config.theme, displayName);
 
   let manifest = manifestTemplate
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
