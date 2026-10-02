@@ -79,11 +79,27 @@ async function handleHLS(request, env, matchedPath) {
   });
 }
 
+const DEFAULT_SHARE_IMAGE = 'https://www.flyiniris.com/Cody-Sarah-og.jpg';
+
 async function handleThumb(request, env, matchedPath) {
   const key = matchedPath.replace(/^\//, '');
   const object = await env.FI_FILMS.get(key);
 
   if (!object) {
+    // Couple shells point og:image at thumbs/teaser.jpg before the teaser
+    // lands, so link previews showed no picture (board #182). Send the
+    // site share image instead, short-cached so the real teaser takes over
+    // as soon as it is uploaded.
+    if (key.endsWith('/thumbs/teaser.jpg')) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: DEFAULT_SHARE_IMAGE,
+          'Cache-Control': 'public, max-age=300',
+          ...cors(request),
+        },
+      });
+    }
     return jsonResponse({ error: 'Not found' }, 404, request);
   }
 
