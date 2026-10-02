@@ -965,6 +965,24 @@
     </div>
   </section>
 
+  <!-- ========== Event Pages ========== -->
+  <style>
+    .event-links { padding: 0 24px 8px; }
+    .event-links .container { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+    .event-link { position: relative; display: flex; align-items: flex-end; min-height: 260px; border-radius: 16px; overflow: hidden; text-decoration: none; color: #F5F0EB; background: #14161c center / cover no-repeat; border: 1px solid rgba(255, 189, 29, 0.25); transition: transform .35s ease, border-color .35s ease; }
+    .event-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.88) 85%); }
+    .event-link:hover { transform: translateY(-3px); border-color: rgba(255, 189, 29, 0.7); }
+    .event-link-body { position: relative; padding: 26px 28px; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+    .event-link-label { font-family: "Outfit", sans-serif; font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: #FFBD1D; margin: 0 0 8px; }
+    .event-link-title { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; margin: 0 0 6px; }
+    .event-link-sub { font-family: "Outfit", sans-serif; font-size: .95rem; color: rgba(245, 240, 235, .72); margin: 0; }
+    .event-link-cta { font-family: "Outfit", sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #FFBD1D; color: #0A0A0A; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }
+  </style>
+  <section class="event-links" id="event-links">
+    <div class="container">
+      <a class="event-link reveal" href="/films/window-world/honor-flight-golf/" style="background-image: url(&quot;https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/clients/window-world/honor-flight-golf/photos/full/575A0192.jpg?v=2&quot;)"><div class="event-link-body"><div><p class="event-link-label">Event Page</p><p class="event-link-title">Honor Flight Golf Outing</p><p class="event-link-sub">August 29, 2026. Recap, 4 short films in widescreen and vertical, and 88 photos.</p></div><span class="event-link-cta">Open the event page</span></div></a>
+    </div>
+  </section>
   <!-- ========== Hero Row ========== -->
   <section class="section hero-row" id="hero-row">
     <div class="container reveal">

@@ -194,6 +194,22 @@ function validateConfig(config, configPath) {
     }
   }
 
+  // eventLinks (business only): cards that link to dedicated event pages,
+  // e.g. films/window-world/honor-flight-golf/. Each { title, href, subtitle?, image? }.
+  if (config.eventLinks !== undefined) {
+    if (kind !== 'business') {
+      errors.push("'eventLinks' is only supported for kind business");
+    } else if (!Array.isArray(config.eventLinks)) {
+      errors.push("'eventLinks' must be an array of { title, href, subtitle?, image? }");
+    } else {
+      config.eventLinks.forEach((l, i) => {
+        if (!l || typeof l.title !== 'string' || !l.title.trim()) errors.push(`eventLinks[${i}].title is required`);
+        if (!l || typeof l.href !== 'string' || !/^(\/|https:\/\/)/.test(l.href)) errors.push(`eventLinks[${i}].href must start with / or https://`);
+        if (l && l.image !== undefined && (typeof l.image !== 'string' || !/^https:\/\//.test(l.image))) errors.push(`eventLinks[${i}].image must be an https URL`);
+      });
+    }
+  }
+
   if (errors.length > 0) {
     console.error(`Config validation failed for ${configPath}:`);
     errors.forEach(err => console.error(`  - ${err}`));
@@ -382,12 +398,45 @@ function main() {
     ? '    /* Business page: no category tag on film cards */' + eol +
       '    .film-card-tag { display: none; }' + eol
     : '';
+  // Business event links: rendered between the hero and the hero row. Empty
+  // for every page without eventLinks, so their output is unchanged.
+  const escHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const eventLinks = isBusiness && Array.isArray(config.eventLinks) ? config.eventLinks : [];
+  const eventLinksHtml = eventLinks.length === 0 ? '' : [
+    '  <!-- ========== Event Pages ========== -->',
+    '  <style>',
+    '    .event-links { padding: 0 24px 8px; }',
+    '    .event-links .container { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }',
+    '    .event-link { position: relative; display: flex; align-items: flex-end; min-height: 260px; border-radius: 16px; overflow: hidden; text-decoration: none; color: #F5F0EB; background: #14161c center / cover no-repeat; border: 1px solid rgba(255, 189, 29, 0.25); transition: transform .35s ease, border-color .35s ease; }',
+    '    .event-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.15) 0%, rgba(10,10,10,.88) 85%); }',
+    '    .event-link:hover { transform: translateY(-3px); border-color: rgba(255, 189, 29, 0.7); }',
+    '    .event-link-body { position: relative; padding: 26px 28px; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }',
+    '    .event-link-label { font-family: "Outfit", sans-serif; font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: #FFBD1D; margin: 0 0 8px; }',
+    '    .event-link-title { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.08; margin: 0 0 6px; }',
+    '    .event-link-sub { font-family: "Outfit", sans-serif; font-size: .95rem; color: rgba(245, 240, 235, .72); margin: 0; }',
+    '    .event-link-cta { font-family: "Outfit", sans-serif; font-weight: 500; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; background: #FFBD1D; color: #0A0A0A; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }',
+    '  </style>',
+    '  <section class="event-links" id="event-links">',
+    '    <div class="container">',
+    ...eventLinks.map((l) =>
+      '      <a class="event-link reveal" href="' + escHtml(l.href) + '"' +
+      (l.image ? ' style="background-image: url(&quot;' + escHtml(l.image) + '&quot;)"' : '') + '>' +
+      '<div class="event-link-body"><div><p class="event-link-label">Event Page</p>' +
+      '<p class="event-link-title">' + escHtml(l.title) + '</p>' +
+      (l.subtitle ? '<p class="event-link-sub">' + escHtml(l.subtitle) + '</p>' : '') +
+      '</div><span class="event-link-cta">Open the event page</span></div></a>'),
+    '    </div>',
+    '  </section>',
+    '',
+  ].join(eol);
+
   let html = htmlTemplate
     .replace(/\{\{META_DESCRIPTION\}\}/g, stamp(metaDescription))
     .replace(/\{\{OG_DESCRIPTION\}\}/g, stamp(ogDescription))
     .replace(/\{\{HERO_SUBTITLE\}\}/g, stamp(heroSubtitle))
     .replace(/\{\{PENDING_SUB_JS\}\}/g, stamp(jsString(pendingSub)))
     .replace(/\{\{KIND_CSS\}\}/g, stamp(kindCss))
+    .replace(/\{\{EVENT_LINKS\}\}/g, stamp(eventLinksHtml))
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
     .replace(/\{\{DATE_LONG\}\}/g, stamp(eventDate))
     .replace(/\{\{DATE_SHORT\}\}/g, stamp(dateShort))
