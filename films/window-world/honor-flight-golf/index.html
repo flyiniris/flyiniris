@@ -479,11 +479,10 @@
     var VM_ICON = '<svg viewBox="0 0 24 24"><path d="M22.4 7.2c-.1 2-1.5 4.8-4.3 8.4-2.9 3.7-5.3 5.6-7.3 5.6-1.2 0-2.3-1.1-3.1-3.4L6 12.3c-.6-2.3-1.3-3.4-2-3.4-.2 0-.7.3-1.6.9L1.5 8.7l2.9-2.6C5.7 5 6.7 4.4 7.3 4.3c1.6-.2 2.6.9 2.9 3.2.4 2.5.7 4.1.8 4.7.5 2.1 1 3.1 1.5 3.1.4 0 1.1-.7 2-2.1.9-1.4 1.4-2.5 1.5-3.2.1-1.2-.3-1.8-1.5-1.8-.5 0-1.1.1-1.6.4 1.1-3.5 3.1-5.2 6.1-5.1 2.2.1 3.3 1.5 3.4 4.2z"/></svg>';
 
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-    // Vertical films use sharp 1080x1920 frames from the 4K masters (Vimeo's
-    // vertical posters are a ~607px strip inside a 16:9 image and look soft).
-    var POSTER_BASE = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/clients/window-world/honor-flight-golf/posters';
-    var VPOSTERS = { 'honor-flight-golf-outing-recap-vertical': 1, 'honor-flight-golf-the-what-vertical': 1, 'honor-flight-golf-the-why-vertical': 1, 'honor-flight-golf-the-donations-vertical': 1, 'honor-flight-golf-the-fun-vertical': 1 };
-    function thumb(id) { return VPOSTERS[id] ? POSTER_BASE + '/' + id + '.jpg?v=1' : VIDEO_BASE + '/thumbs/' + id + '.jpg'; }
+    // Posters are Sierra's own poster images (originals from Vimeo, native
+    // 16:9 or 9:16) in R2. ?v= busts year-long browser caches when they change.
+    var THUMB_V = '2';
+    function thumb(id) { return VIDEO_BASE + '/thumbs/' + id + '.jpg?v=' + THUMB_V; }
     function hls(id) { return VIDEO_BASE + '/hls/' + id + '/master.m3u8'; }
     var SHARE_ICON = '<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.2c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
     var DL_ICON = '<svg viewBox="0 0 24 24"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4L12 16.4 6.3 10.7l1.4-1.4L11 12.6zM5 19h14v2H5z"/></svg>';

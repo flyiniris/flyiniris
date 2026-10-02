@@ -453,6 +453,22 @@
       background-color: #1A1A19;
       position: relative;
     }
+    .film-card-thumb.is-portrait { overflow: hidden; }
+    .film-card-thumb .thumb-blur,
+    .film-card-thumb .thumb-portrait {
+      position: absolute;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .film-card-thumb .thumb-blur {
+      inset: -24px;
+      background-size: cover;
+      filter: blur(18px) brightness(0.55);
+    }
+    .film-card-thumb .thumb-portrait {
+      inset: 0;
+      background-size: contain;
+    }
     .film-card-thumb::after {
       content: '';
       position: absolute;
@@ -1830,8 +1846,24 @@
       // the swap is invisible in practice. No-IO fallback loads eagerly.
       var thumbs = grid.querySelectorAll('.film-card-thumb[data-thumb]');
       function applyThumb(el) {
-        el.style.backgroundImage = "url('" + el.getAttribute('data-thumb') + "')";
+        var src = el.getAttribute('data-thumb');
         el.removeAttribute('data-thumb');
+        // Vertical films carry a true 9:16 poster. In the 16:9 card it sits
+        // whole and sharp over a blurred copy of itself instead of being
+        // cropped to a thin band. Landscape posters render as before.
+        var probe = new Image();
+        probe.onload = function() {
+          if (probe.naturalHeight > probe.naturalWidth) {
+            el.classList.add('is-portrait');
+            el.insertAdjacentHTML('afterbegin',
+              '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
+              '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
+          } else {
+            el.style.backgroundImage = "url('" + src + "')";
+          }
+        };
+        probe.onerror = function() { el.style.backgroundImage = "url('" + src + "')"; };
+        probe.src = src;
       }
       if ('IntersectionObserver' in window) {
         var thumbObserver = new IntersectionObserver(function(entries) {
