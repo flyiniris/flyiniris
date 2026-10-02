@@ -121,6 +121,18 @@ for pg in index.html thanks.html start.html 404.html; do
   check_contains "$pg" "xj2t05exbz"       "Clarity project id"
 done
 
+# ChatGPT Ads measurement pixel (2026-10-01, ChatGPT ads test): CSP origins plus
+# the loader include and the lead_created call on the three inquiry pages.
+check_contains "_headers" "script-src[^;]*bzrcdn\.openai\.com"  "bzrcdn.openai.com in script-src"
+check_contains "_headers" "connect-src[^;]*bzr\.openai\.com"    "bzr.openai.com in connect-src"
+check_contains "_headers" "connect-src[^;]*bzrcdn\.openai\.com" "bzrcdn.openai.com in connect-src"
+check_contains "_headers" "img-src[^;]*bzr\.openai\.com"        "bzr.openai.com in img-src"
+check_contains "fi-oaiq.js" "bzrcdn\.openai\.com/sdk/oaiq\.min\.js" "OpenAI pixel SDK loader"
+for pg in index.html start.html quiz/index.html; do
+  check_contains "$pg" "/fi-oaiq\.js"   "ChatGPT Ads pixel include"
+  check_contains "$pg" "lead_created"   "ChatGPT Ads lead_created event"
+done
+
 if [ "$CLAUDE_MD_TOUCHED" = "1" ]; then
   CHECKER="C:/Users/flyin/Claude Projects/iris-automation/scripts/hooks/claude-md-checks.sh"
   if [ -f "$CHECKER" ]; then

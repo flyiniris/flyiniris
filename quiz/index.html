@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <!-- First-touch referrer capture (see the file header). Runs before the page tracking code reads it. -->
   <script src="/fi-attribution.js"></script>
+  <!-- ChatGPT Ads measurement pixel (OpenAI); lead_created fires on inquiry submit -->
+  <script src="/fi-oaiq.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>What's Your Wedding Film Style? | Free Quiz | Flyin' Iris</title>
   <meta name="description" content="Take our 60-second quiz to discover your wedding film style. Cinematic Romance? Electric Energy? Intimate Poetry? Find out and see real films that match.">
@@ -1499,6 +1501,7 @@ async function submitEmail() {
   if (typeof fbq !== 'undefined') {
     fbq('track', 'Lead', {}, { eventID: leadEventId });
   }
+  try { if (typeof oaiq === 'function') { oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: leadEventId }); } } catch (e) { /* ignore */ }
   window.dataLayer = window.dataLayer || [];
   dataLayer.push({ event: 'quiz_lead' });
 
