@@ -147,6 +147,12 @@
     .chip-dl:hover { background: #fff; color: var(--navy-deep); border-color: #fff; }
     .chip-dl[disabled] { opacity: .75; cursor: progress; }
     .chip-dl small { font-weight: 400; opacity: .7; }
+    button.chip { font-family: var(--sans); cursor: pointer; }
+    .anchor { display: block; position: relative; top: -84px; visibility: hidden; height: 0; }
+    .flash { animation: flash 2.4s var(--ease) 1; }
+    @keyframes flash { 0%, 30% { box-shadow: 0 0 0 3px var(--sky), 0 30px 70px -30px rgba(0,0,0,.9); } 100% { box-shadow: 0 0 0 0 rgba(110,193,248,0), 0 30px 70px -30px rgba(0,0,0,.9); } }
+    .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); z-index: 130; background: var(--cream); color: var(--navy-deep); font-weight: 600; font-size: .9rem; padding: 12px 20px; border-radius: 999px; opacity: 0; pointer-events: none; transition: all .3s var(--ease); box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* Download list + password prompt */
     .dl-list { display: grid; gap: 10px; margin-top: 8px; }
@@ -204,7 +210,9 @@
     .phone-cap { text-align: center; margin-top: 20px; }
     .phone-cap h3 { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin: 0 0 2px; }
     .phone-cap p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
-    .phone-cap .links { justify-content: center; }
+    .phone-cap .links { justify-content: center; gap: 6px; }
+    .phone-cap .links .chip:not(.chip-dl) { padding: 6px 10px; font-size: .72rem; gap: 5px; }
+    .phone-cap .links .chip-dl { flex-basis: 100%; justify-content: center; max-width: 220px; margin: 0 auto 2px; }
 
     .phones {
       display: grid; grid-auto-flow: column; grid-auto-columns: 74%; gap: 22px;
@@ -417,6 +425,8 @@
     </div>
   </footer>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <div class="pw" id="pw" role="dialog" aria-modal="true" aria-labelledby="pw-title">
     <form class="pw-box" id="pw-form">
       <h3 id="pw-title">Download password</h3>
@@ -469,14 +479,20 @@
     var VM_ICON = '<svg viewBox="0 0 24 24"><path d="M22.4 7.2c-.1 2-1.5 4.8-4.3 8.4-2.9 3.7-5.3 5.6-7.3 5.6-1.2 0-2.3-1.1-3.1-3.4L6 12.3c-.6-2.3-1.3-3.4-2-3.4-.2 0-.7.3-1.6.9L1.5 8.7l2.9-2.6C5.7 5 6.7 4.4 7.3 4.3c1.6-.2 2.6.9 2.9 3.2.4 2.5.7 4.1.8 4.7.5 2.1 1 3.1 1.5 3.1.4 0 1.1-.7 2-2.1.9-1.4 1.4-2.5 1.5-3.2.1-1.2-.3-1.8-1.5-1.8-.5 0-1.1.1-1.6.4 1.1-3.5 3.1-5.2 6.1-5.1 2.2.1 3.3 1.5 3.4 4.2z"/></svg>';
 
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-    function thumb(id) { return VIDEO_BASE + '/thumbs/' + id + '.jpg'; }
+    // Vertical films use sharp 1080x1920 frames from the 4K masters (Vimeo's
+    // vertical posters are a ~607px strip inside a 16:9 image and look soft).
+    var POSTER_BASE = 'https://pub-353a8c6ef8dc4c03a98225af8b12a8a9.r2.dev/clients/window-world/honor-flight-golf/posters';
+    var VPOSTERS = { 'honor-flight-golf-outing-recap-vertical': 1, 'honor-flight-golf-the-what-vertical': 1, 'honor-flight-golf-the-why-vertical': 1, 'honor-flight-golf-the-donations-vertical': 1, 'honor-flight-golf-the-fun-vertical': 1 };
+    function thumb(id) { return VPOSTERS[id] ? POSTER_BASE + '/' + id + '.jpg?v=1' : VIDEO_BASE + '/thumbs/' + id + '.jpg'; }
     function hls(id) { return VIDEO_BASE + '/hls/' + id + '/master.m3u8'; }
+    var SHARE_ICON = '<svg viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.2c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></svg>';
     var DL_ICON = '<svg viewBox="0 0 24 24"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4L12 16.4 6.3 10.7l1.4-1.4L11 12.6zM5 19h14v2H5z"/></svg>';
     function dlButton(id, label) {
       return '<button type="button" class="chip chip-dl" data-dl="' + esc(id) + '">' + DL_ICON + '<span>' + (label || 'Download 4K') + '</span> <small>' + (SIZES[id] ? SIZES[id] + ' MB' : '') + '</small></button>';
     }
     function links(f) {
       return '<div class="links">' + dlButton(f.id) +
+        '<button type="button" class="chip" data-share="' + esc(f.id) + '" data-title="' + esc(f.shareTitle || '') + '">' + SHARE_ICON + '<span>Share</span></button>' +
         '<a class="chip" href="https://youtu.be/' + f.yt + '" target="_blank" rel="noopener">' + YT_ICON + 'YouTube</a>' +
         '<a class="chip" href="https://vimeo.com/' + f.vimeo + '" target="_blank" rel="noopener">' + VM_ICON + 'Vimeo</a>' +
         '</div>';
@@ -491,7 +507,8 @@
     }
 
     function widePlayer(f, title, blurb) {
-      return '<div class="player" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + '">' +
+      f.shareTitle = title;
+      return '<span class="anchor" id="' + esc(f.id) + '"></span><div class="player" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + '">' +
           '<div class="cover" data-cover="' + esc(f.id) + '"></div>' +
           '<span class="play" aria-hidden="true">' + PLAY + '</span>' +
           '<span class="dur">' + esc(f.dur) + '</span>' +
@@ -500,7 +517,8 @@
     }
 
     function phone(f, title, blurb) {
-      return '<figure>' +
+      f.shareTitle = title + (/vertical/i.test(title) ? '' : ' (Vertical)');
+      return '<figure><span class="anchor" id="' + esc(f.id) + '"></span>' +
         '<div class="phone" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' vertical">' +
           '<div class="phone-screen">' +
             '<div class="phone-status" aria-hidden="true"><span>9:41</span><span class="phone-island"></span><span class="phone-bars"><i></i><i></i><i></i><i></i><span class="phone-batt"></span></span></div>' +
@@ -688,6 +706,28 @@
       for (var i = 0; i < rows.length; i++) { all.textContent = 'Downloading ' + (i + 1) + ' of ' + rows.length + '...'; await download(rows[i].getAttribute('data-dl'), rows[i]); }
       all.textContent = orig; all.disabled = false;
     });
+
+    // ---------- Share one film: native share sheet on phones, copy link elsewhere ----------
+    var toast = document.getElementById('toast'), toastT = null;
+    function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { toast.classList.remove('show'); }, 2400); }
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-share]'); if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      var url = location.origin + location.pathname + '#' + b.getAttribute('data-share');
+      var title = 'Honor Flight Golf Outing: ' + (b.getAttribute('data-title') || 'Film');
+      if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+      var done = function () { say('Link copied. Paste it anywhere to share this film.'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, function () { window.prompt('Copy this link:', url); }); }
+      else { window.prompt('Copy this link:', url); }
+    }, true);
+    // Opening a shared link: scroll to that film and highlight it.
+    function focusHash() {
+      var id = decodeURIComponent((location.hash || '').slice(1)); if (!id) return;
+      var a = document.getElementById(id); if (!a) return;
+      var host = a.nextElementSibling; if (!host) return;
+      setTimeout(function () { var r = document.documentElement, old = r.style.scrollBehavior; r.style.scrollBehavior = 'auto'; a.scrollIntoView({ block: 'start' }); r.style.scrollBehavior = old; host.classList.add('flash'); setTimeout(function () { host.classList.remove('flash'); }, 2600); }, 250);
+    }
+    window.addEventListener('hashchange', focusHash); focusHash();
 
     // ---------- Chrome ----------
     var bar = document.getElementById('topbar');
