@@ -23,6 +23,16 @@ export default {
         return handleDownload(request, env, downloadMatch[1], downloadMatch[2]);
       }
 
+      // Route: GET /couples/{slug}/file/{videoId}?t=<jwt>&name=<filename>
+      // Same JWT as the POST download, carried in the query so the browser's
+      // own download manager saves the file straight to disk. The POST route
+      // makes the page hold the whole file in memory first, which fails for
+      // 400+ MB 4K masters on phones.
+      const fileMatch = path.match(/^\/couples\/([^/]+)\/file\/([^/]+)$/);
+      if (fileMatch && (request.method === 'GET' || request.method === 'HEAD')) {
+        return handleFileDownload(request, env, fileMatch[1], fileMatch[2], url);
+      }
+
       // Route: GET /couples/{slug}/hls/{videoId}/*
       const hlsMatch = path.match(/^\/couples\/([^/]+)\/hls\/(.+)$/);
       if (hlsMatch && (request.method === 'GET' || request.method === 'HEAD')) {
@@ -177,6 +187,48 @@ async function handleDownload(request, env, slug, videoId) {
       ...cors(request),
     },
   });
+}
+
+async function handleFileDownload(request, env, slug, videoId, url) {
+  const token = url.searchParams.get('t') || '';
+  const payload = token ? await verifyJWT(token, env.JWT_SECRET) : null;
+  if (!payload || payload.slug !== slug) {
+    return new Response('This download link has expired. Go back to the page and tap Download again.', {
+      status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8', ...cors(request) },
+    });
+  }
+
+  const key = `couples/${slug}/originals/${videoId}.mp4`;
+  // Range support lets phones resume and lets players seek a partial file.
+  const object = request.method === 'HEAD'
+    ? await env.FI_FILMS.head(key)
+    : await env.FI_FILMS.get(key, { range: request.headers });
+  if (!object) {
+    return jsonResponse({ error: 'Not found' }, 404, request);
+  }
+
+  // Readable filename from ?name= (ASCII-safe fallback plus RFC 5987 form).
+  const wanted = (url.searchParams.get('name') || `${videoId}.mp4`).slice(0, 150);
+  const ascii = wanted.replace(/[^A-Za-z0-9 ._()&-]/g, '').trim() || `${videoId}.mp4`;
+  const headers = {
+    'Content-Type': 'video/mp4',
+    'Content-Disposition': `attachment; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(wanted)}`,
+    'Accept-Ranges': 'bytes',
+    'Cache-Control': 'private, no-store',
+    ...cors(request),
+  };
+  if (request.method === 'HEAD') {
+    return new Response(null, { headers: { ...headers, 'Content-Length': String(object.size) } });
+  }
+  if (object.range && request.headers.get('Range')) {
+    const offset = object.range.offset || 0;
+    const length = object.range.length != null ? object.range.length : object.size - offset;
+    return new Response(object.body, {
+      status: 206,
+      headers: { ...headers, 'Content-Length': String(length), 'Content-Range': `bytes ${offset}-${offset + length - 1}/${object.size}` },
+    });
+  }
+  return new Response(object.body, { headers: { ...headers, 'Content-Length': String(object.size) } });
 }
 
 // ---------------------------------------------------------------------------

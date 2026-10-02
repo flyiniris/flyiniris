@@ -147,6 +147,8 @@
     .chip-dl:hover { background: #fff; color: var(--navy-deep); border-color: #fff; }
     .chip-dl[disabled] { opacity: .75; cursor: progress; }
     .chip-dl small { font-weight: 400; opacity: .7; }
+    .chip { white-space: nowrap; }
+    @media (max-width: 640px) { .chip { padding: 10px 14px; } .phone-cap .links .chip:not(.chip-dl) { padding: 9px 11px; } }
     button.chip { font-family: var(--sans); cursor: pointer; }
     .anchor { display: block; position: relative; top: -84px; visibility: hidden; height: 0; }
     .flash { animation: flash 2.4s var(--ease) 1; }
@@ -364,7 +366,7 @@
       <div class="sec-head reveal">
         <p class="eyebrow">Downloads</p>
         <h2>Every film, <em>in full 4K.</em></h2>
-        <p>These are the master files, the best quality there is. Enter the download password from our email once, and every film saves straight to your computer or phone. Wifi is best for the bigger files.</p>
+        <p>These are the master files, the best quality there is. Enter the download password from our email once, and every film saves straight to your computer or phone. Wi-Fi is best for the bigger files.</p>
       </div>
       <div class="dl-list reveal" id="dl-list"></div>
       <div class="dl-all reveal"><button class="btn btn-gold" type="button" id="dl-all">Download all 10 films</button></div>
@@ -499,7 +501,7 @@
     }
 
     function phone(f, title, blurb) {
-      f.shareTitle = title + (/vertical/i.test(title) ? '' : ' (Vertical)');
+      f.shareTitle = /vertical/i.test(title) ? title : title + ' (Vertical)';
       return '<figure><span class="anchor" id="' + esc(f.id) + '"></span>' +
         '<div class="phone" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' (vertical)">' +
           '<div class="phone-screen">' +
@@ -513,7 +515,7 @@
     }
 
     document.getElementById('recap-wide').innerHTML = widePlayer(RECAP, RECAP.title, 'Widescreen, 2:37. The full story of the day.');
-    document.getElementById('recap-tall').innerHTML = phone(RECAP_V, 'Recap, Vertical', RECAP_V.blurb);
+    document.getElementById('recap-tall').innerHTML = phone(RECAP_V, 'Event Recap (Vertical)', RECAP_V.blurb);
     document.getElementById('phones').innerHTML = CUTS.map(function (c) { return phone(c.v, c.name, c.blurb); }).join('');
     document.getElementById('cuts-grid').innerHTML = CUTS.map(function (c) { return '<div class="reveal">' + widePlayer(c.h, c.name, c.blurb) + '</div>'; }).join('');
     Array.prototype.forEach.call(document.querySelectorAll('[data-cover]'), function (el) { setCover(el, el.getAttribute('data-cover')); });
@@ -640,34 +642,27 @@
     async function ensureToken() { if (token) return token; return await askPassword(); }
 
     function setLabel(btn, text) { var s = btn.querySelector('span'); if (s) s.textContent = text; }
+    // Native download: the video server checks the token in the link and the
+    // browser saves the file straight to disk (no memory limit, works on
+    // phones, resumable). A quick HEAD check first catches an expired token.
     async function download(id, btn, retried) {
       var t = await ensureToken(); if (!t) return false;
       var span = btn.querySelector('span'), label = span ? span.getAttribute('data-label') || span.textContent : '';
       if (span) span.setAttribute('data-label', label);
       btn.disabled = true; setLabel(btn, 'Starting...');
+      var url = VIDEO_BASE + '/file/' + encodeURIComponent(id) + '?t=' + encodeURIComponent(t) + '&name=' + encodeURIComponent(FILE_NAMES[id] || (id + '.mp4'));
       try {
-        var res = await fetch(VIDEO_BASE + '/download/' + encodeURIComponent(id), { method: 'POST', headers: { 'Authorization': 'Bearer ' + t } });
-        if ((res.status === 401 || res.status === 403) && !retried) {
+        var head = await fetch(url, { method: 'HEAD' });
+        if (head.status === 403 && !retried) {
           token = null; try { sessionStorage.removeItem(TOKEN_KEY); } catch (e) {}
           btn.disabled = false; setLabel(btn, label); return download(id, btn, true);
         }
-        if (!res.ok) throw new Error('failed');
-        var total = parseInt(res.headers.get('Content-Length') || '0', 10), blob;
-        if (res.body && res.body.getReader) {
-          var reader = res.body.getReader(), chunks = [], got = 0;
-          for (;;) {
-            var step = await reader.read(); if (step.done) break;
-            chunks.push(step.value); got += step.value.length;
-            setLabel(btn, total ? 'Downloading ' + Math.min(99, Math.floor(got / total * 100)) + '%' : 'Downloading ' + Math.round(got / 1048576) + ' MB');
-          }
-          blob = new Blob(chunks, { type: 'video/mp4' });
-        } else { blob = await res.blob(); }
-        var url = URL.createObjectURL(blob), a = document.createElement('a');
-        a.href = url; a.download = FILE_NAMES[id] || (id + '.mp4');
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        // Delayed revoke: revoking right away can abort the save on iOS Safari.
-        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
-        setLabel(btn, 'Saved'); setTimeout(function () { setLabel(btn, label); }, 4000);
+        if (!head.ok) throw new Error('failed');
+        var f = document.createElement('iframe');
+        f.style.display = 'none'; f.src = url; document.body.appendChild(f);
+        setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 120000);
+        setLabel(btn, 'Downloading'); say('Download started. Check your Downloads folder.');
+        setTimeout(function () { setLabel(btn, label); }, 5000);
         return true;
       } catch (e) {
         setLabel(btn, 'Try again'); setTimeout(function () { setLabel(btn, label); }, 4000);
@@ -683,7 +678,8 @@
       var all = this; if (!(await ensureToken())) return;
       all.disabled = true; var orig = all.textContent;
       var rows = document.querySelectorAll('#dl-list [data-dl]');
-      for (var i = 0; i < rows.length; i++) { all.textContent = 'Downloading ' + (i + 1) + ' of ' + rows.length + '...'; await download(rows[i].getAttribute('data-dl'), rows[i]); }
+      for (var i = 0; i < rows.length; i++) { all.textContent = 'Starting ' + (i + 1) + ' of ' + rows.length + '...'; await download(rows[i].getAttribute('data-dl'), rows[i]); await new Promise(function (r) { setTimeout(r, 1500); }); }
+      say('All 10 downloads started. If your browser asks to allow multiple downloads, tap Allow.');
       all.textContent = orig; all.disabled = false;
     });
 

@@ -657,6 +657,12 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
+    /* Vertical films play in a 9:16 frame sized to the screen, not letterboxed in 16:9. */
+    .modal-player-wrap.is-vertical {
+      width: min(100%, calc(78vh * 9 / 16));
+      margin: 0 auto;
+    }
+    .modal-player-wrap.is-vertical media-player { aspect-ratio: 9/16; }
     .modal-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 600;
@@ -1165,6 +1171,12 @@
     // worker caches thumbs cache-first, so a re-approved film that keeps its id
     // but gets a new thumbnail would otherwise show the old image forever.
     var THUMB_VERSION = '';
+    // Films whose poster is portrait (set as card thumbs load). Their modal
+    // player switches to a 9:16 frame.
+    var PORTRAIT_IDS = {};
+    function isVerticalFilm(videoId, title) {
+      return !!PORTRAIT_IDS[videoId] || /\(vertical\)/i.test(title || '');
+    }
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg' +
         (THUMB_VERSION ? '?v=' + encodeURIComponent(THUMB_VERSION) : '');
@@ -1884,6 +1896,8 @@
         probe.onload = function() {
           if (probe.naturalHeight > probe.naturalWidth) {
             el.classList.add('is-portrait');
+            var card = el.closest('.film-card');
+            if (card && card.dataset.videoId) PORTRAIT_IDS[card.dataset.videoId] = true;
             el.insertAdjacentHTML('afterbegin',
               '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
               '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
@@ -1954,6 +1968,7 @@
       previousFocus = document.activeElement;
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
+      modalPlayerWrap.classList.toggle('is-vertical', isVerticalFilm(videoId, title));
 
       modalPlayerWrap.innerHTML = createPlayerHtml({
         title: title,
@@ -1980,6 +1995,7 @@
 
     function openPlaylist() {
       if (PLAYLIST.length === 0) return;
+      modalPlayerWrap.classList.remove('is-vertical');
       previousFocus = document.activeElement;
       playlistMode = true;
       playlistIndex = 0;
