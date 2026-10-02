@@ -175,38 +175,19 @@
     .recap-grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
     @media (min-width: 980px) { .recap-grid { grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr); gap: 56px; } }
 
-    /* ---------- Phone frame (adapted from the MKE Web Labs site) ---------- */
+    /* ---------- Vertical film (plain 9:16, rounded; QA 2026-10-02 picked this over a phone mockup) ---------- */
     .phone {
       position: relative; width: 100%; max-width: 300px; margin-inline: auto;
-      padding: 8px; border-radius: 40px;
-      background: linear-gradient(160deg, #4A4A4E 0%, #232326 18%, #1A1A1D 50%, #2E2E32 82%, #4A4A4E 100%);
-      box-shadow: 0 1px 0 rgba(255,255,255,.16) inset, 0 26px 50px -18px rgba(0,0,0,.85), 0 3px 10px rgba(0,0,0,.5);
-      transition: transform .35s var(--ease); cursor: pointer;
+      border-radius: 16px; overflow: hidden; cursor: pointer; background: #000;
+      box-shadow: 0 26px 50px -18px rgba(0,0,0,.85), 0 3px 10px rgba(0,0,0,.5);
+      transition: transform .35s var(--ease);
     }
     .phone:hover { transform: translateY(-5px); }
-    .phone::before, .phone::after { content: ""; position: absolute; left: -2px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, #3A3A3E, #1A1A1D); pointer-events: none; }
-    .phone::before { top: 23%; height: 5%; }
-    .phone::after { top: 32%; height: 9%; }
-    .phone-screen { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 32px; overflow: hidden; background: #000; }
-    .phone-status {
-      position: absolute; top: 0; left: 0; right: 0; z-index: 3; height: 40px;
-      background: linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,0));
-      display: flex; align-items: center; justify-content: space-between; padding: 0 18px;
-      font: 600 11px/1 system-ui, sans-serif; color: #F2F2F4; font-variant-numeric: tabular-nums; pointer-events: none;
-    }
-    .phone-island { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 33%; height: 22px; border-radius: 99px; background: #000; }
-    .phone-bars { display: flex; align-items: center; gap: 3px; }
-    .phone-bars i { display: block; width: 3px; border-radius: 1px; background: #F2F2F4; }
-    .phone-bars i:nth-child(1) { height: 4px; } .phone-bars i:nth-child(2) { height: 6px; }
-    .phone-bars i:nth-child(3) { height: 8px; } .phone-bars i:nth-child(4) { height: 10px; }
-    .phone-batt { width: 19px; height: 10px; border: 1px solid rgba(242,242,244,.55); border-radius: 3px; position: relative; margin-left: 4px; box-sizing: content-box; }
-    .phone-batt::before { content: ""; position: absolute; inset: 1.5px; width: 11px; background: #F2F2F4; border-radius: 1px; }
-    .phone-media { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-    .phone-media video, .phone-media .cover { width: 100%; height: 100%; object-fit: cover; background: #000 center / cover no-repeat; }
+    .phone-screen { position: relative; width: 100%; aspect-ratio: 9 / 16; background: #000; }
+    .phone-media { position: absolute; inset: 0; }
+    .phone-media video, .phone-media .cover { width: 100%; height: 100%; object-fit: cover; background: #000 center / cover no-repeat; display: block; }
     .phone .play { width: 62px; height: 62px; }
     .phone .dur { right: 50%; transform: translateX(50%); bottom: 16px; }
-    .phone-glare { position: absolute; inset: 8px; border-radius: 32px; pointer-events: none; z-index: 4; background: linear-gradient(125deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 32%); }
-    .playing .phone-glare { display: none; }
     .phone-cap { text-align: center; margin-top: 20px; }
     .phone-cap h3 { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin: 0 0 2px; }
     .phone-cap p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
@@ -520,14 +501,12 @@
     function phone(f, title, blurb) {
       f.shareTitle = title + (/vertical/i.test(title) ? '' : ' (Vertical)');
       return '<figure><span class="anchor" id="' + esc(f.id) + '"></span>' +
-        '<div class="phone" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' vertical">' +
+        '<div class="phone" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' (vertical)">' +
           '<div class="phone-screen">' +
-            '<div class="phone-status" aria-hidden="true"><span>9:41</span><span class="phone-island"></span><span class="phone-bars"><i></i><i></i><i></i><i></i><span class="phone-batt"></span></span></div>' +
             '<div class="phone-media"><div class="cover" data-cover="' + esc(f.id) + '"></div></div>' +
             '<span class="play" aria-hidden="true">' + PLAY + '</span>' +
             '<span class="dur">' + esc(f.dur) + '</span>' +
           '</div>' +
-          '<span class="phone-glare" aria-hidden="true"></span>' +
         '</div>' +
         '<figcaption class="phone-cap"><h3>' + esc(title) + '</h3><p>' + esc(blurb) + '</p>' + links(f) + '</figcaption>' +
       '</figure>';
