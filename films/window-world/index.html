@@ -2299,11 +2299,23 @@
       var downloadList = document.getElementById('download-list');
       var authToken = null;
 
+      // Signed download link (board #65): flyiniris.com/films/<slug>/#dl=<key>.
+      // The key sits in the fragment, so it never reaches any server log; the
+      // page posts it to the video Worker, which checks it against the
+      // couple's current password. A link whose password was changed fails
+      // and the page falls back to the normal password box.
+      var linkMatch = (location.hash || '').match(/[#&]dl=([A-Za-z0-9_-]{20,})/);
+      var linkKey = linkMatch ? linkMatch[1] : null;
+
       // Auth submit
       function submitPassword() {
         var password = passwordInput.value.trim();
         if (!password) return;
+        authenticate({ password: password });
+      }
 
+      function authenticate(credentials) {
+        var viaLink = !!credentials.link_key;
         submitBtn.disabled = true;
         submitBtn.textContent = '...';
         errorMsg.classList.remove('visible');
@@ -2311,7 +2323,7 @@
         fetch(WORKER_BASE + '/couples/' + SLUG + '/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: password })
+          body: JSON.stringify(credentials)
         })
         .then(function(res) {
           if (!res.ok) throw new Error('auth_failed');
@@ -2331,9 +2343,12 @@
           linksWrap.classList.add('visible');
         })
         .catch(function() {
+          errorMsg.textContent = viaLink
+            ? 'This download link has expired. Enter your password, or reply to our email for a fresh link.'
+            : 'Incorrect password. Please try again.';
           errorMsg.classList.add('visible');
           passwordInput.value = '';
-          passwordInput.focus();
+          if (!viaLink) passwordInput.focus();
         })
         .finally(function() {
           submitBtn.disabled = false;
@@ -2345,6 +2360,8 @@
       passwordInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') submitPassword();
       });
+
+      if (linkKey) authenticate({ link_key: linkKey });
 
       // Individual downloads
       downloadList.addEventListener('click', function(e) {
