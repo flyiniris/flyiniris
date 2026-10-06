@@ -453,6 +453,22 @@
       background-color: #1A1A19;
       position: relative;
     }
+    .film-card-thumb.is-portrait { overflow: hidden; }
+    .film-card-thumb .thumb-blur,
+    .film-card-thumb .thumb-portrait {
+      position: absolute;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .film-card-thumb .thumb-blur {
+      inset: -24px;
+      background-size: cover;
+      filter: blur(18px) brightness(0.55);
+    }
+    .film-card-thumb .thumb-portrait {
+      inset: 0;
+      background-size: contain;
+    }
     .film-card-thumb::after {
       content: '';
       position: absolute;
@@ -641,6 +657,12 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
+    /* Vertical films play in a 9:16 frame sized to the screen, not letterboxed in 16:9. */
+    .modal-player-wrap.is-vertical {
+      width: min(100%, calc(78vh * 9 / 16));
+      margin: 0 auto;
+    }
+    .modal-player-wrap.is-vertical media-player { aspect-ratio: 9/16; }
     .modal-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
@@ -1120,15 +1142,23 @@
     // worker caches thumbs cache-first, so a re-approved film that keeps its id
     // but gets a new thumbnail would otherwise show the old image forever.
     var THUMB_VERSION = '';
+    // Films whose poster is portrait (set as card thumbs load). Their modal
+    // player switches to a 9:16 frame.
+    var PORTRAIT_IDS = {};
+    function isVerticalFilm(videoId, title) {
+      return !!PORTRAIT_IDS[videoId] || /\(vertical\)/i.test(title || '');
+    }
     function thumbUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg' +
         (THUMB_VERSION ? '?v=' + encodeURIComponent(THUMB_VERSION) : '');
     }
     // --- Quality picker (Auto / 4K / 1080p) ---
-    // Auto is the default and plays exactly what every page played before
-    // the picker existed: the 1080p rung. With hls.js the player loads the
-    // master playlist and Auto caps adaptive selection at the 1080p level;
-    // without hls.js (older iPhones, native HLS) Auto keeps the 1080p rung
+    // Auto is the default everywhere and works like YouTube (board #173,
+    // decided 2026-10-01): with hls.js the player loads the master playlist,
+    // starts on the 1080p rung and, on a computer-sized screen, climbs to 4K
+    // when the connection keeps up. On phones and tablets (or with data saver
+    // or a slow link) Auto stays capped at 1080p unless the viewer picks 4K.
+    // Without hls.js (older iPhones, native HLS) Auto keeps the 1080p rung
     // URL as the src. Choosing 4K or 1080p pins that level (hls.js) or
     // swaps the src to that rung (native HLS), keeping position and play
     // state. The choice is remembered per page in localStorage and applies
@@ -1137,11 +1167,31 @@
     // Auto cap and a 4K pick in a small window.
     var QUALITY_KEY = 'fi-quality:' + SLUG;
     var qualityControls = [];
+    // May Auto climb to the 4K rung? Only on a computer-sized screen (fine
+    // pointer, hover, 1280+ px) with no data saver and no 2g/3g link. Phones
+    // and tablets cannot show 4K and the stream costs ~3x the data, so their
+    // Auto stays at 1080p. hls.js bandwidth estimation then decides whether
+    // a big screen actually reaches 4K, the way YouTube's Auto does.
+    var AUTO_ALLOWS_4K = (function() {
+      try {
+        var conn = navigator.connection || {};
+        if (conn.saveData) return false;
+        if (/(^|slow-)2g|3g/.test(conn.effectiveType || '')) return false;
+        return !!(window.matchMedia && window.matchMedia('(pointer: fine) and (hover: hover)').matches &&
+          Math.max(screen.width, screen.height) >= 1280);
+      } catch (e) { return false; }
+    })();
+    // Auto's level cap: the highest 1080p rung when Auto may not climb to
+    // 4K, otherwise none.
+    function autoCap(has4k, capIdx) {
+      return (has4k && !AUTO_ALLOWS_4K) ? capIdx : -1;
+    }
+    // No saved choice means Auto. A saved choice (Auto, 4K or 1080p) wins.
     function readQualityPref() {
       try {
         var v = window.localStorage.getItem(QUALITY_KEY);
-        if (v === '2160' || v === '1080') return v;
-      } catch (e) { /* storage blocked: default to Auto */ }
+        if (v === '2160' || v === '1080' || v === 'auto') return v;
+      } catch (e) { /* storage blocked: fall through to Auto */ }
       return 'auto';
     }
     function writeQualityPref(v) {
@@ -1342,8 +1392,8 @@
         if (idx == null) { idx = -1; v = 'auto'; }
         st.mode = v;
         if (idx === -1) {
-          // Auto: adaptive, capped at the 1080p rung (today's behaviour).
-          hls.autoLevelCapping = st.tiers['2160'] != null ? st.capIdx : -1;
+          // Auto: adaptive from the 1080p start; capped there on phones.
+          hls.autoLevelCapping = autoCap(st.tiers['2160'] != null, st.capIdx);
           if (st.started) hls.currentLevel = -1; else hls.loadLevel = -1;
           start();
         } else {
@@ -1479,9 +1529,10 @@
         if (t && tiers[t] == null) tiers[t] = i;
         if (t !== '2160') capIdx = i;
       }
-      // Auto: adaptive, capped at the 1080p rung (today's behaviour). A
-      // manual pick in Vidstack's menu is not affected by this cap.
-      hls.autoLevelCapping = tiers['2160'] != null ? capIdx : -1;
+      // Auto: adaptive, capped at the 1080p rung on phones (see
+      // AUTO_ALLOWS_4K). A manual pick in Vidstack's menu is not affected
+      // by this cap.
+      hls.autoLevelCapping = autoCap(tiers['2160'] != null, capIdx);
       var q = playerEl.qualities;
       var idx = v === 'auto' ? null : tiers[v];
       if (idx != null && q && q[idx]) {
@@ -1573,7 +1624,9 @@
 
     // Vidstack names each quality by pixel height, so 4K reads "2160p" and
     // vertical films read "3840p" / "1920p". Relabel its Settings > Quality
-    // menu to the 4K / 1080p names the hero picker uses.
+    // menu to the 4K / 1080p names the hero picker uses, then list each
+    // name once: some older ladders carry two rungs of the same size (a
+    // "4k" folder encoded at 1080p next to the 1080p one, board #174).
     function relabelVidstackQualities() {
       var mp = modalPlayerWrap.querySelector('media-player');
       var q = mp && mp.qualities;
@@ -1587,6 +1640,33 @@
         var before = nodes[n].textContent;
         var after = before.replace(/(\d{3,4})p/g, function(m, h) { return names[h] || m; });
         if (after !== before) nodes[n].textContent = after;
+      }
+      dedupeVidstackQualities();
+    }
+    // Hide repeat rows in Vidstack's quality menu. Per label the selected
+    // row stays visible, otherwise the first one does.
+    function dedupeVidstackQualities() {
+      var radios = document.querySelectorAll('.vds-quality-menu media-radio, .vds-quality-menu [role="menuitemradio"]');
+      var groups = {};
+      var order = [];
+      for (var i = 0; i < radios.length; i++) {
+        var label = radios[i].querySelector('.vds-radio-label');
+        var text = (label ? label.textContent : radios[i].textContent || '').trim();
+        if (!text) continue;
+        if (!groups[text]) { groups[text] = []; order.push(text); }
+        if (groups[text].indexOf(radios[i]) === -1) groups[text].push(radios[i]);
+      }
+      for (var g = 0; g < order.length; g++) {
+        var rows = groups[order[g]];
+        var keep = rows[0];
+        for (var r = 0; r < rows.length; r++) {
+          if (rows[r].getAttribute('aria-checked') === 'true' || rows[r].hasAttribute('data-checked')) { keep = rows[r]; break; }
+        }
+        for (var k = 0; k < rows.length; k++) {
+          var hide = rows[k] !== keep;
+          if (rows[k].hidden !== hide) rows[k].hidden = hide;
+          if (hide) rows[k].style.display = 'none'; else if (rows[k].style.display === 'none') rows[k].style.display = '';
+        }
       }
     }
     if (window.MutationObserver) {
@@ -1830,8 +1910,26 @@
       // the swap is invisible in practice. No-IO fallback loads eagerly.
       var thumbs = grid.querySelectorAll('.film-card-thumb[data-thumb]');
       function applyThumb(el) {
-        el.style.backgroundImage = "url('" + el.getAttribute('data-thumb') + "')";
+        var src = el.getAttribute('data-thumb');
         el.removeAttribute('data-thumb');
+        // Vertical films carry a true 9:16 poster. In the 16:9 card it sits
+        // whole and sharp over a blurred copy of itself instead of being
+        // cropped to a thin band. Landscape posters render as before.
+        var probe = new Image();
+        probe.onload = function() {
+          if (probe.naturalHeight > probe.naturalWidth) {
+            el.classList.add('is-portrait');
+            var card = el.closest('.film-card');
+            if (card && card.dataset.videoId) PORTRAIT_IDS[card.dataset.videoId] = true;
+            el.insertAdjacentHTML('afterbegin',
+              '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
+              '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
+          } else {
+            el.style.backgroundImage = "url('" + src + "')";
+          }
+        };
+        probe.onerror = function() { el.style.backgroundImage = "url('" + src + "')"; };
+        probe.src = src;
       }
       if ('IntersectionObserver' in window) {
         var thumbObserver = new IntersectionObserver(function(entries) {
@@ -1893,6 +1991,7 @@
       previousFocus = document.activeElement;
       playlistBar.classList.remove('visible');
       modalPlayerWrap.classList.remove('has-playlist');
+      modalPlayerWrap.classList.toggle('is-vertical', isVerticalFilm(videoId, title));
 
       modalPlayerWrap.innerHTML = createPlayerHtml({
         title: title,
@@ -1919,6 +2018,7 @@
 
     function openPlaylist() {
       if (PLAYLIST.length === 0) return;
+      modalPlayerWrap.classList.remove('is-vertical');
       previousFocus = document.activeElement;
       playlistMode = true;
       playlistIndex = 0;

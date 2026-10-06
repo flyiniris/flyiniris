@@ -2,7 +2,7 @@
 // storage is origin-wide while each SW is scoped to /films/<slug>/, so a
 // shared name let couples at different template versions delete each
 // other's caches during staggered rollouts (audit 2026-06-09).
-const CACHE_NAME = 'fi-shell-jullia-brian-v29';
+const CACHE_NAME = 'fi-shell-jullia-brian-v32';
 const SHELL_ASSETS = [
   './',
   // Pinned to match the couple-page.html Vidstack pin. Precaching the
@@ -39,6 +39,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // Cross-origin images outside the video host (client event-page photos on
+  // the public R2 bucket) are left to the browser: a fetch() made here is held
+  // to the page CSP's connect-src, which does not list that host, so
+  // intercepting them would break every photo once this worker is installed.
+  if (url.origin !== self.location.origin && event.request.destination === 'image' && url.hostname !== 'video.flyiniris.com') {
+    return;
+  }
 
   // Network-only for HLS segments and playlists (never cache streaming data)
   if (url.pathname.endsWith('.ts') || url.pathname.endsWith('.m3u8')) {
