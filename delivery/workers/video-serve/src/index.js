@@ -130,8 +130,11 @@ async function handleAuth(request, env, slug) {
     return jsonResponse({ error: 'Invalid JSON' }, 400, request);
   }
 
-  const password = body.password;
-  if (!password) {
+  // Either the typed password or the key from a signed download link
+  // (flyiniris.com/films/<slug>/#dl=<key>, board #65).
+  const password = typeof body.password === 'string' ? body.password : '';
+  const linkKey = typeof body.link_key === 'string' ? body.link_key : '';
+  if (!password && !linkKey) {
     return jsonResponse({ error: 'Password required' }, 400, request);
   }
 
@@ -146,7 +149,18 @@ async function handleAuth(request, env, slug) {
   }
 
   const stored = await env.PASSWORDS.get(slug);
-  if (!stored || stored !== password) {
+  let ok = false;
+  if (stored) {
+    if (linkKey) {
+      // Same HMAC iris-automation signs in src/lib/delivery-password.ts. The
+      // key is bound to the CURRENT password, so changing it revokes old links.
+      ok = !!env.DELIVERY_LINK_SECRET &&
+        timingSafeEqual(linkKey, await signDownloadKey(env.DELIVERY_LINK_SECRET, slug, stored));
+    } else {
+      ok = timingSafeEqual(password, stored);
+    }
+  }
+  if (!ok) {
     await env.PASSWORDS.put(rlKey, String(attempts + 1), { expirationTtl: 900 });
     return jsonResponse({ error: 'Invalid password' }, 401, request);
   }
@@ -264,6 +278,26 @@ async function getSigningKey(secret) {
     false,
     ['sign', 'verify']
   );
+}
+
+// Signed download link key: base64url(HMAC-SHA256(secret, "fi-dl-v1:<slug>:<password>")).
+// Must stay byte-identical to signDownloadKey in iris-automation.
+async function signDownloadKey(secret, slug, password) {
+  const key = await getSigningKey(secret);
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`fi-dl-v1:${slug}:${password}`));
+  return base64urlEncodeBytes(mac);
+}
+
+// Constant-time string compare so response timing does not leak how much of
+// a guess matched.
+function timingSafeEqual(a, b) {
+  const x = new TextEncoder().encode(String(a));
+  const y = new TextEncoder().encode(String(b));
+  let diff = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    diff |= (x[i % (x.length || 1)] || 0) ^ (y[i % (y.length || 1)] || 0);
+  }
+  return diff === 0;
 }
 
 async function signJWT(payload, secret) {

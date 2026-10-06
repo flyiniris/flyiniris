@@ -33,7 +33,8 @@ Copy-Item "C:\Users\flyin\Claude Projects\Landing Page\flyiniris\delivery\sample
 ```
 
 In the new file: set `slug`, `coupleNames` ("Name1 & Name2"),
-`weddingDate`, `password`. Add one `videos[]` entry per MP4 file.
+`weddingDate`, `password` (random, never initials plus date; Studio can
+generate it, see workflow-guide.md Step 5). Add one `videos[]` entry per MP4 file.
 Mark up to 5 with `"hero": true` (typically teaser, highlight, plus
 story-session if delivered).
 

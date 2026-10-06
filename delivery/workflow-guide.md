@@ -79,7 +79,7 @@ Edit:
   "slug": "rachel-brandon",
   "coupleNames": "Rachel & Brandon",
   "weddingDate": "October 12, 2024",
-  "password": "rb101224",
+  "password": "k7pm-x3qd-9hrt",
   "videos": [
     {
       "id": "teaser",
@@ -112,7 +112,7 @@ Edit:
 - `id` must match the MP4 filename without `.mp4`.
 - `duration` set to "0:00" initially. The transcoder fills it.
 - Up to 5 videos may have `hero: true`. Convention: teaser plus highlight at minimum; add story-session if delivered.
-- `password` is what the couple enters to unlock downloads.
+- `password` is what the couple enters to unlock downloads. Never build it from the couple's names, initials, wedding date or slug: all of those are printed on the public page (2026-06-09 audit; board #65). Let Studio generate a random one (see Step 5), or use a random value like `k7pm-x3qd-9hrt`.
 - `category` must be one of: `highlight`, `teaser`, `archival`, `bonus`.
 
 ### Step 3: Transcode to HLS
@@ -182,11 +182,15 @@ Upload HLS files, original MP4s, and thumbnails to the R2 bucket.
 
 ### Step 5: Set the download password
 
-The couple's download password lives in Cloudflare KV. Set via wrangler:
+The couple's download password lives in Cloudflare KV.
+
+Preferred (board #65): Studio generates it. POST /api/studio/delivery/<slug>/password with an empty body stores a random password and returns a signed download link (https://flyiniris.com/films/<slug>/#dl=<key>). Send the couple that link: it unlocks downloads with no typing. The password itself is never shown. GET /api/studio/delivery/<slug>/download-link gives the link again later, for any couple, old passwords included.
+
+By hand (only if Studio is unavailable), with a random value, never initials plus date:
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv key put --binding=PASSWORDS "rachel-brandon" "rb101224"
+wrangler kv key put --binding=PASSWORDS "rachel-brandon" "k7pm-x3qd-9hrt"
 ```
 
 (Note: modern wrangler 4.x uses `kv key` with a space, not the older `kv:key` colon form. The colon form silently fails on current wrangler.)
@@ -278,10 +282,10 @@ curl -s "https://video.flyiniris.com/couples/rachel-brandon/hls/highlight/master
 
 ```bash
 cd delivery/workers/video-serve
-wrangler kv key put --binding=PASSWORDS "<slug>" "new-password-here"
+wrangler kv key put --binding=PASSWORDS "<slug>" "<new-random-password>"
 ```
 
-Update the password in `delivery/live/<slug>.json` to keep the local source aligned with KV. The config file is gitignored so the new password stays local.
+Update the password in `delivery/live/<slug>.json` to keep the local source aligned with KV. The config file is gitignored so the new password stays local. Changing the password revokes every signed download link sent for the old one, so send the couple a fresh link. Studio does the same with POST .../password and `{"rotate": true}`.
 
 ## Playback features
 
