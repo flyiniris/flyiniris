@@ -244,12 +244,18 @@ function attachmentDisposition(wanted, fallback) {
 }
 
 // Streams one R2 object as an attachment with Range and HEAD support, so the
-// browser's own download manager can save and resume it.
+// browser's own download manager can save and resume it. key may be a list:
+// the first key that exists is served (photo originals: archive, then the
+// pre-archive prefix).
 async function streamR2Download(request, env, key, wanted, fallbackName, contentType) {
   // Range support lets phones resume and lets players seek a partial file.
-  const object = request.method === 'HEAD'
-    ? await env.FI_FILMS.head(key)
-    : await env.FI_FILMS.get(key, { range: request.headers });
+  let object = null;
+  for (const k of Array.isArray(key) ? key : [key]) {
+    object = request.method === 'HEAD'
+      ? await env.FI_FILMS.head(k)
+      : await env.FI_FILMS.get(k, { range: request.headers });
+    if (object) break;
+  }
   if (!object) {
     return jsonResponse({ error: 'Not found' }, 404, request);
   }
@@ -402,6 +408,18 @@ function originalsPrefix(manifest, gid) {
   return `photo-originals/${gid}/`;
 }
 
+// Where an original can be, best first. After Sean approves a gallery the
+// pipeline copies its originals to photo-archive/<gid>/ (the prefix under the
+// R2 bucket lock; photo-archive-test/<gid>/ for test galleries), checks them,
+// and only then deletes the upload copy. So an original is in the archive,
+// in the upload prefix, or (while the copy runs) in both: try the archive
+// first and fall back, and downloads keep working through the whole move.
+function originalsPrefixes(manifest, gid) {
+  const upload = originalsPrefix(manifest, gid);
+  const archive = upload.replace(/^photo-originals(-test)?\//, (_m, t) => `photo-archive${t || ''}/`);
+  return [archive, upload];
+}
+
 async function handlePhotoOriginal(request, env, url, kind, slug, pid) {
   const live = await loadLiveGallery(env, kind, slug);
   if (!live) return jsonResponse({ error: 'Not found' }, 404, request);
@@ -412,8 +430,8 @@ async function handlePhotoOriginal(request, env, url, kind, slug, pid) {
   if (!photo || typeof photo.key !== 'string') return jsonResponse({ error: 'Not found' }, 404, request);
   const name = String(photo.name || `${pid}.jpg`).slice(0, 150);
   const ext = name.split('.').pop().toLowerCase();
-  const key = originalsPrefix(live.manifest, live.pointer.gallery_id) + photo.key;
-  return streamR2Download(request, env, key, name, `${pid}.jpg`,
+  const keys = originalsPrefixes(live.manifest, live.pointer.gallery_id).map((p) => p + photo.key);
+  return streamR2Download(request, env, keys, name, `${pid}.jpg`,
     PHOTO_CONTENT_TYPES[ext] || 'application/octet-stream');
 }
 
@@ -582,15 +600,28 @@ async function writeChunk(writable, bytes) {
   try { await w.write(bytes); } finally { w.releaseLock(); }
 }
 
-async function pumpZip(env, plan, prefix, writable) {
+// One R2 read per photo in the steady state: prefixes are tried in order and
+// whichever one answered last goes first for the next photo, so a gallery
+// not yet archived costs one extra read for the whole zip, not one per photo.
+async function getOriginal(env, prefixes, key, size) {
+  for (let i = 0; i < prefixes.length; i++) {
+    const obj = await env.FI_FILMS.get(prefixes[i] + key);
+    if (obj && obj.size === size) {
+      if (i > 0) prefixes.unshift(...prefixes.splice(i, 1));
+      return obj;
+    }
+    if (obj && obj.body) { try { await obj.body.cancel(); } catch { /* ignore */ } }
+  }
+  return null;
+}
+
+async function pumpZip(env, plan, prefixes, writable) {
+  const order = [...prefixes];
   try {
     for (const e of plan.entries) {
       await writeChunk(writable, zipLocalHeader(e, plan));
-      const obj = await env.FI_FILMS.get(prefix + e.photo.key);
-      if (!obj || obj.size !== e.size) {
-        if (obj && obj.body) { try { await obj.body.cancel(); } catch { /* ignore */ } }
-        throw new Error(`original missing or changed size: ${e.photo.id}`);
-      }
+      const obj = await getOriginal(env, order, e.photo.key, e.size);
+      if (!obj) throw new Error(`original missing or changed size: ${e.photo.id}`);
       await obj.body.pipeTo(writable, { preventClose: true });
     }
     await writeChunk(writable, zipCentralDirectory(plan));
@@ -637,7 +668,7 @@ async function handlePhotoZip(request, env, ctx, url, kind, slug) {
   const stream = typeof FixedLengthStream === 'function'
     ? new FixedLengthStream(plan.total)
     : new TransformStream();
-  const done = pumpZip(env, plan, originalsPrefix(manifest, pointer.gallery_id), stream.writable);
+  const done = pumpZip(env, plan, originalsPrefixes(manifest, pointer.gallery_id), stream.writable);
   if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(done);
   return new Response(stream.readable, { headers });
 }
