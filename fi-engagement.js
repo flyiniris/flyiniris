@@ -63,7 +63,12 @@
     var formStarted = false;
     var lastSent = '';
 
-    function isVisible() { return document.visibilityState !== 'hidden'; }
+    // Tracked by our own visibilitychange handler, not read from the document
+    // at tick time: by the time 'hidden' fires the document already reports
+    // hidden, which would drop the last visible stretch (a 3 second bounce
+    // would read as 0).
+    var visible = document.visibilityState !== 'hidden';
+    function isVisible() { return visible; }
 
     function tick() {
       var now = Date.now();
@@ -177,8 +182,8 @@
     document.addEventListener('focusin', onFormEvent, true);
     document.addEventListener('input', onFormEvent, true);
     document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') send();
-      else { lastTick = Date.now(); lastInteract = Date.now(); }
+      if (document.visibilityState === 'hidden') { send(); visible = false; }
+      else { visible = true; lastTick = Date.now(); lastInteract = Date.now(); }
     });
     window.addEventListener('pagehide', send);
     setInterval(tick, 5000);
