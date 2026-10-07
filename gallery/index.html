@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Photos | Flyin' Iris</title>
+  <meta name="description" content="A private photo gallery by Flyin' Iris.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <!-- One static page serves every business and one-off gallery:
+       _redirects rewrites /gallery/<slug>/ here, and /fi-photos.js reads the
+       slug from the path (board #24). Tracking mirrors the couple film
+       pages, which carry no analytics tags (private, noindex pages). -->
+
+  <!-- Open Graph: link previews are crawled without JS, so these stay generic. -->
+  <meta property="og:title" content="Photos by Flyin' Iris">
+  <meta property="og:description" content="A private photo gallery by Flyin' Iris.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Flyin' Iris">
+  <meta property="og:image" content="https://www.flyiniris.com/og-films.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://video.flyiniris.com" crossorigin>
+  <link rel="stylesheet" href="/fi-photos.css">
+  <script src="/fi-photos.js" defer></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0A0A0A;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+    @media (min-width: 768px) { .container { padding: 0 24px; } }
+
+    .gal-nav {
+      display: flex;
+      justify-content: center;
+      padding: 22px 16px 0;
+    }
+    .gal-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .gal-head { text-align: center; padding: 56px 0 0; }
+    .gal-label {
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #FFBD1D;
+      margin-bottom: 12px;
+    }
+    .gal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      line-height: 1.15;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      margin-bottom: 48px;
+      overflow-wrap: anywhere;
+    }
+
+    main { flex: 1; padding-bottom: 80px; }
+    .gal-status { text-align: center; color: #C8C3B9; padding: 24px 0 40px; }
+    .gal-status[hidden] { display: none; }
+
+    .gal-footer {
+      border-top: 1px solid #2A2A28;
+      padding: 44px 16px;
+      text-align: center;
+      color: #C8C3B9;
+      font-size: 0.85rem;
+    }
+    .gal-credit {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #F5F0EB;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .gal-credit a { border-bottom: 1px solid #FFBD1D; }
+  </style>
+</head>
+<body>
+  <nav class="gal-nav">
+    <a class="gal-logo" href="https://www.flyiniris.com/">Flyin' Iris</a>
+  </nav>
+
+  <main>
+    <header class="gal-head container">
+      <p class="gal-label">Photo Gallery</p>
+      <h1 class="gal-title" id="gal-title">Photos</h1>
+    </header>
+
+    <p class="gal-status" id="gal-status">Loading photos...</p>
+
+    <section data-fi-photos-wrap hidden>
+      <div class="container">
+        <div data-fi-photos data-kind="gallery" id="gal-root"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gal-footer">
+    <p class="gal-credit">Photos by <a href="https://www.flyiniris.com/">Flyin' Iris</a></p>
+    <p>&copy; <span id="gal-year">2026</span> Flyin' Iris Media Productions LLC. All rights reserved.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.getElementById('gal-root');
+      var status = document.getElementById('gal-status');
+      var titleEl = document.getElementById('gal-title');
+      document.getElementById('gal-year').textContent = String(new Date().getFullYear());
+
+      root.addEventListener('fi-photos:ready', function (e) {
+        var title = (e.detail && e.detail.title) || 'Photos';
+        titleEl.textContent = title;
+        document.title = title + " | Flyin' Iris";
+        status.hidden = true;
+      });
+      root.addEventListener('fi-photos:missing', function () {
+        titleEl.textContent = 'Gallery not found';
+        status.textContent = 'This gallery is not available right now. Check the link you were sent, or reply to that email and we will help.';
+      });
+      // A path with no slug (/gallery/ itself) has nothing to load.
+      if (!/^\/gallery\/[a-z0-9-]{1,80}\/?$/.test(location.pathname)) {
+        titleEl.textContent = 'Gallery not found';
+        status.textContent = 'Check the link you were sent.';
+      }
+    })();
+  </script>
+</body>
+</html>

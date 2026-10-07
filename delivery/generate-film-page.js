@@ -134,9 +134,15 @@ function validateConfig(config, configPath) {
 
   // Reject deprecated fields up front
   DEPRECATED_FIELDS.forEach(f => {
-    if (config[f] !== undefined) {
-      errors.push(`'${f}' is deprecated and must be removed (delivery-page-standard.md Section 5.2)`);
+    if (config[f] === undefined) return;
+    if (f === 'photos') {
+      // Photos need no page config: the template's Photos section (#photos)
+      // loads video.flyiniris.com/photos/couple/<slug> at runtime and shows
+      // itself once a gallery is approved (board #24, delivery/RUNBOOK.md).
+      errors.push(`'photos' is not a config field: remove it. Photo galleries load at runtime in the page's Photos section once approved (delivery/RUNBOOK.md, Photo galleries)`);
+      return;
     }
+    errors.push(`'${f}' is deprecated and must be removed (delivery-page-standard.md Section 5.2)`);
   });
 
   // slug

@@ -38,6 +38,9 @@
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css@1.15.4" />
   <script type="module" src="https://cdn.vidstack.io/player@1.15.4"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+  <!-- Photos section (board #24): shared gallery script and styles. -->
+  <link rel="stylesheet" href="/fi-photos.css">
+  <script src="/fi-photos.js" defer></script>
 
   <style>
     /* ========== Reset & Base ========== */
@@ -1041,6 +1044,17 @@
           <!-- Items injected by JS -->
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ========== Photos ========== -->
+  <!-- Hidden until video.flyiniris.com/photos/couple/<slug> returns an
+       approved gallery (board #24); /fi-photos.js renders it. -->
+  <section class="section" id="photos" data-fi-photos-wrap hidden>
+    <div class="container">
+      <p class="section-label">Photos</p>
+      <h2 class="section-title">Your Photos</h2>
+      <div data-fi-photos data-kind="couple"></div>
     </div>
   </section>
 
@@ -2343,6 +2357,10 @@
             throw new Error('invalid_auth_response');
           }
           authToken = data.token;
+          // One unlock covers films and photos: the Photos section
+          // (/fi-photos.js, board #24) takes this token.
+          window.FI_DL_TOKEN = authToken;
+          try { window.dispatchEvent(new CustomEvent('fi-dl-token', { detail: { token: authToken, from: 'films' } })); } catch (e) { /* old browser */ }
           gate.style.display = 'none';
           renderDownloadList();
           linksWrap.classList.add('visible');
@@ -2367,6 +2385,15 @@
       });
 
       if (linkKey) authenticate({ link_key: linkKey });
+
+      // A password typed into the Photos section unlocks the films too.
+      window.addEventListener('fi-dl-token', function(e) {
+        if (!e.detail || e.detail.from === 'films' || authToken) return;
+        authToken = e.detail.token;
+        gate.style.display = 'none';
+        renderDownloadList();
+        linksWrap.classList.add('visible');
+      });
 
       // Individual downloads
       downloadList.addEventListener('click', function(e) {

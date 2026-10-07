@@ -40,6 +40,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // Gallery photos (board #24) are left to the browser: hundreds of web
+  // copies per gallery would pile up in this cache with no eviction, and
+  // the Worker's own Cache-Control already covers repeat views.
+  if (url.hostname === 'video.flyiniris.com' && url.pathname.indexOf('/photos/') === 0) {
+    return;
+  }
+
   // Cross-origin images outside the video host (client event-page photos on
   // the public R2 bucket) are left to the browser: a fetch() made here is held
   // to the page CSP's connect-src, which does not list that host, so

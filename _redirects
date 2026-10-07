@@ -106,3 +106,10 @@
 # ? clause, same as the /contract.html and /payment rules above. That matters:
 # the page reads fn, vn, wd, film, fc and fv, and Sean attributes on utm_*.
 /watch                     /yours       200
+
+# /gallery/<slug>/ is ONE static page (gallery/index.html) for every business
+# and one-off photo gallery (board #24); /fi-photos.js reads the slug from the
+# path. 200 rewrite, same reasoning as /watch above: the target is the
+# directory, not /gallery/index.html, because Pages strips index.html and a
+# rewrite to it comes back as a redirect that drops the slug.
+/gallery/*                 /gallery/    200
