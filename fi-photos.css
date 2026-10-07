@@ -1,0 +1,202 @@
+/* Flyin' Iris photo galleries (board #24). Shared by the couple film pages
+   (films/<slug>/#photos) and the gallery page (gallery/<slug>/). Rendered
+   by /fi-photos.js; everything is prefixed fi-ph so it never collides with
+   page styles. Brand: #0A0A0A, #FFBD1D, #F5F0EB, Cormorant Garamond + Outfit. */
+
+[data-fi-photos-wrap][hidden] { display: none !important; }
+
+.fi-ph { color: #F5F0EB; font-family: 'Outfit', sans-serif; font-weight: 300; }
+.fi-ph-meta {
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: #C8C3B9;
+  margin: -32px 0 28px;
+}
+
+/* Chapter tabs: one scrollable row on phones */
+.fi-ph-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0 14px;
+  margin-bottom: 14px;
+  justify-content: flex-start;
+  -webkit-overflow-scrolling: touch;
+}
+.fi-ph-tabs::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .fi-ph-tabs { justify-content: center; flex-wrap: wrap; } }
+.fi-ph-tab {
+  flex: 0 0 auto;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid #2A2A28;
+  background: transparent;
+  color: #C8C3B9;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.fi-ph-tab:hover { color: #F5F0EB; }
+.fi-ph-tab[aria-selected="true"] { border-color: #FFBD1D; color: #F5F0EB; }
+.fi-ph-tab:focus-visible, .fi-ph-btn:focus-visible, .fi-ph-item:focus-visible,
+.fi-ph-lb button:focus-visible, .fi-ph-input:focus-visible {
+  outline: 2px solid #FFBD1D;
+  outline-offset: 2px;
+}
+
+.fi-ph-chapter {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 28px 0 12px;
+}
+.fi-ph-chapter:first-child { margin-top: 0; }
+
+/* Justified grid: rows are laid out in JS, each item gets explicit width and
+   height so nothing shifts while thumbnails stream in. */
+.fi-ph-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+.fi-ph-item {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: #161614;
+  border-radius: 2px;
+  cursor: zoom-in;
+}
+.fi-ph-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.6s ease;
+}
+.fi-ph-item img.fi-ph-in { opacity: 1; }
+@media (hover: hover) { .fi-ph-item:hover img { transform: scale(1.03); } }
+
+/* Downloads */
+.fi-ph-dl {
+  margin: 40px auto 0;
+  max-width: 560px;
+  text-align: center;
+}
+.fi-ph-dl p { color: #C8C3B9; font-size: 0.95rem; margin-bottom: 16px; }
+.fi-ph-form { display: flex; gap: 10px; }
+.fi-ph-input {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  font-size: 16px; /* 16px stops iOS zooming into the field */
+  padding: 13px 16px;
+  background: #111110;
+  border: 1px solid #2A2A28;
+  border-radius: 8px;
+  color: #F5F0EB;
+  outline: none;
+}
+.fi-ph-input:focus { border-color: #FFBD1D; }
+.fi-ph-btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  background: transparent;
+  border: 1px solid #FFBD1D;
+  border-radius: 8px;
+  color: #F5F0EB;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.fi-ph-btn:hover { background: #FFBD1D; color: #0A0A0A; }
+.fi-ph-btn[disabled] { opacity: 0.5; cursor: default; background: transparent; color: #F5F0EB; }
+.fi-ph-btn-primary { background: #FFBD1D; color: #0A0A0A; width: 100%; padding: 16px 22px; }
+.fi-ph-btn-primary:hover { background: #F5F0EB; }
+.fi-ph-err { color: #E8896F !important; font-size: 0.85rem !important; margin: 12px 0 0 !important; }
+.fi-ph-sub { font-size: 0.78rem; letter-spacing: 0.02em; text-transform: none; font-weight: 400; opacity: 0.8; display: block; margin-top: 4px; }
+.fi-ph-chlist { display: grid; gap: 8px; margin-top: 14px; }
+.fi-ph-chlist .fi-ph-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; text-align: left; text-transform: none; letter-spacing: 0.02em; font-weight: 400; border-color: #2A2A28; }
+.fi-ph-chlist .fi-ph-btn:hover { border-color: #FFBD1D; background: transparent; color: #F5F0EB; }
+.fi-ph-chlist .fi-ph-sub { margin: 0; white-space: nowrap; }
+.fi-ph-note { font-size: 0.85rem !important; margin: 14px 0 0 !important; }
+
+/* Lightbox */
+.fi-ph-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 10001; /* above the film grain overlay (9999) */
+  background: rgba(10, 10, 10, 0.97);
+  display: flex;
+  flex-direction: column;
+  touch-action: pan-y pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fi-ph-lb[hidden] { display: none; }
+.fi-ph-lb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  font-size: 0.85rem;
+  color: #C8C3B9;
+}
+.fi-ph-lb-count { letter-spacing: 0.05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fi-ph-lb-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.fi-ph-lb-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.fi-ph-lb button {
+  font-family: 'Outfit', sans-serif;
+  background: transparent;
+  border: 0;
+  color: #F5F0EB;
+  cursor: pointer;
+}
+.fi-ph-lb-icon { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; }
+.fi-ph-lb-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fi-ph-lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 10, 10, 0.45) !important;
+  display: none !important;
+}
+.fi-ph-lb-prev { left: 12px; }
+.fi-ph-lb-next { right: 12px; }
+@media (hover: hover) and (min-width: 768px) { .fi-ph-lb-nav { display: inline-flex !important; } }
+.fi-ph-lb-foot {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+.fi-ph-lb-dl {
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 22px !important;
+  border: 1px solid #FFBD1D !important;
+  border-radius: 8px;
+}
+html.fi-ph-lock, html.fi-ph-lock body { overflow: hidden; }
