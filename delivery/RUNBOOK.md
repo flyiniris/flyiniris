@@ -214,6 +214,32 @@ The event page itself (films/window-world/honor-flight-golf/) is a static page
 built outside this repo (Claude Projects/window-world-honor-flight-golf/build-page.py);
 its photos live on the public fi-assets bucket under clients/<slug>/<event>/photos/.
 
+## Photo galleries (board #24)
+
+Pointer level; the pipeline and approve logic live in FI-Pipeline and
+iris-automation.
+
+- **Drop:** Sierra drops a gallery folder into the Photos drop folder,
+  named `<Names>_<YYYY-MM-DD>` (add `_TEST` for a test). Subfolders become
+  chapters (one level). FI-Pipeline reads the originals read-only, makes web
+  and thumb copies, uploads everything, and nothing goes live.
+- **Approve:** Sean alone gets a text with an approve link. He can fix the
+  page address and title, then taps Approve, which publishes the gallery.
+  Nobody else is contacted.
+- **Where it shows:** a couple's photos appear in the Photos section of their
+  film page (`/films/<slug>/#photos`, hidden until approved; every page built
+  from the template has it, no config field needed). Business and one-off
+  galleries live at `/gallery/<slug>/` (one static page, `gallery/index.html`).
+  Shared code: `/fi-photos.js` and `/fi-photos.css`.
+- **Routes:** video-serve `/photos/<kind>/<slug>` (see
+  `workers/video-serve/README.md`).
+- **Passwords:** couple photos use the couple's films password, and one
+  unlock on the page covers films and photos; the films `#dl=` link works for
+  both. Business galleries get their own random password and their own
+  `/gallery/<slug>/#dl=` link, shown to Sean on the approve page only.
+- **Downloads:** per photo, per chapter, or all as one zip (a zip over 950
+  photos is offered per chapter instead).
+
 ## When the template changes
 
 If you edit `delivery/templates/couple-page.html` (layout, player, etc.):
