@@ -84,6 +84,17 @@ The auth slug is the couple slug for `couple`, and `gallery:<slug>` for
 signed link HMAC and the JWT `slug` claim all use it. So a couple's films
 token also opens their photos, and never a business gallery of the same name.
 
+Originals live in one of two places. Uploads land in `photo-originals/<gid>/`
+(unlocked, so a wrong upload can still be deleted). After Sean approves,
+FI-Pipeline copies them server side to `photo-archive/<gid>/` (the prefix
+under the R2 bucket lock), checks every copy, and only then deletes the
+upload copy. Test galleries use `photo-originals-test/` and
+`photo-archive-test/` (never locked). Single downloads and zips try the
+archive first and fall back to the upload prefix, so they keep working before,
+during and after the move. In a zip, whichever prefix answered last is tried
+first for the next photo, so a not-yet-archived gallery costs one extra R2
+read per zip, not one per photo.
+
 A zip of more than 950 photos is refused (413) and offered per chapter
 instead, so one download never hits the per-request subrequest ceiling.
 Run the tests with `npm test` (Node 22 and Python 3 on PATH).

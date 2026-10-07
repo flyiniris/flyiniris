@@ -387,6 +387,125 @@ test('zip: a missing original errors the stream instead of finishing short', asy
   await assert.rejects(res.arrayBuffer());
 });
 
+// --- the locked archive (after approval) ---------------------------------------
+// The pipeline copies photo-originals/<gid>/ to photo-archive/<gid>/, checks
+// it, then deletes the upload copy. Every stage of that move must serve.
+
+function moveToArchive(env, photos, { gid = GID, test = false, copy = () => true, del = () => true } = {}) {
+  const from = test ? `photo-originals-test/${gid}/` : `photo-originals/${gid}/`;
+  const to = test ? `photo-archive-test/${gid}/` : `photo-archive/${gid}/`;
+  photos.forEach((p, i) => {
+    if (copy(i)) env.FI_FILMS.put(to + p.key, p._bytes);
+    if (copy(i) && del(i)) env.FI_FILMS.map.delete(from + p.key);
+  });
+}
+
+async function zipEntries(res) {
+  const dir = mkdtempSync(join(tmpdir(), 'fi-zip-'));
+  try {
+    const bytes = await readAll(res);
+    assert.equal(String(bytes.length), res.headers.get('Content-Length'));
+    writeFileSync(join(dir, 'z.zip'), bytes);
+    return pyZipCheck(join(dir, 'z.zip'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test('archived gallery: originals and zip come from photo-archive, one read each', async () => {
+  const env = makeEnv();
+  const photos = seedGallery(env);
+  moveToArchive(env, photos);
+  assert.equal([...env.FI_FILMS.map.keys()].filter((k) => k.startsWith('photo-originals/')).length, 0);
+  env.PASSWORDS.map.set('ava-ben', 'pw-ava');
+  const tk = await token(env, '/photos/couple/ava-ben/auth', { password: 'pw-ava' });
+  const p = photos[1];
+  const full = await call(env, `/photos/couple/ava-ben/original/${p.id}?t=${tk}`);
+  assert.equal(full.status, 200);
+  assert.deepEqual(await readAll(full), p._bytes);
+  const part = await call(env, `/photos/couple/ava-ben/original/${p.id}?t=${tk}`, { headers: { Range: 'bytes=10-19' } });
+  assert.equal(part.status, 206);
+  assert.deepEqual(await readAll(part), p._bytes.slice(10, 20));
+  const head = await call(env, `/photos/couple/ava-ben/original/${p.id}?t=${tk}`, { method: 'HEAD' });
+  assert.equal(head.headers.get('Content-Length'), String(p.bytes));
+
+  env.FI_FILMS.gets.length = 0;
+  const entries = await zipEntries(await call(env, `/photos/couple/ava-ben/zip?t=${tk}`));
+  entries.forEach((e, i) => assert.equal(e[1], photos[i].bytes));
+  const reads = env.FI_FILMS.gets.filter((k) => /^photo-(archive|originals)\//.test(k));
+  assert.deepEqual(reads, photos.map((x) => `photo-archive/${GID}/${x.key}`));
+});
+
+test('not yet archived: one extra read for the whole zip, not one per photo', async () => {
+  const env = makeEnv();
+  const photos = seedGallery(env);
+  env.PASSWORDS.map.set('ava-ben', 'pw-ava');
+  const tk = await token(env, '/photos/couple/ava-ben/auth', { password: 'pw-ava' });
+  env.FI_FILMS.gets.length = 0;
+  await zipEntries(await call(env, `/photos/couple/ava-ben/zip?t=${tk}`));
+  const reads = env.FI_FILMS.gets.filter((k) => /^photo-(archive|originals)\//.test(k));
+  assert.deepEqual(reads, [`photo-archive/${GID}/${photos[0].key}`, ...photos.map((x) => `photo-originals/${GID}/${x.key}`)]);
+});
+
+test('mid-move: copy half done, then delete half done, zip and downloads still whole', async () => {
+  for (const [label, opts] of [
+    ['copy running', { copy: (i) => i % 2 === 0, del: () => false }],
+    ['delete running', { copy: () => true, del: (i) => i < 3 }],
+    ['odd mix', { copy: (i) => i !== 1, del: (i) => i % 2 === 0 }],
+  ]) {
+    const env = makeEnv();
+    const photos = seedGallery(env);
+    moveToArchive(env, photos, opts);
+    env.PASSWORDS.map.set('ava-ben', 'pw-ava');
+    const tk = await token(env, '/photos/couple/ava-ben/auth', { password: 'pw-ava' });
+    const entries = await zipEntries(await call(env, `/photos/couple/ava-ben/zip?t=${tk}`));
+    assert.equal(entries.length, photos.length, label);
+    entries.forEach((e, i) => assert.equal(e[1], photos[i].bytes, label));
+    for (const p of photos) {
+      const r = await call(env, `/photos/couple/ava-ben/original/${p.id}?t=${tk}`);
+      assert.equal(r.status, 200, `${label} ${p.id}`);
+      assert.deepEqual(await readAll(r), p._bytes, `${label} ${p.id}`);
+    }
+  }
+});
+
+test('archive copy with a wrong size is skipped for the upload copy', async () => {
+  const env = makeEnv();
+  const photos = seedGallery(env);
+  env.FI_FILMS.put(`photo-archive/${GID}/${photos[1].key}`, new Uint8Array(5));
+  env.PASSWORDS.map.set('ava-ben', 'pw-ava');
+  const tk = await token(env, '/photos/couple/ava-ben/auth', { password: 'pw-ava' });
+  const entries = await zipEntries(await call(env, `/photos/couple/ava-ben/zip?t=${tk}`));
+  entries.forEach((e, i) => assert.equal(e[1], photos[i].bytes));
+});
+
+test('test galleries archive to photo-archive-test, never photo-archive', async () => {
+  const env = makeEnv();
+  const photos = seedGallery(env, { kind: 'gallery', slug: 'zz-test-one', gid: TEST_GID, test: true });
+  moveToArchive(env, photos, { gid: TEST_GID, test: true });
+  env.FI_FILMS.put(`photo-archive/${TEST_GID}/${photos[1].key}`, new Uint8Array(photos[1].bytes));
+  env.PASSWORDS.map.set('gallery:zz-test-one', 'pw-t');
+  const tk = await token(env, '/photos/gallery/zz-test-one/auth', { password: 'pw-t' });
+  const res = await call(env, `/photos/gallery/zz-test-one/original/p00002?t=${tk}`);
+  assert.equal(res.status, 200);
+  assert.deepEqual(await readAll(res), photos[1]._bytes);
+  const entries = await zipEntries(await call(env, `/photos/gallery/zz-test-one/zip?t=${tk}`));
+  assert.equal(entries.length, photos.length);
+});
+
+test('zip: an original missing from both places still errors the stream', async () => {
+  const env = makeEnv();
+  const photos = seedGallery(env);
+  moveToArchive(env, photos, { del: () => false });
+  env.FI_FILMS.map.delete(`photo-originals/${GID}/${photos[3].key}`);
+  env.FI_FILMS.map.delete(`photo-archive/${GID}/${photos[3].key}`);
+  env.PASSWORDS.map.set('ava-ben', 'pw-ava');
+  const tk = await token(env, '/photos/couple/ava-ben/auth', { password: 'pw-ava' });
+  const res = await call(env, `/photos/couple/ava-ben/zip?t=${tk}`);
+  await assert.rejects(res.arrayBuffer());
+  assert.equal((await call(env, `/photos/couple/ava-ben/original/${photos[3].id}?t=${tk}`)).status, 404);
+});
+
 // --- existing film routes ----------------------------------------------------
 
 test('film routes unchanged: auth, signed link, file download with range, POST download', async () => {

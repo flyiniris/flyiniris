@@ -239,6 +239,13 @@ iris-automation.
   `/gallery/<slug>/#dl=` link, shown to Sean on the approve page only.
 - **Downloads:** per photo, per chapter, or all as one zip (a zip over 950
   photos is offered per chapter instead).
+- **Originals and the lock:** uploads go to `photo-originals/<gid>/` in
+  fi-films (unlocked). Once Sean approves, the laptop copies them to
+  `photo-archive/<gid>/`, which an R2 bucket lock rule keeps forever, checks
+  every copy, and then deletes the `photo-originals` copy. Downloads read the
+  archive first and fall back, so nothing breaks during the move. A rejected
+  gallery is never archived; its `photo-originals/<gid>/` can be deleted by
+  hand (steps in iris-automation `docs/knowledge/photo-galleries.md`).
 
 ## When the template changes
 
