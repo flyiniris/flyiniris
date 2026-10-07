@@ -1621,6 +1621,19 @@
       <input type="text" id="partners_instagram_username" placeholder="@theirhandle" />
     </div>
 
+    <div class="field" data-field="tiktok_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="tiktok_username">Your TikTok handle (optional)</label>
+      <input type="text" id="tiktok_username" placeholder="@yourhandle" />
+      <div class="field-hint">If you're on TikTok, so we can tag you there too when we share your film.</div>
+    </div>
+
+    <div class="field" data-field="partners_tiktok_username" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="partners_tiktok_username">Your partner's TikTok handle (optional)</label>
+      <input type="text" id="partners_tiktok_username" placeholder="@theirhandle" />
+    </div>
+
     <div class="field" data-field="consultation_call_topics" data-state="user_entered">
       <span class="field-badge"></span>
       <label class="field-label" for="consultation_call_topics">Comments, thoughts, or questions you'd like us to talk about on our call (optional)</label>
@@ -1904,7 +1917,8 @@
     'bloopers_preference', 'reference_films',
     // Section 6
     'home_address', 'partners_phone', 'partners_email', 'consultation_call_topics',
-    'instagram_username', 'partners_instagram_username'
+    'instagram_username', 'partners_instagram_username',
+    'tiktok_username', 'partners_tiktok_username'
   ];
 
   // Section 2 fields (used to gate submit on review)
@@ -2392,7 +2406,9 @@
     'partners_email': 'partners_email',
     'consultation_call_topics': 'consultation_call_topics',
     'instagram_username': 'instagram_username',
-    'partners_instagram_username': 'partners_instagram_username'
+    'partners_instagram_username': 'partners_instagram_username',
+    'tiktok_username': 'tiktok_username',
+    'partners_tiktok_username': 'partners_tiktok_username'
   };
   Object.keys(DIRECT_INPUT_FIELDS).forEach(function (k) {
     bindInput(DIRECT_INPUT_FIELDS[k], k);
