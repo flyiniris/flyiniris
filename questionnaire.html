@@ -1557,6 +1557,61 @@
       <textarea id="music_specifications" rows="3"></textarea>
     </div>
 
+    <!-- Music for YOUR film (iris-automation src/couple-music.ts, flag MUSIC_QUESTIONS).
+         Hidden unless GET /api/questionnaire-features says music_questions: true.
+         Labels must match MUSIC_QUESTIONS in src/couple-music.ts. -->
+    <div id="music-questions" hidden>
+    <div class="field" data-field="music_film_songs" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="music_film_songs">1 to 3 songs or artists that feel like your film (we may not use those exact songs) (optional)</label>
+      <textarea id="music_film_songs" rows="3"></textarea>
+    </div>
+    <div class="field" data-field="music_avoid" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="music_avoid">Any music to avoid? (optional)</label>
+      <textarea id="music_avoid" rows="2"></textarea>
+    </div>
+    <div class="field" data-field="music_vocals" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Singing or instrumental? (optional)</label>
+      <div class="radio-group" data-radio-group="music_vocals">
+        <label class="radio-card"><input type="radio" name="music_vocals" value="Singing" /><span class="radio-card-label">Singing</span></label>
+        <label class="radio-card"><input type="radio" name="music_vocals" value="Instrumental" /><span class="radio-card-label">Instrumental</span></label>
+        <label class="radio-card"><input type="radio" name="music_vocals" value="A mix of both" /><span class="radio-card-label">A mix of both</span></label>
+        <label class="radio-card"><input type="radio" name="music_vocals" value="No preference" /><span class="radio-card-label">No preference</span></label>
+      </div>
+    </div>
+    <div class="field" data-field="music_build" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">How should the music build? (optional)</label>
+      <div class="radio-group" data-radio-group="music_build">
+        <label class="radio-card"><input type="radio" name="music_build" value="Soft and gentle the whole way" /><span class="radio-card-label">Soft and gentle the whole way</span></label>
+        <label class="radio-card"><input type="radio" name="music_build" value="A slow build to a big finish" /><span class="radio-card-label">A slow build to a big finish</span></label>
+        <label class="radio-card"><input type="radio" name="music_build" value="Big and upbeat from the start" /><span class="radio-card-label">Big and upbeat from the start</span></label>
+        <label class="radio-card"><input type="radio" name="music_build" value="Leave it up to us" /><span class="radio-card-label">Leave it up to us</span></label>
+      </div>
+    </div>
+    <div class="field" data-field="music_faith_cultural" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="music_faith_cultural">Any faith or cultural songs that matter to you? (optional)</label>
+      <textarea id="music_faith_cultural" rows="2"></textarea>
+    </div>
+    <div class="field" data-field="music_day_songs" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label" for="music_day_songs">Songs played on the day (first dance, walk down the aisle) (optional)</label>
+      <textarea id="music_day_songs" rows="3"></textarea>
+    </div>
+    <div class="field" data-field="music_say" data-state="user_entered">
+      <span class="field-badge"></span>
+      <label class="field-label">Do you want a say in the music? (optional)</label>
+      <div class="radio-group" data-radio-group="music_say">
+        <label class="radio-card"><input type="radio" name="music_say" value="Yes, show us options first" /><span class="radio-card-label">Yes, show us options first</span></label>
+        <label class="radio-card"><input type="radio" name="music_say" value="A little, the songs above are enough" /><span class="radio-card-label">A little, the songs above are enough</span></label>
+        <label class="radio-card"><input type="radio" name="music_say" value="No, we trust you" /><span class="radio-card-label">No, we trust you</span></label>
+      </div>
+    </div>
+    </div>
+
     <!-- Q61 bloopers_preference (single radio) -->
     <div class="field" data-field="bloopers_preference" data-state="user_entered">
       <span class="field-badge"></span>
@@ -1915,6 +1970,8 @@
     // Section 5
     'film_style_multi_select', 'film_feeling', 'music_preferences', 'music_specifications',
     'bloopers_preference', 'reference_films',
+    'music_film_songs', 'music_avoid', 'music_vocals', 'music_build',
+    'music_faith_cultural', 'music_day_songs', 'music_say',
     // Section 6
     'home_address', 'partners_phone', 'partners_email', 'consultation_call_topics',
     'instagram_username', 'partners_instagram_username',
@@ -2004,6 +2061,11 @@
       var b = document.querySelector('input[name="bloopers_preference"]:checked');
       return b ? b.value : '';
     }
+    // Music radio groups (and any later data-radio-group whose inputs share its name).
+    if (document.querySelector('[data-radio-group="' + name + '"]')) {
+      var rg = document.querySelector('input[name="' + name + '"]:checked');
+      return rg ? rg.value : '';
+    }
     // Y/N grouped fields (single button group with no input id)
     if (ynGroups.indexOf(name) >= 0) {
       return ynState[name] || '';
@@ -2079,6 +2141,11 @@
     if (name === 'bloopers_preference') {
       var br = document.querySelector('input[name="bloopers_preference"][value="' + cssEscape(value) + '"]');
       if (br) br.checked = true;
+      return;
+    }
+    if (document.querySelector('[data-radio-group="' + name + '"]')) {
+      var rw = value ? document.querySelector('input[name="' + name + '"][value="' + cssEscape(value) + '"]') : null;
+      if (rw) rw.checked = true;
       return;
     }
     if (ynGroups.indexOf(name) >= 0) {
@@ -2304,6 +2371,14 @@
       maybeSave();
     });
   });
+  ['music_vocals', 'music_build', 'music_say'].forEach(function (rn) {
+    document.querySelectorAll('input[name="' + rn + '"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        handleFieldChange(rn);
+        maybeSave();
+      });
+    });
+  });
   document.querySelectorAll('input[name="end_of_night_choice"]').forEach(function (r) {
     r.addEventListener('change', function () {
       var otherWrap = document.getElementById('end_of_night_other_wrap');
@@ -2408,7 +2483,11 @@
     'instagram_username': 'instagram_username',
     'partners_instagram_username': 'partners_instagram_username',
     'tiktok_username': 'tiktok_username',
-    'partners_tiktok_username': 'partners_tiktok_username'
+    'partners_tiktok_username': 'partners_tiktok_username',
+    'music_film_songs': 'music_film_songs',
+    'music_avoid': 'music_avoid',
+    'music_faith_cultural': 'music_faith_cultural',
+    'music_day_songs': 'music_day_songs'
   };
   Object.keys(DIRECT_INPUT_FIELDS).forEach(function (k) {
     bindInput(DIRECT_INPUT_FIELDS[k], k);
@@ -3197,6 +3276,21 @@
       }).catch(function () {});
     } catch (e) {}
   }
+
+  // Optional sections switched on by the Worker (flag MUSIC_QUESTIONS in
+  // iris-automation). Off, or the call fails: the section stays hidden and
+  // nothing else changes. No identity or PII goes out on this call.
+  try {
+    fetch(API_BASE + '/api/questionnaire-features')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (f) {
+        if (f && f.music_questions === true) {
+          var mq = document.getElementById('music-questions');
+          if (mq) mq.hidden = false;
+        }
+      })
+      .catch(function () { /* stays hidden */ });
+  } catch (e) { /* stays hidden */ }
 
   // form_started
   setTimeout(function () { sendBeacon('form_started', {}); }, 200);
