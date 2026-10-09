@@ -28,19 +28,22 @@
 
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 
-  <!-- Google Tag Manager + Meta Pixel (deferred 3s for page speed) -->
+  <!-- Google Tag Manager (immediate, async) + Meta Pixel (deferred 3s for page speed) -->
   <script>
   window.dataLayer = window.dataLayer || [];
   // One PageView event id shared by the browser pixel and the server CAPI
   // PageView (/api/pageview) so Meta dedups the pair instead of counting two.
   window.__fi_pv_event_id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+  // GTM (GA4) loads right away, like /start, /thanks and /films (board #227,
+  // 2026-10-09): behind the 3 s delay every visit shorter than about 3 s,
+  // which is most ad clicks, never reached GA4, so GA4 showed a fraction of
+  // the visits and none of the utm_source=chatgpt_ads landings.
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-M74R95NX');
   setTimeout(function() {
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-M74R95NX');
-
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
