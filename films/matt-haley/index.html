@@ -1224,7 +1224,8 @@
           var o = {
             '@type': 'VideoObject',
             '@id': PAGE_URL + '#' + v.id,
-            name: v.title + SCHEMA_NAME_SUFFIX,
+            // The main film's title already names the couple's wedding.
+            name: /^Matt & Haley's Wedding$/.test(v.title) ? "Matt & Haley's Wedding Film | The Valerie, Oconomowoc, WI" : v.title + SCHEMA_NAME_SUFFIX,
             description: FILM_STORIES[v.id].story,
             thumbnailUrl: [WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + v.id + '.jpg'],
             uploadDate: FILM_STORIES[v.id].uploadDate,
