@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matt & Haley | Flyin' Iris</title>
-  <meta name="description" content="Watch Matt & Haley's wedding films, streamed in cinematic quality by Flyin' Iris.">
+  <meta name="description" content="Watch Matt & Haley's wedding films from The Valerie in Oconomowoc, Wisconsin, streamed in cinematic quality by Flyin' Iris.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0A0A0A">
 
@@ -529,6 +529,20 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 1.15rem;
+    }
+    .film-story {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #C8C3B9;
+      margin-top: 8px;
+    }
+    .hero-story {
+      max-width: 640px;
+      margin: 10px auto 0;
+      text-align: center;
+      font-size: 0.95rem;
     }
     .film-card.coming-soon {
       cursor: default;
@@ -1128,6 +1142,109 @@
     var CONFIG_API_BASE = 'https://api.flyiniris.com';
     var WORKER_BASE = 'https://video.flyiniris.com';
     var SLUG = 'matt-haley';
+
+    // Per-film story lines and search data (board #249). Keyed by video id.
+    // A story shows only for a film that is actually on the page, so FOMO
+    // parts stay hidden until they are approved into the live film list.
+    var FILM_STORIES = {
+      "teaser": {
+            "story": "A first taste of Matt and Haley's wedding day at The Valerie in Oconomowoc, Wisconsin: the moments, the people and the feeling of March 20, 2026, in under three minutes.",
+            "uploadDate": "2026-03-25T18:05:22Z"
+      },
+      "highlight": {
+            "story": "Matt and Haley's wedding film. Their whole day at The Valerie in Oconomowoc, Wisconsin, told in twenty minutes, from the first look to the dance floor.",
+            "uploadDate": "2026-08-26T17:23:22Z"
+      },
+      "first-look-partner": {
+            "story": "Matt and Haley see each other for the first time on their wedding day, in the ceremony room at The Valerie in Oconomowoc, Wisconsin. The whole moment, start to finish.",
+            "uploadDate": "2026-10-08T10:15:06Z"
+      },
+      "first-look-dad": {
+            "story": "Haley shares a first look with her dad and brother at The Valerie in Oconomowoc, Wisconsin. The hugs, the tears and everything they said to each other, kept whole.",
+            "uploadDate": "2026-10-08T03:41:20Z"
+      },
+      "first-look-bridesmaids": {
+            "story": "Haley's bridesmaids see her in her dress for the first time at The Valerie in Oconomowoc, Wisconsin, and the happy tears start right away. Their whole first look, uncut.",
+            "uploadDate": "2026-10-08T09:43:54Z"
+      },
+      "ceremony": {
+            "story": "Matt and Haley's full ceremony at The Valerie in Oconomowoc, Wisconsin, under a white floral arch in front of everyone they love. Every word, from the processional to the first kiss.",
+            "uploadDate": "2026-10-08T09:29:34Z"
+      },
+      "guest-interviews": {
+            "story": "Friends and family share their love, memories and advice for Matt and Haley during the celebration at The Valerie in Oconomowoc, Wisconsin.",
+            "uploadDate": "2026-10-08T15:01:47Z"
+      },
+      "grand-march": {
+            "story": "Matt, Haley and their wedding party make their entrance into the reception at The Valerie in Oconomowoc, Wisconsin.",
+            "uploadDate": "2026-10-08T13:34:55Z"
+      },
+      "first-dance": {
+            "story": "Matt and Haley's first dance as a married couple on the checkered dance floor at The Valerie in Oconomowoc, Wisconsin, their name glowing in lights behind them.",
+            "uploadDate": "2026-10-08T03:32:24Z"
+      },
+      "speeches": {
+            "story": "Every speech and toast from Matt and Haley's reception at The Valerie in Oconomowoc, Wisconsin, in full. The laughs, the stories and the raised glasses.",
+            "uploadDate": "2026-10-08T16:21:00Z"
+      },
+      "cake": {
+            "story": "Matt and Haley cut their wedding cake at The Valerie in Oconomowoc, Wisconsin.",
+            "uploadDate": "2026-10-08T02:55:59Z"
+      },
+      "story-interview": {
+            "story": "Matt and Haley sit down together and tell the story of their relationship in their own words: the full Story Session conversation behind their wedding at The Valerie in Oconomowoc, Wisconsin.",
+            "uploadDate": "2026-10-08T18:42:59Z"
+      },
+      "gopro": {
+            "story": "The GoPro view from the middle of the party at The Valerie in Oconomowoc, Wisconsin. Matt and Haley's reception, seen up close from the dance floor.",
+            "uploadDate": "2026-10-08T13:11:08Z"
+      }
+    };
+    var PAGE_URL = 'https://www.flyiniris.com/films/' + SLUG + '/';
+    var SCHEMA_NAME_SUFFIX = " | Matt & Haley's Wedding at The Valerie, Oconomowoc, WI";
+    function storyFor(videoId) {
+      var s = FILM_STORIES[videoId];
+      return s ? s.story : '';
+    }
+    // "M:SS" or "H:MM:SS" to an ISO 8601 duration (PT1H2M3S).
+    function isoDuration(label) {
+      if (!label) return '';
+      var p = String(label).split(':').map(Number);
+      if (p.some(isNaN)) return '';
+      while (p.length < 3) p.unshift(0);
+      return 'PT' + (p[0] ? p[0] + 'H' : '') + (p[1] ? p[1] + 'M' : '') + p[2] + 'S';
+    }
+    // VideoObject structured data for every film on the page that has a
+    // story, so search engines can list the films in video results.
+    function renderVideoSchema() {
+      var graph = VIDEOS
+        .filter(function(v) { return v.comingSoon !== true && FILM_STORIES[v.id]; })
+        .sort(function(a, b) { return a.order - b.order; })
+        .map(function(v) {
+          var o = {
+            '@type': 'VideoObject',
+            '@id': PAGE_URL + '#' + v.id,
+            name: v.title + SCHEMA_NAME_SUFFIX,
+            description: FILM_STORIES[v.id].story,
+            thumbnailUrl: [WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + v.id + '.jpg'],
+            uploadDate: FILM_STORIES[v.id].uploadDate,
+            contentUrl: WORKER_BASE + '/couples/' + SLUG + '/hls/' + v.id + '/master.m3u8',
+            url: PAGE_URL,
+            inLanguage: 'en'
+          };
+          var d = isoDuration(v.duration);
+          if (d) o.duration = d;
+          return o;
+        });
+      var old = document.getElementById('video-schema');
+      if (old) old.remove();
+      if (!graph.length) return;
+      var tag = document.createElement('script');
+      tag.type = 'application/ld+json';
+      tag.id = 'video-schema';
+      tag.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+      document.head.appendChild(tag);
+    }
 
     // Hero entries (sorted by order) play as full-width inline players above
     // the Collection grid. Collection grid excludes them to avoid duplicate
@@ -1819,6 +1936,7 @@
           (h.duration ? '    <span class="hero-duration">' + escapeHtml(h.duration) + '</span>' : '') +
           '    <div class="fi-quality-slot"></div>' +
           '  </div>' +
+          (storyFor(h.id) ? '  <p class="film-story hero-story">' + escapeHtml(storyFor(h.id)) + '</p>' : '') +
           '</div>';
       }
       stack.innerHTML = html;
@@ -1909,6 +2027,7 @@
           '  <div class="film-card-body">' +
           '    <p class="film-card-title">' + escapeHtml(v.title) + '</p>' +
           (soon ? '    <p class="film-card-title" style="font-family:Outfit,sans-serif;font-weight:300;font-size:0.8rem;letter-spacing:0.04em;margin-top:6px;">Coming soon</p>' : '') +
+          (!soon && storyFor(v.id) ? '    <p class="film-story">' + escapeHtml(storyFor(v.id)) + '</p>' : '') +
           '  </div>' +
           '</div>';
       }
@@ -2564,6 +2683,7 @@
 
       renderHeroRow();
       renderCollection();
+      renderVideoSchema();
       renderDownloadList();
       runReveal();
     }
