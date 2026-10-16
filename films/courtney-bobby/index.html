@@ -2431,61 +2431,45 @@
         allBtn.textContent = 'Download All Films';
       });
 
-      // The download route is POST-only with a Bearer header (video-serve
-      // Worker), so a plain tokened-URL anchor is not possible yet; the
-      // browser's native download manager would need a GET route accepting
-      // the JWT as a query param. Until that route ships, stream the
-      // response body and show real percent progress instead of an
-      // indeterminate "Downloading..." label, and only reset the password
-      // gate on actual auth failures (401/403). Wifi blips and missing
-      // files were previously mislabeled "Session expired" (audit
-      // 2026-06-09, fi-delivery ux #2).
+      // Native download (board #249, 10/15): the video server checks the
+      // session token carried in the link (GET /file/:id?t=&name=) and the
+      // browser's own download manager saves the film straight to disk. The
+      // old POST route held the whole file in page memory first, which fails
+      // for multi-GB 4K masters (Matt & Haley's GoPro angle is ~13 GB). A
+      // HEAD check first catches an expired token before the download starts.
+      function downloadName(videoId) {
+        var v = VIDEOS.filter(function(x) { return x.id === videoId; })[0];
+        var title = (v && v.title) || videoId;
+        var names = document.title.split(' | ')[0];
+        return (title.indexOf(names) === 0 ? title : names + ' ' + title) + '.mp4';
+      }
+      function fileUrl(videoId) {
+        return WORKER_BASE + '/couples/' + SLUG + '/file/' + encodeURIComponent(videoId) +
+          '?t=' + encodeURIComponent(authToken) + '&name=' + encodeURIComponent(downloadName(videoId));
+      }
       async function triggerDownload(videoId, btn) {
         var origText = btn.textContent;
         btn.disabled = true;
         btn.textContent = 'Starting...';
 
         try {
-          var res = await fetch(WORKER_BASE + '/couples/' + SLUG + '/download/' + videoId, {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + authToken }
-          });
-          if (res.status === 401 || res.status === 403) throw new Error('auth');
-          if (!res.ok) throw new Error('failed');
+          var url = fileUrl(videoId);
+          var head = await fetch(url, { method: 'HEAD' });
+          if (head.status === 401 || head.status === 403) throw new Error('auth');
+          if (!head.ok) throw new Error('failed');
 
-          var blob;
-          var total = parseInt(res.headers.get('Content-Length') || '0', 10);
-          if (res.body && typeof res.body.getReader === 'function') {
-            var reader = res.body.getReader();
-            var chunks = [];
-            var received = 0;
-            for (;;) {
-              var step = await reader.read();
-              if (step.done) break;
-              chunks.push(step.value);
-              received += step.value.length;
-              btn.textContent = total > 0
-                ? 'Downloading ' + Math.min(99, Math.floor(received / total * 100)) + '%'
-                : 'Downloading ' + Math.round(received / 1048576) + ' MB';
-            }
-            blob = new Blob(chunks, { type: 'video/mp4' });
-          } else {
-            // Old browsers without ReadableStream support.
-            blob = await res.blob();
-          }
-
-          var url = URL.createObjectURL(blob);
+          // A link to an attachment downloads without leaving the page, on
+          // phones too (iOS Safari shows its download prompt).
           var a = document.createElement('a');
           a.href = url;
-          a.download = videoId + '.mp4';
+          a.rel = 'noopener';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          // Delayed revoke: revoking synchronously can abort the save on
-          // iOS Safari before the file lands in Downloads.
-          setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
-          btn.textContent = 'Saved';
-          setTimeout(function() { btn.textContent = origText; }, 4000);
+          btn.textContent = 'Downloading';
+          setTimeout(function() { btn.textContent = origText; }, 5000);
+          // Give the browser a moment between files on Download All.
+          await new Promise(function(r) { setTimeout(r, 1500); });
         } catch (e) {
           if (e && e.message === 'auth') {
             // Token genuinely expired or invalid: back to the password gate.
