@@ -340,6 +340,98 @@
        Settings > Quality menu. */
     .fi-quality-slot { margin-top: 12px; }
     .fi-quality-slot:empty { display: none; }
+    /* Watch on TV: a cast / AirPlay icon in the top-right corner of each
+       top film (shown only while a TV is found), and the remote panel that
+       covers the player while that film plays on the TV. */
+    .fi-tv-slot {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 12;
+      display: flex;
+      gap: 8px;
+    }
+    .fi-tv-slot:empty { display: none; }
+    .hero-player-wrap.is-casting .fi-tv-slot { display: none; }
+    .fi-tv-btn {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      background: rgba(10, 10, 10, 0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .fi-tv-btn:hover { border-color: #FFBD1D; background: rgba(10, 10, 10, 0.85); }
+    .fi-tv-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    .fi-tv-btn svg { width: 22px; height: 22px; fill: #FFBD1D; }
+    .fi-cast-panel {
+      position: absolute;
+      inset: 0;
+      z-index: 11;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 20px;
+      background: rgba(10, 10, 10, 0.82);
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      text-align: center;
+    }
+    .fi-cast-msg { display: flex; align-items: center; gap: 10px; font-size: 1rem; letter-spacing: 0.02em; }
+    .fi-cast-msg svg { width: 22px; height: 22px; fill: #FFBD1D; flex: none; }
+    .fi-cast-msg b { font-weight: 500; color: #FFBD1D; }
+    .fi-cast-play {
+      width: 64px;
+      height: 64px;
+      padding: 0;
+      border-radius: 50%;
+      border: 2px solid #FFBD1D;
+      background: rgba(10, 10, 10, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .fi-cast-play svg { width: 28px; height: 28px; fill: #FFBD1D; }
+    .fi-cast-seek {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: min(560px, 100%);
+      font-size: 0.85rem;
+      color: #C8C3B9;
+      font-variant-numeric: tabular-nums;
+    }
+    .fi-cast-seek input { flex: 1; accent-color: #FFBD1D; }
+    .fi-cast-stop {
+      min-height: 44px;
+      padding: 10px 18px;
+      background: transparent;
+      border: 1px solid #2A2A28;
+      border-radius: 999px;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .fi-cast-stop:hover { border-color: #FFBD1D; }
+    .fi-cast-play:focus-visible,
+    .fi-cast-stop:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    @media (max-width: 600px) {
+      .fi-cast-panel { gap: 10px; padding: 12px; }
+      .fi-cast-msg { font-size: 0.85rem; }
+      .fi-cast-play { width: 48px; height: 48px; }
+      .fi-cast-play svg { width: 22px; height: 22px; }
+      .fi-cast-stop { min-height: 36px; padding: 6px 14px; }
+    }
     .fi-quality {
       position: relative;
       display: inline-block;
@@ -1496,13 +1588,206 @@
       media.src = url;
     }
 
+    // --- Watch on TV (hero players) ---
+    // The heroes are plain <video> elements, so unlike the Vidstack pop-up
+    // they have no cast or AirPlay button of their own. This puts one icon
+    // in the top-right corner of each top film, shown only while the
+    // browser finds a TV: Chromecast / Google TV (and TVs with Cast built
+    // in) through the Google Cast SDK in Chrome or Edge, and AirPlay TVs
+    // through Safari. Cast hands the TV the master playlist so the TV picks
+    // 4K or 1080p itself (video.flyiniris.com sends CORS *, which the Cast
+    // receiver needs). While a film plays on a Cast TV, a remote panel
+    // covers that player (play / pause, seek, stop) so the phone or laptop
+    // works as the remote. AirPlay needs no panel: Safari's own controls
+    // drive the TV.
+    var AIRPLAY_CAPABLE = !!window.WebKitPlaybackTargetAvailabilityEvent;
+    var CAST_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11z"/></svg>';
+    var AIRPLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22h12l-6-6zM21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-2H3V5h18v12h-4v2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>';
+    var TV_PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z"/></svg>';
+    var TV_PAUSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+    // The Cast SDK loads async. Poll for it rather than setting
+    // window.__onGCastApiAvailable, which Vidstack's cast loader owns.
+    var castWaiters = null;
+    function whenCastReady(fn) {
+      if (castWaiters === 'ready') { fn(); return; }
+      if (castWaiters) { castWaiters.push(fn); return; }
+      castWaiters = [fn];
+      var tries = 0;
+      (function poll() {
+        var ok = window.cast && window.cast.framework && window.chrome && window.chrome.cast && window.chrome.cast.media;
+        if (!ok) {
+          if (++tries < 60) setTimeout(poll, 500);
+          return;
+        }
+        try {
+          window.cast.framework.CastContext.getInstance().setOptions({
+            receiverApplicationId: window.chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+            autoJoinPolicy: window.chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+          });
+        } catch (e) { return; }
+        var list = castWaiters;
+        castWaiters = 'ready';
+        for (var i = 0; i < list.length; i++) { try { list[i](); } catch (e) { /* ignore */ } }
+      })();
+    }
+    // One RemotePlayer for the page: it mirrors whatever the TV is playing.
+    var castRemote = null;
+    function getCastRemote() {
+      if (!castRemote) {
+        var player = new window.cast.framework.RemotePlayer();
+        castRemote = { player: player, ctl: new window.cast.framework.RemotePlayerController(player) };
+      }
+      return castRemote;
+    }
+    function fmtTvTime(s) {
+      s = Math.max(0, Math.floor(s || 0));
+      var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+      return (h ? h + ':' + (m < 10 ? '0' : '') : '') + m + ':' + (r < 10 ? '0' : '') + r;
+    }
+    function castHero(video, videoId, title) {
+      var ctx = window.cast.framework.CastContext.getInstance();
+      var load = function() {
+        var session = ctx.getCurrentSession();
+        if (!session) return;
+        var media = window.chrome.cast.media;
+        var info = new media.MediaInfo(masterUrl(videoId), 'application/x-mpegurl');
+        info.streamType = media.StreamType.BUFFERED;
+        if (media.HlsSegmentFormat) info.hlsSegmentFormat = media.HlsSegmentFormat.TS;
+        if (media.HlsVideoSegmentFormat) info.hlsVideoSegmentFormat = media.HlsVideoSegmentFormat.MPEG2_TS;
+        var meta = new media.GenericMediaMetadata();
+        meta.title = title;
+        meta.subtitle = "Flyin' Iris";
+        meta.images = [new window.chrome.cast.Image(thumbUrl(videoId))];
+        info.metadata = meta;
+        var req = new media.LoadRequest(info);
+        req.autoplay = true;
+        req.currentTime = video.currentTime || 0;
+        try { video.pause(); } catch (e) { /* ignore */ }
+        var p = session.loadMedia(req);
+        if (p && typeof p.catch === 'function') p.catch(function() {});
+      };
+      if (ctx.getCurrentSession()) { load(); return; }
+      var p = ctx.requestSession();
+      if (p && typeof p.then === 'function') p.then(load, function() { /* picker closed */ });
+    }
+    function attachHeroTv(video, videoId, title, slot) {
+      if (!video || !slot) return;
+      var wrap = slot.parentElement;
+      var buttons = {};
+      function show(kind, on, label, icon, onClick) {
+        if (on && !buttons[kind]) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'fi-tv-btn';
+          b.title = label;
+          b.setAttribute('aria-label', label + ': ' + title);
+          b.innerHTML = icon;
+          b.addEventListener('click', function(e) { e.stopPropagation(); onClick(); });
+          buttons[kind] = b;
+          slot.appendChild(b);
+        } else if (!on && buttons[kind]) {
+          slot.removeChild(buttons[kind]);
+          buttons[kind] = null;
+        }
+      }
+      if (AIRPLAY_CAPABLE && typeof video.webkitShowPlaybackTargetPicker === 'function') {
+        video.addEventListener('webkitplaybacktargetavailabilitychanged', function(e) {
+          show('airplay', e.availability === 'available', 'Play on TV (AirPlay)', AIRPLAY_ICON, function() {
+            video.webkitShowPlaybackTargetPicker();
+          });
+        });
+      }
+      whenCastReady(function() {
+        var fw = window.cast.framework;
+        var ctx = fw.CastContext.getInstance();
+        var update = function() {
+          show('cast', ctx.getCastState() !== fw.CastState.NO_DEVICES_AVAILABLE, 'Play on TV', CAST_ICON, function() {
+            castHero(video, videoId, title);
+          });
+        };
+        ctx.addEventListener(fw.CastContextEventType.CAST_STATE_CHANGED, update);
+        update();
+
+        // Remote panel while this film is the one on the TV.
+        var rc = getCastRemote();
+        var panel = null, seeking = false, lastTime = 0;
+        function onTv() {
+          var mi = rc.player.mediaInfo;
+          return !!(rc.player.isConnected && mi && mi.contentId === masterUrl(videoId));
+        }
+        function build() {
+          panel = document.createElement('div');
+          panel.className = 'fi-cast-panel';
+          panel.setAttribute('role', 'group');
+          panel.setAttribute('aria-label', title + ' is playing on your TV');
+          panel.innerHTML =
+            '<div class="fi-cast-msg">' + CAST_ICON + '<span>Playing on <b class="fi-cast-device">your TV</b></span></div>' +
+            '<button type="button" class="fi-cast-play"></button>' +
+            '<div class="fi-cast-seek"><span class="fi-cast-cur">0:00</span>' +
+            '<input type="range" min="0" max="0" step="1" value="0" aria-label="Seek on TV">' +
+            '<span class="fi-cast-dur">0:00</span></div>' +
+            '<button type="button" class="fi-cast-stop">Stop playing on TV</button>';
+          var range = panel.querySelector('input');
+          panel.querySelector('.fi-cast-play').addEventListener('click', function() { rc.ctl.playOrPause(); });
+          range.addEventListener('input', function() {
+            seeking = true;
+            panel.querySelector('.fi-cast-cur').textContent = fmtTvTime(range.value);
+          });
+          range.addEventListener('change', function() {
+            rc.player.currentTime = +range.value;
+            rc.ctl.seek();
+            seeking = false;
+          });
+          panel.querySelector('.fi-cast-stop').addEventListener('click', function() {
+            ctx.endCurrentSession(true);
+          });
+          wrap.appendChild(panel);
+          wrap.classList.add('is-casting');
+        }
+        function render() {
+          if (!onTv()) {
+            if (panel) {
+              panel.remove();
+              panel = null;
+              wrap.classList.remove('is-casting');
+              // Back on the laptop or phone: pick up where the TV left off.
+              if (lastTime > 0) { try { video.currentTime = lastTime; } catch (e) { /* ignore */ } }
+            }
+            return;
+          }
+          if (!panel) build();
+          lastTime = rc.player.currentTime || lastTime;
+          var session = ctx.getCurrentSession();
+          var device = session && session.getCastDevice && session.getCastDevice();
+          panel.querySelector('.fi-cast-device').textContent = (device && device.friendlyName) || 'your TV';
+          var paused = rc.player.isPaused;
+          var play = panel.querySelector('.fi-cast-play');
+          play.innerHTML = paused ? TV_PLAY_ICON : TV_PAUSE_ICON;
+          play.setAttribute('aria-label', paused ? 'Play on TV' : 'Pause on TV');
+          var range = panel.querySelector('input');
+          var dur = rc.player.duration || 0;
+          range.max = String(Math.floor(dur));
+          panel.querySelector('.fi-cast-dur').textContent = fmtTvTime(dur);
+          if (!seeking) {
+            range.value = String(Math.floor(rc.player.currentTime || 0));
+            panel.querySelector('.fi-cast-cur').textContent = fmtTvTime(rc.player.currentTime);
+          }
+        }
+        rc.ctl.addEventListener(fw.RemotePlayerEventType.ANY_CHANGE, render);
+        render();
+      });
+    }
+
     // Native <video> hero player. hls.js where supported (Chrome, Edge,
     // Firefox, Android, iOS 17.1+ via ManagedMediaSource); native HLS
     // src switching otherwise.
     function attachHeroPlayer(video, videoId, slot) {
       if (!video) return;
       var fallbackSrc = video.getAttribute('data-hls');
-      if (canUseHlsJs()) {
+      // Safari (Mac and iPhone) uses its own HLS playback: AirPlay cannot
+      // send an hls.js (MediaSource) stream to a TV.
+      var nativeForAirPlay = AIRPLAY_CAPABLE && !!video.canPlayType('application/vnd.apple.mpegurl');
+      if (canUseHlsJs() && !nativeForAirPlay) {
         attachHeroHlsJs(video, videoId, slot, fallbackSrc);
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         attachHeroNative(video, videoId, slot, fallbackSrc);
@@ -1601,6 +1886,7 @@
           if (variants[i].tier === '2160') st.urls['2160'] = variants[i].uri;
         }
         if (!st.urls['2160']) return;
+        if (AUTO_ALLOWS_4K) st.urls.auto = masterUrl(videoId);
         var ctl = createQualityControl(slot, {
           has4k: function() { return true; },
           mode: function() { return st.mode; },
@@ -1931,6 +2217,7 @@
           '        </svg>' +
           '      </div>' +
           '    </div>' +
+          '    <div class="fi-tv-slot"></div>' +
           '  </div>' +
           '  <div class="hero-info">' +
           '    <span class="hero-title">' + escapeHtml(h.title) + '</span>' +
@@ -1948,6 +2235,12 @@
           heroCards[hv].querySelector('video[data-hls]'),
           heroCards[hv].getAttribute('data-hero-id'),
           heroCards[hv].querySelector('.fi-quality-slot')
+        );
+        attachHeroTv(
+          heroCards[hv].querySelector('video[data-hls]'),
+          heroCards[hv].getAttribute('data-hero-id'),
+          (heroCards[hv].querySelector('.hero-title') || {}).textContent || '',
+          heroCards[hv].querySelector('.fi-tv-slot')
         );
       }
 
