@@ -655,9 +655,11 @@
           btn.disabled = false; setLabel(btn, label); return download(id, btn, true);
         }
         if (!head.ok) throw new Error('failed');
-        var f = document.createElement('iframe');
-        f.style.display = 'none'; f.src = url; document.body.appendChild(f);
-        setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 120000);
+        // A plain link, not a hidden iframe: the site's frame-src policy does
+        // not list the video host, so an iframe download was silently blocked.
+        var a = document.createElement('a');
+        a.href = url; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setLabel(btn, 'Downloading'); say('Download started. Check your Downloads folder.');
         setTimeout(function () { setLabel(btn, label); }, 5000);
         return true;
