@@ -66,7 +66,7 @@ function applyBusinessTheme(html, theme, clientName) {
       .replace(/<h1 class="hero-names">([^<]*)<\/h1>/, (m, name) => '<h1 class="hero-names"><img class="hero-logo" src="' + logo + '" alt="' + alt + '"><span class="visually-hidden">' + name + '</span></h1>');
   }
   // Footer: the studio signature, in the studio's own type and gold.
-  out = out.replace(/<p class="footer-logo">Flyin' Iris<\/p>/, () => '<p class="footer-by">Films by</p><p class="footer-logo">Flyin\' Iris</p>');
+  out = out.replace(/<p class="footer-logo">(?:<a [^>]*>)?Flyin' Iris(?:<\/a>)?<\/p>/, (m) => '<p class="footer-by">Films by</p>' + m);
   const css = [
     '  <style>',
     '    /* Business theme overrides (generated) */',
@@ -76,6 +76,7 @@ function applyBusinessTheme(html, theme, clientName) {
     '    .section-title, .event-link-title { font-weight: 700; letter-spacing: -0.01em; }',
     '    .footer-by { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; opacity: .7; margin: 0 0 4px; }',
     "    .footer-logo { font-family: 'Cormorant Garamond', serif; color: #FFBD1D; }",
+    '    .footer-logo a:hover { color: #FFBD1D; }',
     '  </style>',
     '</head>',
   ].join('\n');
