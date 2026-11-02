@@ -550,3 +550,16 @@ test('film routes unchanged: auth, signed link, file download with range, POST d
   assert.equal((await call(env, '/couples/ava-ben/thumbs/teaser.jpg')).status, 302);
   assert.equal((await call(env, '/nothing')).status, 404);
 });
+
+test('share picture: no teaser uses the couple\'s own highlight, never another couple', async () => {
+  const env = makeEnv();
+  const none = await call(env, '/couples/cal-dee/thumbs/teaser.jpg');
+  assert.equal(none.status, 302);
+  assert.equal(none.headers.get('Location'), 'https://www.flyiniris.com/og-films.png');
+  env.FI_FILMS.put('couples/cal-dee/thumbs/highlight.jpg', 'jpg');
+  const own = await call(env, '/couples/cal-dee/thumbs/teaser.jpg');
+  assert.equal(own.status, 302);
+  assert.equal(new URL(own.headers.get('Location')).pathname, '/couples/cal-dee/thumbs/highlight.jpg');
+  env.FI_FILMS.put('couples/cal-dee/thumbs/teaser.jpg', 'jpg');
+  assert.equal((await call(env, '/couples/cal-dee/thumbs/teaser.jpg')).status, 200);
+});

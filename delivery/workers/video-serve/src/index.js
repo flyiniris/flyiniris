@@ -96,7 +96,10 @@ async function handleHLS(request, env, matchedPath) {
   });
 }
 
-const DEFAULT_SHARE_IMAGE = 'https://www.flyiniris.com/Cody-Sarah-og.jpg';
+// Never another couple's photo (11/1: Arianna & Austin's link showed Cody & Sarah).
+const DEFAULT_SHARE_IMAGE = 'https://www.flyiniris.com/og-films.png';
+// A couple with no teaser shares their own highlight picture first.
+const SHARE_FALLBACKS = ['highlight.jpg', 'the-video.jpg', 'film.jpg'];
 
 async function handleThumb(request, env, matchedPath) {
   const key = matchedPath.replace(/^\//, '');
@@ -108,10 +111,18 @@ async function handleThumb(request, env, matchedPath) {
     // site share image instead, short-cached so the real teaser takes over
     // as soon as it is uploaded.
     if (key.endsWith('/thumbs/teaser.jpg')) {
+      const dir = key.slice(0, -'teaser.jpg'.length);
+      let location = DEFAULT_SHARE_IMAGE;
+      for (const name of SHARE_FALLBACKS) {
+        if (await env.FI_FILMS.head(dir + name)) {
+          location = new URL('/' + dir + name, request.url).toString();
+          break;
+        }
+      }
       return new Response(null, {
         status: 302,
         headers: {
-          Location: DEFAULT_SHARE_IMAGE,
+          Location: location,
           'Cache-Control': 'public, max-age=300',
           ...cors(request),
         },
