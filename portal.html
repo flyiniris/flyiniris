@@ -1431,16 +1431,18 @@
       statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is off. Use Pay Now above when each payment comes due.';
     }
 
-    // P2: update card button (always available). P3: turn-off control, only
-    // shown when autopay is currently on.
-    let actions = '<button type="button" class="' + buttonClass + '" onclick="updatePaymentMethod(\'' + token + '\', this)">' + buttonLabel + '</button>';
+    // P2: update card button and P3: turn-off control, both only while
+    // autopay is on. A card saved with autopay off is never charged (there
+    // are no autopay invoices to charge it), so offering it would mislead.
+    let actions = '';
     if (ap.enabled) {
+      actions += '<button type="button" class="' + buttonClass + '" onclick="updatePaymentMethod(\'' + token + '\', this)">' + buttonLabel + '</button>';
       actions += '<button type="button" class="autopay-disable-link" onclick="openAutopayModal(\'' + token + '\')">Turn off autopay</button>';
     }
     actionsEl.innerHTML = actions;
 
     const cardLink = document.getElementById('payments-card-link');
-    if (cardLink) {
+    if (cardLink && ap.enabled) {
       cardLink.textContent = (ap.enabled && !hasCard) ? 'Add my card' : 'Update my card';
       cardLink.style.display = 'inline-block';
     }
