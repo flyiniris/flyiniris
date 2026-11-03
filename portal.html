@@ -474,6 +474,33 @@
     }
     .autopay-status.on .autopay-dot { background: var(--green); }
     .autopay-status.off .autopay-dot { background: var(--text-muted); }
+    .autopay-status.warn {
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: rgba(255, 189, 29, 0.08);
+      border: 1px solid rgba(255, 189, 29, 0.45);
+      color: var(--text-primary);
+    }
+    .autopay-status.warn .autopay-dot { background: var(--accent); }
+    .autopay-btn.primary {
+      background: var(--accent);
+      color: #111;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .autopay-btn.primary:hover { background: var(--accent); filter: brightness(1.08); }
+    .card-alert {
+      max-width: 720px;
+      margin: 16px auto 0;
+      padding: 16px 18px;
+      border-radius: 10px;
+      background: rgba(255, 189, 29, 0.08);
+      border: 1px solid rgba(255, 189, 29, 0.45);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      text-align: center;
+    }
+    .card-alert .autopay-btn { margin-top: 12px; }
     .autopay-actions {
       display: flex;
       flex-wrap: wrap;
@@ -805,7 +832,7 @@
   </div>
   <div class="error-icon"></div>
   <h2 id="error-title">Something went wrong</h2>
-  <p id="error-message">This link doesn't seem to be working. Contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.</p>
+  <p id="error-message">This link doesn't seem to be working. Contact us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>.</p>
 </div>
 
 <!-- Portal Content -->
@@ -862,6 +889,7 @@
         </div>
         <div class="progress-label" id="payments-pct"></div>
         <a class="status-card-link" href="#payments-detail" style="display: none;" id="payments-view-link">View Payments</a>
+        <a class="status-card-link" href="#payment-method-section" style="display: none;" id="payments-card-link">Update my card</a>
       </div>
 
       <!-- Questionnaire Card -->
@@ -900,7 +928,7 @@
     <!-- Payment Method / Autopay Section -->
     <div class="payments-section" id="payment-method-section" style="display: none;">
       <div class="section-title">Payment Method</div>
-      <h3 class="section-heading">Autopay</h3>
+      <h3 class="section-heading">Your Card</h3>
       <div class="autopay-status" id="autopay-status"></div>
       <div class="autopay-actions" id="autopay-actions"></div>
     </div>
@@ -921,7 +949,7 @@
       <div class="footer-reach-out">Questions? Reach out anytime!</div>
       <div class="footer-contact">
         Reply to any of our emails, or reach us at<br>
-        <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>
+        <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>
       </div>
       <div class="footer-brand">
         &copy; 2026 Flyin' Iris Media Productions LLC<br>
@@ -966,6 +994,19 @@
       if (content) content.insertBefore(banner, content.firstChild);
     }
 
+    // The card-only update page returns here with ?card=saved. The webhook
+    // that marks the card as the autopay card can lag the redirect, so trust
+    // the return for this page load.
+    window.__cardJustSaved = params.get('card') === 'saved';
+    if (window.__cardJustSaved) {
+      const banner = document.createElement('div');
+      banner.setAttribute('role', 'status');
+      banner.style.cssText = 'max-width:720px;margin:16px auto 0;padding:14px 18px;border-radius:10px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.45);color:#4ade80;font-size:0.95rem;text-align:center;';
+      banner.textContent = 'Your card is saved. Your next payment will charge it automatically on its due date.';
+      const content = document.getElementById('portal-content');
+      if (content) content.insertBefore(banner, content.firstChild);
+    }
+
     if (!token) {
       showError('Missing Link', 'No access token was provided. Please use the link from your email.');
       return;
@@ -978,9 +1019,9 @@
 
       if (!resp.ok) {
         if (resp.status === 404) {
-          showError('Link Not Found', 'This link doesn\'t seem to be working. Contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.');
+          showError('Link Not Found', 'This link doesn\'t seem to be working. Contact us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>.');
         } else {
-          showError('Something Went Wrong', 'We couldn\'t load your portal. Please try again or contact us at <a href="mailto:sean@flyiniris.com">sean@flyiniris.com</a>.');
+          showError('Something Went Wrong', 'We couldn\'t load your portal. Please try again or contact us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>.');
         }
         return;
       }
@@ -1345,12 +1386,17 @@
           throw new Error((data && data.error) || 'No checkout URL returned');
         }
       })
-      .catch(() => {
+      .catch((err) => {
         btn.disabled = false;
         btn.dataset.armed = '';
         btn.textContent = 'Pay Now';
         btn.classList.remove('pay-now-btn-armed');
-        alert('Sorry, we could not open checkout just now. Please try again, or email us at sean@flyiniris.com.');
+        // Show the Worker's own reason (already paid, charging right now)
+        // when it sent one; otherwise the generic fallback.
+        const msg = err && err.message;
+        const reason = msg && msg !== 'No checkout URL returned' && msg !== 'Failed to fetch'
+          ? msg + ' ' : 'Sorry, we could not open checkout just now. Please try again. ';
+        alert(reason + 'If you need help, email us at sierra@flyiniris.com.');
       });
   }
 
@@ -1363,30 +1409,62 @@
     const section = document.getElementById('payment-method-section');
     const statusEl = document.getElementById('autopay-status');
     const actionsEl = document.getElementById('autopay-actions');
+    const hasCard = ap.has_saved_card || window.__cardJustSaved;
+    let buttonLabel = 'Update my card';
+    let buttonClass = 'autopay-btn';
 
-    // P1: status display.
-    if (ap.enabled) {
-      const cardLine = ap.card_last4 ? ': card ending ' + escapeHtml(String(ap.card_last4)) : '';
+    // P1: status display. Autopay on with no saved card is the state that
+    // let Alyssa & Mitchell's payment fail for 10 days (2026-11-02): say so
+    // plainly and make adding a card the obvious next step.
+    if (ap.enabled && !hasCard) {
+      statusEl.className = 'autopay-status warn';
+      statusEl.innerHTML = '<span class="autopay-dot"></span>No card saved yet. Add your card so your next payment can go through automatically.';
+      buttonLabel = 'Add my card';
+      buttonClass = 'autopay-btn primary';
+      showCardAlert(token);
+    } else if (ap.enabled) {
+      const cardLine = ap.card_last4 ? ' to your card ending ' + escapeHtml(String(ap.card_last4)) : ' to your saved card';
       statusEl.className = 'autopay-status on';
-      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay enabled' + cardLine;
+      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is on. Each payment charges automatically' + cardLine + ' on its due date.';
     } else {
       statusEl.className = 'autopay-status off';
-      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is off';
+      statusEl.innerHTML = '<span class="autopay-dot"></span>Autopay is off. Use Pay Now above when each payment comes due.';
     }
 
-    // P2: update payment method button (always available). P3: turn-off
-    // control, only shown when autopay is currently on.
-    let actions = '<button type="button" class="autopay-btn" onclick="updatePaymentMethod(\'' + token + '\', this)">Update payment method</button>';
+    // P2: update card button (always available). P3: turn-off control, only
+    // shown when autopay is currently on.
+    let actions = '<button type="button" class="' + buttonClass + '" onclick="updatePaymentMethod(\'' + token + '\', this)">' + buttonLabel + '</button>';
     if (ap.enabled) {
       actions += '<button type="button" class="autopay-disable-link" onclick="openAutopayModal(\'' + token + '\')">Turn off autopay</button>';
     }
     actionsEl.innerHTML = actions;
 
+    const cardLink = document.getElementById('payments-card-link');
+    if (cardLink) {
+      cardLink.textContent = (ap.enabled && !hasCard) ? 'Add my card' : 'Update my card';
+      cardLink.style.display = 'inline-block';
+    }
+
     section.style.display = 'block';
   }
 
-  // P2: open the Stripe-hosted Customer Portal to update the saved card.
-  // No card fields ever render here; the browser is redirected to Stripe.
+  // Top-of-page alert for autopay couples with no saved card, so it is the
+  // first thing they see instead of a section near the bottom of the page.
+  function showCardAlert(token) {
+    const content = document.getElementById('portal-content');
+    if (!content || document.getElementById('card-alert')) return;
+    const alertEl = document.createElement('div');
+    alertEl.id = 'card-alert';
+    alertEl.className = 'card-alert';
+    alertEl.setAttribute('role', 'alert');
+    alertEl.innerHTML = 'Action needed: there is no card saved for your autopay payments.<br>'
+      + '<button type="button" class="autopay-btn primary" onclick="updatePaymentMethod(\'' + token + '\', this)">Add my card</button>';
+    content.insertBefore(alertEl, content.firstChild);
+  }
+
+  // P2: open Stripe's card-only page to save a card (the Worker mints a
+  // setup-mode Checkout; it no longer offers Link). No card fields ever
+  // render here; the browser is redirected to Stripe.
   function updatePaymentMethod(token, btn) {
     btn.disabled = true;
     const original = btn.textContent;
@@ -1407,7 +1485,7 @@
       .catch(() => {
         btn.disabled = false;
         btn.textContent = original;
-        alert('Unable to open the update page right now. Please contact us at sean@flyiniris.com.');
+        alert('Unable to open the update page right now. Please contact us at sierra@flyiniris.com.');
       });
   }
 
@@ -1444,7 +1522,7 @@
       .catch(() => {
         confirmBtn.disabled = false;
         confirmBtn.textContent = 'Turn off autopay';
-        alert('Something went wrong turning off autopay. Please try again, or email us at sean@flyiniris.com.');
+        alert('Something went wrong turning off autopay. Please try again, or email us at sierra@flyiniris.com.');
       });
   }
 
@@ -1459,8 +1537,11 @@
     let html = '';
     for (const m of milestones) {
       const completed = m.completed;
+      // Dates arrive as plain dates (2027-08-07) or full ISO timestamps
+      // (2026-08-18T12:23:34.726Z); appending a time to the latter rendered
+      // "Invalid Date". Use the date part either way.
       const dateFormatted = m.date
-        ? new Date(m.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        ? new Date(String(m.date).slice(0, 10) + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         : '';
 
       const checkSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
