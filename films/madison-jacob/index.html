@@ -1181,12 +1181,13 @@
       return '~' + minutes + ' min';
     }
 
-    // PREVIEW ONLY (branch mj-tv-fix, 2026-11-03): this card plays the re-encoded
-    // test folder. Remove this override and nativeSrc's use of it before any
-    // rollout; the live folder for this film has not changed.
-    var TEST_STREAMS = { 'first-look-dad': 'first-look-dad-t2', 'ceremony': 'ceremony-t1', 'teaser': 'teaser-t1' };
+    // Films re-encoded with the ladder proven on real TVs (FI-Pipeline
+    // scripts/reencode_hls_v2.py) play from <id>/v2. A film not listed, such as
+    // a new one straight from the pipeline, plays its normal folder until it
+    // is re-encoded and added here.
+    var V2_STREAMS = { 'teaser': 1, 'first-look-partner': 1, 'first-look-dad': 1, 'first-look-bridesmaids-2': 1, 'first-look-bridesmaids': 1, 'ceremony': 1, 'grand-march': 1, 'first-dance': 1, 'parent-dances': 1, 'speeches': 1, 'cake': 1 };
     function streamId(videoId) {
-      return TEST_STREAMS[videoId] || videoId;
+      return V2_STREAMS[videoId] ? videoId + '/v2' : videoId;
     }
 
     // Start every stream on the 1080p rung (commit 0ce5034: starting on the
@@ -1261,10 +1262,10 @@
     function canUseHlsJs() {
       return !PREFER_NATIVE_HLS && !!(window.MediaSource || window.ManagedMediaSource);
     }
-    // Native HLS Auto: the 1080p rung, except a test film with honest labels,
+    // Native HLS Auto: the 1080p rung, except a v2 film with honest labels,
     // where the master lets the device reach 4K and AirPlay get the best rung.
     function nativeSrc(videoId) {
-      return TEST_STREAMS[videoId] ? masterUrl(videoId) : hlsUrl(videoId);
+      return V2_STREAMS[videoId] ? masterUrl(videoId) : hlsUrl(videoId);
     }
     // When a ladder has both a 4K H.264 and a 4K HEVC rung, hls.js keeps H.264
     // (Auto can only climb within one codec) unless this device plays HEVC 4K
