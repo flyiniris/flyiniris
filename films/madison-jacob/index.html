@@ -522,21 +522,6 @@
       padding: 4px 10px;
       border-radius: 4px;
     }
-    .film-card-tag {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 2;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(255, 189, 29, 0.15);
-      color: #FFBD1D;
-      padding: 4px 10px;
-      border-radius: 4px;
-    }
     .film-card-body {
       padding: 16px;
     }
@@ -1916,7 +1901,6 @@
           // (audit 2026-06-09, fi-delivery ux low #5).
           '  <div class="film-card-thumb" data-thumb="' + escapeAttr(thumbUrl(v.id)) + '">' +
           (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '') +
-          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
           '    </div>' +
