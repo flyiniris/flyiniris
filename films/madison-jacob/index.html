@@ -1210,8 +1210,17 @@
     function masterUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
     }
+    // Apple devices stay on native HLS: on iOS 17.1+ hls.js runs through
+    // ManagedMediaSource and sets disableRemotePlayback, which kills AirPlay.
+    // Native HLS gets the pill quality picker instead (2026-11-03).
+    var PREFER_NATIVE_HLS = (function() {
+      try {
+        return !!window.WebKitPlaybackTargetAvailabilityEvent &&
+          !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+      } catch (e) { return false; }
+    })();
     function canUseHlsJs() {
-      return !!(window.Hls && window.Hls.isSupported());
+      return !PREFER_NATIVE_HLS && !!(window.Hls && window.Hls.isSupported());
     }
     // Tier from the short side so vertical (1080x1920 / 2160x3840) films
     // label the same as landscape ones.
@@ -1760,6 +1769,7 @@
       // airplay / cast / fullscreen. No custom child elements needed.
       return (
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
+        (PREFER_NATIVE_HLS ? ' prefer-native-hls' : '') +
         (opts.autoplay ? ' autoplay' : '') +
         loadAttr +
         ' storage="' + escapeAttr(opts.storage) + '">' +
@@ -2198,8 +2208,15 @@
     }
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
+    // Vidstack puts its phone settings menu outside the modal, so a tap that
+    // only dismisses the menu lands on the overlay. Check at press time, since
+    // the menu has already closed by the time the click arrives.
+    var menuOpenAtPress = false;
+    document.addEventListener('pointerdown', function() {
+      menuOpenAtPress = !!document.querySelector('media-menu-items[data-open], .vds-menu-items[data-open]');
+    }, true);
     modalOverlay.addEventListener('click', function(e) {
-      if (e.target === modalOverlay) closeModal();
+      if (e.target === modalOverlay && !menuOpenAtPress) closeModal();
     });
     document.addEventListener('keydown', function(e) {
       // Only act on Escape when the modal is actually open. Without this
