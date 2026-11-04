@@ -59,18 +59,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ========== Film Grain Overlay ========== */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      pointer-events: none;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 128px 128px;
-      animation: grain 0.5s steps(1) infinite;
-    }
     @keyframes grain {
       0%, 100% { transform: translate(0, 0); }
       25% { transform: translate(-5px, 5px); }
@@ -445,7 +433,6 @@
       transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .film-card:hover {
-      transform: scale(1.03);
       border-color: #FFBD1D;
       box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
@@ -472,12 +459,6 @@
       inset: 0;
       background-size: contain;
     }
-    .film-card-thumb::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
-    }
     .film-card-play {
       position: absolute;
       inset: 0;
@@ -487,7 +468,6 @@
       z-index: 2;
       opacity: 0;
       transition: opacity 0.25s ease;
-      background: rgba(10, 10, 10, 0.3);
     }
     .film-card:hover .film-card-play,
     .film-card:focus-visible .film-card-play { opacity: 1; }
