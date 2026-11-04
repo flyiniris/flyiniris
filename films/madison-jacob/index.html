@@ -1934,7 +1934,7 @@
               '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
           } else {
             // A real <img>, not a CSS background. Chrome's background path
-            // drew the same file up to 1.9x harsher when a card's height
+            // drew the same file up to 2.8x harsher when a card's height
             // rounded up one pixel (2026-11-03, frizzy hair on some cards).
             el.insertAdjacentHTML('afterbegin', '<img class="thumb-img" alt="" src="' + escapeAttr(src) + '">');
           }

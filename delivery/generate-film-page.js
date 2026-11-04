@@ -461,14 +461,8 @@ function main() {
   // second argument lets $-sequences ($&, $', $1...) in couple names, titles,
   // or JSON corrupt the output silently (audit 2026-06-09, corr-eff low #6).
   const stamp = (value) => () => value;
-  // Business pages hide the category tag (bonus, highlight, archival) on film
-  // cards; it is wedding-delivery vocabulary. Couple pages stamp nothing here,
-  // so their output is unchanged. Lines follow the template's line endings.
+  // Lines follow the template's line endings.
   const eol = htmlTemplate.includes('\r\n') ? '\r\n' : '\n';
-  const kindCss = isBusiness
-    ? '    /* Business page: no category tag on film cards */' + eol +
-      '    .film-card-tag { display: none; }' + eol
-    : '';
   // Business event links: rendered between the hero and the hero row. Empty
   // for every page without eventLinks, so their output is unchanged.
   const escHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -510,7 +504,6 @@ function main() {
     .replace(/\{\{OG_DESCRIPTION\}\}/g, stamp(ogDescription))
     .replace(/\{\{HERO_SUBTITLE\}\}/g, stamp(heroSubtitle))
     .replace(/\{\{PENDING_SUB_JS\}\}/g, stamp(jsString(pendingSub)))
-    .replace(/\{\{KIND_CSS\}\}/g, stamp(kindCss))
     .replace(/\{\{EVENT_LINKS\}\}/g, stamp(eventLinksHtml))
     .replace(/\{\{COUPLE_NAMES\}\}/g, stamp(displayName))
     .replace(/\{\{DATE_LONG\}\}/g, stamp(eventDate))

@@ -453,6 +453,14 @@
       background-color: #1A1A19;
       position: relative;
     }
+    .film-card-thumb .thumb-img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .film-card-thumb.is-portrait { overflow: hidden; }
     .film-card-thumb .thumb-blur,
     .film-card-thumb .thumb-portrait {
@@ -508,21 +516,6 @@
       background: rgba(10, 10, 10, 0.75);
       backdrop-filter: blur(4px);
       color: #F5F0EB;
-      padding: 4px 10px;
-      border-radius: 4px;
-    }
-    .film-card-tag {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 2;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(255, 189, 29, 0.15);
-      color: #FFBD1D;
       padding: 4px 10px;
       border-radius: 4px;
     }
@@ -1866,7 +1859,6 @@
           // (audit 2026-06-09, fi-delivery ux low #5).
           '  <div class="film-card-thumb" data-thumb="' + escapeAttr(thumbUrl(v.id)) + '">' +
           (v.duration ? '    <span class="film-card-badge">' + escapeHtml(v.duration) + '</span>' : '') +
-          '    <span class="film-card-tag">' + escapeHtml(v.category) + '</span>' +
           '    <div class="film-card-play">' +
           '      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
           '    </div>' +
@@ -1899,7 +1891,10 @@
               '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
               '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
           } else {
-            el.style.backgroundImage = "url('" + src + "')";
+            // A real <img>, not a CSS background. Chrome's background path
+            // drew the same file up to 2.8x harsher when a card's height
+            // rounded up one pixel (2026-11-03, frizzy hair on some cards).
+            el.insertAdjacentHTML('afterbegin', '<img class="thumb-img" alt="" src="' + escapeAttr(src) + '">');
           }
         };
         probe.onerror = function() { el.style.backgroundImage = "url('" + src + "')"; };
