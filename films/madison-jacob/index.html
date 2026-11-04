@@ -443,6 +443,14 @@
       background-color: #1A1A19;
       position: relative;
     }
+    .film-card-thumb .thumb-img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .film-card-thumb.is-portrait { overflow: hidden; }
     .film-card-thumb .thumb-blur,
     .film-card-thumb .thumb-portrait {
@@ -1921,7 +1929,10 @@
               '<span class="thumb-blur" style="background-image: url(&quot;' + src + '&quot;)"></span>' +
               '<span class="thumb-portrait" style="background-image: url(&quot;' + src + '&quot;)"></span>');
           } else {
-            el.style.backgroundImage = "url('" + src + "')";
+            // A real <img>, not a CSS background. Chrome's background path
+            // drew the same file up to 1.9x harsher when a card's height
+            // rounded up one pixel (2026-11-03, frizzy hair on some cards).
+            el.insertAdjacentHTML('afterbegin', '<img class="thumb-img" alt="" src="' + escapeAttr(src) + '">');
           }
         };
         probe.onerror = function() { el.style.backgroundImage = "url('" + src + "')"; };
