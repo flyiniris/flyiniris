@@ -316,6 +316,34 @@
       margin-left: 3px;
       fill: #FFBD1D;
     }
+    /* TV buttons on a hero that has not loaded yet: Vidstack draws no control
+       bar for load="play" until play is pressed. */
+    .fi-tv-slot {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 12;
+      display: flex;
+      gap: 8px;
+    }
+    .fi-started .fi-tv-slot { display: none; }
+    .fi-tv-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      background: rgba(10, 10, 10, 0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .fi-tv-btn:not([data-supported]) { display: none; }
+    .fi-tv-btn:hover { border-color: #FFBD1D; background: rgba(10, 10, 10, 0.85); }
+    .fi-tv-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    .fi-tv-btn media-icon { width: 24px; height: 24px; color: #FFBD1D; }
     .hero-info {
       text-align: center;
       padding: 20px 0 0;
@@ -1694,9 +1722,12 @@
     //   - HERO_LOAD (hero stack): nothing is fetched for a hero on hls.js until
     //     someone presses play. Native HLS (iPhone) needs the video element
     //     ready before the tap, or the phone refuses a play with sound, so
-    //     it loads metadata once the hero is on screen.
+    //     it loads metadata once the hero is on screen. stream-type there
+    //     draws the control bar (with its AirPlay button) before metadata;
+    //     tvSlot gives hls.js heroes their TV buttons before play.
     function createPlayerHtml(opts) {
-      // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
+      // opts: { title, src, poster, autoplay (bool), storage (string), load (string),
+      //         streamType (string), tvSlot (bool) }
       var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
       // <media-poster> MUST be a direct child of <media-player>, NOT nested
       // inside <media-provider>. Per Vidstack's canonical example
@@ -1716,11 +1747,17 @@
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
         (PREFER_NATIVE_HLS ? ' prefer-native-hls' : '') +
         (opts.autoplay ? ' autoplay' : '') +
+        (opts.streamType ? ' stream-type="' + opts.streamType + '"' : '') +
         loadAttr +
         ' storage="' + escapeAttr(opts.storage) + '">' +
         '  <media-provider></media-provider>' +
         '  <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
         '  <media-video-layout></media-video-layout>' +
+        (opts.tvSlot ?
+          '  <div class="fi-tv-slot">' +
+          '    <media-google-cast-button class="fi-tv-btn" aria-label="Play on TV"><media-icon type="chromecast"></media-icon></media-google-cast-button>' +
+          '    <media-airplay-button class="fi-tv-btn" aria-label="Play on TV (AirPlay)"><media-icon type="airplay"></media-icon></media-airplay-button>' +
+          '  </div>' : '') +
         '</media-player>'
       );
     }
@@ -1765,6 +1802,8 @@
             src: modalSrc(h.id),
             poster: thumbUrl(h.id),
             load: HERO_LOAD,
+            streamType: PREFER_NATIVE_HLS ? 'on-demand' : '',
+            tvSlot: !PREFER_NATIVE_HLS,
             storage: 'fi-hero-' + h.id
           }) +
           '    <div class="hero-overlay">' +
@@ -1809,6 +1848,13 @@
         if (p && typeof p.catch === 'function') p.catch(function() {});
       }
       player.addEventListener('play', started);
+      // The cast session takes the source once the player may load, so a TV
+      // tap before play starts loading. From then on the control bar is drawn.
+      var tvSlot = card.querySelector('.fi-tv-slot');
+      if (tvSlot) tvSlot.addEventListener('click', function() {
+        wrap.classList.add('fi-started');
+        player.startLoading();
+      });
       var btn = overlay.querySelector('.hero-play-btn');
       btn.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -1818,7 +1864,7 @@
       });
       wrap.addEventListener('click', function(e) {
         if (overlay.classList.contains('hidden')) return;
-        var control = e.target.closest('[role="button"], [role="slider"], [role="menu"], [role="menuitem"], [role="menuitemradio"], button');
+        var control = e.target.closest('.fi-tv-btn, [role="button"], [role="slider"], [role="menu"], [role="menuitem"], [role="menuitemradio"], button');
         if (control && control !== btn) return;
         start();
       });
