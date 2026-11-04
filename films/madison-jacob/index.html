@@ -341,6 +341,20 @@
       transition: border-color 0.2s ease, background 0.2s ease;
     }
     .fi-tv-btn:not([data-supported]) { display: none; }
+    .fi-tv-btn[hidden] { display: none; }
+    .fi-airplay-modal {
+      position: static;
+      width: auto;
+      height: 44px;
+      margin-top: 10px;
+      padding: 0 16px;
+      border-radius: 22px;
+      gap: 8px;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+    }
+    .fi-airplay-modal svg { width: 22px; height: 22px; }
     .fi-tv-btn:hover { border-color: #FFBD1D; background: rgba(10, 10, 10, 0.85); }
     .fi-tv-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
     .fi-tv-btn media-icon { width: 24px; height: 24px; color: #FFBD1D; }
@@ -1119,6 +1133,10 @@
       </div>
       <p class="modal-title" id="modal-title"></p>
       <div class="fi-quality-slot fi-quality-modal" id="modal-quality"></div>
+      <button type="button" class="fi-tv-btn fi-airplay-modal" id="modal-airplay" data-supported hidden aria-label="Play on TV (AirPlay)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22h12l-6-6-6 6zM21 3H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4v-2H3V5h18v12h-4v2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" fill="#FFBD1D"></path></svg>
+        <span>Play on TV</span>
+      </button>
     </div>
   </div>
 
@@ -1224,17 +1242,9 @@
     function autoCap(has4k, capIdx) {
       return (has4k && !AUTO_ALLOWS_4K) ? capIdx : -1;
     }
-    // No saved choice means Auto. A saved choice (Auto, 4K or 1080p) wins.
-    function readQualityPref() {
-      try {
-        var v = window.localStorage.getItem(QUALITY_KEY);
-        if (v === '2160' || v === '1080' || v === 'auto') return v;
-      } catch (e) { /* storage blocked: fall through to Auto */ }
-      return 'auto';
-    }
-    function writeQualityPref(v) {
-      try { window.localStorage.setItem(QUALITY_KEY, v); } catch (e) { /* ignore */ }
-    }
+    // Every film starts on Auto. A pick applies only to that film (Sean 2026-11-04).
+    function readQualityPref() { return 'auto'; }
+    function writeQualityPref(v) { /* each film keeps its own quality */ }
     function masterUrl(videoId) {
       return WORKER_BASE + '/couples/' + SLUG + '/hls/' + streamId(videoId) + '/master.m3u8';
     }
@@ -1414,7 +1424,8 @@
         if (!opt) return;
         var v = opt.getAttribute('data-v');
         close(true);
-        setPageQuality(v);
+        adapter.select(v);
+        refresh();
       });
       menu.addEventListener('keydown', function(e) {
         var items = Array.prototype.slice.call(menu.querySelectorAll('.fi-quality-opt'));
@@ -1435,22 +1446,6 @@
       qualityControls = qualityControls.filter(function(c) { return c.slot !== slot; });
       if (slot) slot.innerHTML = '';
     }
-    // One page-wide setting: a pick on any player applies to every player
-    // on the page and is remembered for the next visit.
-    function setPageQuality(v) {
-      writeQualityPref(v);
-      for (var i = 0; i < qualityControls.length; i++) {
-        var c = qualityControls[i];
-        if (!c.slot.isConnected) continue;
-        try { c.adapter.select(v); } catch (e) { /* one player failing must not block the rest */ }
-        c.refresh();
-      }
-      var mps = document.querySelectorAll('media-player');
-      for (var m = 0; m < mps.length; m++) {
-        if (mps[m].__fiApplyQuality) mps[m].__fiApplyQuality(v);
-      }
-    }
-
     // Native-HLS src swap that keeps position and play state.
     function swapSrcKeepingTime(media, url) {
       var t = media.currentTime || 0;
@@ -2208,6 +2203,14 @@
     }
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
+    // Vidstack's own AirPlay button did not show in the pop-up on iPhone, so
+    // the pop-up has its own. Apple devices only.
+    var modalAirplay = document.getElementById('modal-airplay');
+    if (PREFER_NATIVE_HLS) modalAirplay.hidden = false;
+    modalAirplay.addEventListener('click', function() {
+      var v = modalPlayerWrap.querySelector('video');
+      if (v && v.webkitShowPlaybackTargetPicker) v.webkitShowPlaybackTargetPicker();
+    });
     // Vidstack puts its phone settings menu outside the modal, so a tap that
     // only dismisses the menu lands on the overlay. Check at press time, since
     // the menu has already closed by the time the click arrives.
