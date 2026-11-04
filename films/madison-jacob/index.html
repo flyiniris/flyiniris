@@ -1517,12 +1517,9 @@
 
     // --- HLS Buffering Config ---
     var HLS_CONFIG = {
-      // 4K pieces run about 90 MB per 10 s, and Chrome stops taking video
-      // near 150 MB. A 60 s buffer froze the film after picking 4K.
-      maxBufferLength: 15,
-      maxMaxBufferLength: 30,
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
       maxBufferSize: 60000000,
-      backBufferLength: 10,
       maxBufferHole: 0.5,
       startLevel: -1,
       // Off so the Auto cap and a 4K pick hold in any window size (see the
