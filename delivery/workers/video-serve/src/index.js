@@ -76,6 +76,7 @@ async function handleHLS(request, env, matchedPath) {
   const contentType =
     ext === 'm3u8' ? 'application/vnd.apple.mpegurl' :
     ext === 'ts'   ? 'video/MP2T' :
+    (ext === 'm4s' || ext === 'mp4') ? 'video/mp4' :
     'application/octet-stream';
 
   // Playlists get short cache (quality switching). Segments keep the same
