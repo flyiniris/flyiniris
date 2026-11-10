@@ -331,6 +331,10 @@
       transform: translate(-50%, -50%) scale(1.1);
     }
     .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; border-radius: 8px; }
+    /* Vidstack draws its own white load-on-play button (.vds-load-container)
+       right on top of ours before the film loads, so the card showed two
+       play buttons stacked. Ours starts the film (wireHeroPlayer); hide theirs. */
+    .hero-player-wrap .vds-load-container { display: none; }
     .hero-play-btn svg {
       width: 64px;
       height: 64px;
