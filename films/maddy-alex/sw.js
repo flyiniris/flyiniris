@@ -2,7 +2,7 @@
 // storage is origin-wide while each SW is scoped to /films/<slug>/, so a
 // shared name let couples at different template versions delete each
 // other's caches during staggered rollouts (audit 2026-06-09).
-const CACHE_NAME = 'fi-shell-maddy-alex-v32';
+const CACHE_NAME = 'fi-shell-maddy-alex-v33';
 const SHELL_ASSETS = [
   './',
   // Pinned to match the couple-page.html Vidstack pin. Precaching the
@@ -56,7 +56,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-only for HLS segments and playlists (never cache streaming data)
-  if (url.pathname.endsWith('.ts') || url.pathname.endsWith('.m3u8')) {
+  if (url.pathname.indexOf('/hls/') !== -1 || url.pathname.endsWith('.ts') || url.pathname.endsWith('.m3u8')) {
     event.respondWith(fetch(event.request));
     return;
   }
