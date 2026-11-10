@@ -269,6 +269,27 @@
       object-fit: cover;
       background: #1A1A19;
     }
+    /* Size the thumbnail to the card. Vidstack only styles its poster through
+       the .vds-poster class, which this hand-built player does not carry, so
+       without these rules the img draws at its full pixel size (3380 wide for
+       the teaser) and the card shows a zoomed-in corner of it (Sean 2026-11-10).
+       The poster only, never media-player itself (see the wrap note above).
+       hidePoster's inline display:none still wins once a film plays. */
+    .hero-player-wrap media-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+      pointer-events: none;
+    }
+    .hero-player-wrap media-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     /* The gold click-to-play button over the thumbnail. The wrap stays
        click-through so the cast, AirPlay and settings buttons on the player
        work before the film starts; a click anywhere else on the picture
