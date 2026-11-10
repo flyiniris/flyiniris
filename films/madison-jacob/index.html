@@ -1761,8 +1761,17 @@
     function configureHls(playerEl) {
       // A touch on this player (play, AirPlay, cast, any control) makes it
       // the one the TV and lock screen name, before the picker opens.
-      playerEl.addEventListener('pointerdown', function() { claimSession(playerEl); }, true);
-      playerEl.addEventListener('focusin', function() { claimSession(playerEl); });
+      // Another film playing keeps the label unless this press is on a TV
+      // button (the picker then sends THIS player's film).
+      function touched(e) {
+        if (!fiSession) return;
+        var cur = fiSession.owner();
+        var tv = e && e.target && e.target.closest &&
+          e.target.closest('media-google-cast-button, media-airplay-button, .vds-google-cast-button, .vds-airplay-button');
+        if (tv || !cur || cur === playerEl || !cur.isConnected || cur.paused !== false) claimSession(playerEl);
+      }
+      playerEl.addEventListener('pointerdown', touched, true);
+      playerEl.addEventListener('focusin', touched);
       playerEl.addEventListener('play', function() { claimSession(playerEl); });
       playerEl.addEventListener('playing', function() { claimSession(playerEl); });
       playerEl.addEventListener('pause', function() {
