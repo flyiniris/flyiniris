@@ -1210,7 +1210,7 @@
     // scripts/reencode_hls_v2.py) play from <id>/v2. A film not listed, such as
     // a new one straight from the pipeline, plays its normal folder until it
     // is re-encoded and added here.
-    var V2_STREAMS = { 'teaser': 1, 'first-look-partner': 1, 'first-look-dad': 1, 'first-look-bridesmaids-2': 1, 'first-look-bridesmaids': 1, 'ceremony': 1, 'grand-march': 1, 'first-dance': 1, 'parent-dances': 1, 'speeches': 1, 'cake': 1 };
+    var V2_STREAMS = { 'highlight': 1, 'teaser': 1, 'first-look-partner': 1, 'first-look-dad': 1, 'first-look-bridesmaids-2': 1, 'first-look-bridesmaids': 1, 'ceremony': 1, 'grand-march': 1, 'first-dance': 1, 'parent-dances': 1, 'speeches': 1, 'cake': 1 };
     function streamId(videoId) {
       return V2_STREAMS[videoId] ? videoId + '/v2' : videoId;
     }
