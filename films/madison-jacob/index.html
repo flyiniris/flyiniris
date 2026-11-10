@@ -314,28 +314,28 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 11;
-      width: 70px;
-      height: 70px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 2px solid #FFBD1D;
-      border-radius: 50%;
+      /* Same look as the film-card play button (plain gold triangle with a
+         soft shadow, no ring), a size up for the big cards (Sean 2026-11-10). */
+      width: 88px;
+      height: 88px;
+      background: none;
+      border: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       pointer-events: auto;
-      transition: background 0.25s ease, transform 0.25s ease;
+      transition: transform 0.25s ease;
     }
     .hero-play-btn:hover {
-      background: rgba(0, 0, 0, 0.7);
       transform: translate(-50%, -50%) scale(1.1);
     }
-    .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; border-radius: 8px; }
     .hero-play-btn svg {
-      width: 28px;
-      height: 28px;
-      margin-left: 3px;
+      width: 64px;
+      height: 64px;
       fill: #FFBD1D;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
     }
     /* TV buttons on a hero that has not loaded yet: Vidstack draws no control
        bar for load="play" until play is pressed. */
@@ -1825,9 +1825,7 @@
           }) +
           '    <div class="hero-overlay">' +
           '      <div class="hero-play-btn" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
-          '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>' +
-          '        </svg>' +
+          '        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#FFBD1D"></polygon></svg>' +
           '      </div>' +
           '    </div>' +
           '  </div>' +
