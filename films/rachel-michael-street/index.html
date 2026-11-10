@@ -37,7 +37,6 @@
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/theme.css@1.15.4" />
   <link rel="stylesheet" href="https://cdn.vidstack.io/player/video.css@1.15.4" />
   <script type="module" src="https://cdn.vidstack.io/player@1.15.4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
   <!-- Photos section (board #24): shared gallery script and styles. -->
   <link rel="stylesheet" href="/fi-photos.css">
   <script src="/fi-photos.js" defer></script>
@@ -253,13 +252,6 @@
       border-color: #FFBD1D;
       box-shadow: 0 8px 32px rgba(255, 189, 29, 0.08);
     }
-    .hero-player-wrap video {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      background: #1A1A19;
-    }
     .hero-player-wrap media-player {
       /* Vidstack's actual brand variables use the --vds-* prefix per the
          theme.css source. --media-brand was a phantom (no effect). Set both
@@ -272,26 +264,50 @@
       width: 100%;
       aspect-ratio: 16/9;
     }
-    /* Click-thumb-to-play overlay. Pattern restored from the pre-hero-
-       treatment Featured era (commit 7621991) and re-styled to match the
-       landing page's .video-play-btn (index.html line 647): a 70px gold-
-       bordered circle with a centered play-triangle SVG, visible by
-       default over the poster thumbnail. Click fades the overlay and
-       starts Vidstack playback. After play, the overlay stays hidden
-       (pointer-events: none) so Vidstack's own controls bar becomes
-       interactive without interception. */
+    .hero-player-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #1A1A19;
+    }
+    /* Size the thumbnail to the card. Vidstack only styles its poster through
+       the .vds-poster class, which this hand-built player does not carry, so
+       without these rules the img draws at its full pixel size (3380 wide for
+       the teaser) and the card shows a zoomed-in corner of it (Sean 2026-11-10).
+       The poster only, never media-player itself (see the wrap note above).
+       hidePoster's inline display:none still wins once a film plays. */
+    .hero-player-wrap media-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+      pointer-events: none;
+    }
+    .hero-player-wrap media-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* The gold click-to-play button over the thumbnail. The wrap stays
+       click-through so the cast, AirPlay and settings buttons on the player
+       work before the film starts; a click anywhere else on the picture
+       starts it too (wireHeroPlayer). The thumbnail itself is the player's
+       own media-poster. */
     .hero-overlay {
       position: absolute;
       inset: 0;
       z-index: 10;
-      background-size: cover;
-      background-position: center;
-      background-color: #1A1A19;
-      cursor: pointer;
+      pointer-events: none;
       transition: opacity 0.25s ease;
     }
     .hero-overlay.hidden {
       opacity: 0;
+    }
+    .hero-overlay.hidden .hero-play-btn {
       pointer-events: none;
     }
     .hero-play-btn {
@@ -300,27 +316,75 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 11;
-      width: 70px;
-      height: 70px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 2px solid #FFBD1D;
-      border-radius: 50%;
+      /* Same look as the film-card play button (plain gold triangle with a
+         soft shadow, no ring), a size up for the big cards (Sean 2026-11-10). */
+      width: 88px;
+      height: 88px;
+      background: none;
+      border: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: none;
-      transition: background 0.25s ease, transform 0.25s ease;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.25s ease;
     }
-    .hero-overlay:hover .hero-play-btn {
-      background: rgba(0, 0, 0, 0.7);
+    .hero-play-btn:hover {
       transform: translate(-50%, -50%) scale(1.1);
     }
+    .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; border-radius: 8px; }
+    /* Vidstack draws its own white load-on-play button (.vds-load-container)
+       right on top of ours before the film loads, so the card showed two
+       play buttons stacked. Ours starts the film (wireHeroPlayer); hide theirs. */
+    .hero-player-wrap .vds-load-container { display: none; }
     .hero-play-btn svg {
-      width: 28px;
-      height: 28px;
-      margin-left: 3px;
+      width: 64px;
+      height: 64px;
       fill: #FFBD1D;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
     }
+    /* TV buttons on a hero that has not loaded yet: Vidstack draws no control
+       bar for load="play" until play is pressed. */
+    .fi-tv-slot {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 12;
+      display: flex;
+      gap: 8px;
+    }
+    .fi-started .fi-tv-slot { display: none; }
+    .fi-tv-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      background: rgba(10, 10, 10, 0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .fi-tv-btn:not([data-supported]) { display: none; }
+    .fi-tv-btn[hidden] { display: none; }
+    .fi-airplay-modal {
+      position: static;
+      width: auto;
+      height: 44px;
+      margin-top: 10px;
+      padding: 0 16px;
+      border-radius: 22px;
+      gap: 8px;
+      color: #F5F0EB;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+    }
+    .fi-airplay-modal svg { width: 22px; height: 22px; }
+    .fi-tv-btn:hover { border-color: #FFBD1D; background: rgba(10, 10, 10, 0.85); }
+    .fi-tv-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; }
+    .fi-tv-btn media-icon { width: 24px; height: 24px; color: #FFBD1D; }
     .hero-info {
       text-align: center;
       padding: 20px 0 0;
@@ -912,6 +976,26 @@
       transform: translateY(0);
     }
 
+    /* ========== Empty State (films pending) ========== */
+    .films-pending {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .films-pending-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: #F5F0EB;
+      margin-bottom: 12px;
+    }
+    .films-pending-sub {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: #C8C3B9;
+    }
+
     /* ========== Responsive ========== */
     @media (min-width: 640px) {
       .collection-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1076,22 +1160,34 @@
       </div>
       <p class="modal-title" id="modal-title"></p>
       <div class="fi-quality-slot fi-quality-modal" id="modal-quality"></div>
+      <button type="button" class="fi-tv-btn fi-airplay-modal" id="modal-airplay" data-supported hidden aria-label="Play on TV (AirPlay)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22h12l-6-6-6 6zM21 3H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4v-2H3V5h18v12h-4v2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" fill="#FFBD1D"></path></svg>
+        <span>Play on TV</span>
+      </button>
     </div>
   </div>
 
   <!-- ========== Scripts ========== -->
   <script>
     // --- Data ---
-    const VIDEOS = [{"id":"teaser","title":"Teaser Film","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Highlight Film","category":"highlight","duration":"","order":1,"hero":true},{"id":"story-session","title":"Story Session Film","category":"archival","duration":"","order":2,"hero":true,"playlist":false},{"id":"story-session-interview","title":"Story Session: Interview","category":"archival","duration":"","order":3,"playlist":false},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"","order":4},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"","order":5},{"id":"grand-march","title":"Grand March","category":"archival","duration":"","order":6},{"id":"speeches","title":"Speeches","category":"archival","duration":"","order":7},{"id":"special-dances","title":"Special Dances","category":"archival","duration":"","order":8},{"id":"gopro","title":"GoPro","category":"bonus","duration":"","order":9}];
-    const PLAYLIST = [{"id":"first-look-dad","title":"First Look: Dad","duration":""},{"id":"ceremony","title":"Ceremony","duration":""},{"id":"grand-march","title":"Grand March","duration":""},{"id":"speeches","title":"Speeches","duration":""},{"id":"special-dances","title":"Special Dances","duration":""},{"id":"gopro","title":"GoPro","duration":""}];
-    const HERO = [{"id":"teaser","title":"Teaser Film","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Highlight Film","category":"highlight","duration":"","order":1,"hero":true},{"id":"story-session","title":"Story Session Film","category":"archival","duration":"","order":2,"hero":true,"playlist":false}];
-    const WORKER_BASE = 'https://video.flyiniris.com';
-    const SLUG = 'rachel-michael-street';
+    // These tokens are baked at generate time but are now only a FALLBACK.
+    // The live source of truth is fetched at load time from the delivery
+    // config API (see bootstrapDelivery below). For batch pre-generated
+    // shells the baked values are the empty defaults ([] / '' ); once a
+    // couple's video is attached in Studio, the load-time fetch fills these.
+    // They are var (mutable) so bootstrap can overwrite them before render.
+    var VIDEOS = [{"id":"teaser","title":"Teaser Film","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Highlight Film","category":"highlight","duration":"","order":1,"hero":true},{"id":"story-session","title":"Story Session Film","category":"archival","duration":"","order":2,"hero":true,"playlist":false},{"id":"story-session-interview","title":"Story Session: Interview","category":"archival","duration":"","order":3,"playlist":false},{"id":"first-look-dad","title":"First Look: Dad","category":"archival","duration":"","order":4},{"id":"ceremony","title":"Ceremony","category":"archival","duration":"","order":5},{"id":"grand-march","title":"Grand March","category":"archival","duration":"","order":6},{"id":"speeches","title":"Speeches","category":"archival","duration":"","order":7},{"id":"special-dances","title":"Special Dances","category":"archival","duration":"","order":8},{"id":"gopro","title":"GoPro","category":"bonus","duration":"","order":9}];
+    var PLAYLIST = [{"id":"first-look-dad","title":"First Look: Dad","duration":""},{"id":"ceremony","title":"Ceremony","duration":""},{"id":"grand-march","title":"Grand March","duration":""},{"id":"speeches","title":"Speeches","duration":""},{"id":"special-dances","title":"Special Dances","duration":""},{"id":"gopro","title":"GoPro","duration":""}];
+    var HERO = [{"id":"teaser","title":"Teaser Film","category":"teaser","duration":"","order":0,"hero":true},{"id":"highlight","title":"Highlight Film","category":"highlight","duration":"","order":1,"hero":true},{"id":"story-session","title":"Story Session Film","category":"archival","duration":"","order":2,"hero":true,"playlist":false}];
+    var CONFIG_API_BASE = 'https://api.flyiniris.com';
+    var WORKER_BASE = 'https://video.flyiniris.com';
+    var SLUG = 'rachel-michael-street';
 
-    // Hero entries (sorted server-side by order) play as full-width inline players
-    // above the Collection grid. Collection grid excludes them to avoid duplicate
-    // rendering. See delivery-page-standard.md Section 4.5.
-    const collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
+    // Hero entries (sorted by order) play as full-width inline players above
+    // the Collection grid. Collection grid excludes them to avoid duplicate
+    // rendering. See delivery-page-standard.md Section 4.5. Recomputed inside
+    // bootstrapDelivery() after the live config resolves.
+    var collection = VIDEOS.filter(v => v.hero !== true).sort((a, b) => a.order - b.order);
 
     function computePlaylistDurationLabel() {
       var total = 0;
@@ -1112,9 +1208,26 @@
       return '~' + minutes + ' min';
     }
 
-    function hlsUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/1080p/playlist.m3u8';
+    // Films re-encoded with the ladder proven on real TVs (FI-Pipeline
+    // scripts/reencode_hls_v2.py) play from <id>/v2. A film not listed, such as
+    // a new one straight from the pipeline, plays its normal folder until it
+    // is re-encoded and added here.
+    // Empty on a page whose films are all on the old ladder: every film then
+    // plays its normal folder exactly as before. Example entry: 'highlight': 1.
+    var V2_STREAMS = {};
+    function streamId(videoId) {
+      return V2_STREAMS[videoId] ? videoId + '/v2' : videoId;
     }
+
+    // Start every stream on the 1080p rung (commit 0ce5034: starting on the
+    // 4K master stalled playback). Every ladder in the pipeline writes 1080p.
+    function hlsUrl(videoId) {
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + streamId(videoId) + '/1080p/playlist.m3u8';
+    }
+    // THUMB_VERSION is the delivery config updated_at from the API. The service
+    // worker caches thumbs cache-first, so a re-approved film that keeps its id
+    // but gets a new thumbnail would otherwise show the old image forever.
+    var THUMB_VERSION = '';
     // Films whose poster is portrait (set as card thumbs load). Their modal
     // player switches to a 9:16 frame.
     var PORTRAIT_IDS = {};
@@ -1122,9 +1235,9 @@
       return !!PORTRAIT_IDS[videoId] || /\(vertical\)/i.test(title || '');
     }
     function thumbUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg';
+      return WORKER_BASE + '/couples/' + SLUG + '/thumbs/' + videoId + '.jpg' +
+        (THUMB_VERSION ? '?v=' + encodeURIComponent(THUMB_VERSION) : '');
     }
-
     // --- Quality picker (Auto / 4K / 1080p) ---
     // Auto is the default everywhere and works like YouTube (board #173,
     // decided 2026-10-01): with hls.js the player loads the master playlist,
@@ -1159,22 +1272,63 @@
     function autoCap(has4k, capIdx) {
       return (has4k && !AUTO_ALLOWS_4K) ? capIdx : -1;
     }
-    // No saved choice means Auto. A saved choice (Auto, 4K or 1080p) wins.
-    function readQualityPref() {
-      try {
-        var v = window.localStorage.getItem(QUALITY_KEY);
-        if (v === '2160' || v === '1080' || v === 'auto') return v;
-      } catch (e) { /* storage blocked: fall through to Auto */ }
-      return 'auto';
-    }
-    function writeQualityPref(v) {
-      try { window.localStorage.setItem(QUALITY_KEY, v); } catch (e) { /* ignore */ }
-    }
+    // Every film starts on Auto. A pick applies only to that film (Sean 2026-11-04).
+    function readQualityPref() { return 'auto'; }
+    function writeQualityPref(v) { /* each film keeps its own quality */ }
     function masterUrl(videoId) {
-      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + videoId + '/master.m3u8';
+      return WORKER_BASE + '/couples/' + SLUG + '/hls/' + streamId(videoId) + '/master.m3u8';
     }
+    // Apple devices stay on native HLS: on iOS 17.1+ hls.js runs through
+    // ManagedMediaSource and sets disableRemotePlayback, which kills AirPlay.
+    // Native HLS gets the pill quality picker instead (2026-11-03).
+    var PREFER_NATIVE_HLS = (function() {
+      try {
+        return !!window.WebKitPlaybackTargetAvailabilityEvent &&
+          !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+      } catch (e) { return false; }
+    })();
+    // Vidstack loads hls.js itself; this says whether it will be used.
     function canUseHlsJs() {
-      return !!(window.Hls && window.Hls.isSupported());
+      return !PREFER_NATIVE_HLS && !!(window.MediaSource || window.ManagedMediaSource);
+    }
+    // Native HLS Auto: the 1080p rung, except a v2 film with honest labels,
+    // where the master lets the device reach 4K and AirPlay get the best rung.
+    function nativeSrc(videoId) {
+      return V2_STREAMS[videoId] ? masterUrl(videoId) : hlsUrl(videoId);
+    }
+    // When a ladder has both a 4K H.264 and a 4K HEVC rung, hls.js keeps H.264
+    // (Auto can only climb within one codec) unless this device plays HEVC 4K
+    // in hardware and H.264 4K not. hls.js has already dropped any rung the
+    // browser cannot decode.
+    var HEVC_4K_WINS = false;
+    (function() {
+      try {
+        if (!navigator.mediaCapabilities || !navigator.mediaCapabilities.decodingInfo) return;
+        var probe = function(codec, bitrate) {
+          return navigator.mediaCapabilities.decodingInfo({
+            type: 'media-source',
+            video: { contentType: 'video/mp4; codecs="' + codec + '"', width: 3840, height: 2160, bitrate: bitrate, framerate: 24 }
+          });
+        };
+        Promise.all([probe('avc1.640033', 29000000), probe('hvc1.1.6.L150.B0', 25000000)]).then(function(r) {
+          HEVC_4K_WINS = r[1].supported && r[1].powerEfficient && !(r[0].supported && r[0].powerEfficient);
+        }).catch(function() { /* keep H.264 */ });
+      } catch (e) { /* keep H.264 */ }
+    })();
+    function isHevc(codecs) {
+      return /hvc1|hev1/.test(codecs || '');
+    }
+    function keepOne4kLevel(hls) {
+      if (!hls || !hls.levels) return;
+      var hevc = [], avc = [];
+      for (var i = 0; i < hls.levels.length; i++) {
+        var l = hls.levels[i];
+        if (qualityTier(l.width, l.height) !== '2160') continue;
+        (isHevc(l.videoCodec || l.codecSet) ? hevc : avc).push(i);
+      }
+      if (!hevc.length || !avc.length) return;
+      var drop = HEVC_4K_WINS ? avc : hevc;
+      for (var d = drop.length - 1; d >= 0; d--) hls.removeLevel(drop[d]);
     }
     // Tier from the short side so vertical (1080x1920 / 2160x3840) films
     // label the same as landscape ones.
@@ -1196,9 +1350,25 @@
         var m = /RESOLUTION=(\d+)x(\d+)/.exec(lines[i]);
         var uri = (lines[i + 1] || '').trim();
         if (!m || !uri || uri.charAt(0) === '#') continue;
-        out.push({ tier: qualityTier(+m[1], +m[2]), uri: new URL(uri, baseUrl).href });
+        var c = /CODECS="([^"]*)"/.exec(lines[i]);
+        out.push({ tier: qualityTier(+m[1], +m[2]), uri: new URL(uri, baseUrl).href, codecs: c ? c[1] : '' });
       }
       return out;
+    }
+
+    // Native HLS 4K pick: the HEVC rung where the device says it can play it.
+    function native4kUrl(variants) {
+      var url = '', hevcChosen = false;
+      var probe = document.createElement('video');
+      for (var i = 0; i < variants.length; i++) {
+        var v = variants[i];
+        if (v.tier !== '2160') continue;
+        var hevc = isHevc(v.codecs);
+        if (hevc && !probe.canPlayType('video/mp4; codecs="hvc1.1.6.L150.B0"')) continue;
+        if (hevc || !hevcChosen) url = v.uri;
+        if (hevc) hevcChosen = true;
+      }
+      return url;
     }
 
     // Pill button + radio menu. adapter: { has4k(), mode(), playing(), select(v) }.
@@ -1284,7 +1454,8 @@
         if (!opt) return;
         var v = opt.getAttribute('data-v');
         close(true);
-        setPageQuality(v);
+        adapter.select(v);
+        refresh();
       });
       menu.addEventListener('keydown', function(e) {
         var items = Array.prototype.slice.call(menu.querySelectorAll('.fi-quality-opt'));
@@ -1305,20 +1476,6 @@
       qualityControls = qualityControls.filter(function(c) { return c.slot !== slot; });
       if (slot) slot.innerHTML = '';
     }
-    // One page-wide setting: a pick on any player applies to every player
-    // on the page and is remembered for the next visit.
-    function setPageQuality(v) {
-      writeQualityPref(v);
-      for (var i = 0; i < qualityControls.length; i++) {
-        var c = qualityControls[i];
-        if (!c.slot.isConnected) continue;
-        try { c.adapter.select(v); } catch (e) { /* one player failing must not block the rest */ }
-        c.refresh();
-      }
-      var mp = modalPlayerWrap && modalPlayerWrap.querySelector('media-player');
-      if (mp && mp.__fiApplyQuality) mp.__fiApplyQuality(v);
-    }
-
     // Native-HLS src swap that keeps position and play state.
     function swapSrcKeepingTime(media, url) {
       var t = media.currentTime || 0;
@@ -1337,126 +1494,8 @@
       media.src = url;
     }
 
-    // Native <video> hero player. hls.js where supported (Chrome, Edge,
-    // Firefox, Android, iOS 17.1+ via ManagedMediaSource); native HLS
-    // src switching otherwise.
-    function attachHeroPlayer(video, videoId, slot) {
-      if (!video) return;
-      var fallbackSrc = video.getAttribute('data-hls');
-      if (canUseHlsJs()) {
-        attachHeroHlsJs(video, videoId, slot, fallbackSrc);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        attachHeroNative(video, videoId, slot, fallbackSrc);
-      }
-    }
-
-    function attachHeroHlsJs(video, videoId, slot, fallbackSrc) {
-      var Hls = window.Hls;
-      var st = { mode: 'auto', tiers: {}, capIdx: -1, started: false, parsed: false, ctl: null, recovered: 0 };
-      var hls = new Hls({ enableWorker: true, capLevelToPlayerSize: false, autoStartLoad: false });
-      video.__fiHls = hls;
-      function start() {
-        if (st.started) return;
-        st.started = true;
-        hls.startLoad(-1);
-      }
-      function apply(v) {
-        var idx = v === 'auto' ? -1 : st.tiers[v];
-        if (idx == null) { idx = -1; v = 'auto'; }
-        st.mode = v;
-        if (idx === -1) {
-          // Auto: adaptive from the 1080p start; capped there on phones.
-          hls.autoLevelCapping = autoCap(st.tiers['2160'] != null, st.capIdx);
-          if (st.started) hls.currentLevel = -1; else hls.loadLevel = -1;
-          start();
-        } else {
-          hls.autoLevelCapping = -1;
-          if (st.started) hls.currentLevel = idx; else hls.loadLevel = idx;
-          // A pinned level loads on play, so a remembered 4K pick never
-          // preloads 4K for every hero on the page.
-          if (!video.paused) start();
-        }
-      }
-      hls.on(Hls.Events.MANIFEST_PARSED, function() {
-        st.parsed = true;
-        var lv = hls.levels || [];
-        for (var i = 0; i < lv.length; i++) {
-          var t = qualityTier(lv[i].width, lv[i].height);
-          if (t && st.tiers[t] == null) st.tiers[t] = i;
-          if (t !== '2160') st.capIdx = i;
-        }
-        if (st.capIdx >= 0) hls.startLevel = st.capIdx;
-        if (st.tiers['2160'] != null && lv.length > 1) {
-          st.ctl = createQualityControl(slot, {
-            has4k: function() { return true; },
-            mode: function() { return st.mode; },
-            playing: function() {
-              var i = hls.currentLevel >= 0 ? hls.currentLevel : (hls.loadLevel >= 0 ? hls.loadLevel : st.capIdx);
-              var l = (hls.levels || [])[i];
-              return l ? qualityTier(l.width, l.height) : '';
-            },
-            select: apply
-          });
-        }
-        apply(readQualityPref());
-        if (st.ctl) st.ctl.refresh();
-      });
-      hls.on(Hls.Events.LEVEL_SWITCHED, function() { if (st.ctl) st.ctl.refresh(); });
-      hls.on(Hls.Events.ERROR, function(evt, data) {
-        if (!data || !data.fatal) return;
-        if (!st.parsed) {
-          // Master playlist missing or unreadable: fall back to exactly the
-          // pre-picker setup (1080p rung, no picker).
-          hls.destroy();
-          var legacy = new Hls({ enableWorker: true, capLevelToPlayerSize: true });
-          video.__fiHls = legacy;
-          legacy.loadSource(fallbackSrc);
-          legacy.attachMedia(video);
-          if (slot) slot.innerHTML = '';
-          return;
-        }
-        if (st.recovered >= 3) return;
-        st.recovered++;
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-      });
-      video.addEventListener('play', start);
-      hls.loadSource(masterUrl(videoId));
-      hls.attachMedia(video);
-    }
-
-    function attachHeroNative(video, videoId, slot, fallbackSrc) {
-      // Auto is exactly the old src; the picker appears only once the
-      // master playlist confirms a 4K rung exists.
-      video.src = fallbackSrc;
-      var st = { mode: 'auto', urls: { auto: fallbackSrc, '1080': fallbackSrc } };
-      function apply(v) {
-        if (!st.urls[v]) v = 'auto';
-        st.mode = v;
-        var url = st.urls[v];
-        if (video.src !== url) swapSrcKeepingTime(video, url);
-      }
-      fetch(masterUrl(videoId)).then(function(r) { return r.ok ? r.text() : ''; }).then(function(text) {
-        var variants = parseMaster(text, masterUrl(videoId));
-        for (var i = 0; i < variants.length; i++) {
-          if (variants[i].tier === '2160') st.urls['2160'] = variants[i].uri;
-        }
-        if (!st.urls['2160']) return;
-        var ctl = createQualityControl(slot, {
-          has4k: function() { return true; },
-          mode: function() { return st.mode; },
-          playing: function() { return qualityTier(video.videoWidth, video.videoHeight) || '1080'; },
-          select: apply
-        });
-        video.addEventListener('loadedmetadata', function() { ctl.refresh(); });
-        apply(readQualityPref());
-        ctl.refresh();
-      }).catch(function() { /* no master: keep the 1080p src, no picker */ });
-    }
-
     // Page-wide mutual exclusion: when any video starts, pause every other
-    // one. Covers hero-on-hero and hero-vs-pop-up, which the Vidstack-only
-    // handler in configureHls could not see (heroes are native <video>).
+    // one, whichever player it belongs to.
     document.addEventListener('play', function(e) {
       var playing = e.target;
       if (!playing || playing.tagName !== 'VIDEO') return;
@@ -1482,12 +1521,11 @@
       enableWorker: true
     };
 
-    // Pop-up src: hls.js browsers get the master playlist so Vidstack's own
-    // Settings > Quality menu lists Auto / 4K / 1080p. Native HLS keeps the
-    // 1080p rung (Auto = the old behaviour) and gets the pill picker below
-    // the player instead.
+    // Player src, heroes and pop-up alike: hls.js browsers get the master
+    // playlist so Vidstack's own Settings > Quality menu lists Auto / 4K /
+    // 1080p. Native HLS gets nativeSrc and the pill picker below the player.
     function modalSrc(videoId) {
-      return canUseHlsJs() ? masterUrl(videoId) : hlsUrl(videoId);
+      return canUseHlsJs() ? masterUrl(videoId) : nativeSrc(videoId);
     }
 
     // Apply the page quality setting to a Vidstack pop-up player.
@@ -1527,6 +1565,7 @@
         }
       };
       playerEl.addEventListener('hls-manifest-parsed', function() {
+        if (playerEl.provider && playerEl.provider.type === 'hls') keepOne4kLevel(playerEl.provider.instance);
         playerEl.__fiApplyQuality(readQualityPref());
       });
       // Remember a pick made in Vidstack's Settings > Quality menu. Ignored
@@ -1552,22 +1591,21 @@
       });
     }
 
-    // Pop-up on native HLS: pill picker under the title, src swap per rung.
+    // Native HLS: pill picker under the title, src swap per rung. A hero uses
+    // __fiHeroId, not __fiVideoId: /fi-film-track.js then reads its id and
+    // title from .hero-card.
     function wireModalNativeQuality(playerEl) {
-      var slot = document.getElementById('modal-quality');
+      var slot = playerEl.__fiQualitySlot || document.getElementById('modal-quality');
       if (!slot) return;
       slot.innerHTML = '';
-      var videoId = playerEl.__fiVideoId;
+      var videoId = playerEl.__fiVideoId || playerEl.__fiHeroId;
       var src = playerEl.getAttribute('src') || '';
       if (!videoId || src.indexOf('.m3u8') === -1) return;
-      var st = { mode: 'auto', urls: { auto: hlsUrl(videoId), '1080': hlsUrl(videoId) }, videoId: videoId, current: src };
+      var st = { mode: 'auto', urls: { auto: nativeSrc(videoId), '1080': hlsUrl(videoId) }, videoId: videoId, current: src };
       playerEl.__fiNativeSelect = null;
       fetch(masterUrl(videoId)).then(function(r) { return r.ok ? r.text() : ''; }).then(function(text) {
-        if (playerEl.__fiVideoId !== st.videoId || !playerEl.isConnected) return;
-        var variants = parseMaster(text, masterUrl(videoId));
-        for (var i = 0; i < variants.length; i++) {
-          if (variants[i].tier === '2160') st.urls['2160'] = variants[i].uri;
-        }
+        if ((playerEl.__fiVideoId || playerEl.__fiHeroId) !== st.videoId || !playerEl.isConnected) return;
+        st.urls['2160'] = native4kUrl(parseMaster(text, masterUrl(videoId)));
         if (!st.urls['2160']) return;
         var select = function(v) {
           if (!st.urls[v]) v = 'auto';
@@ -1601,13 +1639,18 @@
     // name once: some older ladders carry two rungs of the same size (a
     // "4k" folder encoded at 1080p next to the 1080p one, board #174).
     function relabelVidstackQualities() {
-      var mp = modalPlayerWrap.querySelector('media-player');
-      var q = mp && mp.qualities;
-      if (!q || !q.length) return;
+      var players = document.querySelectorAll('media-player');
       var names = {};
-      for (var i = 0; i < q.length; i++) {
-        names[q[i].height] = tierLabel(qualityTier(q[i].width, q[i].height));
+      var any = false;
+      for (var p = 0; p < players.length; p++) {
+        var q = players[p].qualities;
+        if (!q) continue;
+        for (var i = 0; i < q.length; i++) {
+          names[q[i].height] = tierLabel(qualityTier(q[i].width, q[i].height));
+          any = true;
+        }
       }
+      if (!any) return;
       var nodes = document.querySelectorAll('.vds-quality-menu .vds-radio-label, .vds-quality-menu > media-menu-button [data-part="hint"]');
       for (var n = 0; n < nodes.length; n++) {
         var before = nodes[n].textContent;
@@ -1644,11 +1687,105 @@
     }
     if (window.MutationObserver) {
       new MutationObserver(function() {
-        if (modalOverlay.classList.contains('active')) relabelVidstackQualities();
+        if (modalOverlay.classList.contains('active') ||
+            document.querySelector('media-menu-items[data-open], .vds-menu-items[data-open]')) relabelVidstackQualities();
       }).observe(document.body, { subtree: true, childList: true, characterData: true });
     }
 
+    // --- One player owns the TV and lock screen label ---
+    // Vidstack 1.15.4 writes navigator.mediaSession (title, picture, play and
+    // pause keys) from EVERY <media-player> as it connects, and the page has
+    // one per hero. The last one rendered (the teaser) won, so AirPlay and
+    // Chrome's own cast labelled the playing Highlight "Teaser Film" and the
+    // TV remote's pause went to the teaser (Sean 2026-11-10). The page is now
+    // the only writer: the player someone touches or plays owns the label.
+    var fiSession = (function() {
+      var ms = navigator.mediaSession;
+      if (!ms || typeof MediaMetadata === 'undefined') return null;
+      var proto = Object.getPrototypeOf(ms);
+      var metaDesc = Object.getOwnPropertyDescriptor(proto, 'metadata');
+      var stateDesc = Object.getOwnPropertyDescriptor(proto, 'playbackState');
+      var realSetHandler = ms.setActionHandler.bind(ms);
+      var guarded = false;
+      try {
+        if (metaDesc && metaDesc.set && stateDesc && stateDesc.set) {
+          Object.defineProperty(ms, 'metadata', { configurable: true,
+            get: function() { return metaDesc.get.call(ms); }, set: function() {} });
+          Object.defineProperty(ms, 'playbackState', { configurable: true,
+            get: function() { return stateDesc.get.call(ms); }, set: function() {} });
+          ms.setActionHandler = function() {};
+          guarded = true;
+        }
+      } catch (err) { guarded = false; }
+      function writeMeta(m) {
+        if (guarded) metaDesc.set.call(ms, m); else ms.metadata = m;
+      }
+      function writeState(s) {
+        try { if (guarded) stateDesc.set.call(ms, s); else ms.playbackState = s; } catch (err) {}
+      }
+      var owner = null;
+      function fallbackOwner() {
+        return document.querySelector('#hero-stack media-player');
+      }
+      function refresh() {
+        if (!owner || !owner.isConnected) owner = fallbackOwner();
+        if (!owner) { writeMeta(null); writeState('none'); return; }
+        var posterEl = owner.querySelector('media-poster');
+        var poster = posterEl ? posterEl.getAttribute('src') : '';
+        try {
+          writeMeta(new MediaMetadata({
+            title: owner.title || owner.getAttribute('title') || '',
+            artwork: poster ? [{ src: poster }] : []
+          }));
+        } catch (err) {}
+        var st = owner.state || {};
+        writeState(!st.started && owner.paused !== false ? 'none' : (owner.paused === false ? 'playing' : 'paused'));
+      }
+      function act(fn) {
+        return function(d) { if (owner && owner.isConnected) { try { fn(owner, d || {}); } catch (err) {} } };
+      }
+      var handlers = {
+        play: act(function(p) { var r = p.play(); if (r && r.catch) r.catch(function() {}); }),
+        pause: act(function(p) { p.pause(); }),
+        seekto: act(function(p, d) { if (typeof d.seekTime === 'number') p.currentTime = d.seekTime; }),
+        seekforward: act(function(p, d) { p.currentTime = (p.currentTime || 0) + (d.seekOffset || 10); }),
+        seekbackward: act(function(p, d) { p.currentTime = Math.max(0, (p.currentTime || 0) - (d.seekOffset || 10)); })
+      };
+      for (var k in handlers) { try { realSetHandler(k, handlers[k]); } catch (err) {} }
+      return {
+        claim: function(p) { if (p) owner = p; refresh(); },
+        refresh: refresh,
+        owner: function() { return owner; },
+        guarded: function() { return guarded; }
+      };
+    })();
+    function claimSession(p) { if (fiSession) fiSession.claim(p); }
+    function refreshSession() { if (fiSession) fiSession.refresh(); }
+
     function configureHls(playerEl) {
+      // A touch on this player (play, AirPlay, cast, any control) makes it
+      // the one the TV and lock screen name, before the picker opens.
+      // Another film playing keeps the label unless this press is on a TV
+      // button (the picker then sends THIS player's film).
+      function touched(e) {
+        if (!fiSession) return;
+        var cur = fiSession.owner();
+        var tv = e && e.target && e.target.closest &&
+          e.target.closest('media-google-cast-button, media-airplay-button, .vds-google-cast-button, .vds-airplay-button');
+        if (tv || !cur || cur === playerEl || !cur.isConnected || cur.paused !== false) claimSession(playerEl);
+      }
+      playerEl.addEventListener('pointerdown', touched, true);
+      playerEl.addEventListener('focusin', touched);
+      playerEl.addEventListener('play', function() { claimSession(playerEl); });
+      playerEl.addEventListener('playing', function() { claimSession(playerEl); });
+      playerEl.addEventListener('pause', function() {
+        if (fiSession && fiSession.owner() === playerEl) refreshSession();
+      });
+      // The Full Day playlist swaps title and poster on the same element.
+      if (window.MutationObserver) new MutationObserver(function() {
+        if (fiSession && fiSession.owner() === playerEl) refreshSession();
+      }).observe(playerEl, { attributes: true, attributeFilter: ['title'] });
+
       playerEl.addEventListener('provider-change', function(e) {
         var provider = e.detail;
         if (provider && provider.type === 'hls') {
@@ -1700,12 +1837,15 @@
     //   - "eager" (default for modal + playlist): provider attaches and pulls
     //     master.m3u8 on element insert. Right for a player that opens on click
     //     and immediately autoplays.
-    //   - "visible" (used for hero stack): provider waits until the player
-    //     enters the viewport before pulling source. Prevents 3 simultaneous
-    //     HLS manifest requests on page load when 3 hero players exist, only
-    //     one of which is above the fold on mobile.
+    //   - HERO_LOAD (hero stack): nothing is fetched for a hero on hls.js until
+    //     someone presses play. Native HLS (iPhone) needs the video element
+    //     ready before the tap, or the phone refuses a play with sound, so
+    //     it loads metadata once the hero is on screen. stream-type there
+    //     draws the control bar (with its AirPlay button) before metadata;
+    //     tvSlot gives hls.js heroes their TV buttons before play.
     function createPlayerHtml(opts) {
-      // opts: { title, src, poster, autoplay (bool), storage (string), load (string) }
+      // opts: { title, src, poster, autoplay (bool), storage (string), load (string),
+      //         streamType (string), tvSlot (bool) }
       var loadAttr = opts.load ? (' load="' + escapeAttr(opts.load) + '"') : '';
       // <media-poster> MUST be a direct child of <media-player>, NOT nested
       // inside <media-provider>. Per Vidstack's canonical example
@@ -1723,20 +1863,31 @@
       // airplay / cast / fullscreen. No custom child elements needed.
       return (
         '<media-player title="' + escapeAttr(opts.title) + '" src="' + opts.src + '" crossorigin playsinline' +
+        (PREFER_NATIVE_HLS ? ' prefer-native-hls' : '') +
         (opts.autoplay ? ' autoplay' : '') +
+        (opts.streamType ? ' stream-type="' + opts.streamType + '"' : '') +
         loadAttr +
         ' storage="' + escapeAttr(opts.storage) + '">' +
         '  <media-provider></media-provider>' +
         '  <media-poster src="' + opts.poster + '" alt="' + escapeAttr(opts.title) + '"></media-poster>' +
         '  <media-video-layout></media-video-layout>' +
+        (opts.tvSlot ?
+          '  <div class="fi-tv-slot">' +
+          '    <media-google-cast-button class="fi-tv-btn" aria-label="Play on TV"><media-icon type="chromecast"></media-icon></media-google-cast-button>' +
+          '    <media-airplay-button class="fi-tv-btn" aria-label="Play on TV (AirPlay)"><media-icon type="airplay"></media-icon></media-airplay-button>' +
+          '  </div>' : '') +
         '</media-player>'
       );
     }
 
+    var HERO_LOAD = PREFER_NATIVE_HLS ? 'visible' : 'play';
+
     // --- Hero Row ---
     // Renders one full-width inline player per HERO entry, stacked vertically.
     // Section hides entirely when HERO is empty (page degrades to Collection-only).
-    (function initHeroRow() {
+    // Called from bootstrapDelivery() after the live config resolves, so it
+    // reads the resolved HERO rather than the baked tokens.
+    function renderHeroRow() {
       var stack = document.getElementById('hero-stack');
       var section = document.getElementById('hero-row');
 
@@ -1746,6 +1897,7 @@
         section.style.display = 'none';
         return;
       }
+      section.style.display = '';
 
       var html = '';
       for (var i = 0; i < HERO.length; i++) {
@@ -1761,14 +1913,20 @@
           // below, which are appropriate sub-fold reveal targets.
           '<div class="hero-card" data-hero-id="' + escapeAttr(h.id) + '">' +
           '  <div class="hero-player-wrap">' +
-          // Native <video> + hls.js, the Matt & Haley fix (commit 0374010):
-          // Vidstack hero players never started on overlay tap.
-          '    <video playsinline controls preload="metadata" poster="' + escapeAttr(thumbUrl(h.id)) + '" data-hls="' + escapeAttr(hlsUrl(h.id)) + '"></video>' +
-          '    <div class="hero-overlay" style="background-image: url(\'' + thumbUrl(h.id) + '\')" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
-          '      <div class="hero-play-btn">' +
-          '        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-          '          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/>' +
-          '        </svg>' +
+          // The same Vidstack player as the cards (cast, AirPlay, quality),
+          // with the gold click-to-play button on top. See wireHeroPlayer.
+          createPlayerHtml({
+            title: h.title,
+            src: modalSrc(h.id),
+            poster: thumbUrl(h.id),
+            load: HERO_LOAD,
+            streamType: PREFER_NATIVE_HLS ? 'on-demand' : '',
+            tvSlot: !PREFER_NATIVE_HLS,
+            storage: 'fi-hero-' + h.id
+          }) +
+          '    <div class="hero-overlay">' +
+          '      <div class="hero-play-btn" role="button" tabindex="0" aria-label="Play ' + escapeAttr(h.title) + '">' +
+          '        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="#FFBD1D"></polygon></svg>' +
           '      </div>' +
           '    </div>' +
           '  </div>' +
@@ -1781,42 +1939,54 @@
       }
       stack.innerHTML = html;
 
-      // Wire overlay click + Enter/Space keyboard activation. Pattern from the
-      // pre-hero-treatment Featured era (commit 7621991): clicking the
-      // thumb-as-overlay hides it and starts Vidstack playback. After hide,
-      // pointer-events: none lets all subsequent clicks reach Vidstack's
-      // controls bar naturally.
-      var overlays = stack.querySelectorAll('.hero-overlay');
-      for (var o = 0; o < overlays.length; o++) {
-        (function(overlay) {
-          var activate = function() {
-            if (overlay.classList.contains('hidden')) return;
-            overlay.classList.add('hidden');
-            var player = overlay.parentElement.querySelector('video');
-            if (player && typeof player.play === 'function') {
-              var p = player.play();
-              if (p && typeof p.catch === 'function') p.catch(function() {});
-            }
-          };
-          overlay.addEventListener('click', activate);
-          overlay.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              activate();
-            }
-          });
-        })(overlays[o]);
-      }
-
       var heroCards = stack.querySelectorAll('.hero-card');
-      for (var hv = 0; hv < heroCards.length; hv++) {
-        attachHeroPlayer(
-          heroCards[hv].querySelector('video[data-hls]'),
-          heroCards[hv].getAttribute('data-hero-id'),
-          heroCards[hv].querySelector('.fi-quality-slot')
-        );
+      for (var hv = 0; hv < heroCards.length; hv++) wireHeroPlayer(heroCards[hv]);
+      // Until someone picks a film, the TV label is the first hero's.
+      claimSession(stack.querySelector('media-player'));
+    }
+
+    // Click-to-play for one hero: the gold button or anywhere on the picture
+    // that is not one of the player's own controls. After the first play the
+    // button is gone and the player works like the one in the pop-up.
+    function wireHeroPlayer(card) {
+      var player = card.querySelector('media-player');
+      var wrap = card.querySelector('.hero-player-wrap');
+      var overlay = card.querySelector('.hero-overlay');
+      if (!player) return;
+      player.__fiHeroId = card.getAttribute('data-hero-id');
+      player.__fiQualitySlot = card.querySelector('.fi-quality-slot');
+      configureHls(player);
+      function started() {
+        overlay.classList.add('hidden');
+        wrap.classList.add('fi-started');
       }
-    })();
+      function start() {
+        started();
+        var p = player.play();
+        if (p && typeof p.catch === 'function') p.catch(function() {});
+      }
+      player.addEventListener('play', started);
+      // The cast session takes the source once the player may load, so a TV
+      // tap before play starts loading. From then on the control bar is drawn.
+      var tvSlot = card.querySelector('.fi-tv-slot');
+      if (tvSlot) tvSlot.addEventListener('click', function() {
+        wrap.classList.add('fi-started');
+        player.startLoading();
+      });
+      var btn = overlay.querySelector('.hero-play-btn');
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          start();
+        }
+      });
+      wrap.addEventListener('click', function(e) {
+        if (overlay.classList.contains('hidden')) return;
+        var control = e.target.closest('.fi-tv-btn, [role="button"], [role="slider"], [role="menu"], [role="menuitem"], [role="menuitemradio"], button');
+        if (control && control !== btn) return;
+        start();
+      });
+    }
 
     // --- Collection Grid ---
     // Order: Watch the Full Day playlist card FIRST (full-width, eye-catching),
@@ -1825,7 +1995,7 @@
     // would otherwise scroll past. Renders only when 2+ playlist-eligible cuts
     // exist; below that threshold the playlist card is suppressed and only
     // film thumbnails render.
-    (function initCollection() {
+    function renderCollection() {
       var grid = document.getElementById('collection-grid');
       var html = '';
 
@@ -1914,7 +2084,31 @@
       } else {
         for (var t = 0; t < thumbs.length; t++) applyThumb(thumbs[t]);
       }
-    })();
+    }
+
+    // --- Empty State ---
+    // Pre-generated shells (no video attached yet) and any config that resolves
+    // to an empty videos array render a single tasteful, on-brand message in the
+    // collection area. Hero and Downloads sections are hidden by bootstrap.
+    function renderEmptyState() {
+      var heroRow = document.getElementById('hero-row');
+      if (heroRow) heroRow.style.display = 'none';
+      var downloads = document.getElementById('downloads');
+      if (downloads) downloads.style.display = 'none';
+      var collectionSection = document.getElementById('collection');
+      if (collectionSection) {
+        var header = collectionSection.querySelector('.reveal');
+        if (header) header.style.display = 'none';
+      }
+      var grid = document.getElementById('collection-grid');
+      if (grid) {
+        grid.innerHTML =
+          '<div class="films-pending">' +
+          '  <p class="films-pending-title">Your films are on the way.</p>' +
+          '  <p class="films-pending-sub">We are putting the finishing touches on your wedding films. Check back soon.</p>' +
+          '</div>';
+      }
+    }
 
     // --- Modal ---
     var modalOverlay = document.getElementById('modal-overlay');
@@ -2058,7 +2252,7 @@
           if (playlistIndex >= PLAYLIST.length - 1) return;
           // Ignore spurious 'ended' / near-end signals during the first 2 sec
           // of clip init (HLS load races, stale buffers from the prior src).
-          // Real wedding-clip durations are far above 2 sec, so this cannot
+          // Real film-clip durations are far above 2 sec, so this cannot
           // block a legitimate advance.
           if (Date.now() - s.startedAt < 2000) return;
           s.hasAdvanced = true;
@@ -2128,12 +2322,30 @@
         modalPlayerWrap.classList.remove('has-playlist');
         playlistBar.classList.remove('visible');
         modalTitle.textContent = '';
+        // The pop-up player is gone; the label goes back to the first hero.
+        refreshSession();
       }, 300);
     }
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
+    // Vidstack's own AirPlay button did not show in the pop-up on iPhone, so
+    // the pop-up has its own. Apple devices only.
+    var modalAirplay = document.getElementById('modal-airplay');
+    if (PREFER_NATIVE_HLS) modalAirplay.hidden = false;
+    modalAirplay.addEventListener('click', function() {
+      claimSession(modalPlayerWrap.querySelector('media-player'));
+      var v = modalPlayerWrap.querySelector('video');
+      if (v && v.webkitShowPlaybackTargetPicker) v.webkitShowPlaybackTargetPicker();
+    });
+    // Vidstack puts its phone settings menu outside the modal, so a tap that
+    // only dismisses the menu lands on the overlay. Check at press time, since
+    // the menu has already closed by the time the click arrives.
+    var menuOpenAtPress = false;
+    document.addEventListener('pointerdown', function() {
+      menuOpenAtPress = !!document.querySelector('media-menu-items[data-open], .vds-menu-items[data-open]');
+    }, true);
     modalOverlay.addEventListener('click', function(e) {
-      if (e.target === modalOverlay) closeModal();
+      if (e.target === modalOverlay && !menuOpenAtPress) closeModal();
     });
     document.addEventListener('keydown', function(e) {
       // Only act on Escape when the modal is actually open. Without this
@@ -2201,7 +2413,10 @@
     });
 
     // --- Scroll Reveal ---
-    (function initReveal() {
+    // Run from bootstrapDelivery() AFTER hero + collection render, so the
+    // observer sees the dynamically injected .reveal cards (playlist card and
+    // film cards). Running it before render would miss them.
+    function runReveal() {
       var reveals = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window)) {
         // Fallback: show everything
@@ -2217,7 +2432,28 @@
         }
       }, { threshold: 0.15 });
       for (var i = 0; i < reveals.length; i++) observer.observe(reveals[i]);
-    })();
+    }
+
+    // --- Download list render ---
+    // Module-scope so bootstrapDelivery() can pre-render the (hidden) list and
+    // the auth handler can re-render after unlock.
+    function renderDownloadList() {
+      var downloadList = document.getElementById('download-list');
+      if (!downloadList) return;
+      var html = '';
+      for (var i = 0; i < VIDEOS.length; i++) {
+        var v = VIDEOS[i];
+        html +=
+          '<div class="download-item">' +
+          '  <div class="download-item-info">' +
+          '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
+          (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
+          '  </div>' +
+          '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
+          '</div>';
+      }
+      downloadList.innerHTML = html;
+    }
 
     // --- Download Auth ---
     (function initDownloads() {
@@ -2228,23 +2464,6 @@
       var errorMsg = document.getElementById('download-error');
       var downloadList = document.getElementById('download-list');
       var authToken = null;
-
-      // Render download list items
-      function renderDownloadList() {
-        var html = '';
-        for (var i = 0; i < VIDEOS.length; i++) {
-          var v = VIDEOS[i];
-          html +=
-            '<div class="download-item">' +
-            '  <div class="download-item-info">' +
-            '    <span class="download-item-title">' + escapeHtml(v.title) + '</span>' +
-            (v.duration ? '    <span class="download-item-duration">' + escapeHtml(v.duration) + '</span>' : '') +
-            '  </div>' +
-            '  <button class="download-item-btn" data-video-id="' + escapeAttr(v.id) + '">Download</button>' +
-            '</div>';
-        }
-        downloadList.innerHTML = html;
-      }
 
       // Signed download link (board #65): flyiniris.com/films/<slug>/#dl=<key>.
       // The key sits in the fragment, so it never reaches any server log; the
@@ -2414,6 +2633,125 @@
         }
       }
     })();
+
+    // --- Load-time config resolution ---
+    // Delivery pages are batch pre-generated as video-empty shells well ahead
+    // of delivery day. On delivery day Studio writes the couple's video source
+    // to a Worker D1 table; the page must pick it up WITHOUT being regenerated.
+    // resolveConfig() fetches that live source and, when present, overwrites the
+    // baked VIDEOS and DERIVES HERO + PLAYLIST with the same rules the generator
+    // uses. On any failure (network, timeout, non-OK, empty) it silently leaves
+    // the baked fallback in place.
+    function byOrder(a, b) { return a.order - b.order; }
+
+    function deriveFromVideos(videos) {
+      HERO = videos.filter(function(v) { return v.hero === true; }).sort(byOrder);
+      PLAYLIST = videos
+        .filter(function(v) {
+          return (v.category === 'archival' || v.category === 'bonus') && v.playlist !== false;
+        })
+        .sort(byOrder)
+        .map(function(v) { return { id: v.id, title: v.title, duration: v.duration }; });
+    }
+
+    // The API stores whatever Studio or the pipeline approved, so apply the
+    // generator's rules here too: drop entries the page cannot play (no id,
+    // a category outside the standard enum, or comingSoon placeholders, which
+    // the May standard does not render), default empty titles the same way
+    // generate-film-page.js does, and keep duration a string. At most 5 heroes.
+    var CATEGORY_ENUM = ['highlight', 'teaser', 'archival', 'bonus'];
+    var HERO_TITLE_DEFAULTS = { 'teaser': 'Teaser Film', 'highlight': 'Highlight Film', 'story-session': 'Story Session Film' };
+    function normalizeLiveVideos(raw) {
+      var out = [];
+      var heroes = 0;
+      var sorted = raw.slice().sort(function(a, b) { return ((a && a.order) || 0) - ((b && b.order) || 0); });
+      for (var i = 0; i < sorted.length; i++) {
+        var v = sorted[i];
+        if (!v || typeof v.id !== 'string' || !/^[a-z0-9-]+$/.test(v.id)) continue;
+        if (CATEGORY_ENUM.indexOf(v.category) === -1) continue;
+        if (v.comingSoon === true) continue;
+        var title = (typeof v.title === 'string' && v.title.trim()) ? v.title.trim()
+          : (HERO_TITLE_DEFAULTS[v.id] || (v.id.charAt(0).toUpperCase() + v.id.slice(1).replace(/-/g, ' ')));
+        var entry = {
+          id: v.id,
+          title: title,
+          category: v.category,
+          duration: typeof v.duration === 'string' ? v.duration : '',
+          order: typeof v.order === 'number' ? v.order : i
+        };
+        if (v.hero === true && heroes < 5) { entry.hero = true; heroes++; }
+        if (v.playlist === false) entry.playlist = false;
+        out.push(entry);
+      }
+      return out;
+    }
+
+    // Mirrors deriveHeroCta() in generate-film-page.js. Shells bake the
+    // generic "View Your Films" because they have no heroes at generate time.
+    function updateHeroCta() {
+      var btn = document.getElementById('hero-cta');
+      if (!btn) return;
+      var label = 'View Your Films';
+      if (HERO.length >= 2) label = 'Watch the Films';
+      else if (HERO.length === 1) {
+        var only = HERO[0];
+        if (only.category === 'teaser') label = 'Watch the Teaser';
+        else if (only.category === 'highlight') label = 'Watch the Highlight';
+        else if (only.id === 'story-session') label = 'Watch the Story Session';
+        else label = 'Watch the Film';
+      }
+      btn.textContent = label;
+    }
+
+    function resolveConfig() {
+      // No API base baked (older generation): rely on the baked data alone.
+      if (!CONFIG_API_BASE) return Promise.resolve();
+      var url = CONFIG_API_BASE + '/api/delivery/' + SLUG + '/videos';
+      var controller = ('AbortController' in window) ? new AbortController() : null;
+      var timer = controller ? setTimeout(function() { controller.abort(); }, 6000) : null;
+      var opts = controller ? { signal: controller.signal } : {};
+      return fetch(url, opts)
+        .then(function(res) {
+          if (timer) clearTimeout(timer);
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function(data) {
+          var live = (data && Array.isArray(data.videos)) ? normalizeLiveVideos(data.videos) : [];
+          if (live.length > 0) {
+            VIDEOS = live;
+            deriveFromVideos(VIDEOS);
+            if (data.updated_at) THUMB_VERSION = String(data.updated_at);
+            updateHeroCta();
+          }
+        })
+        .catch(function() {
+          if (timer) clearTimeout(timer);
+          // Fall back to baked data; do not surface an error to the couple.
+        });
+    }
+
+    // Single ordered render pipeline. Hero, then Collection (which injects the
+    // .reveal cards), then the hidden Download list, THEN the reveal observer
+    // so it sees those cards. Empty config short-circuits to the on-brand
+    // "films on the way" state.
+    async function bootstrapDelivery() {
+      await resolveConfig();
+
+      collection = VIDEOS.filter(function(v) { return v.hero !== true; }).sort(byOrder);
+
+      if (!VIDEOS || VIDEOS.length === 0) {
+        renderEmptyState();
+        return;
+      }
+
+      renderHeroRow();
+      renderCollection();
+      renderDownloadList();
+      runReveal();
+    }
+
+    bootstrapDelivery();
 
     // --- PWA Service Worker ---
     if ('serviceWorker' in navigator) {
