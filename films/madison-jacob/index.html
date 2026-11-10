@@ -1730,7 +1730,7 @@
         var poster = posterEl ? posterEl.getAttribute('src') : '';
         try {
           writeMeta(new MediaMetadata({
-            title: owner.getAttribute('title') || '',
+            title: owner.title || owner.getAttribute('title') || '',
             artwork: poster ? [{ src: poster }] : []
           }));
         } catch (err) {}
