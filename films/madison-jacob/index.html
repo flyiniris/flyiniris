@@ -1688,7 +1688,91 @@
       }).observe(document.body, { subtree: true, childList: true, characterData: true });
     }
 
+    // --- One player owns the TV and lock screen label ---
+    // Vidstack 1.15.4 writes navigator.mediaSession (title, picture, play and
+    // pause keys) from EVERY <media-player> as it connects, and the page has
+    // one per hero. The last one rendered (the teaser) won, so AirPlay and
+    // Chrome's own cast labelled the playing Highlight "Teaser Film" and the
+    // TV remote's pause went to the teaser (Sean 2026-11-10). The page is now
+    // the only writer: the player someone touches or plays owns the label.
+    var fiSession = (function() {
+      var ms = navigator.mediaSession;
+      if (!ms || typeof MediaMetadata === 'undefined') return null;
+      var proto = Object.getPrototypeOf(ms);
+      var metaDesc = Object.getOwnPropertyDescriptor(proto, 'metadata');
+      var stateDesc = Object.getOwnPropertyDescriptor(proto, 'playbackState');
+      var realSetHandler = ms.setActionHandler.bind(ms);
+      var guarded = false;
+      try {
+        if (metaDesc && metaDesc.set && stateDesc && stateDesc.set) {
+          Object.defineProperty(ms, 'metadata', { configurable: true,
+            get: function() { return metaDesc.get.call(ms); }, set: function() {} });
+          Object.defineProperty(ms, 'playbackState', { configurable: true,
+            get: function() { return stateDesc.get.call(ms); }, set: function() {} });
+          ms.setActionHandler = function() {};
+          guarded = true;
+        }
+      } catch (err) { guarded = false; }
+      function writeMeta(m) {
+        if (guarded) metaDesc.set.call(ms, m); else ms.metadata = m;
+      }
+      function writeState(s) {
+        try { if (guarded) stateDesc.set.call(ms, s); else ms.playbackState = s; } catch (err) {}
+      }
+      var owner = null;
+      function fallbackOwner() {
+        return document.querySelector('#hero-stack media-player');
+      }
+      function refresh() {
+        if (!owner || !owner.isConnected) owner = fallbackOwner();
+        if (!owner) { writeMeta(null); writeState('none'); return; }
+        var posterEl = owner.querySelector('media-poster');
+        var poster = posterEl ? posterEl.getAttribute('src') : '';
+        try {
+          writeMeta(new MediaMetadata({
+            title: owner.getAttribute('title') || '',
+            artwork: poster ? [{ src: poster }] : []
+          }));
+        } catch (err) {}
+        var st = owner.state || {};
+        writeState(!st.started && owner.paused !== false ? 'none' : (owner.paused === false ? 'playing' : 'paused'));
+      }
+      function act(fn) {
+        return function(d) { if (owner && owner.isConnected) { try { fn(owner, d || {}); } catch (err) {} } };
+      }
+      var handlers = {
+        play: act(function(p) { var r = p.play(); if (r && r.catch) r.catch(function() {}); }),
+        pause: act(function(p) { p.pause(); }),
+        seekto: act(function(p, d) { if (typeof d.seekTime === 'number') p.currentTime = d.seekTime; }),
+        seekforward: act(function(p, d) { p.currentTime = (p.currentTime || 0) + (d.seekOffset || 10); }),
+        seekbackward: act(function(p, d) { p.currentTime = Math.max(0, (p.currentTime || 0) - (d.seekOffset || 10)); })
+      };
+      for (var k in handlers) { try { realSetHandler(k, handlers[k]); } catch (err) {} }
+      return {
+        claim: function(p) { if (p) owner = p; refresh(); },
+        refresh: refresh,
+        owner: function() { return owner; },
+        guarded: function() { return guarded; }
+      };
+    })();
+    function claimSession(p) { if (fiSession) fiSession.claim(p); }
+    function refreshSession() { if (fiSession) fiSession.refresh(); }
+
     function configureHls(playerEl) {
+      // A touch on this player (play, AirPlay, cast, any control) makes it
+      // the one the TV and lock screen name, before the picker opens.
+      playerEl.addEventListener('pointerdown', function() { claimSession(playerEl); }, true);
+      playerEl.addEventListener('focusin', function() { claimSession(playerEl); });
+      playerEl.addEventListener('play', function() { claimSession(playerEl); });
+      playerEl.addEventListener('playing', function() { claimSession(playerEl); });
+      playerEl.addEventListener('pause', function() {
+        if (fiSession && fiSession.owner() === playerEl) refreshSession();
+      });
+      // The Full Day playlist swaps title and poster on the same element.
+      if (window.MutationObserver) new MutationObserver(function() {
+        if (fiSession && fiSession.owner() === playerEl) refreshSession();
+      }).observe(playerEl, { attributes: true, attributeFilter: ['title'] });
+
       playerEl.addEventListener('provider-change', function(e) {
         var provider = e.detail;
         if (provider && provider.type === 'hls') {
@@ -1844,6 +1928,8 @@
 
       var heroCards = stack.querySelectorAll('.hero-card');
       for (var hv = 0; hv < heroCards.length; hv++) wireHeroPlayer(heroCards[hv]);
+      // Until someone picks a film, the TV label is the first hero's.
+      claimSession(stack.querySelector('media-player'));
     }
 
     // Click-to-play for one hero: the gold button or anywhere on the picture
@@ -2223,6 +2309,8 @@
         modalPlayerWrap.classList.remove('has-playlist');
         playlistBar.classList.remove('visible');
         modalTitle.textContent = '';
+        // The pop-up player is gone; the label goes back to the first hero.
+        refreshSession();
       }, 300);
     }
 
@@ -2232,6 +2320,7 @@
     var modalAirplay = document.getElementById('modal-airplay');
     if (PREFER_NATIVE_HLS) modalAirplay.hidden = false;
     modalAirplay.addEventListener('click', function() {
+      claimSession(modalPlayerWrap.querySelector('media-player'));
       var v = modalPlayerWrap.querySelector('video');
       if (v && v.webkitShowPlaybackTargetPicker) v.webkitShowPlaybackTargetPicker();
     });
