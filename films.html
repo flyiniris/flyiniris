@@ -423,6 +423,251 @@
       font-size: 1.1rem;
     }
 
+    /* ========== FILM LIBRARY (couple cards + vibe filters) ==========
+       Rendered from /api/films/library. Hidden until the data arrives, so
+       the curated grid below is what shows on a slow or failed fetch. */
+
+    .lib-intro {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin: -8px 0 20px;
+    }
+
+    .lib-filter-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .lib-filter-group {
+      margin-bottom: 18px;
+    }
+
+    /* Mobile: one row that scrolls sideways, bleeding to the screen edge.
+       The page itself never scrolls sideways (body has overflow-x hidden). */
+    .lib-btn-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -24px;
+      padding: 2px 24px 6px;
+    }
+
+    .lib-btn-row::-webkit-scrollbar { display: none; }
+
+    .lib-btn {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .lib-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .lib-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .lib-btn[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+      font-weight: 500;
+    }
+
+    .lib-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin: 4px 0 24px;
+    }
+
+    .lib-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .lib-thumb {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      border: 2px solid transparent;
+      background: radial-gradient(ellipse at 30% 20%, rgba(255, 189, 29, 0.18), transparent 60%),
+                  linear-gradient(135deg, #1F1D19 0%, #111110 55%, #1A1712 100%);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .lib-card:hover .lib-thumb,
+    .lib-card:focus-visible .lib-thumb {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 189, 29, 0.15);
+    }
+
+    .lib-card:focus-visible { outline: none; }
+
+    .lib-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Shown only when there is no thumbnail (or it fails to load). */
+    .lib-thumb-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: rgba(245, 240, 235, 0.5);
+      padding: 0 16px 12px;
+      text-align: center;
+    }
+
+    .lib-card .video-play-btn {
+      width: 56px;
+      height: 56px;
+    }
+
+    .lib-card .video-play-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .lib-card:hover .video-play-btn {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .lib-featured .video-play-btn {
+      width: 70px;
+      height: 70px;
+    }
+
+    .lib-featured .video-play-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .lib-featured {
+      margin-bottom: 32px;
+    }
+
+    .lib-info {
+      text-align: center;
+    }
+
+    .lib-info .film-title {
+      font-size: 1.15rem;
+    }
+
+    .lib-featured .lib-info .film-title {
+      font-size: 1.4rem;
+    }
+
+    .lib-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      list-style: none;
+      margin: 10px 0 8px;
+    }
+
+    .lib-chip {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+
+    .lib-chip.is-match {
+      background: rgba(255, 189, 29, 0.14);
+      border-color: var(--accent);
+    }
+
+    .lib-keywords {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .lib-types {
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .lib-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .lib-empty {
+      text-align: center;
+      padding: 32px 0 8px;
+    }
+
+    .lib-empty p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .lib-reset {
+      background: none;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 10px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .lib-reset:hover {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+
     /* ========== SOCIAL PROOF ========== */
 
     .social-proof {
@@ -623,6 +868,26 @@
         width: calc(50% - 12px);
       }
 
+      /* Library: buttons wrap and center instead of scrolling sideways. */
+      .lib-btn-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+      }
+
+      .lib-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 24px;
+      }
+
+      .lib-grid > .lib-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: calc(50% - 12px);
+      }
+
       .quote-text {
         font-size: 1.5rem;
       }
@@ -674,14 +939,26 @@
     <section class="film-grid">
       <h2 class="section-label" style="font-family:'Outfit',sans-serif;">OUR WORK</h2>
 
-      <!-- Live film grid, rendered from /api/films when the index carries
-           playable media. The curated markup below stays as the instant
-           fallback (and the render if the index has no media-complete films,
-           which is the state at build time 2026-07-03). Regeneration path:
-           the film index lives in Worker KV key "films" (Studio Films tab /
-           iris-automation scripts write it); entries need slug, coupleNames,
-           venue, thumbnailUrl, and teaserUrl to appear here. -->
-      <div id="film-grid-live" style="display:none;"></div>
+      <!-- Film library: couple cards with vibe and film type filters,
+           rendered from GET api.flyiniris.com/api/films/library (2026-11-14,
+           replaces the dormant /api/films live grid). The curated markup
+           below is the instant render and stays as the fallback when the
+           fetch fails or returns fewer than 4 couples. Filters live in the
+           URL hash so a link can open pre-filtered, for example
+           /films#vibe=romantic,fun&type=teaser -->
+      <div id="film-library" hidden>
+        <p class="lib-intro">Tap a vibe to find films that feel like your day.</p>
+        <div class="lib-filter-group">
+          <span class="lib-filter-label" id="lib-vibe-label">Vibe</span>
+          <div class="lib-btn-row" id="lib-vibes" role="group" aria-labelledby="lib-vibe-label"></div>
+        </div>
+        <div class="lib-filter-group">
+          <span class="lib-filter-label" id="lib-type-label">Film type</span>
+          <div class="lib-btn-row" id="lib-types" role="group" aria-labelledby="lib-type-label"></div>
+        </div>
+        <p class="lib-count" id="lib-count" aria-live="polite"></p>
+        <div id="lib-results"></div>
+      </div>
 
       <div id="film-grid-curated">
       <!-- Featured Film (full-width) -->
@@ -824,44 +1101,240 @@
       }
     })();
 
-    // Live film grid from the Worker film index. Renders only entries with
-    // complete public media (thumbnailUrl + teaserUrl); if fewer than 4
-    // qualify, the curated static grid above stays exactly as authored.
+    // Film library (2026-11-14): couple cards from the Worker's
+    // /api/films/library with vibe and film type filters. Vibe buttons are
+    // multi-select (a couple matches if it has ANY selected vibe); film type
+    // is one at a time. The selection is mirrored into the URL hash
+    // (#vibe=romantic,fun&type=teaser) so ads and DM links can open the grid
+    // pre-filtered. If the fetch fails or returns fewer than 4 couples, the
+    // curated grid above stays exactly as authored.
     (function() {
+      var root = document.getElementById('film-library');
+      var curated = document.getElementById('film-grid-curated');
+      if (!root || !curated || !window.fetch) return;
+
+      // Local testing only: ?api=http://localhost:PORT points the page at a
+      // local server, and only when the page itself is served from localhost.
+      // Production always reads api.flyiniris.com (the CSP blocks anything else).
+      var API = 'https://api.flyiniris.com';
+      try {
+        var override = new URLSearchParams(window.location.search).get('api');
+        var localPage = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+        if (override && localPage) {
+          var u = new URL(override);
+          if (u.protocol === 'http:' && /^(localhost|127\.0\.0\.1)$/.test(u.hostname)) API = u.origin;
+        }
+      } catch (e) { /* bad override: keep production */ }
+
+      var DEFAULT_TYPES = [
+        { key: 'teaser', label: 'Teasers' },
+        { key: 'highlight', label: 'Highlight Films' },
+        { key: 'fomo', label: 'FOMO Doc Edits' }
+      ];
+      // Singular tags for the card footer; unknown keys fall back to the API label.
+      var TYPE_TAG = { teaser: 'Teaser', highlight: 'Highlight', fomo: 'FOMO Doc' };
+      var PLAY_SVG = '<div class="video-play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/></svg></div>';
+
+      var vibes = [], types = [], couples = [];
+      var vibeLabel = {}, typeLabel = {};
+      var state = { vibes: [], type: '' };
+
       function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
-      var PLAY_SVG = '<div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/></svg></div>';
-      fetch('https://api.flyiniris.com/api/films')
+      function safeUrl(s) {
+        if (!s) return '';
+        try {
+          var u = new URL(String(s), window.location.href);
+          return (u.protocol === 'https:' || u.protocol === 'http:') ? u.href : '';
+        } catch (e) { return ''; }
+      }
+      function arr(a) { return Array.isArray(a) ? a : []; }
+
+      function readHash() {
+        var p;
+        try { p = new URLSearchParams(window.location.hash.replace(/^#/, '')); } catch (e) { return; }
+        var vk = (p.get('vibe') || '').split(',').map(function(s) { return s.trim().toLowerCase(); });
+        state.vibes = vk.filter(function(k, i) { return k && vibeLabel[k] && vk.indexOf(k) === i; });
+        var t = (p.get('type') || '').trim().toLowerCase();
+        state.type = typeLabel[t] ? t : '';
+      }
+
+      function writeHash() {
+        var parts = [];
+        if (state.vibes.length) parts.push('vibe=' + state.vibes.map(encodeURIComponent).join(','));
+        if (state.type) parts.push('type=' + encodeURIComponent(state.type));
+        var url = window.location.pathname + window.location.search + (parts.length ? '#' + parts.join('&') : '');
+        try { history.replaceState(null, '', url); } catch (e) { /* sandboxed: filters still work */ }
+      }
+
+      function matches(c) {
+        if (state.type && arr(c.filmTypes).indexOf(state.type) === -1) return false;
+        if (!state.vibes.length) return true;
+        var cv = arr(c.vibeKeys);
+        return state.vibes.some(function(k) { return cv.indexOf(k) !== -1; });
+      }
+
+      function card(c, isFeatured) {
+        var href = safeUrl(c.pageUrl);
+        var thumb = safeUrl(c.thumbnailUrl);
+        var keys = arr(c.vibeKeys);
+        var words = arr(c.vibeWords);
+        var chips = '';
+        for (var i = 0; i < 3; i++) {
+          var key = keys[i], word = words[i] || (key && vibeLabel[key]);
+          if (!word) continue;
+          var hit = key && state.vibes.indexOf(key) !== -1;
+          chips += '<li class="lib-chip' + (hit ? ' is-match' : '') + '">' + esc(word) + '</li>';
+        }
+        var tags = arr(c.filmTypes).map(function(t) { return TYPE_TAG[t] || typeLabel[t] || ''; }).filter(Boolean);
+        var n = Number(c.filmCount);
+        if (n > 0) tags.push(n + (n === 1 ? ' film' : ' films'));
+        var kw = arr(c.keywords).slice(0, 3);
+        var alt = c.coupleNames + ' wedding film' + (c.venueName ? ' at ' + c.venueName : '');
+        return '<a class="lib-card' + (isFeatured ? ' lib-featured' : '') + '" href="' + esc(href) + '">' +
+          '<div class="lib-thumb">' +
+            (thumb ? '<img src="' + esc(thumb) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async" width="1280" height="720">'
+                   : '<span class="lib-thumb-fallback" role="img" aria-label="' + esc(alt) + '">' + esc(c.coupleNames) + '</span>') +
+            PLAY_SVG +
+          '</div>' +
+          '<div class="lib-info">' +
+            '<h3 class="film-title">' + esc(c.coupleNames) + '</h3>' +
+            (c.venueName ? '<p class="film-subtitle">' + esc(c.venueName) + '</p>' : '') +
+            (chips ? '<ul class="lib-chips" aria-label="Vibe">' + chips + '</ul>' : '') +
+            (kw.length ? '<p class="lib-keywords">' + kw.map(esc).join(' &middot; ') + '</p>' : '') +
+            (tags.length ? '<p class="lib-types">' + tags.map(esc).join(' &middot; ') + '</p>' : '') +
+          '</div></a>';
+      }
+
+      // Buttons are built once; later renders only flip aria-pressed so
+      // keyboard focus and the mobile row's scroll position survive a tap.
+      function buildButtons() {
+        var vh = '<button type="button" class="lib-btn" data-vibe="">All</button>';
+        vibes.forEach(function(v) {
+          vh += '<button type="button" class="lib-btn" data-vibe="' + esc(v.key) + '">' + esc(v.label) + '</button>';
+        });
+        document.getElementById('lib-vibes').innerHTML = vh;
+        var th = '<button type="button" class="lib-btn" data-type="">All</button>';
+        types.forEach(function(t) {
+          th += '<button type="button" class="lib-btn" data-type="' + esc(t.key) + '">' + esc(t.label) + '</button>';
+        });
+        document.getElementById('lib-types').innerHTML = th;
+      }
+
+      function syncButtons() {
+        root.querySelectorAll('[data-vibe]').forEach(function(b) {
+          var k = b.getAttribute('data-vibe');
+          b.setAttribute('aria-pressed', String(k ? state.vibes.indexOf(k) !== -1 : !state.vibes.length));
+        });
+        root.querySelectorAll('[data-type]').forEach(function(b) {
+          b.setAttribute('aria-pressed', String(b.getAttribute('data-type') === state.type));
+        });
+      }
+
+      // On a pre-filtered open, slide each sideways row so its first chosen
+      // button is visible (mobile only; on desktop the rows wrap).
+      function revealPressed() {
+        ['lib-vibes', 'lib-types'].forEach(function(id) {
+          var row = document.getElementById(id);
+          var b = row.querySelector('.lib-btn[aria-pressed="true"]:not([data-vibe=""]):not([data-type=""])');
+          if (!b || row.scrollWidth <= row.clientWidth) return;
+          row.scrollLeft += b.getBoundingClientRect().left - row.getBoundingClientRect().left - 24;
+        });
+      }
+
+      function renderGrid() {
+        var list = couples.filter(matches);
+        var count = document.getElementById('lib-count');
+        var out = document.getElementById('lib-results');
+        var filtered = state.vibes.length || state.type;
+        count.textContent = filtered
+          ? list.length + (list.length === 1 ? ' film matches' : ' films match')
+          : list.length + ' films';
+        if (!list.length) {
+          out.innerHTML = '<div class="lib-empty"><p>No films match that mix yet. Try fewer vibes or another film type.</p>' +
+            '<button type="button" class="lib-reset" id="lib-reset">Show all films</button></div>';
+          return;
+        }
+        var featured = list.filter(function(c) { return c.featured; })[0];
+        var rest = list.filter(function(c) { return c !== featured; });
+        var h = featured ? card(featured, true) : '';
+        if (rest.length) {
+          h += '<div class="lib-grid">';
+          rest.forEach(function(c) { h += card(c, false); });
+          h += '</div>';
+        }
+        out.innerHTML = h;
+        // A thumbnail that fails to load falls back to the gradient + names.
+        out.querySelectorAll('.lib-thumb img').forEach(function(img) {
+          img.addEventListener('error', function() {
+            var span = document.createElement('span');
+            span.className = 'lib-thumb-fallback';
+            span.setAttribute('role', 'img');
+            span.setAttribute('aria-label', img.alt);
+            span.textContent = img.closest('.lib-card').querySelector('.film-title').textContent;
+            img.replaceWith(span);
+          });
+        });
+      }
+
+      function render() { syncButtons(); renderGrid(); }
+
+      function track(kind, value) {
+        try {
+          if (window.gtag) gtag('event', 'film_library_filter', { filter_type: kind, filter_value: value });
+        } catch (e) { /* analytics never breaks the page */ }
+      }
+
+      root.addEventListener('click', function(e) {
+        var btn = e.target.closest('button');
+        if (!btn || !root.contains(btn)) return;
+        if (btn.id === 'lib-reset') {
+          state.vibes = []; state.type = '';
+        } else if (btn.hasAttribute('data-vibe')) {
+          var k = btn.getAttribute('data-vibe');
+          if (!k) state.vibes = [];
+          else {
+            var i = state.vibes.indexOf(k);
+            if (i === -1) { state.vibes.push(k); track('vibe', k); }
+            else state.vibes.splice(i, 1);
+          }
+        } else if (btn.hasAttribute('data-type')) {
+          var t = btn.getAttribute('data-type');
+          state.type = (t && t !== state.type) ? t : '';
+          if (state.type) track('type', state.type);
+        } else return;
+        writeHash();
+        render();
+      });
+
+      // A link to the same page with a new hash (for example from a DM) re-filters.
+      window.addEventListener('hashchange', function() {
+        if (root.hidden) return;
+        readHash();
+        render();
+        revealPressed();
+      });
+
+      fetch(API + '/api/films/library')
         .then(function(r) { return r.ok ? r.json() : null; })
         .then(function(data) {
-          var films = (data && data.films) || [];
-          var playable = films.filter(function(f) {
-            return f && f.slug && f.coupleNames && f.thumbnailUrl && f.teaserUrl;
-          }).slice(0, 12);
-          if (playable.length < 4) return; // curated grid stays
-          var featured = playable.filter(function(f) { return f.featured; })[0] || playable[0];
-          var rest = playable.filter(function(f) { return f !== featured; });
-          function card(f, wrapClass) {
-            var href = 'https://www.flyiniris.com/yours?film=' + encodeURIComponent(f.slug) + '&fc=' + encodeURIComponent(f.coupleNames);
-            return '<div class="' + wrapClass + '">' +
-              '<a href="' + href + '" class="film-thumb-link">' +
-              '<img src="' + esc(f.thumbnailUrl) + '" alt="' + esc(f.coupleNames) + ' wedding film" class="film-thumb" loading="lazy">' +
-              PLAY_SVG + '</a>' +
-              '<div class="film-info"><h3 class="film-title">' + esc(f.coupleNames) + '</h3>' +
-              '<p class="film-subtitle">' + esc(f.venue || 'A Wisconsin Love Story') + '</p></div></div>';
-          }
-          var h = card(featured, 'film-featured');
-          h += '<div class="film-grid-secondary">';
-          rest.forEach(function(f) { h += card(f, 'film-grid-item'); });
-          h += '</div>';
-          var live = document.getElementById('film-grid-live');
-          var curated = document.getElementById('film-grid-curated');
-          if (live && curated) {
-            live.innerHTML = h;
-            live.style.display = '';
-            curated.style.display = 'none';
-          }
+          if (!data) return;
+          couples = arr(data.couples).filter(function(c) {
+            return c && c.slug && c.coupleNames && safeUrl(c.pageUrl);
+          });
+          if (couples.length < 4) return; // curated grid stays
+          vibes = arr(data.vibes).filter(function(v) { return v && v.key && v.label; });
+          types = arr(data.types).filter(function(t) { return t && t.key && t.label; });
+          if (!types.length) types = DEFAULT_TYPES;
+          vibes.forEach(function(v) { vibeLabel[v.key] = v.label; });
+          types.forEach(function(t) { typeLabel[t.key] = t.label; });
+          readHash();
+          buildButtons();
+          render();
+          root.hidden = false;
+          curated.hidden = true;
+          revealPressed();
         })
         .catch(function() { /* curated grid stays */ });
     })();
