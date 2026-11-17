@@ -2028,6 +2028,14 @@
     function renderCollection() {
       var grid = document.getElementById('collection-grid');
       var html = '';
+      // Heading names what is in the grid (Sean 2026-11-16): when every film here
+      // is a FOMO Documentary Edit part, say so. Mixed grids keep All Your Films.
+      (function() {
+        var heading = grid && grid.parentElement ? grid.parentElement.querySelector('.section-title') : null;
+        if (!heading || !collection.length) return;
+        var allFomo = collection.every(function(v) { return String(v.category || '') === 'archival'; });
+        if (allFomo) heading.textContent = collection.length === 1 ? 'Your FOMO Documentary Edit' : 'Your FOMO Documentary Edits';
+      })();
 
       if (PLAYLIST.length >= 2) {
         var totalLabel = computePlaylistDurationLabel();
