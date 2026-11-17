@@ -158,15 +158,18 @@
 
     .page-wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
 
-    /* Confirmation header */
+    /* Confirmation header. Kept tight (2026-11-16) so the booking calendar
+       starts as high as possible: most couples who book a call do it from
+       this page within the hour of inquiring. */
     .confirm-head {
       text-align: center;
-      padding: 72px 20px 8px;
+      padding: 48px 20px 4px;
       max-width: 620px;
       margin: 0 auto;
     }
     .confirm-check {
-      font-size: 2.75rem;
+      font-size: 2rem;
+      line-height: 1;
       color: var(--accent);
       font-weight: 700;
       opacity: 0;
@@ -176,7 +179,8 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: clamp(2rem, 6vw, 3.25rem);
-      margin: 8px 0 10px;
+      line-height: 1.15;
+      margin: 8px 0 8px;
       opacity: 0;
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
     }
@@ -194,19 +198,23 @@
       font-weight: 400;
       font-size: 0.9375rem;
       color: var(--accent);
-      margin: 18px auto 0;
+      margin: 12px auto 0;
       max-width: 480px;
       opacity: 0;
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
     }
 
-    /* Film reveal */
+    /* Film reveal. Sits BELOW the booking calendar since 2026-11-16 (it
+       used to sit above it and pushed the calendar off the first phone
+       screen); playback starts only when it scrolls near the viewport. */
     .film-reveal {
       display: none;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 36px 20px 8px;
+      padding: 8px 20px 8px;
+      max-width: 680px;
+      margin: 0 auto;
     }
     .film-reveal .reveal-label {
       font-size: 0.625rem;
@@ -265,14 +273,15 @@
     .gold-divider {
       width: 60px; height: 2px;
       background: var(--accent);
-      margin: 40px auto 36px;
+      margin: 22px auto 22px;
       border-radius: 2px;
     }
+    .gold-divider.after-cal { margin: 36px auto 28px; }
 
     /* Router: primary book-a-call */
     .router {
       text-align: center;
-      padding: 0 20px 30px;
+      padding: 0 20px 8px;
       max-width: 620px;
       margin: 0 auto;
     }
@@ -280,7 +289,8 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: clamp(1.5rem, 4.5vw, 2.125rem);
-      margin-bottom: 10px;
+      line-height: 1.2;
+      margin-bottom: 8px;
     }
     .router .router-sub {
       font-weight: 300;
@@ -288,20 +298,70 @@
       color: var(--text-secondary);
       max-width: 460px;
       margin: 0 auto 6px;
-      line-height: 1.7;
+      line-height: 1.6;
     }
+    /* Secondary path, above the calendar: a direct link to the couple's
+       pricing (their /yours page, else the token-gated calculator). It used
+       to be an in-page jump to a box below the 1000px calendar. */
     .pricing-first-line {
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       color: var(--text-secondary);
-      margin: 14px auto 8px;
+      margin: 10px auto 0;
     }
-    .pricing-first-line a { color: var(--accent); text-decoration: underline; }
+    .pricing-first-line a { color: var(--accent); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
     .pricing-first-line a:hover { color: var(--accent-light); }
+
+    /* Proof block, directly above the calendar (2026-11-16). Count and
+       quotes mirror the homepage (index.html reviews badge and why-quote
+       lines); when the Google count changes, both pages follow. */
+    .proof {
+      max-width: 520px;
+      margin: 14px auto 0;
+      padding: 12px 16px 10px;
+      border: 1px solid rgba(255, 189, 29, 0.22);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      text-align: center;
+    }
+    .proof-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .proof-stars { color: var(--accent); font-size: 0.95rem; letter-spacing: 2px; line-height: 1; }
+    .proof-quotes { display: grid; gap: 6px; margin: 8px 0 6px; }
+    .proof-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.0625rem;
+      line-height: 1.35;
+      color: var(--accent-light);
+      text-wrap: balance;
+    }
+    .proof-quote cite {
+      font-family: 'Outfit', sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      margin-left: 4px;
+    }
+    .proof-link { font-size: 0.8125rem; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .proof-link:hover { color: var(--accent-light); }
+    @media (min-width: 600px) {
+      .proof-quotes { grid-template-columns: 1fr 1fr; gap: 14px; }
+    }
 
     .cal-wrap {
       width: 100%;
       max-width: 520px;
-      margin: 18px auto 4px;
+      margin: 14px auto 4px;
       border-radius: 10px;
       overflow: hidden;
       min-height: 1000px;
@@ -313,44 +373,6 @@
       margin-top: 4px;
     }
     .cal-fallback a { color: var(--accent); text-decoration: underline; }
-
-    /* Secondary: build your package */
-    .package-box {
-      border: 1px solid rgba(255, 189, 29, 0.25);
-      background: var(--bg-secondary);
-      border-radius: 10px;
-      padding: 28px 24px;
-      max-width: 520px;
-      margin: 28px auto 0;
-      text-align: center;
-    }
-    .package-box h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.375rem;
-      margin-bottom: 8px;
-    }
-    .package-box p {
-      font-weight: 300;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
-    .btn-outline {
-      display: inline-block;
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--accent);
-      background: transparent;
-      border: 2px solid var(--accent);
-      padding: 12px 30px;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.25s ease;
-      cursor: pointer;
-    }
-    .btn-outline:hover { background: rgba(255, 189, 29, 0.1); color: var(--accent-light); border-color: var(--accent-light); }
 
     .cta-btn {
       display: inline-block;
@@ -390,10 +412,15 @@
     .footer-legal a::before { content: ''; position: absolute; top: -15px; bottom: -15px; left: -8px; right: -8px; z-index: 1; }
     .cal-fallback a { position: relative; display: inline-block; }
     .cal-fallback a::before { content: ''; position: absolute; top: -14px; bottom: -14px; left: -8px; right: -8px; z-index: 1; }
+    .pricing-first-line a, .proof-link { position: relative; display: inline-block; }
+    .pricing-first-line a::before { content: ''; position: absolute; top: -12px; bottom: -12px; left: -8px; right: -8px; z-index: 1; }
+    .proof-link::before { content: ''; position: absolute; top: -12px; bottom: -12px; left: -8px; right: -8px; z-index: 1; }
 
     @media (max-width: 640px) {
-      .confirm-head { padding: 56px 16px 8px; }
-      .router { padding: 0 12px 24px; }
+      .confirm-head { padding: 28px 16px 4px; }
+      .router { padding: 0 12px 8px; }
+      .router .router-sub { font-size: 0.875rem; }
+      .gold-divider { margin: 18px auto 18px; }
     }
   </style>
 </head>
@@ -408,8 +435,37 @@
     <p class="availability-line" id="availability-line"></p>
   </section>
 
-  <!-- Film match reveal (renders when the session or legacy params carry a match) -->
+  <div class="gold-divider"></div>
+
+  <!-- Router: PRIMARY book the call, as high on the page as the layout allows -->
+  <section class="router">
+    <h2>Talk it through on a quick call.</h2>
+    <p class="router-sub">15 minutes with Sierra &amp; Sean. No pitch, no pressure. We'll walk through your day, your pricing, and make sure we're the right fit.</p>
+    <!-- SECONDARY: pricing, above the calendar. Shown once the session
+         resolves; links straight to the couple's /yours page, else the
+         token-gated calculator. -->
+    <p class="pricing-first-line" id="pricing-first-line" style="display:none">Want to see your pricing first? <a id="pricing-link" href="/calculator/">Build My Package &#10022;</a></p>
+
+    <!-- Proof, right above the calendar -->
+    <aside class="proof" aria-label="What our couples say">
+      <p class="proof-head"><span class="proof-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>43 reviews on Google</span></p>
+      <div class="proof-quotes">
+        <blockquote class="proof-quote"><p>&ldquo;It felt like we had two close friends with us rather than vendors.&rdquo; <cite>Rachel R.</cite></p></blockquote>
+        <blockquote class="proof-quote"><p>&ldquo;They captured our wedding in a way that felt so us.&rdquo; <cite>Sally K.</cite></p></blockquote>
+      </div>
+      <a class="proof-link" id="reviews-link" href="https://g.page/r/CQpTaJiYLwkSEBM" target="_blank" rel="noopener">Read our Google reviews</a>
+    </aside>
+
+    <div class="cal-wrap" id="cal-wrap">
+      <iframe id="booking-iframe" title="Book your discovery call" scrolling="yes" src="about:blank"></iframe>
+    </div>
+    <p class="cal-fallback">Calendar not loading? <a id="book-call-link" href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+  </section>
+
+  <!-- Film match reveal, below the calendar (renders when the session or
+       legacy params carry a match) -->
   <section class="film-reveal" id="film-reveal">
+    <div class="gold-divider after-cal"></div>
     <p class="reveal-label">We matched you with a film</p>
     <div class="video-wrap" id="video-wrap">
       <div class="video-aspect">
@@ -428,27 +484,6 @@
     <div class="film-meta" id="film-meta">
       <div class="couple-name" id="film-couple"></div>
       <div class="venue-name" id="film-venue"></div>
-    </div>
-  </section>
-
-  <div class="gold-divider"></div>
-
-  <!-- Router: PRIMARY book the call -->
-  <section class="router">
-    <h2>Talk it through on a quick call.</h2>
-    <p class="router-sub">15 minutes with Sierra &amp; Sean. No pitch, no pressure. We'll walk through your day, your pricing, and make sure we're the right fit.</p>
-    <p class="pricing-first-line" id="pricing-first-line" style="display:none">Want to see your pricing first? <a href="#build-package">Build your package below</a> and get your exact number in about a minute.</p>
-
-    <div class="cal-wrap" id="cal-wrap">
-      <iframe id="booking-iframe" title="Book your discovery call" scrolling="yes" src="about:blank"></iframe>
-    </div>
-    <p class="cal-fallback">Calendar not loading? <a id="book-call-link" href="https://book.flyiniris.com/widget/booking/Kd7zWqsXzAswGHR1HuDR" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
-
-    <!-- SECONDARY: token-gated calculator -->
-    <div class="package-box" id="build-package" style="display:none">
-      <h3>Or build your package first.</h3>
-      <p>Pick your coverage, your film length, your add-ons, and watch your exact investment update live. Save it, sleep on it, bring it to the call.</p>
-      <a class="btn-outline" id="build-package-link" href="/calculator/">Build My Package &#10022;</a>
     </div>
   </section>
 
@@ -554,9 +589,25 @@
             wrap.style.display = 'none';
           }
         }
-        // hls.js is deferred; wait for it if needed
-        if (window.Hls || video.canPlayType('application/vnd.apple.mpegurl')) initHls();
-        else window.addEventListener('load', initHls);
+        // The film sits below the 1000px calendar now, so it only starts
+        // loading once it nears the viewport: no stream competes with the
+        // calendar for a phone's bandwidth. hls.js is deferred; wait for it
+        // if needed.
+        function startWhenReady() {
+          if (window.Hls || video.canPlayType('application/vnd.apple.mpegurl') || document.readyState === 'complete') initHls();
+          else window.addEventListener('load', initHls);
+        }
+        if ('IntersectionObserver' in window) {
+          var filmObserver = new IntersectionObserver(function(entries) {
+            if (entries[0] && entries[0].isIntersecting) {
+              filmObserver.disconnect();
+              startWhenReady();
+            }
+          }, { rootMargin: '300px 0px' });
+          filmObserver.observe(reveal);
+        } else {
+          startWhenReady();
+        }
 
         var soundToggle = document.getElementById('sound-toggle');
         var soundLabel = document.getElementById('sound-label');
@@ -606,23 +657,27 @@
         // Unlock the pricing path: the couple's personal /yours page when
         // /start or the homepage stored one for THIS session, else the
         // token-gated calculator (from=thanks tells the Worker which button
-        // sent them; the calculator strips the token before tags run).
-        var box = document.getElementById('build-package');
+        // sent them; the calculator strips the token before tags run). It is
+        // a secondary link ABOVE the calendar and goes straight there; it
+        // used to be an in-page jump to a box below the calendar.
         var line = document.getElementById('pricing-first-line');
-        var link = document.getElementById('build-package-link');
+        var link = document.getElementById('pricing-link');
         var yoursUrl = storedFor('fi_yours_url_for') === sessionToken ? storedFor('fi_yours_url') : '';
         if (!/^https:\/\/([a-z0-9-]+\.)*flyiniris\.com\//i.test(yoursUrl)) yoursUrl = '';
         link.href = yoursUrl || ('/calculator/?session=' + encodeURIComponent(sessionToken) + '&from=thanks');
-        if (yoursUrl) {
-          // Their page is more than a calculator (films, tiers, hours), so the
-          // box names what they will actually find there.
-          box.querySelector('h3').textContent = 'Or look at your pricing first.';
-          box.querySelector('p').textContent = 'Your films, your pricing, and the two ways we film, all on your personal page. Build your package, sleep on it, bring it to the call.';
-          link.innerHTML = 'See My Pricing &#10022;';
-          line.innerHTML = 'Want to see your pricing first? <a href="#build-package">Your personal page is below</a>, whenever you want it.';
-        }
-        box.style.display = 'block';
+        if (yoursUrl) link.innerHTML = 'See My Pricing &#10022;';
+        link.addEventListener('click', function() {
+          if (typeof gtag === 'function') gtag('event', 'pricing_link_clicked', { link_location: 'thanks_above_calendar', link_type: yoursUrl ? 'yours' : 'calculator' });
+        });
         line.style.display = 'block';
+      }
+
+      // Outbound click on the proof block's Google reviews link
+      var reviewsLink = document.getElementById('reviews-link');
+      if (reviewsLink) {
+        reviewsLink.addEventListener('click', function() {
+          if (typeof gtag === 'function') gtag('event', 'reviews_link_clicked', { link_location: 'thanks_proof' });
+        });
       }
 
       function renderLegacy() {
