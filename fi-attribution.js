@@ -24,10 +24,41 @@
  * URL carries fresh UTM parameters).
  *
  * The inquiry forms and the /api/pageview beacon read these keys and send
- * them to the Worker as first_referrer and referrer. Nothing here sends data
- * anywhere by itself.
+ * them to the Worker as first_referrer and referrer.
+ *
+ * Per-couple tracked links (2026-11-16). A link we send a couple (DM, follow-up
+ * email) can carry ?fi=<token>&fs=<source>. The token is 20 random letters
+ * that only the Worker can map to the couple: no name, email or id. This file
+ * runs first in the head, so it takes fi and fs off the address bar before
+ * fi_landing_page, GA4 and the Meta pixel read the URL, keeps the token in
+ * localStorage fi_link_token (fi-film-track.js sends it with film plays), and
+ * posts once per such page load to api.flyiniris.com/api/link-open:
+ * {t: token, v: fi_visitor_id, o: a random id for this page load, fs: source,
+ * p: path}. That is the only data this
+ * file sends. fi_visitor_id is created here the same way index.html does when
+ * missing, after the first-touch check below so a new visitor is not marked
+ * legacy.
  */
 (function () {
+  var fiToken = '', fiSource = '';
+  try {
+    var query = location.search.replace(/^\?/, '');
+    if (query) {
+      var kept = [];
+      query.split('&').forEach(function (kv) {
+        var key = kv.split('=')[0];
+        var val = kv.slice(key.length + 1);
+        var dec = val;
+        try { dec = decodeURIComponent(val); } catch (e) { /* keep raw */ }
+        if (key === 'fi') fiToken = dec;
+        else if (key === 'fs') fiSource = dec;
+        else if (kv) kept.push(kv);
+      });
+      if ((fiToken || fiSource) && window.history && history.replaceState) {
+        history.replaceState(history.state, '', location.pathname + (kept.length ? '?' + kept.join('&') : '') + location.hash);
+      }
+    }
+  } catch (e) { /* the page works the same without it */ }
   try {
     var ls = window.localStorage;
     var ref = document.referrer || '';
@@ -44,6 +75,32 @@
     if (clean) ls.setItem('fi_referrer', clean);
     if (!ls.getItem('fi_landing_page')) ls.setItem('fi_landing_page', location.href.split('#')[0]);
   } catch (e) { /* storage blocked: attribution degrades to UTM only */ }
+  if (/^[a-z]{20}$/.test(fiToken) && !window.__fiLinkOpenSent) {
+    window.__fiLinkOpenSent = true;
+    var fiVisitor = '';
+    try {
+      localStorage.setItem('fi_link_token', fiToken);
+      fiVisitor = localStorage.getItem('fi_visitor_id') || '';
+      if (!fiVisitor) {
+        fiVisitor = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+        localStorage.setItem('fi_visitor_id', fiVisitor);
+      }
+    } catch (e) { /* storage blocked: the open is still recorded, without the browser */ }
+    try {
+      // o: a random id for this page load, so a replayed post counts once.
+      var openId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      var linkBody = JSON.stringify({
+        t: fiToken, v: fiVisitor, o: openId, p: location.pathname || '/',
+        fs: fiSource.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32)
+      });
+      var linkUrl = 'https://api.flyiniris.com/api/link-open';
+      var queued = false;
+      try { queued = !!(navigator.sendBeacon && navigator.sendBeacon(linkUrl, linkBody)); } catch (e) { queued = false; }
+      if (!queued && window.fetch) {
+        fetch(linkUrl, { method: 'POST', body: linkBody, keepalive: true, mode: 'no-cors', credentials: 'omit', headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
+      }
+    } catch (e) { /* never break the page */ }
+  }
   // Read helper for the page scripts. first_referrer is sent as an empty
   // string when the first visit was direct, so the Worker can tell "direct"
   // (key present, empty) apart from "unknown" (key absent: a legacy browser,
