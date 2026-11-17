@@ -619,6 +619,13 @@
       border-color: var(--accent);
     }
 
+    .lib-date {
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
     .lib-keywords {
       font-size: 0.8rem;
       color: var(--text-muted);
@@ -945,7 +952,8 @@
            below is the instant render and stays as the fallback when the
            fetch fails or returns fewer than 4 couples. Filters live in the
            URL hash so a link can open pre-filtered, for example
-           /films#vibe=romantic,fun&type=teaser -->
+           /films#vibe=romantic,fun&type=teaser&crew=team. Query params
+           (fi, utm_*, fbclid) are left alone and survive every filter tap. -->
       <div id="film-library" hidden>
         <p class="lib-intro">Tap a vibe to find films that feel like your day.</p>
         <div class="lib-filter-group">
@@ -955,6 +963,11 @@
         <div class="lib-filter-group">
           <span class="lib-filter-label" id="lib-type-label">Film type</span>
           <div class="lib-btn-row" id="lib-types" role="group" aria-labelledby="lib-type-label"></div>
+        </div>
+        <!-- Shown only when at least one couple in the feed has a crew value. -->
+        <div class="lib-filter-group" id="lib-crew-group" hidden>
+          <span class="lib-filter-label" id="lib-crew-label">Filmed by</span>
+          <div class="lib-btn-row" id="lib-crews" role="group" aria-labelledby="lib-crew-label"></div>
         </div>
         <p class="lib-count" id="lib-count" aria-live="polite"></p>
         <div id="lib-results"></div>
@@ -1105,7 +1118,7 @@
     // /api/films/library with vibe and film type filters. Vibe buttons are
     // multi-select (a couple matches if it has ANY selected vibe); film type
     // is one at a time. The selection is mirrored into the URL hash
-    // (#vibe=romantic,fun&type=teaser) so ads and DM links can open the grid
+    // (#vibe=romantic,fun&type=teaser&crew=team) so ads and DM links can open the grid
     // pre-filtered. If the fetch fails or returns fewer than 4 couples, the
     // curated grid above stays exactly as authored.
     (function() {
@@ -1131,13 +1144,20 @@
         { key: 'highlight', label: 'Highlight Films' },
         { key: 'fomo', label: 'FOMO Doc Edits' }
       ];
+      var DEFAULT_CREWS = [
+        { key: 'sierra-sean', label: 'Sierra & Sean' },
+        { key: 'team', label: 'Our Team' }
+      ];
       // Singular tags for the card footer; unknown keys fall back to the API label.
       var TYPE_TAG = { teaser: 'Teaser', highlight: 'Highlight', fomo: 'FOMO Doc' };
+      var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'];
+      var HASH_KEYS = { vibe: 1, type: 1, crew: 1 };
       var PLAY_SVG = '<div class="video-play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" fill="#FFBD1D"/></svg></div>';
 
-      var vibes = [], types = [], couples = [];
-      var vibeLabel = {}, typeLabel = {};
-      var state = { vibes: [], type: '' };
+      var vibes = [], types = [], crews = [], couples = [];
+      var vibeLabel = {}, typeLabel = {}, crewLabel = {};
+      var state = { vibes: [], type: '', crew: '' };
 
       function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -1151,6 +1171,18 @@
       }
       function arr(a) { return Array.isArray(a) ? a : []; }
 
+      // "2026-06-13" to "June 13, 2026", read as plain numbers so no
+      // timezone can shift the day. Anything else renders nothing.
+      function longDate(s) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || ''));
+        if (!m) return '';
+        var mo = Number(m[2]), d = Number(m[3]);
+        if (mo < 1 || mo > 12 || d < 1 || d > 31) return '';
+        return MONTHS[mo - 1] + ' ' + d + ', ' + m[1];
+      }
+
+      // Only the hash is ours. The query string (fi tokens, utm_*, fbclid,
+      // vn) is never read here except ?api= above, and is kept as is.
       function readHash() {
         var p;
         try { p = new URLSearchParams(window.location.hash.replace(/^#/, '')); } catch (e) { return; }
@@ -1158,17 +1190,24 @@
         state.vibes = vk.filter(function(k, i) { return k && vibeLabel[k] && vk.indexOf(k) === i; });
         var t = (p.get('type') || '').trim().toLowerCase();
         state.type = typeLabel[t] ? t : '';
+        var cr = (p.get('crew') || '').trim().toLowerCase();
+        state.crew = crewLabel[cr] ? cr : '';
       }
 
       function writeHash() {
-        var parts = [];
+        // Keep any hash pieces that are not filters, then add the filters.
+        var parts = window.location.hash.replace(/^#/, '').split('&').filter(function(seg) {
+          return seg && !HASH_KEYS[seg.split('=')[0].toLowerCase()];
+        });
         if (state.vibes.length) parts.push('vibe=' + state.vibes.map(encodeURIComponent).join(','));
         if (state.type) parts.push('type=' + encodeURIComponent(state.type));
+        if (state.crew) parts.push('crew=' + encodeURIComponent(state.crew));
         var url = window.location.pathname + window.location.search + (parts.length ? '#' + parts.join('&') : '');
         try { history.replaceState(null, '', url); } catch (e) { /* sandboxed: filters still work */ }
       }
 
       function matches(c) {
+        if (state.crew && c.crew !== state.crew) return false;
         if (state.type && arr(c.filmTypes).indexOf(state.type) === -1) return false;
         if (!state.vibes.length) return true;
         var cv = arr(c.vibeKeys);
@@ -1191,7 +1230,10 @@
         var n = Number(c.filmCount);
         if (n > 0) tags.push(n + (n === 1 ? ' film' : ' films'));
         var kw = arr(c.keywords).slice(0, 3);
-        var alt = c.coupleNames + ' wedding film' + (c.venueName ? ' at ' + c.venueName : '');
+        // "The Legend at Brandybrook, Lake Geneva"; either piece may be null.
+        var place = [c.venueName, c.venueCity].filter(function(x) { return x && String(x).trim(); }).join(', ');
+        var date = longDate(c.weddingDate);
+        var alt = c.coupleNames + ' wedding film' + (place ? ' at ' + place : '');
         return '<a class="lib-card' + (isFeatured ? ' lib-featured' : '') + '" href="' + esc(href) + '">' +
           '<div class="lib-thumb">' +
             (thumb ? '<img src="' + esc(thumb) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async" width="1280" height="720">'
@@ -1200,7 +1242,8 @@
           '</div>' +
           '<div class="lib-info">' +
             '<h3 class="film-title">' + esc(c.coupleNames) + '</h3>' +
-            (c.venueName ? '<p class="film-subtitle">' + esc(c.venueName) + '</p>' : '') +
+            (place ? '<p class="film-subtitle">' + esc(place) + '</p>' : '') +
+            (date ? '<p class="lib-date">' + esc(date) + '</p>' : '') +
             (chips ? '<ul class="lib-chips" aria-label="Vibe">' + chips + '</ul>' : '') +
             (kw.length ? '<p class="lib-keywords">' + kw.map(esc).join(' &middot; ') + '</p>' : '') +
             (tags.length ? '<p class="lib-types">' + tags.map(esc).join(' &middot; ') + '</p>' : '') +
@@ -1220,9 +1263,20 @@
           th += '<button type="button" class="lib-btn" data-type="' + esc(t.key) + '">' + esc(t.label) + '</button>';
         });
         document.getElementById('lib-types').innerHTML = th;
+        if (crews.length) {
+          var ch = '<button type="button" class="lib-btn" data-crew="">All</button>';
+          crews.forEach(function(c) {
+            ch += '<button type="button" class="lib-btn" data-crew="' + esc(c.key) + '">' + esc(c.label) + '</button>';
+          });
+          document.getElementById('lib-crews').innerHTML = ch;
+          document.getElementById('lib-crew-group').hidden = false;
+        }
       }
 
       function syncButtons() {
+        root.querySelectorAll('[data-crew]').forEach(function(b) {
+          b.setAttribute('aria-pressed', String(b.getAttribute('data-crew') === state.crew));
+        });
         root.querySelectorAll('[data-vibe]').forEach(function(b) {
           var k = b.getAttribute('data-vibe');
           b.setAttribute('aria-pressed', String(k ? state.vibes.indexOf(k) !== -1 : !state.vibes.length));
@@ -1235,9 +1289,9 @@
       // On a pre-filtered open, slide each sideways row so its first chosen
       // button is visible (mobile only; on desktop the rows wrap).
       function revealPressed() {
-        ['lib-vibes', 'lib-types'].forEach(function(id) {
+        ['lib-vibes', 'lib-types', 'lib-crews'].forEach(function(id) {
           var row = document.getElementById(id);
-          var b = row.querySelector('.lib-btn[aria-pressed="true"]:not([data-vibe=""]):not([data-type=""])');
+          var b = row.querySelector('.lib-btn[aria-pressed="true"]:not([data-vibe=""]):not([data-type=""]):not([data-crew=""])');
           if (!b || row.scrollWidth <= row.clientWidth) return;
           row.scrollLeft += b.getBoundingClientRect().left - row.getBoundingClientRect().left - 24;
         });
@@ -1247,12 +1301,12 @@
         var list = couples.filter(matches);
         var count = document.getElementById('lib-count');
         var out = document.getElementById('lib-results');
-        var filtered = state.vibes.length || state.type;
+        var filtered = state.vibes.length || state.type || state.crew;
         count.textContent = filtered
           ? list.length + (list.length === 1 ? ' film matches' : ' films match')
           : list.length + ' films';
         if (!list.length) {
-          out.innerHTML = '<div class="lib-empty"><p>No films match that mix yet. Try fewer vibes or another film type.</p>' +
+          out.innerHTML = '<div class="lib-empty"><p>No films match that mix yet. Try fewer vibes or a different filter.</p>' +
             '<button type="button" class="lib-reset" id="lib-reset">Show all films</button></div>';
           return;
         }
@@ -1290,7 +1344,11 @@
         var btn = e.target.closest('button');
         if (!btn || !root.contains(btn)) return;
         if (btn.id === 'lib-reset') {
-          state.vibes = []; state.type = '';
+          state.vibes = []; state.type = ''; state.crew = '';
+        } else if (btn.hasAttribute('data-crew')) {
+          var cr = btn.getAttribute('data-crew');
+          state.crew = (cr && cr !== state.crew) ? cr : '';
+          if (state.crew) track('crew', state.crew);
         } else if (btn.hasAttribute('data-vibe')) {
           var k = btn.getAttribute('data-vibe');
           if (!k) state.vibes = [];
@@ -1327,8 +1385,15 @@
           vibes = arr(data.vibes).filter(function(v) { return v && v.key && v.label; });
           types = arr(data.types).filter(function(t) { return t && t.key && t.label; });
           if (!types.length) types = DEFAULT_TYPES;
+          // "Filmed by" row: only when some couple carries a crew value.
+          // Couples with crew null still show, but only under All.
+          if (couples.some(function(c) { return c.crew; })) {
+            crews = arr(data.crews).filter(function(c) { return c && c.key && c.label; });
+            if (!crews.length) crews = DEFAULT_CREWS;
+          }
           vibes.forEach(function(v) { vibeLabel[v.key] = v.label; });
           types.forEach(function(t) { typeLabel[t.key] = t.label; });
+          crews.forEach(function(c) { crewLabel[c.key] = c.label; });
           readHash();
           buildButtons();
           render();
