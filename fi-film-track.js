@@ -81,7 +81,7 @@
       if (/^[a-z]{20}$/.test(fiToken) && !window.__fiLinkOpenSent) {
         window.__fiLinkOpenSent = true;
         setItem('fi_link_token', fiToken);
-        var linkBody = JSON.stringify({ t: fiToken, v: visitorId || '', p: location.pathname, fs: fiSource.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32) });
+        var linkBody = JSON.stringify({ t: fiToken, v: visitorId || '', o: pageViewId, p: location.pathname, fs: fiSource.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32) });
         var linkUrl = 'https://api.flyiniris.com/api/link-open';
         if (!(navigator.sendBeacon && navigator.sendBeacon(linkUrl, linkBody)) && window.fetch) {
           fetch(linkUrl, { method: 'POST', body: linkBody, keepalive: true, mode: 'cors' }).catch(function () {});

@@ -33,7 +33,8 @@
  * fi_landing_page, GA4 and the Meta pixel read the URL, keeps the token in
  * localStorage fi_link_token (fi-film-track.js sends it with film plays), and
  * posts once per such page load to api.flyiniris.com/api/link-open:
- * {t: token, v: fi_visitor_id, fs: source, p: path}. That is the only data this
+ * {t: token, v: fi_visitor_id, o: a random id for this page load, fs: source,
+ * p: path}. That is the only data this
  * file sends. fi_visitor_id is created here the same way index.html does when
  * missing, after the first-touch check below so a new visitor is not marked
  * legacy.
@@ -86,8 +87,10 @@
       }
     } catch (e) { /* storage blocked: the open is still recorded, without the browser */ }
     try {
+      // o: a random id for this page load, so a replayed post counts once.
+      var openId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
       var linkBody = JSON.stringify({
-        t: fiToken, v: fiVisitor, p: location.pathname || '/',
+        t: fiToken, v: fiVisitor, o: openId, p: location.pathname || '/',
         fs: fiSource.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32)
       });
       var linkUrl = 'https://api.flyiniris.com/api/link-open';
