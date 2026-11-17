@@ -20,8 +20,14 @@
  *   share      any control marked data-fi-share (film pages have none today)
  *   tv         a Chromecast or AirPlay button was tapped, or a TV connected
  *
- * Identity is a random browser id in localStorage (fi-film-browser), separate
- * on purpose from the site's fi_visitor_id, so it never joins to an inquiry. No
+ * Identity: a random browser id in localStorage (fi-film-browser), plus, since
+ * 2026-11-16 (Sean: know, per couple, what they watch), the site's
+ * fi_visitor_id (created here the same way index.html does when missing) and,
+ * when this browser opened a link we sent a couple, that link's token
+ * (localStorage fi_link_token). The Worker uses those two to tie the rows to the
+ * couple. A page opened from such a link (?fi=<token>&fs=<source>) is handled
+ * like fi-attribution.js does on the entry pages: fi and fs come off the
+ * address bar, the token is kept, and one post goes to /api/link-open. No
  * names, no emails, nothing typed. The Worker stores no IP address.
  *
  * Our own devices: opening Studio sets the cookie fi_ours=1 on .flyiniris.com,
@@ -56,6 +62,35 @@
     if (!browserId) { browserId = rid(); setItem('fi-film-browser', browserId); }
     var pageViewId = rid();
 
+    // --- the couple: site visitor id and a tracked link token ---
+    var visitorId = getItem('fi_visitor_id');
+    if (!visitorId) { visitorId = rid(); setItem('fi_visitor_id', visitorId); }
+    try {
+      var fiToken = '', fiSource = '', kept = [];
+      location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+        var key = kv.split('=')[0];
+        var val = kv.slice(key.length + 1);
+        try { val = decodeURIComponent(val); } catch (e) { /* keep raw */ }
+        if (key === 'fi') fiToken = val;
+        else if (key === 'fs') fiSource = val;
+        else if (kv) kept.push(kv);
+      });
+      if ((fiToken || fiSource) && window.history && history.replaceState) {
+        history.replaceState(history.state, '', location.pathname + (kept.length ? '?' + kept.join('&') : '') + location.hash);
+      }
+      if (/^[a-z]{20}$/.test(fiToken) && !window.__fiLinkOpenSent) {
+        window.__fiLinkOpenSent = true;
+        setItem('fi_link_token', fiToken);
+        var linkBody = JSON.stringify({ t: fiToken, v: visitorId || '', p: location.pathname, fs: fiSource.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32) });
+        var linkUrl = 'https://api.flyiniris.com/api/link-open';
+        if (!(navigator.sendBeacon && navigator.sendBeacon(linkUrl, linkBody)) && window.fetch) {
+          fetch(linkUrl, { method: 'POST', body: linkBody, keepalive: true, mode: 'cors' }).catch(function () {});
+        }
+      }
+    } catch (e) { /* tracking never surfaces */ }
+    var linkToken = getItem('fi_link_token');
+    if (!/^[a-z]{20}$/.test(linkToken || '')) linkToken = '';
+
     var ours = getItem('fi-film-ours') === '1';
     try {
       if (/(?:^|;\s*)fi_ours=1(?:;|$)/.test(document.cookie)) ours = true;
@@ -67,7 +102,10 @@
 
     function send(ev) {
       try {
-        var body = JSON.stringify({ pv: pageViewId, b: browserId, slug: SLUG, ours: ours ? 1 : 0, events: [ev] });
+        var payload = { pv: pageViewId, b: browserId, slug: SLUG, ours: ours ? 1 : 0, events: [ev] };
+        if (visitorId) payload.v = visitorId;
+        if (linkToken) payload.t = linkToken;
+        var body = JSON.stringify(payload);
         if (navigator.sendBeacon && navigator.sendBeacon(ENDPOINT, body)) return;
         if (window.fetch) fetch(ENDPOINT, { method: 'POST', body: body, keepalive: true, mode: 'cors' }).catch(function () {});
       } catch (e) { /* tracking never surfaces */ }
