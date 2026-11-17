@@ -3418,7 +3418,7 @@
           if (!btn) return;
           var action = btn.getAttribute("data-action");
 
-          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = document.getElementById('quiz-date'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = document.getElementById('quiz-date'); if (!nxt || nxt.disabled) nxt = quizApp.querySelector('[data-action="toggle-sms-nonmarketing"]'); if (nxt) nxt.focus(); return; }
           if (action === "toggle-no-date") {
             saveFormFields();
             state.contactForm.noDate = !state.contactForm.noDate;
