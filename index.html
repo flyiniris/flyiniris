@@ -164,7 +164,7 @@
         "name": "How long until we get our wedding film?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Your teaser lands within 2 weeks of the wedding. The full film is delivered within 20 weeks, streaming Netflix-style so you can relive it anytime, on any device."
+          "text": "Your full film is delivered within 20 weeks, streaming Netflix-style so you can relive it anytime, on any device. Add a teaser and you'll have a sneak peek within 2 weeks of the wedding."
         }
       },
       {
@@ -2382,7 +2382,7 @@
 
         <div class="why-block" data-why-reveal id="why-04">
           <h3 class="why-headline">You'll watch it and <span class="accent">feel it all again.</span></h3>
-          <p class="why-body">The teaser lands within 2 weeks. The full film? You'll ugly-cry. You'll hear his voice crack during the vows again. You'll watch your dad's face when he sees you for the first time. Your kids will watch this one day. Their kids, too.</p>
+          <p class="why-body">Want a sneak peek fast? Add a teaser and it's yours within 2 weeks. The full film? You'll ugly-cry. You'll hear his voice crack during the vows again. You'll watch your dad's face when he sees you for the first time. Your kids will watch this one day. Their kids, too.</p>
           <p class="why-quote">&ldquo;I can&rsquo;t stop watching it. Happy tears, so much joy, laughter and love. I&rsquo;ve watched it at least 3 times a day since getting it.&rdquo;<br>Mariah K.</p>
           <div class="why-divider"></div>
         </div>
@@ -2525,7 +2525,7 @@
           </details>
           <details class="faq-item">
             <summary>How long until we get our wedding film?</summary>
-            <p>Your teaser lands within 2 weeks of the wedding. The full film is delivered within 20 weeks, streaming Netflix-style so you can relive it anytime, on any device.</p>
+            <p>Your full film is delivered within 20 weeks, streaming Netflix-style so you can relive it anytime, on any device. Add a teaser and you'll have a sneak peek within 2 weeks of the wedding.</p>
           </details>
           <details class="faq-item">
             <summary>Do we get the whole day or just a highlight film?</summary>
@@ -3039,7 +3039,7 @@
           calcStep: 0, calcAnswers: {},
           calcSubmitted: false,
           contactFormTried: false,
-          contactForm: { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" }
+          contactForm: { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", noDate:false, found:"" }
         };
         var quizApp = document.getElementById("quizApp");
 
@@ -3147,7 +3147,7 @@
         // 2026-07-04: "Start with your date."
         function renderInquiryForm() {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = f.weddingDate && f.weddingDate.length > 0, fOk = FOUND_OPTIONS.indexOf(f.found) !== -1;
+          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = !!f.noDate || !!(f.weddingDate && f.weddingDate.length > 0), fOk = FOUND_OPTIONS.indexOf(f.found) !== -1;
           var h = '<div class="quiz-step">';
           h += '<p class="quiz-intro-label" style="text-align:center">Flyin’ Iris ✦ Milwaukee, WI</p>';
           h += '<h2 class="quiz-question" tabindex="-1" style="outline:none;text-align:center">Start with your date.</h2>';
@@ -3185,11 +3185,19 @@
           h += '</div></div>';
           // Wedding date (the hook)
           var minDate = new Date().toISOString().split('T')[0];
-          var savedDate = (state.contactForm && state.contactForm.weddingDate) || '';
+          var savedDate = f.noDate ? '' : ((state.contactForm && state.contactForm.weddingDate) || '');
           h += '<div><label class="quiz-form-label" for="quiz-date">Wedding Date <span style="color:var(--accent)">*</span></label>';
-          h += '<input type="date" id="quiz-date" class="quiz-form-input' + (t && !dOk ? ' error' : '') + '" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date">';
+          h += '<input type="date" id="quiz-date" class="quiz-form-input' + (t && !dOk ? ' error' : '') + '" min="' + minDate + '" max="2029-12-31" value="' + savedDate + '" placeholder="Select your date"' + (f.noDate ? ' disabled aria-disabled="true" style="opacity:0.45"' : '') + '>';
           h += '<div id="availability-msg" style="min-height:0;margin-top:6px" aria-live="polite"></div>';
-          if (t && !dOk) h += '<p class="quiz-form-error">We need your date to check availability!</p>';
+          if (t && !dOk) h += '<p class="quiz-form-error">We need your date to check availability! No date yet? Tick the box below.</p>';
+          // No-date option (2026-11-16), the homepage twin of /start's "We
+          // don't have a date yet." ghost: weddingDate submits blank and the
+          // Worker's dateless handling takes it from there (welcome variant
+          // without a date, no availability check).
+          h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-no-date" role="checkbox" aria-checked="' + (f.noDate ? 'true' : 'false') + '">';
+          h += '<div class="quiz-checkbox' + (f.noDate ? ' checked' : '') + '">' + (f.noDate ? '<span>✓</span>' : '') + '</div>';
+          h += '<span class="quiz-checkbox-label" style="color:' + (f.noDate ? 'var(--text-primary)' : 'var(--text-secondary)') + ';text-align:left">We don’t have a date yet.</span>';
+          h += '</button>';
           h += '</div>';
           // Venue (optional)
           h += '<div><label class="quiz-form-label" for="qf-venue">Venue <span style="color:var(--text-secondary);font-weight:300;font-size:0.6875rem">(optional)</span></label>';
@@ -3384,7 +3392,7 @@
           if (el.tagName === "TEXTAREA") return; // allow Enter in textarea
           if (el.classList.contains("quiz-form-input") || el.tagName === "SELECT") {
             e.preventDefault();
-            var inputs = Array.prototype.slice.call(quizApp.querySelectorAll(".quiz-form-input, .quiz-form-textarea, select.quiz-form-input"));
+            var inputs = Array.prototype.slice.call(quizApp.querySelectorAll(".quiz-form-input:not(:disabled), .quiz-form-textarea, select.quiz-form-input"));
             var idx = inputs.indexOf(el);
             if (idx >= 0 && idx < inputs.length - 1) {
               inputs[idx + 1].focus();
@@ -3410,15 +3418,26 @@
           if (!btn) return;
           var action = btn.getAttribute("data-action");
 
-          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = document.getElementById('quiz-date'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-sms-nonmarketing") { saveFormFields(); state.contactForm.smsNonMarketing = !state.contactForm.smsNonMarketing; saveInquiryDraft(); render(); var nxt = document.getElementById('quiz-date'); if (!nxt || nxt.disabled) nxt = quizApp.querySelector('[data-action="toggle-sms-nonmarketing"]'); if (nxt) nxt.focus(); return; }
+          if (action === "toggle-no-date") {
+            saveFormFields();
+            state.contactForm.noDate = !state.contactForm.noDate;
+            // Ticking it clears any picked date, so a stale date (or a stale
+            // fully-booked waitlist match) never rides along on a no-date submit.
+            if (state.contactForm.noDate) state.contactForm.weddingDate = '';
+            saveInquiryDraft(); render();
+            var nd = quizApp.querySelector('[data-action="toggle-no-date"]'); if (nd) nd.focus();
+            return;
+          }
           if (action === "submit-inquiry") {
             saveFormFields();
             state.contactFormTried = true;
             var fi = state.contactForm;
-            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && fi.weddingDate && fi.weddingDate.length > 0 && FOUND_OPTIONS.indexOf(fi.found) !== -1;
+            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && (!!fi.noDate || !!(fi.weddingDate && fi.weddingDate.length > 0)) && FOUND_OPTIONS.indexOf(fi.found) !== -1;
             if (!okToSend) { render(); return; }
             var dateEl = document.getElementById('quiz-date');
-            if (dateEl && dateEl.value) state.contactForm.weddingDate = dateEl.value;
+            if (fi.noDate) state.contactForm.weddingDate = '';
+            else if (dateEl && dateEl.value) state.contactForm.weddingDate = dateEl.value;
             state.contactInfo = { name: fi.name, partner: fi.partner, email: fi.email, phone: fi.phone, smsNonMarketing: fi.smsNonMarketing, smsMarketing: false, venue: fi.venue, note: '', weddingDate: fi.weddingDate };
             state.submitError = false;
             // Shared event_id: pixel Lead fires only after a confirmed 2xx,
@@ -3449,6 +3468,12 @@
             if (isWaitlist) {
               shortInquiry.submissionType = 'waitlist';
               shortInquiry.note = 'Waitlist request from the homepage form: ' + formatDateForSheet(fi.weddingDate) + ' came back fully booked (Sierra & Sean and Team both committed). Reach out if anything opens up.';
+            }
+            // No-date path: same shape /start sends (weddingDate blank,
+            // submissionType 'inquiry', and the same note line).
+            if (fi.noDate) {
+              shortInquiry.weddingDate = '';
+              shortInquiry.note = 'No wedding date yet; couple took the no-date path.';
             }
             state.mode = "experience-loading";
             render();
@@ -3506,7 +3531,7 @@
             state.mode = "inquiry"; state.quizStep = 0; state.quizAnswers = {}; state.referralName = "";
             state.contactInfo = null; state.calcStep = 0; state.calcAnswers = {}; state.calcSubmitted = false;
             state.contactFormTried = false;
-            state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", found:"" };
+            state.contactForm = { name:"", partner:"", email:"", phone:"", smsNonMarketing:false, smsMarketing:false, venue:"", note:"", weddingDate:"", noDate:false, found:"" };
             // Explicit discard: clear the persisted draft too, otherwise the
             // next page load would restore the data the user just wiped.
             clearInquiryDraft();

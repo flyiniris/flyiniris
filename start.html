@@ -308,6 +308,15 @@
     .quote-attrib .stars { display: flex; gap: 2px; }
     .quote-attrib .src { font-weight: 400; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E8E; }
 
+    /* Welcome-screen proof (2026-11-16): one line of stars plus the Google
+       count, and one short quote, under the first CTA so the button does not
+       move. Count and quote mirror index.html (reviews badge, why-quote). */
+    .welcome-proof { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .welcome-proof .proof-line { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .welcome-proof .stars { display: inline-flex; gap: 2px; }
+    .welcome-proof .proof-quote { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 17px; line-height: 1.4; color: var(--accent-light); max-width: 420px; text-wrap: balance; }
+    .welcome-proof .who { font-family: var(--font-body); font-style: normal; font-weight: 400; font-size: 12px; color: #8E8E8E; white-space: nowrap; margin-left: 4px; }
+
     /* Meet module */
     .meet-photo { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-elevated); }
     /* sean-sierra.webp is a tall portrait with faces in the upper band; a
@@ -1285,6 +1294,10 @@
             ? '<div class="offer-chip">This month\'s offer: book and the full documentary video of your day is <span class="gold">free</span> ($1,000 value).</div>'
             : '') +
           '<button type="button" class="cta" style="margin-top:' + (OFFER_DOC ? '22px' : '34px') + '" data-action="start">Check your date</button>' +
+          '<div class="welcome-proof">' +
+          '<p class="proof-line"><span class="stars" role="img" aria-label="Rated 5 out of 5">' + STAR_SVG + STAR_SVG + STAR_SVG + STAR_SVG + STAR_SVG + '</span><span>43 reviews on Google</span></p>' +
+          '<p class="proof-quote">&ldquo;It brings unlimited tears to your eyes when you get to relive it.&rdquo; <span class="who">Kendall</span></p>' +
+          '</div>' +
           '<div class="welcome-video" id="welcome-video">' +
           '<img src="' + WELCOME_VIDEO.poster + '" alt="A just-married couple walking through their cheering wedding party, a still from a Flyin\' Iris film" decoding="async">' +
           '</div>' +
