@@ -1090,7 +1090,7 @@
   <section class="hero">
     <div class="hero-eyebrow">Just for Taylor &amp; Neil</div>
     <h1>Your <em>day</em> at 10 South</h1>
-    <p class="hero-sub">It was so good getting to know you both today. Here is everything we talked through, plus a few extra films from 10 South so you can really see how that venue plays on camera. Build your package below whenever you are ready.</p>
+    <p class="hero-sub">It was so good getting to know you both today. Here is everything we talked through, plus a few extra films from 10 South so you can really see how that venue plays on camera. You can revisit the package options below.</p>
     <div class="hero-meta">10.15.2027 <span>&bull;</span> 10 South <span>&bull;</span> Janesville, WI</div>
   </section>
 
@@ -1304,28 +1304,7 @@
       <div class="summary-breakdown" id="summaryBreakdown"></div>
     </div>
 
-    <div class="submit-section" id="submitSection">
-      <button class="submit-button" id="submitButton" onclick="submitPackage()">Lock In This Package</button>
-      <p class="submit-caption">We will get your contract and invoice ready and send it over within 24 hours. No payment yet, just confirms what we will be building together.</p>
-    </div>
-
-    <div class="success-state" id="successState">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </div>
-      <h3 class="success-title">You are <em>locked in</em></h3>
-      <p class="success-body">Sierra &amp; Sean will have your contract and invoice over within 24 hours. Keep an eye on your inbox.</p>
-      <p class="success-body" style="font-size: 0.85rem; color: var(--text-muted);">If anything looks off when it arrives, just reply to that email and we will fix it.</p>
-    </div>
-
-    <div class="error-state" id="errorState">
-      <h3 class="error-title">Hmm, that did not go through.</h3>
-      <p class="error-body">Looks like we hit a snag on our end. <strong>Your package is still saved on this page.</strong> Give it another try in a moment.</p>
-      <button class="retry-button" onclick="retrySubmit()">Try Again</button>
-    </div>
-
+    <p class="submit-caption">Your package has been confirmed. You can still explore the options here. Your signed agreement holds the final details.</p>
   </div>
 
   <footer class="site-footer">
@@ -1337,14 +1316,6 @@
 
   <script>
   (function() {
-    var PRICING_VERSION = '2026-05-21';
-    var SUBMIT_ENDPOINT = 'https://api.flyiniris.com/api/yours/taylor-neil/submit';
-    var SLUG = 'taylor-neil';
-    // Per-couple page token. The Worker requires it on /submit and /viewed so
-    // the guessable slug alone can no longer fire Pushovers or stage moves.
-    // Pairs with YOURS_SLUG_TO_CONTACT in iris-automation src/index.ts.
-    var YOURS_TOKEN = 'f5da76ba7192da55015f5bd0abf6a6f2a76c775908f2ce8d';
-
     var PRICING = {
       team: { base: 2800, hourlyRate: 150, name: 'Team Package', tierLabel: 'TEAM PACKAGE' },
       ss:   { base: 3800, hourlyRate: 225, name: 'S&S Experience Package', tierLabel: 'S&S EXPERIENCE' }
@@ -1531,107 +1502,10 @@
         savingsEl.style.display = 'none';
       }
 
-      window.__currentConfig = {
-        tier: currentTier,
-        hours: String(hours),
-        highlight: highlight,
-        teaser: hasTeaser,
-        storySession: hasStory,
-        fomo: hasFomo,
-        displayedTotal: subTotal,
-        displayedSavings: discountAmount
-      };
-    };
-
-    var inFlight = false;
-
-    window.submitPackage = function() {
-      if (inFlight) return;
-      inFlight = true;
-
-      var btn = document.getElementById('submitButton');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Locking it in...';
-
-      var cfg = window.__currentConfig;
-      var body = {
-        slug: SLUG,
-        token: YOURS_TOKEN,
-        config: {
-          tier: cfg.tier,
-          hours: cfg.hours,
-          highlight: cfg.highlight,
-          teaser: cfg.teaser,
-          storySession: cfg.storySession,
-          fomo: cfg.fomo
-        },
-        displayedTotal: cfg.displayedTotal,
-        displayedSavings: cfg.displayedSavings,
-        pricingVersion: PRICING_VERSION
-      };
-
-      var controller = new AbortController();
-      var timeoutId = setTimeout(function() { controller.abort(); }, 20000);
-
-      fetch(SUBMIT_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: controller.signal
-      })
-      .then(function(res) {
-        clearTimeout(timeoutId);
-        if (!res.ok) throw new Error('http ' + res.status);
-        return res.json().catch(function() { return {}; });
-      })
-      .then(function() {
-        showSuccess();
-      })
-      .catch(function() {
-        clearTimeout(timeoutId);
-        showError();
-      });
-    };
-
-    function showSuccess() {
-      document.getElementById('submitSection').style.display = 'none';
-      document.getElementById('errorState').style.display = 'none';
-      document.getElementById('successState').style.display = 'block';
-      window.scrollTo({ top: document.getElementById('successState').offsetTop - 80, behavior: 'smooth' });
-    }
-
-    function showError() {
-      inFlight = false;
-      var btn = document.getElementById('submitButton');
-      btn.disabled = false;
-      btn.textContent = 'Lock In This Package';
-      document.getElementById('submitSection').style.display = 'none';
-      document.getElementById('errorState').style.display = 'block';
-    }
-
-    window.retrySubmit = function() {
-      document.getElementById('errorState').style.display = 'none';
-      document.getElementById('submitSection').style.display = 'block';
-      submitPackage();
     };
 
     setTier('ss');
-
-    // Fire-and-forget /viewed once per browser session. Server has lifetime
-    // idempotency too, but this avoids hitting the endpoint on every reload.
-    try {
-      var viewedKey = 'yours_viewed_' + SLUG;
-      if (!sessionStorage.getItem(viewedKey)) {
-        sessionStorage.setItem(viewedKey, '1');
-        fetch('https://api.flyiniris.com/api/yours/' + SLUG + '/viewed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug: SLUG, token: YOURS_TOKEN }),
-          keepalive: true
-        }).catch(function() {});
-      }
-    } catch (e) {}
-  })();
+})();
   </script>
 
 </body>
