@@ -1,10 +1,17 @@
 name = "fi-video-match"
+# Flyin' Iris Cloudflare account. This repo is PUBLIC, so the full account id is
+# not written here (pre-push hook). This machine's wrangler login can see two
+# accounts, and with no account_id wrangler refuses to run non-interactively,
+# which is the fail-loud we want. Deploy with CLOUDFLARE_ACCOUNT_ID set to the
+# Flyin' Iris account (last-4 f369; the full value is pinned in the private
+# iris-automation wrangler.toml). Same rule as delivery/workers/video-serve.
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
-[[kv_namespaces]]
-binding = "FI_MATCH"
-id = "5f3a6d707ec449c7936cdb766c88d6e6"
+# Version URLs stay off for this archived Worker. Only the current deployment on
+# the main workers.dev hostname should answer. When this line is missing,
+# wrangler leaves the setting as it finds it, so keep it explicit.
+preview_urls = false
 
 [vars]
 MEDIA_BASE = "https://media.flyiniris.com"

@@ -1,5 +1,12 @@
 # Video Matching Engine — Build Task
 
+The original build specification below is historical. The main application uses
+the automation Worker for film matching. The compatibility Worker retains its
+public catalog and stateless ranking. It ignores email, accepts a caller's
+excludeSlugs, and returns 410 on the retired viewing history routes. It needs
+no KV binding. Deploying this source leaves the historical namespace intact.
+
+
 ## Goal
 Build a Cloudflare Worker that serves personalized video recommendations based on couple data. This Worker will be called by the email system and the website to determine which films to show each couple.
 

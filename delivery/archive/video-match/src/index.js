@@ -39,7 +39,7 @@ const MEDIA_BASE = "https://media.flyiniris.com";
 const SITE_BASE = "https://flyiniris.com";
 
 export default {
-  async fetch(request, env) {
+  async fetch(request) {
     if (request.method === "OPTIONS") return handleOptions(request);
 
     const url = new URL(request.url);
@@ -48,17 +48,12 @@ export default {
     try {
       // POST /match — get personalized film recommendations
       if (path === "/match" && request.method === "POST") {
-        return handleMatch(request, env);
+        return await handleMatch(request);
       }
 
-      // POST /viewed — track that a couple saw a film
-      if (path === "/viewed" && request.method === "POST") {
-        return handleTrackViewed(request, env);
-      }
-
-      // GET /viewed?email=... — get list of viewed films
-      if (path === "/viewed" && request.method === "GET") {
-        return handleGetViewed(request, env);
+      // Legacy per-email history has no verified owner identity.
+      if (path === "/viewed" && (request.method === "GET" || request.method === "POST")) {
+        return jsonResponse({ error: "Viewing history retired" }, 410, request);
       }
 
       // GET /films — return all films metadata
@@ -67,8 +62,8 @@ export default {
       }
 
       return jsonResponse({ error: "Not found" }, 404, request);
-    } catch (err) {
-      return jsonResponse({ error: "Internal server error", detail: err.message }, 500, request);
+    } catch {
+      return jsonResponse({ error: "Invalid matching request" }, 400, request);
     }
   }
 };
@@ -109,22 +104,15 @@ function scoreFilm(film, query) {
   return score;
 }
 
-async function handleMatch(request, env) {
+async function handleMatch(request) {
   const body = await request.json();
   const {
-    email, vibe, priority, budget, region, season,
+    vibe, priority, budget, region, season,
     venueType, guestSize, count = 3, excludeSlugs = []
   } = body;
 
-  // Get already-viewed films for this email
-  let viewed = [];
-  if (email && env.FI_MATCH) {
-    const stored = await env.FI_MATCH.get(`viewed:${email.toLowerCase()}`);
-    if (stored) viewed = JSON.parse(stored);
-  }
-
-  // Combine exclude lists
-  const allExcluded = new Set([...viewed, ...excludeSlugs]);
+  // Callers can still omit films with their own list of exclusions.
+  const allExcluded = new Set(excludeSlugs);
 
   // Score all films
   const scored = FILMS.map(film => ({
@@ -156,66 +144,13 @@ async function handleMatch(request, env) {
     filmUrl: `${SITE_BASE}/films/${f.slug}`
   }));
 
-  // Auto-track these as viewed if email provided
-  if (email && env.FI_MATCH) {
-    const newViewed = [...viewed, ...selected.map(s => s.slug)];
-    await env.FI_MATCH.put(
-      `viewed:${email.toLowerCase()}`,
-      JSON.stringify([...new Set(newViewed)])
-    );
-  }
-
   return jsonResponse({
     films: selected,
     totalFilms: FILMS.length,
     totalMatched: available.length,
-    viewedCount: viewed.length,
+    viewedCount: 0,
     query: { vibe, priority, budget, region, season, venueType, guestSize }
   }, 200, request);
-}
-
-// ---------------------------------------------------------------------------
-// View Tracking
-// ---------------------------------------------------------------------------
-
-async function handleTrackViewed(request, env) {
-  const body = await request.json();
-  const { email, slug } = body;
-
-  if (!email || !slug) {
-    return jsonResponse({ error: "email and slug required" }, 400, request);
-  }
-
-  const key = `viewed:${email.toLowerCase()}`;
-  let viewed = [];
-  if (env.FI_MATCH) {
-    const stored = await env.FI_MATCH.get(key);
-    if (stored) viewed = JSON.parse(stored);
-  }
-
-  if (!viewed.includes(slug)) {
-    viewed.push(slug);
-    await env.FI_MATCH.put(key, JSON.stringify(viewed));
-  }
-
-  return jsonResponse({ viewed }, 200, request);
-}
-
-async function handleGetViewed(request, env) {
-  const url = new URL(request.url);
-  const email = url.searchParams.get("email");
-
-  if (!email) {
-    return jsonResponse({ error: "email query param required" }, 400, request);
-  }
-
-  let viewed = [];
-  if (env.FI_MATCH) {
-    const stored = await env.FI_MATCH.get(`viewed:${email.toLowerCase()}`);
-    if (stored) viewed = JSON.parse(stored);
-  }
-
-  return jsonResponse({ email, viewed }, 200, request);
 }
 
 // ---------------------------------------------------------------------------
