@@ -1725,8 +1725,8 @@
 
     <div class="field" data-field="partners_email" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="partners_email">What is your fiance's email address?</label>
-      <input type="email" id="partners_email" placeholder="them@email.com" />
+      <label class="field-label" for="qs-partners_email">What is your fiance's email address?</label>
+      <input type="email" id="qs-partners_email" placeholder="them@email.com" />
       <div class="field-hint">So you both see the same things and nobody has to forward anything.</div>
     </div>
 
@@ -1755,13 +1755,13 @@
       <div class="yn-followup" data-followup-for="planner_has">
         <div class="field" data-field="planner_name" data-state="user_entered">
           <span class="field-badge"></span>
-          <label class="field-label" for="planner_name">Their name</label>
-          <input type="text" id="planner_name" />
+          <label class="field-label" for="qs-planner_name">Their name</label>
+          <input type="text" id="qs-planner_name" />
         </div>
         <div class="field" data-field="planner_email" data-state="user_entered">
           <span class="field-badge"></span>
-          <label class="field-label" for="planner_email">Their email address</label>
-          <input type="email" id="planner_email" />
+          <label class="field-label" for="qs-planner_email">Their email address</label>
+          <input type="email" id="qs-planner_email" />
         </div>
         <div class="field" data-field="planner_instagram" data-state="user_entered">
           <span class="field-badge"></span>
@@ -1815,15 +1815,15 @@
 
     <div class="field" data-field="instagram_username" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="instagram_username">Last thing: your Instagram handle</label>
-      <input type="text" id="instagram_username" placeholder="@yourhandle" />
+      <label class="field-label" for="qs-instagram_username">Last thing: your Instagram handle</label>
+      <input type="text" id="qs-instagram_username" placeholder="@yourhandle" />
       <div class="field-hint">So we can tag you in anything we post, and so our Instagram auto-replies know you are already booked with us instead of treating you like a new lead.</div>
     </div>
 
     <div class="field" data-field="partners_instagram_username" data-state="user_entered">
       <span class="field-badge"></span>
-      <label class="field-label" for="partners_instagram_username">And your fiance's</label>
-      <input type="text" id="partners_instagram_username" placeholder="@theirhandle" />
+      <label class="field-label" for="qs-partners_instagram_username">And your fiance's</label>
+      <input type="text" id="qs-partners_instagram_username" placeholder="@theirhandle" />
     </div>
 
     <div class="btn-row">
@@ -1876,6 +1876,8 @@
    * URL Params + Identity
    * ============================================================ */
   var params = new URLSearchParams(location.search);
+  var IS_QUICKSTART = params.get('mode') === 'quickstart';
+  var quickstartStep = document.getElementById('step-qs');
   var contactId = params.get('contactId') || '';
   // Email 2 (pre-wedding-6w) and booked-05 timeline-anchor CTAs send token URLs;
   // every other email uses contactId. Identity is whichever the URL carries.
@@ -2006,15 +2008,13 @@
    * Helpers: get all fields, lookup field-element
    * ============================================================ */
   function getFieldEl(name) {
-    // First .field with data-field=name
-    return document.querySelector('.field[data-field="' + name + '"]');
+    var selector = '.field[data-field="' + name + '"]';
+    return (IS_QUICKSTART && quickstartStep.querySelector(selector)) || document.querySelector(selector);
   }
 
-  function getInputEl(name) {
-    var el = document.getElementById(name);
-    if (el) return el;
-    // some compound inputs use ids matching names already; otherwise return the wrapper
-    return null;
+  function getInputEl(id) {
+    // The two forms share payload keys but use distinct inputs for shared fields.
+    return (IS_QUICKSTART && document.getElementById('qs-' + id)) || document.getElementById(id);
   }
 
   /* ============================================================
@@ -2070,8 +2070,7 @@
     if (ynGroups.indexOf(name) >= 0) {
       return ynState[name] || '';
     }
-    // default: input element by id
-    var el = document.getElementById(name);
+    var el = getInputEl(name);
     if (!el) return '';
     return (el.value || '').trim();
   }
@@ -2161,7 +2160,7 @@
       }
       return;
     }
-    var el = document.getElementById(name);
+    var el = getInputEl(name);
     if (el) el.value = value;
   }
 
@@ -2398,7 +2397,7 @@
    * Wire up plain text/textarea/date inputs to handleFieldChange
    * ============================================================ */
   function bindInput(id, fieldName) {
-    var el = document.getElementById(id);
+    var el = getInputEl(id);
     if (!el) return;
     el.addEventListener('focus', function () {
       var fieldEl = getFieldEl(fieldName);
@@ -2610,12 +2609,6 @@
    * Turnstile post already work here. The submit sends mode=quickstart so the
    * Worker does not mark the full planning questionnaire complete.
    * ============================================================ */
-  var IS_QUICKSTART = (function () {
-    try {
-      return new URLSearchParams(window.location.search).get('mode') === 'quickstart';
-    } catch (e) { return false; }
-  })();
-
   function applyQuickstart() {
     if (!IS_QUICKSTART) return;
     // HIDE, never REMOVE. Two rounds of bugs came from deleting steps: init
@@ -2657,7 +2650,7 @@
         sb.addEventListener('click', function (e) {
           e.stopImmediatePropagation();
           start.classList.remove('active');
-          document.getElementById('step-qs').classList.add('active');
+          quickstartStep.classList.add('active');
           updateProgress();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }, true);
@@ -3039,8 +3032,8 @@
   document.getElementById('btn-submit').addEventListener('click', submitForm);
 
   function submitForm() {
-    // validateStep(6) and btn-submit both belong to the long form. Quickstart
-    // has its own button and no required-field gate beyond the partner email.
+    // The full questionnaire validates its final section. Quickstart uses its
+    // own button and allows couples to share whichever details they have.
     if (!IS_QUICKSTART && !validateStep(6)) return;
     var btn = document.getElementById(IS_QUICKSTART ? 'btn-qs-submit' : 'btn-submit');
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
@@ -3076,6 +3069,7 @@
       return r.json().catch(function () { return {}; });
     }).then(function () {
       try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      if (IS_QUICKSTART) quickstartStep.classList.remove('active');
       goToStep(7);
     }).catch(function () {
       // Same button reference as above: quickstart uses its own, and its label
