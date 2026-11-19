@@ -134,11 +134,22 @@ async function handleThumb(request, env, matchedPath) {
 
   return new Response(object.body, {
     headers: {
-      'Content-Type': 'image/jpeg',
+      'Content-Type': thumbContentType(key, object),
       'Cache-Control': 'public, max-age=31536000',
       ...cors(request),
     },
   });
+}
+
+// Thumbs were all JPEG until the Instagram lead page added small WebP posters
+// (2026-11-18). Label each by what it is: the stored image type first, then
+// the file extension, and JPEG for everything else exactly as before.
+const THUMB_TYPES = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif' };
+function thumbContentType(key, object) {
+  const stored = object && object.httpMetadata && object.httpMetadata.contentType;
+  if (typeof stored === 'string' && /^image\/[a-z0-9.+-]+$/i.test(stored)) return stored;
+  const ext = (key.match(/\.([a-z0-9]+)$/i) || [])[1];
+  return (ext && THUMB_TYPES[ext.toLowerCase()]) || 'image/jpeg';
 }
 
 // Shared by /couples/<slug>/auth (authSlug = slug) and
