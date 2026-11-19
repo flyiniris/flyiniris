@@ -1214,7 +1214,7 @@
     // is re-encoded and added here.
     // Empty on a page whose films are all on the old ladder: every film then
     // plays its normal folder exactly as before. Example entry: 'highlight': 1.
-    var V2_STREAMS = {};
+    var V2_STREAMS = { 'highlight': 1 };
     function streamId(videoId) {
       return V2_STREAMS[videoId] ? videoId + '/v2' : videoId;
     }
