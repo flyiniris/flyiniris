@@ -918,7 +918,34 @@ p { margin-bottom: 0.6em; }
 }
 .builder-card input[type=text]:focus { outline: none; border-color: var(--accent); }
 .builder-card input[type=text]::placeholder { color: var(--text-muted); }
-.loc-row { display: grid; grid-template-columns: 200px 1fr 1fr 44px; gap: 10px; margin-bottom: 10px; align-items: center; }
+/* One layout at every width (the card is narrow even on a laptop): grip,
+   earlier and later stack down the left edge so the part of the day, the
+   place and the address each get the full width. */
+.loc-row { display: grid; grid-template-columns: 40px minmax(0, 1fr) 44px; gap: 8px; margin-bottom: 10px; align-items: center; padding: 12px 12px 12px 8px; border: 1px solid var(--border); border-radius: 8px; }
+.loc-row .loc-handle { grid-column: 1; grid-row: 1; width: 40px; }
+.loc-row select, .loc-row .dd { grid-column: 2 / -1; grid-row: 1; }
+.loc-row .loc-moves { display: contents; }
+.loc-row .loc-move { width: 40px; }
+.loc-row .loc-move[data-up] { grid-column: 1; grid-row: 2; }
+.loc-row .loc-move[data-down] { grid-column: 1; grid-row: 3; }
+.loc-row input[data-k=name] { grid-column: 2 / -1; grid-row: 2; }
+.loc-row input[data-k=address] { grid-column: 2; grid-row: 3; }
+.loc-row .loc-remove { grid-column: 3; grid-row: 3; }
+/* Day order (Sean 2026-11-20): a grip to drag, plus up and down arrows for
+   keyboards and phones. Outlines only, never a tinted fill. */
+.loc-handle { width: 32px; height: 48px; display: flex; align-items: center; justify-content: center; padding: 0; background: none; border: 0; color: var(--text-muted); cursor: grab; touch-action: none; }
+.loc-handle:hover, .loc-handle:focus-visible { color: var(--accent); outline: none; }
+.loc-handle svg { width: 12px; height: 20px; }
+.loc-move { width: 33px; height: 48px; display: flex; align-items: center; justify-content: center; padding: 0; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); cursor: pointer; }
+.loc-move:hover:not(:disabled), .loc-move:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+.loc-move:disabled { opacity: 0.35; cursor: default; }
+.loc-move svg { width: 12px; height: 8px; }
+.loc-row.dragging { outline: 1px solid var(--accent); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6); position: relative; z-index: 5; background: var(--bg-card); }
+.loc-row.dragging .loc-handle { cursor: grabbing; color: var(--accent); }
+.loc-row.drop-before { box-shadow: 0 -3px 0 0 var(--accent); }
+.loc-row.drop-after { box-shadow: 0 3px 0 0 var(--accent); }
+.loc-num { display: none; }
+.loc-hint { font-size: 0.88rem; color: var(--text-muted); margin: 0 0 12px; }
 .loc-remove { height: 46px; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
 .loc-remove:hover { border-color: var(--accent); color: var(--accent); }
 .loc-add-link { background: none; border: 0; padding: 6px 0; margin-top: 2px; color: var(--accent); font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; }
@@ -960,7 +987,7 @@ p { margin-bottom: 0.6em; }
 .dd-opt .dd-check { width: 14px; height: 14px; color: #FFBD1D; }
 .dd-opt.active .dd-check, .dd-opt.active .lock-tag { color: #0A0A0A; }
 .dd-opt .lock-tag { margin-left: 0; }
-@media (max-width: 700px) { .dd-opt { min-height: 50px; } .loc-row .dd { grid-column: 1; grid-row: 1; } }
+@media (max-width: 700px) { .dd-opt { min-height: 50px; } }
 
 /* Step 2 confirm (Sean 2026-11-19: couples add upgrades themselves). */
 .confirm-card { text-align: left; margin-bottom: 16px; border-color: var(--accent); }
@@ -1018,10 +1045,6 @@ p { margin-bottom: 0.6em; }
 .request-card li { color: var(--text-primary); margin-bottom: 4px; }
 .err-note { color: #F87171; }
 @media (max-width: 700px) {
-  .loc-row { grid-template-columns: 1fr 44px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
-  .loc-row select { grid-column: 1; grid-row: 1; }
-  .loc-row .loc-remove { grid-column: 2; grid-row: 1; }
-  .loc-row input[type=text] { grid-column: 1 / -1; }
   .builder-toggles label.owned-lock { align-self: flex-start; }
   .builder-toggles { gap: 20px; }   /* room for two stacked gold outlines */
 }
@@ -1077,8 +1100,9 @@ p { margin-bottom: 0.6em; }
 
     <section class="yours-section" id="locations" style="padding-top:0;">
       <h2>Your wedding locations</h2>
-      <p class="muted" style="margin-bottom:6px;">Getting ready somewhere else, or a second spot for the ceremony or reception? List each place so we can plan your day around it. Adding a location never changes your total.</p>
+      <p class="muted" style="margin-bottom:6px;">List each place your day happens, in the order it happens, so we can plan your day around it. Adding a location never changes your total.</p>
       <div class="builder-card">
+        <p class="loc-hint" id="loc-hint">Drag the grip or use the arrows to put them in the order of your day.</p>
         <div id="loc-rows"></div>
         <button type="button" class="loc-add-link" id="loc-add">+ Add another location</button>
       </div>
@@ -1132,7 +1156,14 @@ p { margin-bottom: 0.6em; }
   var $ = function (id) { return document.getElementById(id); };
   var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   var data = null, sel = null, quoteTimer = null, quoteSeq = 0;
-  var locs = [], LOC_MAX = 5;   // Sean 2026-11-19: up to 5
+  var locs = [], LOC_MAX = 5;   // Sean 2026-11-19: up to 5 (places we already know count)
+  // Sean 2026-11-20: start from what we already know, in the order of the day.
+  var locBaseline = '[]';
+  // Reception is the type that holds their venue, so the page calls it that.
+  var LOC_LABELS = { reception: 'Venue / reception' };
+  var GRIP_SVG = '<svg viewBox="0 0 12 20" fill="currentColor" aria-hidden="true"><circle cx="3" cy="4" r="1.6"/><circle cx="9" cy="4" r="1.6"/><circle cx="3" cy="10" r="1.6"/><circle cx="9" cy="10" r="1.6"/><circle cx="3" cy="16" r="1.6"/><circle cx="9" cy="16" r="1.6"/></svg>';
+  var UP_SVG = '<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 6.5l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var DOWN_SVG = '<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function fmt(n) {
     // Same as the /yours calculator's fmt$: cents only when there are cents.
@@ -1160,6 +1191,10 @@ p { margin-bottom: 0.6em; }
     var load = demoData ? Promise.resolve(demoData) : fetch('/upgrade-demo.json').then(function (r) { return r.json(); }).then(function (j) { demoData = j; return j; });
     return load.then(function (d) {
       if (path === '') return JSON.parse(JSON.stringify(d.options));
+      if (path === '/locations') return { locations: [
+        { type: 'getting_ready_bride', name: 'Lakeside Manor, Suite 204', address: '', known: true },
+        { type: 'reception', name: 'Rustic Manor 1848', address: 'N1234 County Rd, Wisconsin', known: true }
+      ], total: 2, max: 5, venueKnown: true };
       if (path.indexOf('/quote') === 0) {
         var q = new URLSearchParams(path.split('?')[1]);
         var k = [q.get('hours'), q.get('highlight'), q.get('teaser') === 'true' ? 1 : 0, q.get('storySession') === 'true' ? 1 : 0, q.get('secondShooter') === 'true' ? 1 : 0].join('|');
@@ -1190,6 +1225,7 @@ p { margin-bottom: 0.6em; }
 
   function typeLabel(t) {
     var list = (data && data.locationTypes) || [];
+    if (LOC_LABELS[t]) return LOC_LABELS[t];
     for (var i = 0; i < list.length; i++) if (list[i].type === t) return list[i].label;
     return 'Other';
   }
@@ -1385,7 +1421,7 @@ p { margin-bottom: 0.6em; }
     // The big total moves instantly from the engine-priced grid; the full
     // breakdown follows from the quote a moment later.
     if ($('bd-total') && cur != null) $('bd-total').textContent = fmt(cur);
-    var hasLocs = filledLocs().length > 0, btn = $('request-btn');
+    var hasLocs = locsChanged() && filledLocs().length > 0, btn = $('request-btn');
     btn.disabled = (!changed && !hasLocs) || cur == null;
     var self = !!(data && data.canSelfServe);
     btn.textContent = changed ? (self ? 'Add to my package' : 'Request this upgrade') : hasLocs ? 'Send our locations' : 'Pick an upgrade above';
@@ -1476,24 +1512,48 @@ p { margin-bottom: 0.6em; }
     return locs.map(function (l) { return { type: l.type, name: String(l.name || '').trim(), address: String(l.address || '').trim() }; })
       .filter(function (l) { return l.name || l.address; });
   }
+  function locsSig(list) { return JSON.stringify(list.map(function (l) { return [l.type, l.name, l.address]; })); }
+  // What we already know comes back as rows; only a changed list (a new
+  // place, an edit, a removal or a new order) is sent, so an unchanged list
+  // never rings Sean again.
+  function locsChanged() { return locsSig(filledLocs()) !== locBaseline; }
+  function locsToSend() { return locsChanged() ? filledLocs() : []; }
   function renderLocRows() {
     var types = (data && data.locationTypes) || [];
+    var n = locs.length;
     $('loc-rows').innerHTML = locs.map(function (l, i) {
-      return '<div class="loc-row">' +
+      return '<div class="loc-row" data-row="' + i + '">' +
+        '<button type="button" class="loc-handle" data-drag="' + i + '" aria-label="Drag to reorder, or use the arrow keys" title="Drag to reorder">' + GRIP_SVG + '</button>' +
         '<select data-i="' + i + '" data-k="type" aria-label="Which part of the day">' + types.map(function (t) {
-          return '<option value="' + esc(t.type) + '"' + (t.type === l.type ? ' selected' : '') + '>' + esc(t.label) + '</option>';
+          return '<option value="' + esc(t.type) + '"' + (t.type === l.type ? ' selected' : '') + '>' + esc(LOC_LABELS[t.type] || t.label) + '</option>';
         }).join('') + '</select>' +
         '<input type="text" data-i="' + i + '" data-k="name" maxlength="120" placeholder="Place name" aria-label="Place name" value="' + esc(l.name) + '">' +
         '<input type="text" data-i="' + i + '" data-k="address" maxlength="200" placeholder="Address or city" aria-label="Address" value="' + esc(l.address) + '">' +
+        '<div class="loc-moves">' +
+          '<button type="button" class="loc-move" data-up="' + i + '" aria-label="Move earlier in the day"' + (i === 0 ? ' disabled' : '') + '>' + UP_SVG + '</button>' +
+          '<button type="button" class="loc-move" data-down="' + i + '" aria-label="Move later in the day"' + (i === n - 1 ? ' disabled' : '') + '>' + DOWN_SVG + '</button>' +
+        '</div>' +
         '<button type="button" class="loc-remove" data-rm="' + i + '" aria-label="Remove this location">&times;</button></div>';
     }).join('');
-    $('loc-add').style.display = locs.length >= LOC_MAX ? 'none' : '';
-    $('loc-add').textContent = locs.length ? '+ Add another location' : '+ Add a location';
+    $('loc-add').style.display = n >= LOC_MAX ? 'none' : '';
+    $('loc-add').textContent = n ? '+ Add another location' : '+ Add a location';
+    $('loc-hint').style.display = n > 1 ? '' : 'none';
     Array.prototype.forEach.call($('loc-rows').querySelectorAll('select[data-k="type"]'), enhanceSelect);
+  }
+  function moveLoc(from, to, focusSel) {
+    if (to < 0 || to >= locs.length || from === to) return;
+    var item = locs.splice(from, 1)[0];
+    locs.splice(to, 0, item);
+    renderLocRows(); relabel();
+    if (focusSel) {
+      var el = $('loc-rows').querySelector(focusSel.replace('#', String(to)));
+      if (el && el.disabled) el = $('loc-rows').querySelector('[data-drag="' + to + '"]');
+      if (el) el.focus();
+    }
   }
   function nextLocType() {
     var used = locs.map(function (l) { return l.type; });
-    var order = ['ceremony', 'reception', 'getting_ready_bride', 'getting_ready_groom', 'portraits', 'other'];
+    var order = ['reception', 'ceremony', 'getting_ready_bride', 'getting_ready_groom', 'first_look', 'portraits', 'cocktail_hour', 'other'];
     for (var i = 0; i < order.length; i++) if (used.indexOf(order[i]) < 0) return order[i];
     return 'other';
   }
@@ -1512,9 +1572,58 @@ p { margin-bottom: 0.6em; }
   $('loc-rows').addEventListener('input', onLocEdit);
   $('loc-rows').addEventListener('change', onLocEdit);
   $('loc-rows').addEventListener('click', function (e) {
-    var rm = e.target.getAttribute && e.target.getAttribute('data-rm');
-    if (rm != null) { locs.splice(Number(rm), 1); renderLocRows(); relabel(); }
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b) return;
+    if (b.hasAttribute('data-rm')) { locs.splice(Number(b.getAttribute('data-rm')), 1); renderLocRows(); relabel(); return; }
+    if (b.hasAttribute('data-up')) { var u = Number(b.getAttribute('data-up')); moveLoc(u, u - 1, '[data-up="#"]'); return; }
+    if (b.hasAttribute('data-down')) { var d = Number(b.getAttribute('data-down')); moveLoc(d, d + 1, '[data-down="#"]'); }
   });
+  // Keyboard on the grip: arrow up / down moves the place.
+  $('loc-rows').addEventListener('keydown', function (e) {
+    var h = e.target.closest ? e.target.closest('.loc-handle') : null;
+    if (!h) return;
+    var i = Number(h.getAttribute('data-drag'));
+    if (e.key === 'ArrowUp') { e.preventDefault(); moveLoc(i, i - 1, '[data-drag="#"]'); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); moveLoc(i, i + 1, '[data-drag="#"]'); }
+  });
+  // Drag with a finger or the mouse (pointer events, so phones work too).
+  var drag = null;
+  function dragOthers() { return Array.prototype.filter.call($('loc-rows').children, function (r) { return r !== drag.row; }); }
+  function dropIndex(y) {
+    var n = 0;
+    dragOthers().forEach(function (r) { var b = r.getBoundingClientRect(); if (y > b.top + b.height / 2) n++; });
+    return n;
+  }
+  function clearDropMarks() {
+    Array.prototype.forEach.call($('loc-rows').children, function (r) { r.classList.remove('drop-before', 'drop-after'); });
+  }
+  function endDrag(apply, y) {
+    if (!drag) return;
+    var to = apply ? dropIndex(y) : drag.from;   // before the drag state is cleared
+    var d = drag; drag = null;
+    clearDropMarks();
+    d.row.classList.remove('dragging'); d.row.style.transform = '';
+    if (to !== d.from) moveLoc(d.from, to, '[data-drag="#"]');
+  }
+  $('loc-rows').addEventListener('pointerdown', function (e) {
+    var h = e.target.closest ? e.target.closest('.loc-handle') : null;
+    if (!h || locs.length < 2) return;
+    e.preventDefault();
+    var row = h.closest('.loc-row');
+    drag = { from: Number(h.getAttribute('data-drag')), row: row, startY: e.clientY, id: e.pointerId };
+    try { h.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
+    row.classList.add('dragging');
+  });
+  $('loc-rows').addEventListener('pointermove', function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.row.style.transform = 'translateY(' + (e.clientY - drag.startY) + 'px)';
+    clearDropMarks();
+    var others = dragOthers(), to = dropIndex(e.clientY);
+    if (!others.length || to === drag.from) return;
+    if (to < others.length) others[to].classList.add('drop-before'); else others[others.length - 1].classList.add('drop-after');
+  });
+  $('loc-rows').addEventListener('pointerup', function (e) { if (drag && e.pointerId === drag.id) endDrag(true, e.clientY); });
+  $('loc-rows').addEventListener('pointercancel', function () { endDrag(false, 0); });
 
   // ---- send ----
   function showErr(t) { $('err').textContent = t; $('err').style.display = ''; }
@@ -1527,7 +1636,7 @@ p { margin-bottom: 0.6em; }
   function openConfirm() {
     var cur = priceOf(sel); if (cur == null) return;
     confirmKey = key(sel); idemKey = newKey();
-    var items = describe(sel), pl = filledLocs();
+    var items = describe(sel), pl = locsToSend();
     $('confirm-adds').innerHTML = '<ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
       (pl.length ? '<p class="bd-sub" style="margin-top:8px;">Your locations go to Sierra &amp; Sean too: ' + esc(pl.map(function (l) { return typeLabel(l.type) + ': ' + [l.name, l.address].filter(Boolean).join(', '); }).join('; ')) + '</p>' : '');
     $('confirm-before').textContent = fmt(data.currentTotal);
@@ -1553,7 +1662,7 @@ p { margin-bottom: 0.6em; }
     if (expected == null || !$('consent').checked) return;
     btn.disabled = true; btn.textContent = 'Updating your package...';
     api('/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-      selection: sel, expected_total: expected, locations: filledLocs(), consent: true, idempotency_key: idemKey,
+      selection: sel, expected_total: expected, locations: locsToSend(), consent: true, idempotency_key: idemKey,
     }) }).then(function (r) {
       if (r && r.ok) {
         var portal = token ? '/portal?token=' + encodeURIComponent(token) : '/portal';
@@ -1587,9 +1696,9 @@ p { margin-bottom: 0.6em; }
     // Upgrades with the full link: the couple adds it themselves (confirm step).
     if (data && data.canSelfServe && key(sel) !== key(data.owned)) { openConfirm(); return; }
     btn.disabled = true; btn.textContent = 'Sending...';
-    api('/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ selection: sel, expected_total: expected, locations: filledLocs() }) })
+    api('/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ selection: sel, expected_total: expected, locations: locsToSend() }) })
       .then(function (r) {
-        if (r && r.ok) { renderPending(r.request); $('pending-section').scrollIntoView({ behavior: 'smooth', block: 'start' }); btn.textContent = 'Sent'; return; }
+        if (r && r.ok) { locBaseline = locsSig(filledLocs()); renderPending(r.request); $('pending-section').scrollIntoView({ behavior: 'smooth', block: 'start' }); btn.textContent = 'Sent'; return; }
         if (r && r.reason === 'price_changed') { showErr('Your package was just updated on our end, so the numbers changed. We refreshed them; take a look and send again.'); return load(true); }
         showErr(r && r.__status === 403 ? 'Too many tries in a row. Wait a minute, then send again.' : 'That did not go through. Please try again, or write to us at sierra@flyiniris.com.');
         relabel();
@@ -1609,12 +1718,16 @@ p { margin-bottom: 0.6em; }
       var prev = keepSelection && sel ? sel : null;
       data = r;
       renderPending(r.pendingRequest);
-      if (!keepSelection && r.pendingRequest && Array.isArray(r.pendingRequest.locations)) {
-        locs = r.pendingRequest.locations.map(function (l) { return { type: l.type, name: l.name || '', address: l.address || '' }; });
-      }
-      // Start with one empty row so the first location needs no extra tap.
-      if (!keepSelection && !locs.length) {
-        locs = [{ type: 'ceremony', name: '', address: '' }];
+      return (keepSelection ? Promise.resolve(null) : api('/locations').catch(function () { return null; })).then(function (known) {
+      if (!keepSelection) {
+        var start = (known && Array.isArray(known.locations)) ? known.locations : [];
+        locs = start.slice(0, LOC_MAX).map(function (l) { return { type: l.type, name: l.name || '', address: l.address || '' }; });
+        locBaseline = locsSig(filledLocs());
+        if (!locs.length && r.pendingRequest && Array.isArray(r.pendingRequest.locations)) {
+          locs = r.pendingRequest.locations.map(function (l) { return { type: l.type, name: l.name || '', address: l.address || '' }; });
+        }
+        // Nothing known yet: one empty row, the venue first (never asked again once known).
+        if (!locs.length) locs = [{ type: (known && known.venueKnown) ? 'ceremony' : 'reception', name: '', address: '' }];
       }
       buildSelects(); renderLocRows();
       sel = copy(r.owned);
@@ -1622,6 +1735,7 @@ p { margin-bottom: 0.6em; }
       $('builder-wrap').style.display = '';
       sizeTier();
       relabel(); refreshQuote();
+      });
     }).catch(function () { message('Connection error', 'We could not reach our servers. Check your connection and try again.'); });
   }
 
