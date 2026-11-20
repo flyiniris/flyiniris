@@ -75,10 +75,10 @@
       --accent: #FFBD1D;
       --accent-light: #FFF0C9;
       --accent-dark: #D99E0A;
-      --border: #2A2A28;
+      --border: #2a2a2a;
       --surface-input: #0f0f0f;
       --border-input: #1a1a1a;
-      --surface-gold-tint: #1a1700;
+      --surface-gold-tint: rgba(245, 245, 245, 0.07);
       --text-placeholder: #6B6B6B;
       --error: #e74c3c;
       --font-display: 'Cormorant Garamond', serif;
@@ -233,7 +233,7 @@
     }
     .cal-day:hover:not(:disabled), .cal-day:focus-visible:not(:disabled) { border-color: var(--accent); }
     .cal-day.selected { color: var(--bg-primary); background: var(--accent); border: none; font-weight: 600; }
-    .cal-day:disabled { color: #3a3a38; cursor: not-allowed; border-color: transparent; }
+    .cal-day:disabled { color: #3a3a3a; cursor: not-allowed; border-color: transparent; }
     .cal-blank { aspect-ratio: 1 / 1; }
     .cal-hint { font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8E8E8E; }
 
@@ -414,7 +414,7 @@
       background: transparent; color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer;
       text-align: center; transition: all .25s ease;
     }
-    .cta-outline:hover, .cta-outline:focus-visible { background: rgba(255,189,29,0.1); color: var(--accent-light); border-color: var(--accent-light); }
+    .cta-outline:hover, .cta-outline:focus-visible { background: rgba(245, 245, 245, 0.07); color: var(--accent-light); border-color: var(--accent-light); }
 
     .date-card {
       margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid var(--border);

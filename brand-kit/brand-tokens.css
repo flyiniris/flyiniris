@@ -22,12 +22,12 @@
   --accent: #FFBD1D;
   --accent-light: #FFF0C9;
   --accent-dark: #D99E0A;
-  --border: #2A2A28;
+  --border: #2a2a2a;
 
   /* Deep form surfaces (inquiry quiz) */
   --surface-input: #0f0f0f;
   --border-input: #1a1a1a;
-  --surface-gold-tint: #1a1700;
+  --surface-gold-tint: rgba(245, 245, 245, 0.07);
   --text-placeholder: #6B6B6B;
 
   /* Functional states */
@@ -151,7 +151,7 @@ p {
 }
 
 .btn-outline:hover {
-  background: rgba(255, 189, 29, 0.1);
+  background: rgba(245, 245, 245, 0.07);
   color: var(--accent-light);
   border-color: var(--accent-light);
 }

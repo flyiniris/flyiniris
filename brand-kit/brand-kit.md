@@ -26,7 +26,9 @@ Core palette (index.html `:root`, lines 192-202):
 | `--accent` | `#FFBD1D` | THE gold. Labels, links, icons, buttons, dividers |
 | `--accent-light` | `#FFF0C9` | Gold-tinted text inside gold boxes |
 | `--accent-dark` | `#D99E0A` | Button hover, price tags |
-| `--border` | `#2A2A28` | 1px borders, card outlines |
+| `--border` | `#2a2a2a` | 1px borders, card outlines |
+
+No brown (Sean 2026-11-19): never fill a background with translucent gold or a dark gold; on near-black it reads as brown. Selected and highlighted states use a neutral grey lift (`rgba(245, 245, 245, 0.04)`, or `0.07` for a stronger state) plus a gold border or gold text. Surfaces and greys are pure neutral. Canonical rule: iris-automation docs/knowledge/brand.md section 6.
 
 Deep-surface grays used by the inquiry form / quiz (index.html lines 1593-1722):
 
@@ -34,14 +36,14 @@ Deep-surface grays used by the inquiry form / quiz (index.html lines 1593-1722):
 |---|---|
 | `#0f0f0f` | Form input and option backgrounds |
 | `#1a1a1a` | Input borders (2px), progress track, disabled button |
-| `#1a1700` | Gold-tinted background for selected options and gold boxes |
+| `rgba(245, 245, 245, 0.07)` | Neutral lift for selected options and gold boxes (`--surface-gold-tint`, kept by name). Gold stays on the border and text only |
 | `#151515` / `#1f1f1f` | Film match card background / its border |
 | `#333` | Option hover border, checkbox border |
 | `#6B6B6B` | Placeholders, faint hints |
 | `#8E8E8E` | Step counters, tiny notes |
 | `#A8A29A` | Option descriptions |
 | `#C4BFB6` | Intro chips |
-| `#1a1815` | Hero fallback gradient midpoint (`linear-gradient(135deg, #0A0A0A 0%, #1a1815 50%, #0A0A0A 100%)`) |
+| `#181818` | Hero fallback gradient midpoint (`linear-gradient(135deg, #0A0A0A 0%, #181818 50%, #0A0A0A 100%)`) |
 
 Gold at low alpha (the only tints in use, all `rgba(255, 189, 29, x)`): 0.07 price-tag bg, 0.08 icon circles and hover fills, 0.1 outline-button hover fill, 0.13 gold left-border rules, 0.15 card hover glow, 0.2 gold-box borders, 0.25 package-box border, 0.3 sound-toggle border.
 
@@ -110,7 +112,7 @@ Hover and focus: `background-color: var(--accent-dark)` (gold darkens, text stay
 
 Small nav button (quiz next): padding `10px 22px`, radius 6px, `0.75rem` weight 700; disabled state `#1a1a1a` bg with `#6B6B6B` text.
 
-Outline button `.btn-outline` (thanks.html lines 282-295): transparent bg, `2px solid var(--accent)`, gold text, weight 600 `0.875rem`, padding `12px 30px`, radius 8px; hover fills `rgba(255, 189, 29, 0.1)` and shifts text and border to `--accent-light`.
+Outline button `.btn-outline` (thanks.html lines 282-295): transparent bg, `2px solid var(--accent)`, gold text, weight 600 `0.875rem`, padding `12px 30px`, radius 8px; hover fills a neutral lift `rgba(245, 245, 245, 0.07)` and shifts text and border to `--accent-light`.
 
 Text link `.text-link` (index.html lines 791-815): Outfit 400 `0.95rem`, gold, no underline at rest; a 1px gold underline animates from `width: 0` to `100%` on hover (the signature gold underline).
 
@@ -120,7 +122,7 @@ Text link `.text-link` (index.html lines 791-815): Outfit 400 `0.95rem`, gold, n
 - Labels: Outfit 600, `0.75rem`, `--text-secondary`, `letter-spacing: 0.5px`, 5px below-gap.
 - Checkboxes: 20px square, radius 4px, `2px solid #333`; checked fills solid gold with a near-black check.
 - Date inputs: `color-scheme: dark; accent-color: #ffbd1d;` with a gold-filtered calendar icon.
-- Option cards (quiz): radius 10px, `2px solid #1a1a1a` on `#0f0f0f`; hover border `#333`; selected border gold on `#1a1700` with the label turning gold.
+- Option cards (quiz): radius 10px, `2px solid #1a1a1a` on `#0f0f0f`; hover border `#333`; selected border gold on the neutral lift `rgba(245, 245, 245, 0.07)` with the label turning gold.
 
 ## Spacing rhythm and layout
 

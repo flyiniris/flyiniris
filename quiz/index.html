@@ -73,7 +73,7 @@
       --accent: #FFBD1D;
       --accent-dark: #D99E0A;
       --accent-light: #FFF0C9;
-      --border: #2A2A28;
+      --border: #2a2a2a;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -412,7 +412,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255, 189, 29, 0.06), transparent);
+      background: linear-gradient(135deg, rgba(245, 245, 245, 0.04), transparent);
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -426,7 +426,7 @@
 
     .option-btn.selected {
       border-color: var(--accent);
-      background: rgba(255, 189, 29, 0.08);
+      background: rgba(245, 245, 245, 0.04);
     }
 
     .option-btn.selected::before { opacity: 1; }
@@ -674,7 +674,7 @@
     .btn-submit:active { transform: translateY(0); }
 
     .btn-submit.submitted {
-      background: rgba(255, 189, 29, 0.15);
+      background: rgba(245, 245, 245, 0.07);
       color: var(--accent);
       cursor: default;
     }
@@ -700,7 +700,7 @@
       font-size: 0.85rem;
       line-height: 1.5;
       color: #FFBD1D;
-      background: rgba(255, 189, 29, 0.08);
+      background: rgba(245, 245, 245, 0.04);
       border: 1px solid rgba(255, 189, 29, 0.35);
       border-radius: 8px;
       padding: 12px 14px;
@@ -1593,7 +1593,7 @@ function showShareOverlay() {
     <div style="
       width: 100%; max-width: 360px;
       background: #0A0A0A;
-      border: 1px solid #2A2A28;
+      border: 1px solid #2a2a2a;
       border-radius: 24px;
       padding: 48px 32px;
       text-align: center;

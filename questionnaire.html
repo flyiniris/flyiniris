@@ -18,13 +18,13 @@
       --gold: #FFBD1D;
       --gold-soft: rgba(255,189,29,0.10);
       --gold-glow: rgba(255,189,29,0.25);
-      --autofill-bg: #2A2410;
+      --autofill-bg: rgba(245, 245, 245, 0.07);
       --autofill-border: rgba(255,189,29,0.55);
       --confirmed-bg: rgba(50,200,120,0.08);
       --confirmed-border: rgba(80,210,140,0.45);
       --edited-bg: rgba(120,180,255,0.06);
       --edited-border: rgba(120,180,255,0.4);
-      --lowconf-bg: #2A1A10;
+      --lowconf-bg: rgba(245, 245, 245, 0.07);
       --lowconf-border: rgba(255,140,80,0.55);
       --error: #ff7a7a;
       --text: #F5F0EB;
@@ -84,7 +84,7 @@
 
     /* ---- Progress Bar ---- */
     .progress-wrap {
-      background: rgba(255,189,29,0.08);
+      background: rgba(245, 245, 245, 0.04);
       height: 4px;
       width: 100%;
     }
@@ -134,7 +134,7 @@
       font-size: 14px;
       color: var(--dim);
       line-height: 1.65;
-      background: rgba(255,189,29,0.05);
+      background: rgba(245, 245, 245, 0.04);
       border-left: 2px solid var(--gold);
       padding: 14px 16px;
       border-radius: 4px;
@@ -182,7 +182,7 @@
     }
     .field-badge.show { display: inline-block; }
     .badge-autofilled {
-      background: var(--gold-soft);
+      background: rgba(245, 245, 245, 0.07);
       color: var(--gold);
       border: 1px solid var(--autofill-border);
     }
@@ -312,7 +312,7 @@
     }
     .yn-btn:hover { border-color: var(--gold); }
     .yn-btn.active {
-      background: rgba(255,189,29,0.12);
+      background: rgba(245, 245, 245, 0.07);
       border-color: var(--gold);
       color: var(--gold);
     }
@@ -362,7 +362,7 @@
     }
     .radio-card input[type="radio"]:checked + .radio-card-label {
       border-color: var(--gold);
-      background: rgba(255,189,29,0.06);
+      background: rgba(245, 245, 245, 0.04);
     }
     .radio-card input[type="radio"]:checked + .radio-card-label::before {
       background: var(--gold);
@@ -407,7 +407,7 @@
     }
     .checkbox-card input[type="checkbox"]:checked + .checkbox-card-label {
       border-color: var(--gold);
-      background: rgba(255,189,29,0.06);
+      background: rgba(245, 245, 245, 0.04);
     }
     .checkbox-card input[type="checkbox"]:checked + .checkbox-card-label::before {
       background: var(--gold);
@@ -440,7 +440,7 @@
     .fl-opt-btn:hover { border-color: var(--gold); }
     .fl-opt-btn.active {
       border-color: var(--gold);
-      background: rgba(255,189,29,0.06);
+      background: rgba(245, 245, 245, 0.04);
     }
     .fl-opt-time {
       overflow: hidden;
@@ -537,7 +537,7 @@
       border: 1px solid var(--gold-glow);
       border-radius: var(--radius);
       padding: 24px;
-      background: rgba(255,189,29,0.03);
+      background: rgba(245, 245, 245, 0.04);
       margin-bottom: 24px;
     }
     .timeline-box-heading {
@@ -590,7 +590,7 @@
       width: 100%;
       transition: background 0.2s;
     }
-    .timeline-paste-toggle:hover { background: var(--gold-soft); }
+    .timeline-paste-toggle:hover { background: rgba(245, 245, 245, 0.07); }
     .timeline-paste-area {
       max-height: 0;
       overflow: hidden;
@@ -614,7 +614,7 @@
     }
     .timeline-status.show { display: block; }
     .timeline-status.info {
-      background: rgba(255,189,29,0.08);
+      background: rgba(245, 245, 245, 0.04);
       color: var(--gold);
     }
     .timeline-status.success {

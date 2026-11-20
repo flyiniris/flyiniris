@@ -314,13 +314,13 @@
 </style>
 </helmet>
 
-<div style="min-height: 100vh; background: linear-gradient(135deg, #0A0A0A 0%, #1a1815 50%, #0A0A0A 100%); display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 34px 16px 56px; font-family: 'Outfit', sans-serif;">
+<div style="min-height: 100vh; background: linear-gradient(135deg, #0A0A0A 0%, #181818 50%, #0A0A0A 100%); display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 34px 16px 56px; font-family: 'Outfit', sans-serif;">
 
   <!-- DIRECTOR CONTROLS -->
-  <div style="width: 100%; max-width: 402px; display: flex; flex-direction: column; gap: 13px; padding: 16px 18px; border: 1px solid #2A2A28; border-radius: 12px; background: #111110;">
+  <div style="width: 100%; max-width: 402px; display: flex; flex-direction: column; gap: 13px; padding: 16px 18px; border: 1px solid #2a2a2a; border-radius: 12px; background: #111110;">
     <div style="display: flex; align-items: center; justify-content: space-between;">
       <span style="font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 400; letter-spacing: 0.2em; color: #8E8E8E; text-transform: uppercase;">Prototype controls</span>
-      <button onclick="{{ restart }}" style="background: none; border: 1px solid #2A2A28; border-radius: 8px; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 11px; padding: 5px 12px; cursor: pointer;" style-hover="border-color: #FFBD1D; color: #FFBD1D;">Restart</button>
+      <button onclick="{{ restart }}" style="background: none; border: 1px solid #2a2a2a; border-radius: 8px; color: #C8C3B9; font-family: 'Outfit', sans-serif; font-size: 11px; padding: 5px 12px; cursor: pointer;" style-hover="border-color: #FFBD1D; color: #FFBD1D;">Restart</button>
     </div>
     <div style="display: flex; flex-direction: column; gap: 7px;">
       <span style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #8E8E8E;">Welcome layout</span>
@@ -394,7 +394,7 @@
             <div style="display: flex; flex-direction: column;">
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 22px;">
                 <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Flyin' Iris</span>
-                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2A2A28; border-radius: 4px; padding: 2px 6px;">1a</span>
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2a2a2a; border-radius: 4px; padding: 2px 6px;">1a</span>
               </div>
               <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 46px; line-height: 1.12; letter-spacing: 0.005em; margin: 0; color: #F5F0EB;">Start with your <span style="font-style: italic; color: #FFBD1D;">date.</span></h1>
               <p style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 20px 0 0;">Answer a few quick questions and we'll send your pricing, your availability, and the films that match your day.</p>
@@ -407,7 +407,7 @@
             <div style="display: flex; flex-direction: column;">
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
                 <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Flyin' Iris</span>
-                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2A2A28; border-radius: 4px; padding: 2px 6px;">1b</span>
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E; border: 1px solid #2a2a2a; border-radius: 4px; padding: 2px 6px;">1b</span>
               </div>
               <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.12; margin: 0; color: #F5F0EB;">Start with your <span style="font-style: italic; color: #FFBD1D;">date.</span></h1>
               <p style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 14px 0 0;">Pick the day and we'll check it live, then send your pricing and the films that match.</p>
@@ -430,7 +430,7 @@
               </div>
 
               <sc-if value="{{ checking }}">
-                <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: #1a1700; border: 1px solid rgba(255,189,29,0.2);">
+                <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: rgba(245, 245, 245, 0.07); border: 1px solid rgba(255,189,29,0.2);">
                   <div style="display: flex; gap: 5px;">
                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out infinite;"></span>
                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .18s infinite;"></span>
@@ -469,7 +469,7 @@
           </div>
 
           <sc-if value="{{ checking }}">
-            <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: #1a1700; border: 1px solid rgba(255,189,29,0.2);">
+            <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-radius: 10px; background: rgba(245, 245, 245, 0.07); border: 1px solid rgba(255,189,29,0.2);">
               <div style="display: flex; gap: 5px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out infinite;"></span>
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; animation: dot 1.1s ease-in-out .18s infinite;"></span>
@@ -510,7 +510,7 @@
           <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.18; margin: 0; color: #F5F0EB;">We are already with a couple that day.</h1>
           <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">{{ heldLine }} Your day is still in wonderful hands.</p>
 
-          <div style="margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: #1a1700;">
+          <div style="margin-top: 24px; padding: 22px; border-radius: 10px; border: 1px solid rgba(255,189,29,0.2); background: rgba(245, 245, 245, 0.07);">
             <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">The Team experience</span>
             <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 23px; line-height: 1.4; color: #FFF0C9; margin: 12px 0 0;">Our team, trained by us, shooting in our style, with Sierra &amp; Sean editing every frame.</p>
           </div>
@@ -528,7 +528,7 @@
           <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">Both of our crews are committed that day, so we are not able to take on your wedding. We would rather be straight with you than leave you waiting.</p>
 
           <sc-if value="{{ notWaitlisted }}">
-            <div style="margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid #2A2A28; background: #111110;">
+            <div style="margin-top: 24px; padding: 18px; border-radius: 10px; border: 1px solid #2a2a2a; background: #111110;">
               <span style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; color: #C8C3B9E6;">If a spot opens up</span>
               <input value="{{ email }}" oninput="{{ onEmail }}" placeholder="you@email.com" style="width: 100%; margin-top: 10px; padding: 13px 14px; background: #0f0f0f; border: 2px solid #1a1a1a; border-radius: 8px; color: #F5F0EB; font-family: 'Outfit', sans-serif; font-size: 16px;" style-focus="border-color: #FFBD1D;">
               <button onclick="{{ submitWaitlist }}" style="{{ waitlistCtaStyle }}" style-hover="{{ waitlistCtaHover }}">Tell me if anything opens up</button>
@@ -563,12 +563,12 @@
           <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; color: #F5F0EB;">Picking up where you left off.</h1>
           <p style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 300; line-height: 1.7; color: #C8C3B9E6; margin: 16px 0 0;">We saved your details. Here's the day you had in mind.</p>
 
-          <div style="margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid #2A2A28; background: #111110; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="margin-top: 24px; padding: 18px 20px; border-radius: 10px; border: 1px solid #2a2a2a; background: #111110; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
             <div style="display: flex; flex-direction: column; gap: 4px;">
               <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">Your date</span>
               <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB;">{{ savedDateLabel }}, 2026</span>
             </div>
-            <span style="width: 26px; height: 26px; border-radius: 50%; background: #1a1700; border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="width: 26px; height: 26px; border-radius: 50%; background: rgba(245, 245, 245, 0.07); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
               <svg width="12" height="10" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
             </span>
           </div>
@@ -611,7 +611,7 @@
                 <sc-if value="{{ card.done }}">
                   <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                     <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E8E8E;">Seen</span>
-                    <span style="width: 18px; height: 18px; border-radius: 50%; background: #1a1700; border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center;">
+                    <span style="width: 18px; height: 18px; border-radius: 50%; background: rgba(245, 245, 245, 0.07); border: 1px solid rgba(255,189,29,0.4); display: flex; align-items: center; justify-content: center;">
                       <svg width="9" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#FFBD1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </span>
                   </span>
@@ -636,7 +636,7 @@
           <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
             <sc-for list="{{ films }}" as="film" hint-placeholder-count="3">
               <div onclick="{{ film.onClick }}" style="display: flex; gap: 14px; align-items: center; padding: 10px; border: 2px solid #1a1a1a; border-radius: 10px; background: #0f0f0f; cursor: pointer; transition: border-color .2s ease;" style-hover="border-color: #333;">
-                <div style="position: relative; width: 96px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: radial-gradient(120% 120% at 35% 25%, #7a5636 0%, #43301f 55%, #1d150e 100%);">
+                <div style="position: relative; width: 96px; height: 72px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: radial-gradient(120% 120% at 35% 25%, #3a3a3a 0%, #1f1f1f 55%, #121212 100%);">
                   <video data-film="{{ film.dataFilm }}" src="{{ film.src }}" playsinline="" loop="" preload="metadata" style="{{ film.videoStyle }}"></video>
                   <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);"></div>
                   <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
@@ -685,7 +685,7 @@
           <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D; margin-bottom: 12px;">Say hello</span>
           <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.18; margin: 0 0 20px; color: #F5F0EB;">The two of us, in a minute.</h1>
 
-          <div onclick="{{ toggleMeet }}" style="position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; cursor: pointer; background: radial-gradient(120% 120% at 38% 26%, #8a6238 0%, #4a3421 52%, #1d150e 100%); border: 1px solid #2A2A28;">
+          <div onclick="{{ toggleMeet }}" style="position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; cursor: pointer; background: radial-gradient(120% 120% at 38% 26%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%); border: 1px solid #2a2a2a;">
             <svg width="100%" height="100%" viewBox="0 0 100 75" preserveAspectRatio="xMidYMax meet" fill="none" style="position: absolute; inset: 0;">
               <circle cx="37" cy="34" r="15" fill="#c39f6d"></circle>
               <path d="M8 75 C8 55 22 46 37 46 C52 46 66 55 66 75 Z" fill="#c39f6d"></path>
@@ -890,10 +890,10 @@
             <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Your availability, confirmed</span></div>
           </div>
 
-          <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2A2A28; background: #111110;">
+          <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2a2a2a; background: #111110;">
             <p style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB; margin: 0;">Want to talk it through?</p>
             <p style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 8px 0 16px;">Booking an intro call holds your date for 7 days while you decide.</p>
-            <button onclick="{{ restart }}" style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .25s ease;" style-hover="background: rgba(255,189,29,0.1); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
+            <button onclick="{{ restart }}" style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .25s ease;" style-hover="background: rgba(245, 245, 245, 0.07); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
           </div>
         </div>
       </sc-if>
@@ -945,7 +945,7 @@
     <!-- DESKTOP 01 WELCOME -->
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">01 Welcome</span>
-      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2a2a2a; background: #0A0A0A; overflow: hidden; position: relative;">
         <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
         <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
           <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
@@ -956,7 +956,7 @@
               <button style="align-self: flex-start; padding: 15px 40px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 32px;" style-hover="background: #D99E0A;">Check availability</button>
             </div>
             <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
-              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%); border: 2px solid rgba(255,189,29,0.3);">
                 <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
                 <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
                 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
@@ -971,7 +971,7 @@
     <!-- DESKTOP 02 MODULE -->
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">02 Module (What makes us different)</span>
-      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2a2a2a; background: #0A0A0A; overflow: hidden; position: relative;">
         <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
         <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
           <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
@@ -996,7 +996,7 @@
               <button style="width: 100%; padding: 16px; border-radius: 8px; border: none; background: #FFBD1D; color: #0A0A0A; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; margin-top: 22px;" style-hover="background: #D99E0A;">Get my pricing</button>
             </div>
             <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
-              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%); border: 2px solid rgba(255,189,29,0.3);">
                 <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
                 <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
                 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
@@ -1011,7 +1011,7 @@
     <!-- DESKTOP 03 MICRO-CAPTURE -->
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">03 Micro-capture</span>
-      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+      <div style="width: 100%; height: 620px; border-radius: 14px; border: 1px solid #2a2a2a; background: #0A0A0A; overflow: hidden; position: relative;">
         <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
         <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
           <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
@@ -1029,7 +1029,7 @@
               <p style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 300; text-align: center; color: #8E8E8E; margin: 14px 0 0;">Takes about a minute. We promise.</p>
             </div>
             <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
-              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%); border: 2px solid rgba(255,189,29,0.3);">
                 <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
                 <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
                 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
@@ -1044,7 +1044,7 @@
     <!-- DESKTOP 04 CONFIRM -->
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8E8E;">04 Confirm</span>
-      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2A2A28; background: #0A0A0A; overflow: hidden; position: relative;">
+      <div style="width: 100%; height: 660px; border-radius: 14px; border: 1px solid #2a2a2a; background: #0A0A0A; overflow: hidden; position: relative;">
         <div style="position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
         <div style="position: absolute; inset: 0; display: flex; justify-content: center;">
           <div style="position: relative; width: 480px; max-width: 100%; height: 100%;">
@@ -1058,14 +1058,14 @@
                 <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Films matched to your chosen feeling</span></div>
                 <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300; color: #F5F0EB;">Your availability, confirmed</span></div>
               </div>
-              <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2A2A28; background: #111110;">
+              <div style="margin-top: 24px; padding: 20px; border-radius: 12px; border: 1px solid #2a2a2a; background: #111110;">
                 <p style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; color: #F5F0EB; margin: 0;">Want to talk it through?</p>
                 <p style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 300; line-height: 1.6; color: #C8C3B9E6; margin: 8px 0 16px;">Booking an intro call holds your date for 7 days while you decide.</p>
-                <button style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: rgba(255,189,29,0.1); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
+                <button style="width: 100%; padding: 13px; border-radius: 8px; border: 2px solid #FFBD1D; background: transparent; color: #FFBD1D; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: rgba(245, 245, 245, 0.07); color: #FFF0C9; border-color: #FFF0C9;">Book an intro call</button>
               </div>
             </div>
             <div style="position: absolute; left: 12px; bottom: 30px; display: flex; align-items: center; gap: 10px;">
-              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%); border: 2px solid rgba(255,189,29,0.3);">
+              <div style="position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 32% 24%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%); border: 2px solid rgba(255,189,29,0.3);">
                 <svg width="64" height="64" viewBox="0 0 74 74" fill="none" style="position: absolute; inset: 0;"><circle cx="27" cy="35" r="12" fill="#c39f6d"></circle><path d="M5 74 C5 57 16 49 27 49 C38 49 49 57 49 74 Z" fill="#c39f6d"></path><circle cx="50" cy="31" r="12.5" fill="#e2c79c"></circle><path d="M28 74 C28 55 39 47 50 47 C61 47 72 55 72 74 Z" fill="#e2c79c"></path></svg>
                 <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
                 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;"><span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(10,10,10,0.42); display: flex; align-items: center; justify-content: center;"><svg width="7" height="8" viewBox="0 0 8 9"><path d="M0.5 0.5 L7.5 4.5 L0.5 8.5 Z" fill="#F5F0EB"></path></svg></span></div>
@@ -1081,7 +1081,7 @@
   <!-- ================= REDUCED MOTION NOTE ================= -->
   <div style="width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
     <span style="font-family: 'Outfit', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #FFBD1D;">Reduced motion</span>
-    <div style="border: 1px dashed #2A2A28; border-radius: 14px; background: #0f0f0f; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="border: 1px dashed #2a2a2a; border-radius: 14px; background: #0f0f0f; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
       <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 22px; line-height: 1.4; color: #F5F0EB; margin: 0;">With prefers-reduced-motion, the experience holds still without losing meaning.</p>
       <div style="display: flex; flex-direction: column; gap: 12px;">
         <div style="display: flex; gap: 12px; align-items: flex-start;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #FFBD1D; flex-shrink: 0; margin-top: 7px;"></span><span style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: #C8C3B9E6;"><span style="color: #F5F0EB;">Film grain</span> renders as a static texture. The 8s shuffle stops.</span></div>
@@ -1199,7 +1199,7 @@ class Component extends DCLogic {
     return {
       padding: "14px", borderRadius: "10px",
       border: "2px solid " + (sel ? "#FFBD1D" : "#1a1a1a"),
-      background: sel ? "#1a1700" : "#0f0f0f",
+      background: sel ? "rgba(245, 245, 245, 0.07)" : "#0f0f0f",
       color: sel ? "#FFBD1D" : "#F5F0EB",
       fontFamily: "'Outfit', sans-serif", fontSize: "13.5px", fontWeight: sel ? "500" : "400", cursor: "pointer",
       textAlign: "left", transition: "all .2s ease", display: "flex", alignItems: "center",
@@ -1212,8 +1212,8 @@ class Component extends DCLogic {
   segStyle(active) {
     return {
       flex: 1, padding: "8px 10px", borderRadius: "8px",
-      border: "1px solid " + (active ? "#FFBD1D" : "#2A2A28"),
-      background: active ? "#1a1700" : "transparent",
+      border: "1px solid " + (active ? "#FFBD1D" : "#2a2a2a"),
+      background: active ? "rgba(245, 245, 245, 0.07)" : "transparent",
       color: active ? "#FFBD1D" : "#C8C3B9",
       fontFamily: "'Outfit', sans-serif", fontSize: "12px", fontWeight: "500", cursor: "pointer", transition: "all .15s ease",
     };
@@ -1237,13 +1237,13 @@ class Component extends DCLogic {
     return {
       position: "relative", width: "74px", height: "74px", borderRadius: "50%", overflow: "hidden",
       display: "flex", alignItems: "center", justifyContent: "center",
-      background: "radial-gradient(120% 120% at 32% 24%, #7a5636 0%, #43301f 52%, #1d150e 100%)",
+      background: "radial-gradient(120% 120% at 32% 24%, #3a3a3a 0%, #1f1f1f 52%, #121212 100%)",
       border: "2px solid " + (on ? "#FFBD1D" : "rgba(255,189,29,0.3)"),
     };
   }
 
   routerCardStyle(done) {
-    return { width: "100%", padding: "18px 16px", borderRadius: "10px", border: "2px solid " + (done ? "#2A2A28" : "#1a1a1a"), background: "#0f0f0f", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", textAlign: "left", opacity: done ? 0.72 : 1, transition: "all .2s ease" };
+    return { width: "100%", padding: "18px 16px", borderRadius: "10px", border: "2px solid " + (done ? "#2a2a2a" : "#1a1a1a"), background: "#0f0f0f", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", textAlign: "left", opacity: done ? 0.72 : 1, transition: "all .2s ease" };
   }
 
   renderVals() {
