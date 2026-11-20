@@ -332,6 +332,43 @@
       margin-bottom: 32px;
       animation: fadeUp 0.8s ease 0.3s both;
     }
+    /* Itemized package breakdown (board #1234). The bd-* block below is a
+       verbatim copy of BREAKDOWN_CSS in iris-automation
+       src/lib/package-breakdown.ts; the HTML comes from the API
+       (contract.breakdownHtml). Keep the two identical. */
+    .bd { text-align: left; }
+    .bd-section { border-top: 1px solid var(--border, rgba(245,245,245,0.12)); padding: 18px 0 4px; }
+    .bd-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #FFBD1D); margin-bottom: 8px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 10px 0; }
+    .bd-row + .bd-row { border-top: 1px solid rgba(245, 245, 245, 0.06); }
+    .bd-name { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-weight: 400; }
+    .bd-price { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bd-sub { font-size: 0.86rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; line-height: 1.5; }
+    .bd-was { text-decoration: line-through; color: var(--text-muted, rgba(245,245,245,0.55)); margin-right: 6px; }
+    .bd-now { color: var(--accent, #FFBD1D); }
+    .bd-frame { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: var(--accent, #FFBD1D); color: #0A0A0A; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; vertical-align: 2px; }
+    .bd-counts { display: block; font-size: 0.75rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; letter-spacing: 0.02em; }
+    .bd-muted { color: var(--text-muted, rgba(245,245,245,0.55)); font-size: 0.9rem; }
+    .bd-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; color: var(--text-primary, #F5F5F5); margin: 2px 0 14px; }
+    .bd-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-step { border: 1px solid var(--border, rgba(245,245,245,0.12)); border-radius: 8px; padding: 10px 6px 9px; text-align: center; }
+    .bd-step.you { border: 2px solid var(--accent, #FFBD1D); padding: 9px 5px 8px; }
+    .bd-step-pct { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.45rem; line-height: 1.1; color: var(--text-primary, #F5F5F5); }
+    .bd-step.you .bd-step-pct { color: var(--accent, #FFBD1D); }
+    .bd-step-lab { font-size: 0.72rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 2px; }
+    .bd-step.you .bd-step-lab { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-nudge { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary, rgba(245,245,245,0.75)); }
+    .bd-nudge strong { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-totals .bd-row { padding: 6px 0; border-top: 0; }
+    .bd-gold { color: var(--accent, #FFBD1D); }
+    .bd-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 14px; border-top: 2px solid var(--accent, #FFBD1D); }
+    .bd-total-row .label { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, rgba(245,245,245,0.55)); }
+    .bd-total-row .amount { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; font-weight: 700; color: var(--accent, #FFBD1D); }
+    .bd .lock-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #FFBD1D); vertical-align: 1px; }
+    .bd .lock-tag svg { width: 10px; height: 10px; }
+    @media (max-width: 700px) { .bd-total-row .amount { font-size: 1.9rem; } .bd-step-pct { font-size: 1.25rem; } }
+    .package-section .bd > .bd-section:first-child { border-top: 0; padding-top: 4px; }
+
     .upgrade-cta { border: 2px solid var(--accent); }
     .upgrade-cta-text { color: var(--text-secondary); font-size: 15px; margin: 8px 0 20px; line-height: 1.6; }
     .upgrade-cta-btn {
@@ -922,10 +959,19 @@
 
     </div>
 
+    <!-- Itemized package breakdown (board #1234). Filled from
+         contract.breakdownHtml; stays hidden when the API sends none (the
+         contract card then shows the plain summary). -->
+    <div class="payments-section package-section" id="package-section" style="display: none;">
+      <div class="section-title">Your Package</div>
+      <h3 class="section-heading">Everything in your package</h3>
+      <div id="package-breakdown"></div>
+    </div>
+
     <!-- Upgrade entry (board #1230). Shown for a signed agreement before the
          wedding day; opens the upgrade calculator for this couple. -->
     <div class="payments-section upgrade-cta" id="upgrade-cta" style="display: none;">
-      <div class="section-title">Your Package</div>
+      <div class="section-title">Upgrades</div>
       <h3 class="section-heading">Has your day grown?</h3>
       <p class="upgrade-cta-text">Add coverage hours, a longer highlight film, a teaser, a Story Session and more. Everything you already have stays locked in, and you will see exactly what each upgrade adds before you ask for it.</p>
       <a class="upgrade-cta-btn" id="upgrade-cta-link" href="/upgrade">Upgrade your package</a>
@@ -1190,6 +1236,21 @@
     // when zero or null. Qualifier carries up to two pieces inside one
     // parenthetical (percent qualifier, expiry text) matching the agreement
     // shell render.
+    //
+    // Board #1234: when the API sends the shared itemized breakdown
+    // (contract.breakdownHtml, the engine's numbers, proven equal to the
+    // contract total), it renders as its own Your Package section and the
+    // card keeps only the total. The plain summary below is the fallback.
+    const packageSection = document.getElementById('package-section');
+    if (contract.breakdownHtml && packageSection) {
+      document.getElementById('package-breakdown').innerHTML = contract.breakdownHtml;
+      packageSection.style.display = '';
+      if (breakdownEl && contract.total != null) {
+        breakdownEl.innerHTML = `<div class="breakdown-row breakdown-total"><span>Total</span><span>${formatCurrency(Number(contract.total) || 0)}</span></div>`;
+        breakdownEl.style.display = 'block';
+      }
+      return;
+    }
     if (breakdownEl && contract.total != null && contract.subtotal != null) {
       const subtotal = Number(contract.subtotal) || 0;
       const discount = Number(contract.discount) || 0;
@@ -1607,9 +1668,11 @@
     return div.innerHTML;
   }
 
+  // Negatives print "-$1,000.00", never "$-1,000.00" (board #1234).
   function formatCurrency(amount) {
     if (amount == null || isNaN(amount)) return '$0.00';
-    return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const n = Number(amount);
+    return (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function titleCase(s) {
