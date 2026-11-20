@@ -2609,6 +2609,26 @@
    * Turnstile post already work here. The submit sends mode=quickstart so the
    * Worker does not mark the full planning questionnaire complete.
    * ============================================================ */
+  // Quickstart thank-you (Sean 2026-11-19). The shared success screen is
+  // written for the full questionnaire ("schedule your consultation call,
+  // block out 60 minutes"), which is wrong after four quick answers, and a
+  // couple (Caitlynn) emailed to ask whether hers went through. Same layout,
+  // quickstart words, no call button. The Worker also emails a "got it" note.
+  function showQuickstartSuccess() {
+    var wrap = document.querySelector('#step-7 .success-wrap');
+    if (!wrap) return;
+    var title = wrap.querySelector('.success-title');
+    var body = wrap.querySelector('.success-body');
+    var cta = wrap.querySelector('.success-cta');
+    var sign = wrap.querySelector('.success-sign');
+    if (title) title.textContent = "Got it! You're all set.";
+    if (body) body.textContent = "Your answers came through, and we just emailed you a quick confirmation. "
+      + "There's nothing else to do for now. About six weeks before your wedding we'll send your full planning questionnaire, "
+      + "already filled in with these answers.";
+    if (cta) cta.style.display = 'none';
+    if (sign) sign.textContent = 'Talk soon,';
+  }
+
   function applyQuickstart() {
     if (!IS_QUICKSTART) return;
     // HIDE, never REMOVE. Two rounds of bugs came from deleting steps: init
@@ -3069,7 +3089,10 @@
       return r.json().catch(function () { return {}; });
     }).then(function () {
       try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-      if (IS_QUICKSTART) quickstartStep.classList.remove('active');
+      if (IS_QUICKSTART) {
+        quickstartStep.classList.remove('active');
+        showQuickstartSuccess();
+      }
       goToStep(7);
     }).catch(function () {
       // Same button reference as above: quickstart uses its own, and its label
