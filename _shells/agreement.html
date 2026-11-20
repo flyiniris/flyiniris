@@ -824,6 +824,43 @@
       color: var(--accent);
     }
 
+
+    /* Itemized package breakdown (bd-*). Copied verbatim from BREAKDOWN_CSS in
+       iris-automation src/lib/package-breakdown.ts (the approved upgrade page
+       look); the Worker sends the markup as breakdown_html. */
+    .bd { text-align: left; }
+    .bd-section { border-top: 1px solid var(--border, rgba(245,245,245,0.12)); padding: 18px 0 4px; }
+    .bd-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #FFBD1D); margin-bottom: 8px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 10px 0; }
+    .bd-row + .bd-row { border-top: 1px solid rgba(245, 245, 245, 0.06); }
+    .bd-name { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-weight: 400; }
+    .bd-price { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bd-sub { font-size: 0.86rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; line-height: 1.5; }
+    .bd-was { text-decoration: line-through; color: var(--text-muted, rgba(245,245,245,0.55)); margin-right: 6px; }
+    .bd-now { color: var(--accent, #FFBD1D); }
+    .bd-frame { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: var(--accent, #FFBD1D); color: #0A0A0A; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; vertical-align: 2px; }
+    .bd-counts { display: block; font-size: 0.75rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; letter-spacing: 0.02em; }
+    .bd-muted { color: var(--text-muted, rgba(245,245,245,0.55)); font-size: 0.9rem; }
+    .bd-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; color: var(--text-primary, #F5F5F5); margin: 2px 0 14px; }
+    .bd-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-step { border: 1px solid var(--border, rgba(245,245,245,0.12)); border-radius: 8px; padding: 10px 6px 9px; text-align: center; }
+    .bd-step.you { border: 2px solid var(--accent, #FFBD1D); padding: 9px 5px 8px; }
+    .bd-step-pct { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.45rem; line-height: 1.1; color: var(--text-primary, #F5F5F5); }
+    .bd-step.you .bd-step-pct { color: var(--accent, #FFBD1D); }
+    .bd-step-lab { font-size: 0.72rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 2px; }
+    .bd-step.you .bd-step-lab { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-nudge { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary, rgba(245,245,245,0.75)); }
+    .bd-nudge strong { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-totals .bd-row { padding: 6px 0; border-top: 0; }
+    .bd-gold { color: var(--accent, #FFBD1D); }
+    .bd-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 14px; border-top: 2px solid var(--accent, #FFBD1D); }
+    .bd-total-row .label { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, rgba(245,245,245,0.55)); }
+    .bd-total-row .amount { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; font-weight: 700; color: var(--accent, #FFBD1D); }
+    .bd .lock-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #FFBD1D); vertical-align: 1px; }
+    .bd .lock-tag svg { width: 10px; height: 10px; }
+    @media (max-width: 700px) { .bd-total-row .amount { font-size: 1.9rem; } .bd-step-pct { font-size: 1.25rem; } }
+    .package-details .bd-section:first-of-type { margin-top: 4px; }
+
     .footer-note {
       font-size: 12px;
       color: var(--text-muted);
@@ -1779,23 +1816,33 @@
     let html = '<div class="pd-tier">' + escapeHtml(tierLabel) + '</div>';
     html += '<div class="pd-crew">' + escapeHtml(crewLine) + '</div>';
 
+    // The itemized package breakdown (server-rendered by the Worker's shared
+    // builder, already escaped). The Worker only sends it when the pricing
+    // engine reproduces this contract's stored line items and total to the
+    // cent; without it the plain stored itemization below renders as before.
+    if (typeof data.breakdown_html === 'string' && data.breakdown_html) {
+      wrap.innerHTML = html + data.breakdown_html;
+      wrap.style.display = 'block';
+      return;
+    }
+
     items.forEach(li => {
       html += '<div class="pd-row">' +
         '<span class="pd-label">' + escapeHtml(li.name || '') + '</span>' +
-        '<span class="pd-amount">$' + fmtMoney(li.price || 0) + '</span>' +
+        '<span class="pd-amount">' + money(li.price || 0) + '</span>' +
       '</div>';
     });
 
     html += '<div class="pd-divider"></div>';
     html += '<div class="pd-summary-row">' +
       '<span class="pd-label">Subtotal</span>' +
-      '<span class="pd-amount">$' + fmtMoney(it.subtotal || 0) + '</span>' +
+      '<span class="pd-amount">' + money(it.subtotal || 0) + '</span>' +
     '</div>';
 
     if ((it.discount || 0) > 0) {
       html += '<div class="pd-summary-row discount">' +
         '<span class="pd-label">Bundle savings</span>' +
-        '<span class="pd-amount">-$' + fmtMoney(it.discount) + '</span>' +
+        '<span class="pd-amount">' + money(-it.discount) + '</span>' +
       '</div>';
     }
 
@@ -1819,18 +1866,18 @@
       const qualifier = parts.length ? ' (' + parts.join(', ') + ')' : '';
       html += '<div class="pd-summary-row discount">' +
         '<span class="pd-label">Custom S&amp;S discount' + qualifier + '</span>' +
-        '<span class="pd-amount">-$' + fmtMoney(customDiscount) + '</span>' +
+        '<span class="pd-amount">' + money(-customDiscount) + '</span>' +
       '</div>';
     }
 
     html += '<div class="pd-summary-row">' +
       '<span class="pd-label">Sales tax (5.5%)</span>' +
-      '<span class="pd-amount">$' + fmtMoney(it.tax || 0) + '</span>' +
+      '<span class="pd-amount">' + money(it.tax || 0) + '</span>' +
     '</div>';
 
     html += '<div class="pd-total-row">' +
       '<span class="pd-label">Total</span>' +
-      '<span class="pd-amount">$' + fmtMoney(it.total || 0) + '</span>' +
+      '<span class="pd-amount">' + money(it.total || 0) + '</span>' +
     '</div>';
 
     wrap.innerHTML = html;
@@ -1841,6 +1888,13 @@
   function fmtMoney(n) {
     if (n == null || isNaN(n)) return '0.00';
     return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Signed dollars: "-$1,000.00", never "$-1,000.00" (a FOMO free-spot credit
+  // is stored as a negative line item).
+  function money(n) {
+    const v = Number(n) || 0;
+    return (v < 0 ? '-$' : '$') + fmtMoney(Math.abs(v));
   }
 
   // Format a Custom S&S discount expiry date as "May 28, 2026". Parse ISO by
