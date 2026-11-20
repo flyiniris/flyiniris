@@ -1216,7 +1216,9 @@ p { margin-bottom: 0.6em; }
     $('message-text').innerHTML = html;
     $('message-section').style.display = '';
   }
-  var HAND = 'Your package was put together by hand, so we will update it for you. Just reply to any of our emails, or write to us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>, and tell us what you want to add.';
+  // Kind, never an error (alerts chat 2026-11-20): some packages were priced
+  // before today's pricing or adjusted by hand, so we update them for the couple.
+  var HAND = 'We will update your package for you. Just reply to our email, or write to us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>, and tell us what you would like to add. We will send you the new total to approve.';
   var UNAVAILABLE = {
     not_signed: 'Your agreement is not signed yet, so there is nothing to upgrade here. Once it is signed, come back anytime.',
     wedding_passed: 'Your wedding day has passed, so your package is set. Want something extra for your films? Just write to us at <a href="mailto:sierra@flyiniris.com">sierra@flyiniris.com</a>.',
