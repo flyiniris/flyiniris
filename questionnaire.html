@@ -167,6 +167,29 @@
       font-style: italic;
     }
 
+    /* "Your package" card (Sean 2026-11-20): read-only, from the couple's
+       agreement as it stands today (upgrades included). Token links only. */
+    .pkg-card {
+      background: var(--autofill-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 28px;
+    }
+    .pkg-card[hidden] { display: none; }
+    .pkg-card-title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .pkg-card ul { list-style: none; margin: 0 0 10px; padding: 0; }
+    .pkg-card li { padding: 2px 0; color: var(--text); }
+    .pkg-card li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin-right: 10px; vertical-align: middle; }
+    .pkg-card-note { font-size: 13px; color: var(--muted); margin: 0; }
+
     /* Badge for autofilled / confirmed / edited */
     .field-badge {
       position: absolute;
@@ -853,6 +876,13 @@
     <div class="step-eyebrow">Section 1 of 6</div>
     <h1 class="step-title">The Basics</h1>
     <p class="step-intro">Five quick ones to ground us. Around 2 minutes.</p>
+
+    <!-- Your package (read-only; filled from /api/questionnaire/:token package) -->
+    <div class="pkg-card" id="pkg-card" hidden>
+      <div class="pkg-card-title">Your package</div>
+      <ul id="pkg-card-lines"></ul>
+      <p class="pkg-card-note">This is what your agreement covers today. If anything looks off, add it to the topics for our call in the last section and we will sort it out together.</p>
+    </div>
 
     <!-- Q1 wedding_date -->
     <div class="field" data-field="wedding_date" data-state="user_entered" data-required="true">
@@ -2085,6 +2115,21 @@
     if (!box) return '';
     var checked = box.querySelectorAll('input[type="checkbox"]:checked');
     return Array.prototype.map.call(checked, function (c) { return c.value; }).join(', ');
+  }
+
+  // Read-only "Your package" card: the couple's agreement as it stands today
+  // (upgrades included), so they confirm it instead of retyping it.
+  function renderPackageCard(pkg) {
+    var card = document.getElementById('pkg-card');
+    var list = document.getElementById('pkg-card-lines');
+    if (!card || !list || !pkg || !pkg.lines || !pkg.lines.length) return;
+    list.innerHTML = '';
+    pkg.lines.forEach(function (line) {
+      var li = document.createElement('li');
+      li.textContent = String(line);
+      list.appendChild(li);
+    });
+    card.hidden = false;
   }
 
   function writeFieldValue(name, value) {
@@ -3386,6 +3431,7 @@
         // /api/contact endpoint. Backfill contactId for the analytics POST, then
         // apply fields directly. Falls back to the chain only if an older Worker
         // build did not return customFields.
+        if (data && data.package) renderPackageCard(data.package);
         if (data && data.customFields) {
           if (data.firstName && !coupleName1) coupleName1 = String(data.firstName).trim();
           if (data.customFields.fiancs_first_name && !coupleName2) coupleName2 = String(data.customFields.fiancs_first_name).trim();
