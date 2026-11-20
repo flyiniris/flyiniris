@@ -38,8 +38,8 @@
   --accent-light: #FFF0C9;
   --danger: #B85450;
   --danger-dark: #8E3F3C;
-  --border: #2A2A28;
-  --border-strong: #3A3A38;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
   --transcript-tint: rgba(245, 245, 245, 0.04);
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -644,7 +644,7 @@ p { margin-bottom: 0.6em; }
   padding: 7px 15px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
 }
 .plan-pill:hover { border-color: rgba(255,189,29,0.5); }
-.plan-pill-active { border-color: var(--accent); background: rgba(245, 245, 245, 0.04); color: var(--accent); }
+.plan-pill-active { border-color: var(--accent); background: rgba(245, 245, 245, 0.07); color: var(--accent); }
 .plan-detail { font-size: 0.92rem; line-height: 1.55; color: var(--text-primary); }
 .plan-note { margin-top: 8px; font-size: 0.78rem; color: var(--text-muted); }
 /* Signed-agreement void confirmation dialog */
@@ -733,7 +733,7 @@ p { margin-bottom: 0.6em; }
   color: var(--text-muted);
 }
 .fomo-card {
-  background: linear-gradient(135deg, rgba(245, 245, 245, 0.04), var(--bg-card));
+  background: linear-gradient(135deg, rgba(245, 245, 245, 0.07), var(--bg-card));
   border: 1px solid var(--accent);
   border-radius: 12px;
   padding: 22px 24px;
@@ -921,6 +921,9 @@ p { margin-bottom: 0.6em; }
 .loc-row { display: grid; grid-template-columns: 200px 1fr 1fr 44px; gap: 10px; margin-bottom: 10px; align-items: center; }
 .loc-remove { height: 46px; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
 .loc-remove:hover { border-color: var(--accent); color: var(--accent); }
+.loc-add-link { background: none; border: 0; padding: 6px 0; margin-top: 2px; color: var(--accent); font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; }
+.loc-add-link:hover { color: var(--accent-light); text-decoration: underline; }
+.loc-add-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 /* Branded dropdown (Sean 2026-11-19: the browser's own option list is blue).
    A button that looks exactly like the box above, opening our own list:
    hover / keyboard highlight is SOLID gold with dark text, the chosen option
@@ -943,7 +946,7 @@ p { margin-bottom: 0.6em; }
 .owned-lock .dd-btn:focus-visible, .owned-lock .dd-btn[aria-expanded="true"] { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 2px rgba(255, 189, 29, 0.55); }
 .dd-list {
   position: absolute; z-index: 60; left: 0; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none;
-  background: #161615; border: 1px solid #3A3A38; border-radius: 8px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+  background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 8px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
   max-height: 320px; overflow-y: auto; text-align: left;
 }
 .dd-list:focus { outline: none; }
@@ -958,6 +961,26 @@ p { margin-bottom: 0.6em; }
 .dd-opt.active .dd-check, .dd-opt.active .lock-tag { color: #0A0A0A; }
 .dd-opt .lock-tag { margin-left: 0; }
 @media (max-width: 700px) { .dd-opt { min-height: 50px; } .loc-row .dd { grid-column: 1; grid-row: 1; } }
+
+/* Step 2 confirm (Sean 2026-11-19: couples add upgrades themselves). */
+.confirm-card { text-align: left; margin-bottom: 16px; border-color: var(--accent); }
+.confirm-card ul { list-style: none; padding: 0; margin: 6px 0 0; }
+.confirm-card li { color: var(--text-primary); padding: 4px 0; }
+.confirm-card li::before { content: '+ '; color: var(--accent); font-weight: 600; }
+.consent { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 14px; font-size: 0.98rem; color: var(--text-primary); cursor: pointer; line-height: 1.45; }
+.consent input { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; accent-color: #FFBD1D; }
+.confirm-card .btn { width: 100%; padding: 17px; font-size: 1.05rem; }
+/* Disabled buttons are NEUTRAL (Sean 2026-11-19: dimmed gold reads brown on
+   near-black). The /yours sheet dims with opacity; here a disabled button is a
+   flat grey with muted text. Enabled primary stays solid #FFBD1D, dark text. */
+.btn:disabled, .btn:disabled:hover {
+  opacity: 1; background: rgba(245, 245, 245, 0.06); color: rgba(245, 245, 245, 0.42);
+  border-color: rgba(245, 245, 245, 0.12); cursor: not-allowed;
+}
+.builder-toggles input[aria-disabled="true"] { cursor: default; }
+/* The hidden flag must win over .btn's own display (the button under an open
+   confirm step stayed visible). */
+#builder-wrap [hidden] { display: none !important; }
 
 /* Itemized breakdown (Sean approved 2026-11-19). Near-black and neutral
    greys; gold only for labels, outlines, tags and highlights; no fills. */
@@ -1000,6 +1023,7 @@ p { margin-bottom: 0.6em; }
   .loc-row .loc-remove { grid-column: 2; grid-row: 1; }
   .loc-row input[type=text] { grid-column: 1 / -1; }
   .builder-toggles label.owned-lock { align-self: flex-start; }
+  .builder-toggles { gap: 20px; }   /* room for two stacked gold outlines */
 }
   </style>
 </head>
@@ -1056,13 +1080,27 @@ p { margin-bottom: 0.6em; }
       <p class="muted" style="margin-bottom:6px;">Getting ready somewhere else, or a second spot for the ceremony or reception? List each place so we can plan your day around it. Adding a location never changes your total.</p>
       <div class="builder-card">
         <div id="loc-rows"></div>
-        <button type="button" class="btn btn-secondary" id="loc-add">Add a location</button>
+        <button type="button" class="loc-add-link" id="loc-add">+ Add another location</button>
       </div>
     </section>
 
     <div class="generate-row">
+      <div class="builder-card confirm-card" id="confirm" hidden>
+        <div class="bd-eyebrow">Confirm your upgrade</div>
+        <div id="confirm-adds"></div>
+        <div class="bd-section bd-totals" style="margin-top:12px;">
+          <div class="bd-row"><div><div class="bd-name bd-muted">Your package before today</div></div><div class="bd-price bd-muted" id="confirm-before"></div></div>
+          <div class="bd-row"><div><div class="bd-name bd-gold">Today&#39;s additions come to</div></div><div class="bd-price bd-gold" id="confirm-adds-amt"></div></div>
+          <div class="bd-total-row"><span class="label">Your new total</span><span class="amount" id="confirm-total"></span></div>
+        </div>
+        <label class="consent"><input type="checkbox" id="consent"> <span>I agree this updates my Flyin&#39; Iris agreement to the new total.</span></label>
+        <button class="btn btn-primary" id="confirm-btn" type="button" disabled>Confirm and pay</button>
+        <p class="generate-note" style="margin:10px 0 0;">You pay the difference securely with Stripe. Your other payments stay exactly as they are.</p>
+        <p style="text-align:center;margin:6px 0 0;"><button type="button" class="loc-add-link" id="confirm-back">Go back</button></p>
+      </div>
+      <div class="builder-card confirm-card" id="done" hidden></div>
       <button class="btn btn-secondary" id="request-btn" type="button" disabled>Pick an upgrade above</button>
-      <p class="generate-note" style="margin-top:12px;">Nothing is charged now. Sierra &amp; Sean look it over, then send you a link for just the difference.</p>
+      <p class="generate-note" id="request-note" style="margin-top:12px;">Nothing is charged now. Sierra &amp; Sean look it over, then send you a link for just the difference.</p>
       <p class="generate-note err-note" id="err" style="display:none;"></p>
     </div>
   </div>
@@ -1094,7 +1132,7 @@ p { margin-bottom: 0.6em; }
   var $ = function (id) { return document.getElementById(id); };
   var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   var data = null, sel = null, quoteTimer = null, quoteSeq = 0;
-  var locs = [], LOC_MAX = 8;
+  var locs = [], LOC_MAX = 5;   // Sean 2026-11-19: up to 5
 
   function fmt(n) {
     // Same as the /yours calculator's fmt$: cents only when there are cents.
@@ -1129,6 +1167,10 @@ p { margin-bottom: 0.6em; }
       }
       var body = JSON.parse(opts.body);
       var p = d.options.grid[key(body.selection)];
+      if (path === '/apply') {
+        var add = Math.round((p - d.options.currentTotal) * 100) / 100;
+        return { ok: true, newTotal: p, additions: add, owed: add, invoiceId: 'demo', payUrl: null };
+      }
       return { ok: true, request: { id: 'demo', selection: body.selection, locations: body.locations || [], quotedTotal: p, quotedDelta: Math.round((p - d.options.currentTotal) * 100) / 100, createdAt: new Date().toISOString() } };
     });
   }
@@ -1285,14 +1327,28 @@ p { margin-bottom: 0.6em; }
   else window.addEventListener('resize', sizeTier);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeTier);
 
+  function lockBox(el, locked) {
+    el.disabled = false;
+    if (locked) {
+      el.checked = true;
+      el.setAttribute('aria-disabled', 'true');
+      el.onclick = function (e) { e.preventDefault(); };
+    } else {
+      el.removeAttribute('aria-disabled');
+      el.onclick = null;
+    }
+  }
+
   // ---- builder ----
   function buildSelects() {
     var o = data.owned;
     $('u-tier').textContent = data.tierLabel;
     $('u-hours').innerHTML = data.hoursOptions.map(function (h) { return '<option value="' + esc(h) + '"' + (h === o.hours ? ' data-owned="1"' : '') + '></option>'; }).join('');
     $('u-highlight').innerHTML = data.highlightOptions.map(function (h) { return '<option value="' + esc(h) + '"' + (h === o.highlight ? ' data-owned="1"' : '') + '></option>'; }).join('');
-    $('u-teaser').disabled = o.teaser;
-    $('u-story').disabled = o.storySession;
+    // Owned films stay in the calculator's own checked look (solid gold tick)
+    // and are locked by code, not greyed out by the browser's disabled style.
+    lockBox($('u-teaser'), o.teaser);
+    lockBox($('u-story'), o.storySession);
     enhanceSelect($('u-hours')); enhanceSelect($('u-highlight'));
   }
 
@@ -1331,7 +1387,13 @@ p { margin-bottom: 0.6em; }
     if ($('bd-total') && cur != null) $('bd-total').textContent = fmt(cur);
     var hasLocs = filledLocs().length > 0, btn = $('request-btn');
     btn.disabled = (!changed && !hasLocs) || cur == null;
-    btn.textContent = changed ? 'Request this upgrade' : hasLocs ? 'Send our locations' : 'Pick an upgrade above';
+    var self = !!(data && data.canSelfServe);
+    btn.textContent = changed ? (self ? 'Add to my package' : 'Request this upgrade') : hasLocs ? 'Send our locations' : 'Pick an upgrade above';
+    $('request-note').textContent = changed && self
+      ? 'Next you will see your new total and confirm it. Then you pay just the difference.'
+      : 'Nothing is charged now. Sierra & Sean look it over, then send you a link for just the difference.';
+    // Picks changed after the confirm step opened: close it (its numbers are stale).
+    if (!$('confirm').hidden && confirmKey !== key(sel)) closeConfirm();
   }
 
   // The approved itemized breakdown. Every number comes from the Worker's
@@ -1426,7 +1488,7 @@ p { margin-bottom: 0.6em; }
         '<button type="button" class="loc-remove" data-rm="' + i + '" aria-label="Remove this location">&times;</button></div>';
     }).join('');
     $('loc-add').style.display = locs.length >= LOC_MAX ? 'none' : '';
-    $('loc-add').textContent = locs.length ? 'Add another location' : 'Add a location';
+    $('loc-add').textContent = locs.length ? '+ Add another location' : '+ Add a location';
     Array.prototype.forEach.call($('loc-rows').querySelectorAll('select[data-k="type"]'), enhanceSelect);
   }
   function nextLocType() {
@@ -1456,9 +1518,74 @@ p { margin-bottom: 0.6em; }
 
   // ---- send ----
   function showErr(t) { $('err').textContent = t; $('err').style.display = ''; }
+  // ---- step 2: the couple adds it themselves ----
+  var confirmKey = null, idemKey = null;
+  function newKey() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  }
+  function openConfirm() {
+    var cur = priceOf(sel); if (cur == null) return;
+    confirmKey = key(sel); idemKey = newKey();
+    var items = describe(sel), pl = filledLocs();
+    $('confirm-adds').innerHTML = '<ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
+      (pl.length ? '<p class="bd-sub" style="margin-top:8px;">Your locations go to Sierra &amp; Sean too: ' + esc(pl.map(function (l) { return typeLabel(l.type) + ': ' + [l.name, l.address].filter(Boolean).join(', '); }).join('; ')) + '</p>' : '');
+    $('confirm-before').textContent = fmt(data.currentTotal);
+    $('confirm-adds-amt').textContent = fmt(cur - data.currentTotal);
+    $('confirm-total').textContent = fmt(cur);
+    $('consent').checked = false;
+    $('confirm-btn').disabled = true;
+    $('confirm-btn').textContent = 'Confirm and pay ' + fmt(cur - data.currentTotal);
+    $('confirm').hidden = false; $('request-btn').hidden = true; $('request-note').hidden = true; $('err').style.display = 'none';
+    $('confirm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function closeConfirm() {
+    $('confirm').hidden = true; $('request-btn').hidden = false; $('request-note').hidden = false; confirmKey = null;
+  }
+  $('consent').addEventListener('change', function () { $('confirm-btn').disabled = !$('consent').checked; });
+  $('confirm-back').addEventListener('click', function () { closeConfirm(); $('request-btn').focus(); });
+  function showDone(html) {
+    $('done').innerHTML = html; $('done').hidden = false; closeConfirm(); $('request-btn').hidden = true; $('request-note').hidden = true;
+    $('done').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  $('confirm-btn').addEventListener('click', function () {
+    var btn = $('confirm-btn'), expected = priceOf(sel);
+    if (expected == null || !$('consent').checked) return;
+    btn.disabled = true; btn.textContent = 'Updating your package...';
+    api('/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      selection: sel, expected_total: expected, locations: filledLocs(), consent: true, idempotency_key: idemKey,
+    }) }).then(function (r) {
+      if (r && r.ok) {
+        var portal = token ? '/portal?token=' + encodeURIComponent(token) : '/portal';
+        if (r.payUrl) {
+          showDone('<div class="bd-eyebrow">Your package is updated</div><p>Taking you to pay ' + esc(fmt(r.owed)) + ' now...</p><p class="bd-sub">If nothing happens, <a href="' + esc(r.payUrl) + '">tap here to pay</a>. We also sent you the link by email and text.</p>');
+          setTimeout(function () { location.href = r.payUrl; }, 900);
+        } else if (Math.round(Number(r.owed) * 100) === 0) {
+          showDone('<div class="bd-eyebrow">Your package is updated</div><p>Your new total is ' + esc(fmt(r.newTotal)) + '. Your account credit covered the difference, so there is nothing to pay.</p><p class="bd-sub"><a href="' + esc(portal) + '">Back to your portal</a></p>');
+        } else {
+          showDone('<div class="bd-eyebrow">Your package is updated</div><p>Your new total is ' + esc(fmt(r.newTotal)) + '. We sent you a link to pay ' + esc(fmt(r.owed)) + ' by email and text, and you can pay it from your portal anytime.</p><p class="bd-sub"><a href="' + esc(portal) + '">Go to your portal</a></p>');
+        }
+        return;
+      }
+      var reason = r && r.reason;
+      if (reason === 'price_changed') { closeConfirm(); showErr('Your package changed on our end, so the numbers moved. We refreshed them; take a look and confirm again.'); return load(true); }
+      if (reason === 'read_only_link') { data.canSelfServe = false; closeConfirm(); relabel(); showErr('This link can only send a request. Tap Request this upgrade and Sierra & Sean will take it from there.'); return; }
+      if (reason === 'amendment_delta_outstanding') { closeConfirm(); showErr('You have an earlier upgrade waiting for payment. Please pay it from your portal first, then come back.'); return; }
+      if (reason === 'in_progress') { btn.disabled = false; btn.textContent = 'Confirm and pay ' + fmt(expected - data.currentTotal); showErr('Still working on your last tap. Give it a moment, then try again.'); return; }
+      if (reason === 'consent_required') { btn.textContent = 'Confirm and pay ' + fmt(expected - data.currentTotal); showErr('Please tick the box to agree to the new total.'); return; }
+      btn.disabled = false; btn.textContent = 'Confirm and pay ' + fmt(expected - data.currentTotal);
+      showErr(r && r.__status === 403 ? 'Too many tries in a row. Wait a minute, then try again.' : 'That did not go through, and nothing was charged. Please try again, or write to us at sierra@flyiniris.com.');
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Confirm and pay ' + fmt(expected - data.currentTotal);
+      showErr('We could not reach our servers. Nothing was charged. Check your connection and try again.');
+    });
+  });
+
   $('request-btn').addEventListener('click', function () {
     var btn = $('request-btn'), expected = priceOf(sel);
     if (expected == null) return;
+    // Upgrades with the full link: the couple adds it themselves (confirm step).
+    if (data && data.canSelfServe && key(sel) !== key(data.owned)) { openConfirm(); return; }
     btn.disabled = true; btn.textContent = 'Sending...';
     api('/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ selection: sel, expected_total: expected, locations: filledLocs() }) })
       .then(function (r) {
@@ -1484,6 +1611,10 @@ p { margin-bottom: 0.6em; }
       renderPending(r.pendingRequest);
       if (!keepSelection && r.pendingRequest && Array.isArray(r.pendingRequest.locations)) {
         locs = r.pendingRequest.locations.map(function (l) { return { type: l.type, name: l.name || '', address: l.address || '' }; });
+      }
+      // Start with one empty row so the first location needs no extra tap.
+      if (!keepSelection && !locs.length) {
+        locs = [{ type: 'ceremony', name: '', address: '' }];
       }
       buildSelects(); renderLocRows();
       sel = copy(r.owned);
