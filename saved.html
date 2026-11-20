@@ -358,6 +358,43 @@
     .footer-brand::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: -12px; right: -12px; z-index: 1; }
     .footer-legal a { position: relative; display: inline-block; }
     .footer-legal a::before { content: ''; position: absolute; top: -15px; bottom: -15px; left: -8px; right: -8px; z-index: 1; }
+    /* Itemized package breakdown (Sean 2026-11-20). BREAKDOWN_CSS copied from
+       iris-automation src/lib/package-breakdown.ts, the canonical source:
+       change it there and re-copy. The HTML it styles comes from the Worker
+       (POST /api/breakdown/quote). */
+    .bd { text-align: left; }
+    .bd-section { border-top: 1px solid var(--border, rgba(245,245,245,0.12)); padding: 18px 0 4px; }
+    .bd-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #FFBD1D); margin-bottom: 8px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 10px 0; }
+    .bd-row + .bd-row { border-top: 1px solid rgba(245, 245, 245, 0.06); }
+    .bd-name { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-weight: 400; }
+    .bd-price { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bd-sub { font-size: 0.86rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; line-height: 1.5; }
+    .bd-was { text-decoration: line-through; color: var(--text-muted, rgba(245,245,245,0.55)); margin-right: 6px; }
+    .bd-now { color: var(--accent, #FFBD1D); }
+    .bd-frame { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: var(--accent, #FFBD1D); color: #0A0A0A; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; vertical-align: 2px; }
+    .bd-counts { display: block; font-size: 0.75rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; letter-spacing: 0.02em; }
+    .bd-muted { color: var(--text-muted, rgba(245,245,245,0.55)); font-size: 0.9rem; }
+    .bd-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; color: var(--text-primary, #F5F5F5); margin: 2px 0 14px; }
+    .bd-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-step { border: 1px solid var(--border, rgba(245,245,245,0.12)); border-radius: 8px; padding: 10px 6px 9px; text-align: center; }
+    .bd-step.you { border: 2px solid var(--accent, #FFBD1D); padding: 9px 5px 8px; }
+    .bd-step-pct { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.45rem; line-height: 1.1; color: var(--text-primary, #F5F5F5); }
+    .bd-step.you .bd-step-pct { color: var(--accent, #FFBD1D); }
+    .bd-step-lab { font-size: 0.72rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 2px; }
+    .bd-step.you .bd-step-lab { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-nudge { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary, rgba(245,245,245,0.75)); }
+    .bd-nudge strong { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-totals .bd-row { padding: 6px 0; border-top: 0; }
+    .bd-gold { color: var(--accent, #FFBD1D); }
+    .bd-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 14px; border-top: 2px solid var(--accent, #FFBD1D); }
+    .bd-total-row .label { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, rgba(245,245,245,0.55)); }
+    .bd-total-row .amount { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; font-weight: 700; color: var(--accent, #FFBD1D); }
+    .bd .lock-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #FFBD1D); vertical-align: 1px; }
+    .bd .lock-tag svg { width: 10px; height: 10px; }
+    @media (max-width: 700px) { .bd-total-row .amount { font-size: 1.9rem; } .bd-step-pct { font-size: 1.25rem; } }
+    /* Saved: the breakdown replaces the plain rows inside the saved card. */
+    #saved-card .bd > .bd-section:first-child { border-top: 0; padding-top: 0; }
   </style>
 </head>
 <body>
@@ -411,13 +448,24 @@
     // src/pricing.ts with the live FOMO spot state. This page now renders
     // that data verbatim and computes nothing.
 
+    // Negatives as "-$1,000", never "$-1,000".
     function formatPrice(n) {
-      return '$' + Number(n).toLocaleString('en-US');
+      var v = Number(n);
+      return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US');
+    }
+
+    // The engine's money format (src/lib/package-breakdown.ts fmtMoney):
+    // cents only when there are cents. Used to check the breakdown's total.
+    function engineMoney(n) {
+      var v = Math.round((Number(n) || 0) * 100) / 100;
+      var a = Math.abs(v);
+      return (v < 0 ? '-$' : '$') + a.toLocaleString('en-US', { minimumFractionDigits: a % 1 ? 2 : 0, maximumFractionDigits: 2 });
     }
 
     // Always-2-decimal formatter for tax + grand total (fractional cents).
     function formatMoney(n) {
-      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      var v = Number(n);
+      return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // Mirrors the package.html esc() fix (audit, public-site XSS): every
@@ -512,6 +560,16 @@
       }
 
       h += '<div class="sc-total"><span class="sc-total-label">Your Total</span><span class="sc-total-value">' + formatMoney(grandTotal) + '</span></div>';
+
+      // The itemized breakdown of this same package, built by the Worker
+      // engine (/api/saved adds it only when it equals these line items to
+      // the cent). Shown only when it carries this exact total; otherwise the
+      // plain rows above stay.
+      if (typeof data.breakdownHtml === 'string' && data.breakdownHtml &&
+          data.breakdownHtml.indexOf('>' + engineMoney(grandTotal) + '<') !== -1 &&
+          data.breakdownHtml.indexOf('$-') === -1) {
+        h = data.breakdownHtml;
+      }
 
       card.innerHTML = h;
 

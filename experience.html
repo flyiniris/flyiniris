@@ -1418,6 +1418,52 @@
         grid-template-columns: 1fr;
       }
     }
+    /* Itemized package breakdown (Sean 2026-11-20). BREAKDOWN_CSS copied from
+       iris-automation src/lib/package-breakdown.ts, the canonical source:
+       change it there and re-copy. The HTML it styles comes from the Worker
+       (POST /api/breakdown/quote). */
+    .bd { text-align: left; }
+    .bd-section { border-top: 1px solid var(--border, rgba(245,245,245,0.12)); padding: 18px 0 4px; }
+    .bd-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #FFBD1D); margin-bottom: 8px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 10px 0; }
+    .bd-row + .bd-row { border-top: 1px solid rgba(245, 245, 245, 0.06); }
+    .bd-name { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-weight: 400; }
+    .bd-price { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bd-sub { font-size: 0.86rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; line-height: 1.5; }
+    .bd-was { text-decoration: line-through; color: var(--text-muted, rgba(245,245,245,0.55)); margin-right: 6px; }
+    .bd-now { color: var(--accent, #FFBD1D); }
+    .bd-frame { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: var(--accent, #FFBD1D); color: #0A0A0A; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; vertical-align: 2px; }
+    .bd-counts { display: block; font-size: 0.75rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; letter-spacing: 0.02em; }
+    .bd-muted { color: var(--text-muted, rgba(245,245,245,0.55)); font-size: 0.9rem; }
+    .bd-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; color: var(--text-primary, #F5F5F5); margin: 2px 0 14px; }
+    .bd-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-step { border: 1px solid var(--border, rgba(245,245,245,0.12)); border-radius: 8px; padding: 10px 6px 9px; text-align: center; }
+    .bd-step.you { border: 2px solid var(--accent, #FFBD1D); padding: 9px 5px 8px; }
+    .bd-step-pct { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.45rem; line-height: 1.1; color: var(--text-primary, #F5F5F5); }
+    .bd-step.you .bd-step-pct { color: var(--accent, #FFBD1D); }
+    .bd-step-lab { font-size: 0.72rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 2px; }
+    .bd-step.you .bd-step-lab { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-nudge { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary, rgba(245,245,245,0.75)); }
+    .bd-nudge strong { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-totals .bd-row { padding: 6px 0; border-top: 0; }
+    .bd-gold { color: var(--accent, #FFBD1D); }
+    .bd-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 14px; border-top: 2px solid var(--accent, #FFBD1D); }
+    .bd-total-row .label { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, rgba(245,245,245,0.55)); }
+    .bd-total-row .amount { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; font-weight: 700; color: var(--accent, #FFBD1D); }
+    .bd .lock-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #FFBD1D); vertical-align: 1px; }
+    .bd .lock-tag svg { width: 10px; height: 10px; }
+    @media (max-width: 700px) { .bd-total-row .amount { font-size: 1.9rem; } .bd-step-pct { font-size: 1.25rem; } }
+    /* Experience: the breakdown sits in the price summary card; on phones the
+       collapsed bottom sheet keeps only the total row. */
+    .price-summary .bd > .bd-section:first-child { border-top: 0; padding-top: 0; }
+    .price-summary.bd-loading .bd { opacity: 0.55; transition: opacity 0.15s ease; }
+    @media (max-width: 768px) {
+      .price-summary.collapsed .bd-section:not(.bd-totals),
+      .price-summary.collapsed .bd-totals .bd-row { display: none; }
+      .price-summary.collapsed .bd-totals { border-top: 0; padding-top: 0; }
+      .price-summary.collapsed .bd-total-row { margin-top: 0; }
+      .price-summary .bd-total-row { cursor: pointer; }
+    }
   </style>
 </head>
 <body>
@@ -1580,6 +1626,7 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
+  <script src="/fi-breakdown.js"></script>
   <script>
   (function() {
     // ========== CONSTANTS ==========
@@ -1683,6 +1730,10 @@
       addons: { teaser: false, storySession: false }
     };
 
+    // The last engine breakdown shown (fi-breakdown.js), kept on screen dimmed
+    // while the next package's answer loads; '' until the first answer.
+    var expBdLast = '';
+
     var dreamCalcState = {
       step: 0,
       answers: {},
@@ -1753,13 +1804,15 @@
     }
 
     // ========== HELPERS ==========
+    // Negatives as "-$1,000", never "$-1,000".
     function formatPrice(n) {
-      return '$' + n.toLocaleString();
+      return (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US');
     }
 
     // Always-2-decimal formatter for tax + grand total (fractional cents).
     function formatMoney(n) {
-      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      var v = Number(n);
+      return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // Build a discovery-booking widget URL prefilled with the couple's contact
@@ -2332,41 +2385,53 @@
 
       h += '<div class="price-summary-title">Your Package</div>';
 
-      h += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sierra & Sean' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
+      // The itemized breakdown comes from the Worker engine (fi-breakdown.js,
+      // POST /api/breakdown/quote) and replaces #price-breakdown when it
+      // answers. The rows built here are only the fallback, shown before the
+      // first answer and if the fetch fails.
+      var bdCfg = { tier: bs.tier, hours: bs.hours, highlight: bs.highlight, teaser: !!bs.addons.teaser, storySession: !!bs.addons.storySession };
+      var bdCached = window.fiBreakdown ? window.fiBreakdown.cached(bdCfg) : null;
+      var fb = '';
+      fb += '<div class="price-line"><span>' + (bs.tier === 'ss' ? 'Sierra & Sean' : 'Team') + ' Package</span><span class="price-line-value">' + formatPrice(tier.base) + '</span></div>';
 
       var hoursPrice = tier.hours[bs.hours] || 0;
       if (hoursPrice > 0) {
-        h += '<div class="price-line"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">+' + formatPrice(hoursPrice) + '</span></div>';
+        fb += '<div class="price-line"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">+' + formatPrice(hoursPrice) + '</span></div>';
       } else {
-        h += '<div class="price-line included"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">Included</span></div>';
+        fb += '<div class="price-line included"><span>' + bs.hours + ' Hours Coverage</span><span class="price-line-value">Included</span></div>';
       }
 
       var hlPrice = tier.highlight[bs.highlight] || 0;
       if (hlPrice > 0) {
-        h += '<div class="price-line"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">+' + formatPrice(hlPrice) + '</span></div>';
+        fb += '<div class="price-line"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">+' + formatPrice(hlPrice) + '</span></div>';
       } else {
-        h += '<div class="price-line included"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
+        fb += '<div class="price-line included"><span>' + bs.highlight + ' Highlight</span><span class="price-line-value">Included</span></div>';
       }
 
-      h += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
+      fb += '<div class="price-line"><span>FOMO Documentary Edit</span><span class="price-line-value">+' + formatPrice(1000) + '</span></div>';
       // Audit entry 43 (2026-06-10): the free credit line only renders while a
       // monthly free spot remains (live count from /api/pricing/constants).
       // The old page hardcoded the pair, so FOMO always looked free.
       if (fomoFreeSpot) {
-        h += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
+        fb += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
       }
-      if (bs.addons.teaser) h += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
-      if (bs.addons.storySession) h += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
+      if (bs.addons.teaser) fb += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
+      if (bs.addons.storySession) fb += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 
-      h += '<div class="price-divider"></div>';
+      fb += '<div class="price-divider"></div>';
 
       if (calc.discount > 0) {
-        h += '<div class="price-discount"><span>Bundle Discount' + (calc.discountTrimmed ? '' : ' (' + Math.round(calc.discountPct * 100) + '%)') + '</span><span>-' + formatPrice(calc.discount) + '</span></div>';
+        fb += '<div class="price-discount"><span>Bundle Discount' + (calc.discountTrimmed ? '' : ' (' + Math.round(calc.discountPct * 100) + '%)') + '</span><span>-' + formatPrice(calc.discount) + '</span></div>';
       }
 
-      h += '<div class="price-line"><span>Sales Tax (5.5% Wisconsin)</span><span class="price-line-value">+' + formatMoney(calc.tax) + '</span></div>';
+      fb += '<div class="price-line"><span>Sales Tax (5.5% Wisconsin)</span><span class="price-line-value">+' + formatMoney(calc.tax) + '</span></div>';
 
-      h += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatMoney(calc.totalWithTax) + '</span></div>';
+      fb += '<div class="price-total" id="price-total-row"><span class="price-total-label">Total</span><span class="price-total-value">' + formatMoney(calc.totalWithTax) + '</span></div>';
+
+      // Engine answer if cached; else the last engine breakdown (dimmed)
+      // while the new one loads; else the fallback rows.
+      var bdLoading = !bdCached && !!expBdLast && !!window.fiBreakdown;
+      h += '<div id="price-breakdown">' + (bdCached ? bdCached.breakdownHtml : bdLoading ? expBdLast : fb) + '</div>';
 
       // CTA ladder (2026-08-03): 'book' pitches the call, 'call_upcoming' goes
       // soft, 'proposal_out' points at the live agreement, 'booked' sells
@@ -2393,6 +2458,24 @@
       }
 
       summary.innerHTML = h;
+      summary.classList.toggle('bd-loading', bdLoading);
+      if (bdCached) expBdLast = bdCached.breakdownHtml;
+
+      // Ask the engine for this package (debounced, latest wins). On an
+      // answer, swap it in; on a failure, show this page's own rows.
+      if (window.fiBreakdown && !bdCached) {
+        window.fiBreakdown.quote(bdCfg, function (d) {
+          expBdLast = d.breakdownHtml;
+          var box = document.getElementById('price-breakdown');
+          if (box) box.innerHTML = d.breakdownHtml;
+          summary.classList.remove('bd-loading');
+        }, function () {
+          expBdLast = '';
+          var box = document.getElementById('price-breakdown');
+          if (box) box.innerHTML = fb;
+          summary.classList.remove('bd-loading');
+        });
+      }
 
       // Save package handler
       document.getElementById('save-package-btn').addEventListener('click', function() {
@@ -2443,11 +2526,16 @@
         }
       });
 
-      // Mobile toggle
+      // Mobile toggle: tapping the total row (the fallback's or the engine
+      // breakdown's) opens and closes the bottom sheet. Bound once on the
+      // summary, since its contents are re-rendered on every change.
       var totalRow = document.getElementById('price-total-row');
-      if (totalRow && window.innerWidth <= 768) {
-        totalRow.style.cursor = 'pointer';
-        totalRow.addEventListener('click', function(e) {
+      if (totalRow && window.innerWidth <= 768) totalRow.style.cursor = 'pointer';
+      if (!summary._fiToggleBound) {
+        summary._fiToggleBound = true;
+        summary.addEventListener('click', function(e) {
+          if (window.innerWidth > 768) return;
+          if (!e.target.closest('#price-total-row, .bd-total-row')) return;
           if (e.target.closest('.price-cta') || e.target.closest('.save-package-btn')) return;
           summary.classList.toggle('collapsed');
         });

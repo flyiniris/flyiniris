@@ -839,6 +839,49 @@
       .toggle-row { padding: 14px 12px; }
       .toggle-desc { display: none; }
     }
+    /* Itemized package breakdown (Sean 2026-11-20). BREAKDOWN_CSS copied from
+       iris-automation src/lib/package-breakdown.ts, the canonical source:
+       change it there and re-copy. The HTML it styles comes from the Worker
+       (POST /api/breakdown/quote). */
+    .bd { text-align: left; }
+    .bd-section { border-top: 1px solid var(--border, rgba(245,245,245,0.12)); padding: 18px 0 4px; }
+    .bd-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #FFBD1D); margin-bottom: 8px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 10px 0; }
+    .bd-row + .bd-row { border-top: 1px solid rgba(245, 245, 245, 0.06); }
+    .bd-name { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-weight: 400; }
+    .bd-price { color: var(--text-primary, #F5F5F5); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bd-sub { font-size: 0.86rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; line-height: 1.5; }
+    .bd-was { text-decoration: line-through; color: var(--text-muted, rgba(245,245,245,0.55)); margin-right: 6px; }
+    .bd-now { color: var(--accent, #FFBD1D); }
+    .bd-frame { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 3px; background: var(--accent, #FFBD1D); color: #0A0A0A; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; vertical-align: 2px; }
+    .bd-counts { display: block; font-size: 0.75rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 3px; letter-spacing: 0.02em; }
+    .bd-muted { color: var(--text-muted, rgba(245,245,245,0.55)); font-size: 0.9rem; }
+    .bd-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; color: var(--text-primary, #F5F5F5); margin: 2px 0 14px; }
+    .bd-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-step { border: 1px solid var(--border, rgba(245,245,245,0.12)); border-radius: 8px; padding: 10px 6px 9px; text-align: center; }
+    .bd-step.you { border: 2px solid var(--accent, #FFBD1D); padding: 9px 5px 8px; }
+    .bd-step-pct { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.45rem; line-height: 1.1; color: var(--text-primary, #F5F5F5); }
+    .bd-step.you .bd-step-pct { color: var(--accent, #FFBD1D); }
+    .bd-step-lab { font-size: 0.72rem; color: var(--text-muted, rgba(245,245,245,0.55)); margin-top: 2px; }
+    .bd-step.you .bd-step-lab { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-nudge { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary, rgba(245,245,245,0.75)); }
+    .bd-nudge strong { color: var(--accent, #FFBD1D); font-weight: 600; }
+    .bd-totals .bd-row { padding: 6px 0; border-top: 0; }
+    .bd-gold { color: var(--accent, #FFBD1D); }
+    .bd-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 14px; border-top: 2px solid var(--accent, #FFBD1D); }
+    .bd-total-row .label { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, rgba(245,245,245,0.55)); }
+    .bd-total-row .amount { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; font-weight: 700; color: var(--accent, #FFBD1D); }
+    .bd .lock-tag { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #FFBD1D); vertical-align: 1px; }
+    .bd .lock-tag svg { width: 10px; height: 10px; }
+    @media (max-width: 700px) { .bd-total-row .amount { font-size: 1.9rem; } .bd-step-pct { font-size: 1.25rem; } }
+    /* Calculator: the gold dropdown draws its own chevron, and the breakdown
+       carries its own total, so the card's old header hides while it shows. */
+    .custom-select.dd-on::after { display: none; }
+    .summary-card.has-bd .summary-header { display: none; }
+    .summary-card.has-bd .summary-breakdown { border-top: 0; padding-top: 0; }
+    .summary-card.has-bd .bd > .bd-section:first-child { border-top: 0; padding-top: 0; }
+    .summary-card.bd-loading .bd { opacity: 0.55; transition: opacity 0.15s ease; }
+    @media (min-width: 601px) { .summary-card.has-bd { position: relative; bottom: auto; } }
   </style>
 </head>
 <body>
@@ -1020,6 +1063,8 @@
     <p class="footer-legal"><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms &amp; Conditions</a></p>
   </footer>
 
+  <script src="/fi-gold-dropdown.js"></script>
+  <script src="/fi-breakdown.js"></script>
   <script>
   (function() {
     // ========== PRICING DATA ==========
@@ -1197,6 +1242,22 @@
       var taxAmount = Math.round(preTaxTotal * SALES_TAX_RATE * 100) / 100;
       var finalTotal = preTaxTotal + taxAmount;
 
+      // The itemized breakdown comes from the Worker engine (fi-breakdown.js,
+      // POST /api/breakdown/quote). The rows built below are only the
+      // fallback, shown before the first answer and if the fetch fails.
+      var card = document.getElementById('summaryCard');
+      document.getElementById('summaryPrice').textContent = fmtMoney(finalTotal);
+      if (window.fiBreakdown) {
+        if (bdShown) card.classList.add('bd-loading');
+        window.fiBreakdown.quote(currentConfig(), applyBreakdown, function () {
+          bdShown = false;
+          card.classList.remove('has-bd', 'bd-loading');
+          renderFallback();
+        });
+      }
+      if (!bdShown) renderFallback();
+
+      function renderFallback() {
       // Build breakdown
       var breakdownHTML = '';
       breakdownHTML += row('Base package (6hr + highlight + drone)', fmt(tier.base));
@@ -1244,19 +1305,45 @@
       } else {
         savingsEl.style.display = 'none';
       }
+      }
     };
+
+    // The engine's answer: its itemized breakdown replaces the fallback rows,
+    // and the (hidden) header price carries the engine total for the save.
+    var bdShown = false;
+    function applyBreakdown(d) {
+      var card = document.getElementById('summaryCard');
+      document.getElementById('summaryBreakdown').innerHTML = d.breakdownHtml;
+      document.getElementById('summaryPrice').textContent = fmtMoney(d.result.totalWithTax);
+      card.classList.add('has-bd');
+      card.classList.remove('bd-loading');
+      bdShown = true;
+    }
 
     function row(label, value) {
       return '<div class="breakdown-row"><span class="breakdown-label">' + label + '</span><span class="breakdown-value">' + value + '</span></div>';
     }
 
+    // Negatives as "-$1,000", never "$-1,000".
     function fmt(n) {
-      return '$' + n.toLocaleString('en-US');
+      return (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US');
     }
 
     // Always-2-decimal formatter for tax + estimated total (which can be fractional cents).
     function fmtMoney(n) {
-      return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      var v = Number(n);
+      return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // The gold dropdown on both selects (fi-gold-dropdown.js). The native
+    // selects stay as the value holders, so onchange="recalc()" still fires.
+    if (window.fiEnhanceSelect) {
+      ['hoursSelect', 'highlightSelect'].forEach(function (id) {
+        var sel = document.getElementById(id);
+        if (!sel) return;
+        if (sel.parentNode && sel.parentNode.classList) sel.parentNode.classList.add('dd-on');
+        window.fiEnhanceSelect(sel);
+      });
     }
 
     // Init: fetch live FOMO spot state, then render the breakdown. Recalc
