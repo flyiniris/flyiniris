@@ -15,6 +15,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+  <!-- Site tracking, same as the other film pages: first-touch referrer and ?fi= link capture, the page engagement beacon, and the film tracker (it reads data-fi-video-id on each player below). See each file header. -->
+  <script src="/fi-attribution.js"></script>
+  <script src="/fi-engagement.js" defer></script>
+  <script src="/fi-film-track.js" defer></script>
   <style>
     :root {
       /* Window World of Southeastern Wisconsin brand (their site CSS):
@@ -479,7 +483,7 @@
 
     function widePlayer(f, title, blurb) {
       f.shareTitle = title;
-      return '<span class="anchor" id="' + esc(f.id) + '"></span><div class="player" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + '">' +
+      return '<span class="anchor" id="' + esc(f.id) + '"></span><div class="player" data-id="' + esc(f.id) + '" data-fi-video-id="' + esc(f.id) + '" data-fi-title="' + esc(title) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + '">' +
           '<div class="cover" data-cover="' + esc(f.id) + '"></div>' +
           '<span class="play" aria-hidden="true">' + PLAY + '</span>' +
           '<span class="dur">' + esc(f.dur) + '</span>' +
@@ -490,7 +494,7 @@
     function phone(f, title, blurb) {
       f.shareTitle = /vertical/i.test(title) ? title : title + ' (Vertical)';
       return '<figure><span class="anchor" id="' + esc(f.id) + '"></span>' +
-        '<div class="phone" data-id="' + esc(f.id) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' (vertical)">' +
+        '<div class="phone" data-id="' + esc(f.id) + '" data-fi-video-id="' + esc(f.id) + '" data-fi-title="' + esc(f.shareTitle) + '" role="button" tabindex="0" aria-label="Play ' + esc(title) + ' (vertical)">' +
           '<div class="phone-screen">' +
             '<div class="phone-media"><div class="cover" data-cover="' + esc(f.id) + '"></div></div>' +
             '<span class="play" aria-hidden="true">' + PLAY + '</span>' +

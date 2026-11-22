@@ -98,6 +98,21 @@ done
 # in email links; its head strips them before GA4 and the pixel run.
 check_contains "yours.html" "history.replaceState" "the PII param strip that runs before the tags"
 check_contains "yours.html" "__fi_watch_params"    "the PII param strip that runs before the tags"
+# 2026-11-21 (Sean: every page gets the same tracking). /films is where DM
+# links land (?fi=<token>&fs=dm) and each library card opens films/<slug>/.
+# Every page under films/ (and the template they are generated from) records
+# the open and each film play (fi-film-track.js) plus the same referrer, link
+# and engagement capture as the entry pages. Film pages are enumerated from
+# the tree, so a new one generated without them blocks the push.
+for js in fi-attribution.js fi-engagement.js; do
+  check_contains "films.html" "/$js" "$js"
+done
+FILM_PAGES=$(git ls-tree -r --name-only "$TIP" films/ 2>/dev/null | grep -E '^films/.+/index\.html$')
+for pg in delivery/templates/couple-page.html $FILM_PAGES; do
+  for js in fi-attribution.js fi-engagement.js fi-film-track.js; do
+    check_contains "$pg" "/$js" "$js"
+  done
+done
 # 2026-09-15: this check used to assert only that the page contained the string
 # "fbq(". That string is present inside a BROKEN snippet too, so from 2026-02-20
 # to 2026-09-15 the pixel loaded connect.facebook.net/en_US/fbq.js, which does

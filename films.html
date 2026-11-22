@@ -463,6 +463,56 @@
 
     .lib-btn-row::-webkit-scrollbar { display: none; }
 
+    /* Scroll cue (2026-11-21, DM test note 7): on phones the chips past the
+       screen edge were easy to miss. While a row has more chips to one side,
+       that side fades out (the cut-off chip peeks through the fade) and a
+       small gold chevron sits at the right edge; both go away at the end of
+       the row. The mask and the chevron never take up space, so nothing
+       shifts. The chevron ignores taps, so a tap lands on the chip under it.
+       The script toggles more-left / more-right on .lib-scroller. */
+    .lib-scroller {
+      position: relative;
+    }
+
+    .lib-scroller .lib-btn-row {
+      scroll-padding: 0 72px 0 48px;
+    }
+
+    .lib-scroller.more-right .lib-btn-row {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+    }
+
+    .lib-scroller.more-left .lib-btn-row {
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 48px);
+      mask-image: linear-gradient(to right, transparent, #000 48px);
+    }
+
+    .lib-scroller.more-left.more-right .lib-btn-row {
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 72px), transparent);
+      mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 72px), transparent);
+    }
+
+    .lib-scroller::after {
+      content: '';
+      position: absolute;
+      top: calc(50% - 2px);
+      right: -16px;
+      width: 28px;
+      height: 28px;
+      margin-top: -14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 189, 29, 0.55);
+      background: rgba(10, 10, 10, 0.85) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5 6l6 6-6 6' fill='none' stroke='%23FFBD1D' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .lib-scroller.more-right::after {
+      opacity: 1;
+    }
+
     .lib-btn {
       flex: 0 0 auto;
       min-height: 40px;
@@ -884,6 +934,19 @@
         padding: 0;
       }
 
+      /* Rows wrap here, so no scroll cue. */
+      .lib-scroller .lib-btn-row,
+      .lib-scroller.more-left .lib-btn-row,
+      .lib-scroller.more-right .lib-btn-row,
+      .lib-scroller.more-left.more-right .lib-btn-row {
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+
+      .lib-scroller::after {
+        display: none;
+      }
+
       .lib-grid {
         grid-template-columns: 1fr 1fr;
         gap: 32px 24px;
@@ -958,16 +1021,16 @@
         <p class="lib-intro">Tap a vibe to find films that feel like your day.</p>
         <div class="lib-filter-group">
           <span class="lib-filter-label" id="lib-vibe-label">Vibe</span>
-          <div class="lib-btn-row" id="lib-vibes" role="group" aria-labelledby="lib-vibe-label"></div>
+          <div class="lib-scroller"><div class="lib-btn-row" id="lib-vibes" role="group" aria-labelledby="lib-vibe-label"></div></div>
         </div>
         <div class="lib-filter-group">
           <span class="lib-filter-label" id="lib-type-label">Film type</span>
-          <div class="lib-btn-row" id="lib-types" role="group" aria-labelledby="lib-type-label"></div>
+          <div class="lib-scroller"><div class="lib-btn-row" id="lib-types" role="group" aria-labelledby="lib-type-label"></div></div>
         </div>
         <!-- Shown only when at least one couple in the feed has a crew value. -->
         <div class="lib-filter-group" id="lib-crew-group" hidden>
           <span class="lib-filter-label" id="lib-crew-label">Filmed by</span>
-          <div class="lib-btn-row" id="lib-crews" role="group" aria-labelledby="lib-crew-label"></div>
+          <div class="lib-scroller"><div class="lib-btn-row" id="lib-crews" role="group" aria-labelledby="lib-crew-label"></div></div>
         </div>
         <p class="lib-count" id="lib-count" aria-live="polite"></p>
         <div id="lib-results"></div>
@@ -1234,7 +1297,7 @@
         var place = [c.venueName, c.venueCity].filter(function(x) { return x && String(x).trim(); }).join(', ');
         var date = longDate(c.weddingDate);
         var alt = c.coupleNames + ' wedding film' + (place ? ' at ' + place : '');
-        return '<a class="lib-card' + (isFeatured ? ' lib-featured' : '') + '" href="' + esc(href) + '">' +
+        return '<a class="lib-card' + (isFeatured ? ' lib-featured' : '') + '" href="' + esc(href) + '" data-slug="' + esc(c.slug) + '">' +
           '<div class="lib-thumb">' +
             (thumb ? '<img src="' + esc(thumb) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async" width="1280" height="720">'
                    : '<span class="lib-thumb-fallback" role="img" aria-label="' + esc(alt) + '">' + esc(c.coupleNames) + '</span>') +
@@ -1340,7 +1403,52 @@
         } catch (e) { /* analytics never breaks the page */ }
       }
 
+      // A card opens films/<slug>/, where /fi-film-track.js records the open
+      // and every play against the same visitor and ?fi= link token this
+      // visit stored. This GA4 event adds which card was tapped from here.
+      function trackOpen(cardEl) {
+        try {
+          if (!window.gtag) return;
+          var all = Array.prototype.slice.call(root.querySelectorAll('.lib-card'));
+          gtag('event', 'film_library_open', {
+            film_slug: cardEl.getAttribute('data-slug') || '',
+            featured: cardEl.classList.contains('lib-featured') ? 'yes' : 'no',
+            position: all.indexOf(cardEl) + 1,
+            filter_vibe: state.vibes.join(','),
+            filter_type: state.type,
+            filter_crew: state.crew,
+            transport_type: 'beacon'
+          });
+        } catch (e) { /* analytics never breaks the page */ }
+      }
+
+      // Scroll cue for the sideways chip rows (CSS: .lib-scroller).
+      var CUE_ROWS = ['lib-vibes', 'lib-types', 'lib-crews'];
+      function updateCue(row) {
+        var box = row && row.parentNode;
+        if (!box || !box.classList) return;
+        var max = row.scrollWidth - row.clientWidth;
+        box.classList.toggle('more-left', max > 2 && row.scrollLeft > 2);
+        box.classList.toggle('more-right', max > 2 && row.scrollLeft < max - 2);
+      }
+      function updateCues() {
+        CUE_ROWS.forEach(function(id) { updateCue(document.getElementById(id)); });
+      }
+      var cueFrame = 0;
+      function queueCues() {
+        if (cueFrame) return;
+        var run = function() { cueFrame = 0; updateCues(); };
+        cueFrame = window.requestAnimationFrame ? window.requestAnimationFrame(run) : setTimeout(run, 16);
+      }
+      CUE_ROWS.forEach(function(id) {
+        var row = document.getElementById(id);
+        if (row) row.addEventListener('scroll', queueCues, { passive: true });
+      });
+      window.addEventListener('resize', queueCues, { passive: true });
+
       root.addEventListener('click', function(e) {
+        var cardEl = e.target.closest('.lib-card');
+        if (cardEl && root.contains(cardEl)) { trackOpen(cardEl); return; }
         var btn = e.target.closest('button');
         if (!btn || !root.contains(btn)) return;
         if (btn.id === 'lib-reset') {
@@ -1400,6 +1508,9 @@
           root.hidden = false;
           curated.hidden = true;
           revealPressed();
+          updateCues();
+          // Chip widths change once the web font arrives.
+          try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateCues); } catch (e) { /* cue still updates on scroll */ }
         })
         .catch(function() { /* curated grid stays */ });
     })();

@@ -35,6 +35,16 @@
  * undoes it). Remembered in localStorage (fi-film-ours). Studio filters those
  * browsers out, including anything they sent before they were marked.
  *
+ * Which film: a Vidstack player carrying __fiVideoId (the pop-up player), a
+ * .hero-card with data-hero-id, or (2026-11-21) any element around the <video>
+ * with data-fi-video-id and optional data-fi-title, for pages that build their
+ * own player (films/window-world/honor-flight-golf/). The slug is always the
+ * first folder after /films/, so that event page reports as window-world.
+ *
+ * The public /films library page plays nothing itself: each card opens
+ * films/<slug>/, where this file records the open and every play, tied to the
+ * same fi_visitor_id and fi_link_token the library visit set.
+ *
  * This must never slow or break playback. It listens from the outside, keeps
  * no timers, ignores every response, and every step is wrapped so it can never
  * throw into the page.
@@ -123,6 +133,12 @@
       if (hero && hero.getAttribute('data-hero-id')) {
         var t = hero.querySelector('.hero-title');
         return { id: hero.getAttribute('data-hero-id'), title: t ? t.textContent : null };
+      }
+      // Any other player under films/ (the business event pages build their own
+      // <video>): the video or a wrapper names its film with data-fi-video-id.
+      var tagged = v.closest && v.closest('[data-fi-video-id]');
+      if (tagged && tagged.getAttribute('data-fi-video-id')) {
+        return { id: tagged.getAttribute('data-fi-video-id'), title: tagged.getAttribute('data-fi-title') || null };
       }
       return null;
     }
