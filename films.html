@@ -540,6 +540,16 @@
       outline-offset: 2px;
     }
 
+    /* A chip that would leave no films with the other picks (Sean 2026-11-23:
+       Epic, Teasers, Sierra & Sean showed nothing). Dimmed and not tappable,
+       so the grid can never be filtered down to an empty page. */
+    .lib-btn[aria-disabled="true"] {
+      opacity: 0.35;
+      cursor: default;
+      border-color: var(--border);
+      color: var(--text-secondary);
+    }
+
     .lib-btn[aria-pressed="true"] {
       background: var(--accent);
       border-color: var(--accent);
@@ -1269,12 +1279,33 @@
         try { history.replaceState(null, '', url); } catch (e) { /* sandboxed: filters still work */ }
       }
 
-      function matches(c) {
-        if (state.crew && c.crew !== state.crew) return false;
-        if (state.type && arr(c.filmTypes).indexOf(state.type) === -1) return false;
-        if (!state.vibes.length) return true;
+      function matchesWith(c, s) {
+        if (s.crew && c.crew !== s.crew) return false;
+        if (s.type && arr(c.filmTypes).indexOf(s.type) === -1) return false;
+        if (!s.vibes.length) return true;
         var cv = arr(c.vibeKeys);
-        return state.vibes.some(function(k) { return cv.indexOf(k) !== -1; });
+        return s.vibes.some(function(k) { return cv.indexOf(k) !== -1; });
+      }
+      function matches(c) { return matchesWith(c, state); }
+
+      // Would tapping this chip (on top of the other picks) leave any film?
+      // A pressed chip and every All chip always stay tappable.
+      function chipHasFilms(kind, key) {
+        var s = { vibes: state.vibes, type: state.type, crew: state.crew };
+        if (kind === 'vibe') s.vibes = state.vibes.length ? state.vibes.concat([key]) : [key];
+        else if (kind === 'type') s.type = key;
+        else s.crew = key;
+        return couples.some(function(c) { return matchesWith(c, s); });
+      }
+      function markEmpty(b, kind, key, pressed) {
+        var empty = !!key && !pressed && !chipHasFilms(kind, key);
+        if (empty) {
+          b.setAttribute('aria-disabled', 'true');
+          b.title = 'No films with this mix yet';
+        } else {
+          b.removeAttribute('aria-disabled');
+          b.removeAttribute('title');
+        }
       }
 
       function card(c, isFeatured) {
@@ -1338,14 +1369,19 @@
 
       function syncButtons() {
         root.querySelectorAll('[data-crew]').forEach(function(b) {
-          b.setAttribute('aria-pressed', String(b.getAttribute('data-crew') === state.crew));
+          var k = b.getAttribute('data-crew'), on = k === state.crew;
+          b.setAttribute('aria-pressed', String(on));
+          markEmpty(b, 'crew', k, on);
         });
         root.querySelectorAll('[data-vibe]').forEach(function(b) {
-          var k = b.getAttribute('data-vibe');
-          b.setAttribute('aria-pressed', String(k ? state.vibes.indexOf(k) !== -1 : !state.vibes.length));
+          var k = b.getAttribute('data-vibe'), on = k ? state.vibes.indexOf(k) !== -1 : !state.vibes.length;
+          b.setAttribute('aria-pressed', String(on));
+          markEmpty(b, 'vibe', k, on);
         });
         root.querySelectorAll('[data-type]').forEach(function(b) {
-          b.setAttribute('aria-pressed', String(b.getAttribute('data-type') === state.type));
+          var k = b.getAttribute('data-type'), on = k === state.type;
+          b.setAttribute('aria-pressed', String(on));
+          markEmpty(b, 'type', k, on);
         });
       }
 
@@ -1451,6 +1487,7 @@
         if (cardEl && root.contains(cardEl)) { trackOpen(cardEl); return; }
         var btn = e.target.closest('button');
         if (!btn || !root.contains(btn)) return;
+        if (btn.getAttribute('aria-disabled') === 'true') return;
         if (btn.id === 'lib-reset') {
           state.vibes = []; state.type = ''; state.crew = '';
         } else if (btn.hasAttribute('data-crew')) {
