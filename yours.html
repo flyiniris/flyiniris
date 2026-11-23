@@ -784,11 +784,9 @@
       var filmThumbImg = document.getElementById('filmThumbImg');
       var filmThumbLink = document.getElementById('filmThumbLink');
 
-      if (film) {
-        var thumbUrl = R2_THUMB + film + '/thumbs/thumb.jpg';
-        var hlsUrl = R2_HLS + film + '/hls/teaser/master.m3u8';
-        var coupleDisplay = fc ? fc : coupleFromSlug(film);
-        var venueDisplay = fv ? fv : '';
+      // Plays one film. Its video and poster come from the films index
+      // lookup below; the old fixed paths are the fallback.
+      function startFilm(thumbUrl, hlsUrl, coupleDisplay, venueDisplay) {
 
         // Set title
         filmTitle.textContent = coupleDisplay + (venueDisplay ? ' at ' + venueDisplay : '');
@@ -859,6 +857,31 @@
           // No HLS support: show the still image instead
           showThumbFallback();
         }
+      }
+
+      if (film) {
+        // One films index (2026-11-23): newer films keep their video and
+        // poster under their own paths (couples/<name>/hls/teaser/...), so a
+        // slug like "madison-jacob-teaser" cannot be guessed from the slug.
+        // Ask the Worker; on any failure or after 2.5s, use the old paths.
+        var fbThumb = R2_THUMB + film + '/thumbs/thumb.jpg';
+        var fbHls = R2_HLS + film + '/hls/teaser/master.m3u8';
+        var started = false;
+        var startOnce = function(d) {
+          if (started) return;
+          started = true;
+          startFilm(
+            (d && d.thumbnailUrl) || fbThumb,
+            (d && d.hlsUrl) || fbHls,
+            fc || (d && d.couple) || coupleFromSlug(film),
+            fv || (d && d.venue) || ''
+          );
+        };
+        var lookupTimer = setTimeout(function() { startOnce(null); }, 2500);
+        fetch('https://api.flyiniris.com/api/films/watch?film=' + encodeURIComponent(film))
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(d) { clearTimeout(lookupTimer); startOnce(d); })
+          .catch(function() { clearTimeout(lookupTimer); startOnce(null); });
       } else {
         // No film param: hide the whole section or show generic
         document.getElementById('filmSection').style.display = 'none';
