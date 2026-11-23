@@ -336,6 +336,16 @@
        right on top of ours before the film loads, so the card showed two
        play buttons stacked. Ours starts the film (wireHeroPlayer); hide theirs. */
     .hero-player-wrap .vds-load-container { display: none; }
+    /* On a phone (Vidstack small layout) the player draws its own round dark
+       play button before the first play: on iPhone the control layer is up
+       from the start (native HLS, load=visible), and that 45px circle sits
+       25% low under our gold triangle, so a dark half circle poked out of
+       it (Sean 2026-11-23, Instagram browser). Ours is the only play button
+       until the film starts; after that theirs is the pause/play control.
+       Two rules, not one list: an old browser without :has() must still
+       read the first. */
+    .hero-player-wrap:not(.fi-started) .vds-controls .vds-play-button { display: none; }
+    .hero-player-wrap:has(> .hero-overlay:not(.hidden)) .vds-controls .vds-play-button { display: none; }
     .hero-play-btn svg {
       width: 64px;
       height: 64px;
