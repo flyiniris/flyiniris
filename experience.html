@@ -2353,7 +2353,7 @@
       h += '<div class="builder-section-title">Add-ons</div>';
       h += '<div class="b-addon-toggles">';
       var addonList = [
-        { key: 'teaser', name: '60-Second Teaser', price: tier.addons.teaser },
+        { key: 'teaser', name: '1-2 Minute Teaser', price: tier.addons.teaser },
         { key: 'storySession', name: 'Story Session', price: tier.addons.storySession }
       ];
       addonList.forEach(function(a) {
@@ -2417,7 +2417,7 @@
       if (fomoFreeSpot) {
         fb += '<div class="price-line" style="color:#4CAF50;font-weight:500"><span>FOMO Documentary Edit (free, monthly promo)</span><span class="price-line-value" style="color:#4CAF50">-' + formatPrice(1000) + '</span></div>';
       }
-      if (bs.addons.teaser) fb += '<div class="price-line"><span>60-Second Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
+      if (bs.addons.teaser) fb += '<div class="price-line"><span>1-2 Minute Teaser</span><span class="price-line-value">+' + formatPrice(tier.addons.teaser) + '</span></div>';
       if (bs.addons.storySession) fb += '<div class="price-line"><span>Story Session</span><span class="price-line-value">+' + formatPrice(tier.addons.storySession) + '</span></div>';
 
       fb += '<div class="price-divider"></div>';
