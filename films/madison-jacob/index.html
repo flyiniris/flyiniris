@@ -317,12 +317,14 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 11;
-      /* Same look as the film-card play button (plain gold triangle with a
-         soft shadow, no ring), a size up for the big cards (Sean 2026-11-10). */
-      width: 88px;
-      height: 88px;
-      background: none;
-      border: 0;
+      /* Gold ring with a dark fill: the same play button as
+         flyiniris.com/films and the film cards below (Sean 2026-11-23; it
+         was a bare triangle from 2026-11-10, which read as unfinished). */
+      width: 76px;
+      height: 76px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -331,9 +333,10 @@
       transition: transform 0.25s ease;
     }
     .hero-play-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
       transform: translate(-50%, -50%) scale(1.1);
     }
-    .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 2px; border-radius: 8px; }
+    .hero-play-btn:focus-visible { outline: 2px solid #FFBD1D; outline-offset: 3px; }
     /* Vidstack draws its own white load-on-play button (.vds-load-container)
        right on top of ours before the film loads, so the card showed two
        play buttons stacked. Ours starts the film (wireHeroPlayer); hide theirs. */
@@ -349,10 +352,10 @@
     .hero-player-wrap:not(.fi-started) .vds-controls .vds-play-button { display: none; }
     .hero-player-wrap:has(> .hero-overlay:not(.hidden)) .vds-controls .vds-play-button { display: none; }
     .hero-play-btn svg {
-      width: 64px;
-      height: 64px;
+      width: 30px;
+      height: 30px;
+      margin-left: 4px;
       fill: #FFBD1D;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
     }
     /* TV buttons on a hero that has not loaded yet: Vidstack draws no control
        bar for load="play" until play is pressed. */
@@ -566,20 +569,24 @@
       align-items: center;
       justify-content: center;
       z-index: 2;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      background: rgba(10, 10, 10, 0.3);
     }
-    .film-card:hover .film-card-play,
-    .film-card:focus-visible .film-card-play { opacity: 1; }
-    @media (hover: none) {
-      .film-card-play { opacity: 0.7; }
-    }
+    /* The ring is drawn on the svg itself (padding + border), always shown,
+       same look as the main films above (Sean 2026-11-23). */
     .film-card-play svg {
-      width: 48px;
-      height: 48px;
+      box-sizing: border-box;
+      width: 56px;
+      height: 56px;
+      padding: 14px 12px 14px 16px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #FFBD1D;
+      border-radius: 50%;
       fill: #FFBD1D;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+      transition: transform 0.25s ease, background-color 0.25s ease;
+    }
+    .film-card:hover .film-card-play svg,
+    .film-card:focus-visible .film-card-play svg {
+      background: rgba(0, 0, 0, 0.7);
+      transform: scale(1.08);
     }
     .film-card-badge {
       position: absolute;
