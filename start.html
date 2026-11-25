@@ -1291,7 +1291,7 @@
           '<h1 class="headline lg">We create captivating films you\'ll <span class="gold-italic">rewatch for generations.</span></h1>' +
           '<p class="subcopy lg">We only take a limited number of weddings each year. Answer a few quick questions and we\'ll check your date, send your pricing, and show you films that match your day. No date yet? No problem, we\'ll still get you everything.</p>' +
           (OFFER_DOC
-            ? '<div class="offer-chip">This month\'s offer: book and the full documentary video of your day is <span class="gold">free</span> ($1,000 value).</div>'
+            ? '<div class="offer-chip">This month\'s offer: book your wedding package and get the FOMO Documentary Edits <span class="gold">free</span> ($1,000 value). Your ceremony, toasts and first dance each get their own film.</div>'
             : '') +
           '<button type="button" class="cta" style="margin-top:' + (OFFER_DOC ? '22px' : '34px') + '" data-action="start">Check your date</button>' +
           '<div class="welcome-proof">' +
@@ -1500,7 +1500,7 @@
           '<button type="button" class="cta" data-action="submit-capture"' + (can ? '' : ' disabled') + '>Continue</button>' +
           '<p class="form-hint">Takes about a minute. We promise.</p>' +
           (OFFER_DOC
-            ? '<div class="offer-chip echo">Your free <span class="gold">documentary video</span> offer is noted.</div>'
+            ? '<div class="offer-chip echo">Your free <span class="gold">FOMO Documentary Edits</span> offer is noted.</div>'
             : '') +
           '</div>';
       },
@@ -1645,7 +1645,7 @@
         if (fomo && fomo.fomoFreeSpot === true && fomo.fomoSpotsRemaining >= 1) {
           var spots = fomo.fomoSpotsRemaining;
           var monthName = MONTHS[new Date().getMonth()];
-          h += '<div class="offer-closer">Book this month and the full documentary video of your day is <span class="gold">free</span> ($1,000 value). ' +
+          h += '<div class="offer-closer">Book your wedding package this month and get the FOMO Documentary Edits <span class="gold">free</span> ($1,000 value). Each big moment has its own film. ' +
             spots + (spots === 1 ? ' spot' : ' spots') + ' left in ' + monthName + '.</div>';
           if (!offerLineSeen) { offerLineSeen = true; ga('start_offer_line_view', { spots: spots }); }
         }
