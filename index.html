@@ -3010,8 +3010,11 @@
         function fpMoney(n) { return "$" + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
         function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
         function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-        function isValidPhone(p) { return p.replace(/\D/g, "").length >= 10; }
-        function fmtPhone(v) { var d = v.replace(/\D/g, "").slice(0, 10); if (!d.length) return ""; if (d.length <= 3) return "(" + d; if (d.length <= 6) return "(" + d.slice(0,3) + ") " + d.slice(3); return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6); }
+        function isValidPhone(p) {
+          var digits = p.replace(/\D/g, "");
+          return /^[2-9]\d{9}$/.test(digits) && !/^(.)\1+$/.test(digits) && !digits.startsWith("555");
+        }
+        function fmtPhone(v) { var d = v.replace(/\D/g, ""); if (d.length === 11 && d[0] === "1") d = d.slice(1); if (!d.length) return ""; if (d.length <= 3) return "(" + d; if (d.length <= 6) return "(" + d.slice(0,3) + ") " + d.slice(3); return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6); }
         function buildCalendarUrl(widgetId) {
           var base = 'https://book.flyiniris.com/widget/booking/' + widgetId;
           if (!state.contactInfo) return base;
@@ -3147,7 +3150,7 @@
         // 2026-07-04: "Start with your date."
         function renderInquiryForm() {
           var f = state.contactForm, t = state.contactFormTried;
-          var eOk = isValidEmail(f.email), pOk = isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = !!f.noDate || !!(f.weddingDate && f.weddingDate.length > 0), fOk = FOUND_OPTIONS.indexOf(f.found) !== -1;
+          var eOk = isValidEmail(f.email), pOk = !f.phone || isValidPhone(f.phone), nOk = f.name.trim().length >= 2, paOk = f.partner.trim().length >= 2, dOk = !!f.noDate || !!(f.weddingDate && f.weddingDate.length > 0), fOk = FOUND_OPTIONS.indexOf(f.found) !== -1;
           var h = '<div class="quiz-step">';
           h += '<p class="quiz-intro-label" style="text-align:center">Flyin’ Iris ✦ Milwaukee, WI</p>';
           h += '<h2 class="quiz-question" tabindex="-1" style="outline:none;text-align:center">Start with your date.</h2>';
@@ -3174,13 +3177,13 @@
           if (t && !eOk) h += '<p class="quiz-form-error">' + (f.email.length ? 'Hmm, that doesn’t look right. Double check?' : 'We need your email to send your pricing!') + '</p>';
           h += '</div>';
           // Phone + single non-marketing SMS consent
-          h += '<div><label class="quiz-form-label" for="qf-phone">Phone <span style="color:var(--accent)">*</span></label>';
+          h += '<div><label class="quiz-form-label" for="qf-phone">Phone (optional)</label>';
           h += '<input type="tel" id="qf-phone" class="quiz-form-input' + (t && !pOk ? ' error' : '') + '" data-field="phone" placeholder="(414) 555-1234" autocomplete="tel">';
-          if (t && !pOk) h += '<p class="quiz-form-error">' + (f.phone.length ? 'Need a full 10-digit number!' : 'We need your number!') + '</p>';
-          h += '<div style="margin-top:8px">';
+          if (t && !pOk) h += '<p class="quiz-form-error">Enter a valid 10-digit number or leave this blank.</p>';
+          h += '<div id="qf-sms-choice" style="margin-top:8px"' + (isValidPhone(f.phone) ? '' : ' hidden') + '>';
           h += '<button type="button" class="quiz-checkbox-wrap" data-action="toggle-sms-nonmarketing" role="checkbox" aria-checked="' + (f.smsNonMarketing ? 'true' : 'false') + '">';
           h += '<div class="quiz-checkbox' + (f.smsNonMarketing ? ' checked' : '') + '">' + (f.smsNonMarketing ? '<span>✓</span>' : '') + '</div>';
-          h += '<span class="quiz-checkbox-label" style="color:' + (f.smsNonMarketing ? 'var(--text-primary)' : 'var(--text-secondary)') + ';font-size:0.6875rem;line-height:1.5;text-align:left">I agree to receive text messages from Sierra &amp; Sean at Flyin\' Iris about my inquiry, including pricing, availability, and follow-ups about our films. Message frequency varies, message and data rates may apply, reply STOP to opt out.</span>';
+          h += '<span class="quiz-checkbox-label" style="font-size:0.6875rem;line-height:1.5;text-align:left">I agree to receive text messages from Sierra &amp; Sean at Flyin\' Iris about my inquiry, including pricing, availability, and follow-ups about our films. Message frequency varies, message and data rates may apply, reply STOP to opt out.</span>';
           h += '</button>';
           h += '</div></div>';
           // Wedding date (the hook)
@@ -3355,12 +3358,27 @@
         }
 
         // --- EVENT HANDLING ---
+        function saveInquiryPhone(value) {
+          var phone = fmtPhone(value);
+          var form = state.contactForm;
+          if (form.phone !== phone || !isValidPhone(phone)) form.smsNonMarketing = false;
+          form.phone = phone;
+          var choice = document.getElementById('qf-sms-choice');
+          if (choice) {
+            choice.hidden = !isValidPhone(phone);
+            choice.querySelector('button').setAttribute('aria-checked', String(form.smsNonMarketing));
+            var box = choice.querySelector('.quiz-checkbox');
+            box.classList.toggle('checked', form.smsNonMarketing);
+            if (!form.smsNonMarketing) box.textContent = '';
+          }
+          return phone;
+        }
         function saveFormFields() {
           var fields = quizApp.querySelectorAll("[data-field]");
           for (var i = 0; i < fields.length; i++) {
             var f = fields[i], k = f.getAttribute("data-field");
             if (k === "referralName") state.referralName = f.value;
-            else if (k === "phone") state.contactForm.phone = fmtPhone(f.value);
+            else if (k === "phone") saveInquiryPhone(f.value);
             else if (state.contactForm[k] !== undefined) state.contactForm[k] = f.value;
           }
           saveInquiryDraft();
@@ -3370,7 +3388,7 @@
           var f = e.target.getAttribute("data-field");
           if (!f) return;
           if (f === "referralName") { state.referralName = e.target.value; }
-          else if (f === "phone") { state.contactForm.phone = fmtPhone(e.target.value); e.target.value = state.contactForm.phone; }
+          else if (f === "phone") { e.target.value = saveInquiryPhone(e.target.value); }
           else if (state.contactForm[f] !== undefined) { state.contactForm[f] = e.target.value; }
           saveInquiryDraft();
         });
@@ -3433,7 +3451,7 @@
             saveFormFields();
             state.contactFormTried = true;
             var fi = state.contactForm;
-            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && isValidPhone(fi.phone) && (!!fi.noDate || !!(fi.weddingDate && fi.weddingDate.length > 0)) && FOUND_OPTIONS.indexOf(fi.found) !== -1;
+            var okToSend = fi.name.trim().length >= 2 && fi.partner.trim().length >= 2 && isValidEmail(fi.email) && (!fi.phone || isValidPhone(fi.phone)) && (!!fi.noDate || !!(fi.weddingDate && fi.weddingDate.length > 0)) && FOUND_OPTIONS.indexOf(fi.found) !== -1;
             if (!okToSend) { render(); return; }
             var dateEl = document.getElementById('quiz-date');
             if (fi.noDate) state.contactForm.weddingDate = '';
@@ -3444,6 +3462,8 @@
             // with the same id the Worker reuses for the CAPI Lead.
             var inqEventId = generateEventId();
             var inqTracking = getTrackingData();
+            var gaSession = window.fiInquiryGaSession && window.fiInquiryGaSession();
+            if (gaSession) inqTracking.gaSession = gaSession;
             inqTracking.event_id = inqEventId;
             var shortInquiry = Object.assign({
               submissionType: 'inquiry',

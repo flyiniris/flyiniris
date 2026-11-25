@@ -116,4 +116,53 @@
     } catch (e) { /* ignore */ }
     return out;
   };
+
+  // The homepage configures GA4 through GTM. /start uses gtag directly.
+  // Ask the already loaded tag for its own identifiers before an inquiry.
+  if (/^\/(?:index\.html|start(?:\.html)?\/?)?$/.test(location.pathname)) {
+    var measurement = 'G-XGSWD6JW3E', latest = null, lastAttempt = 0;
+    function analyticsAllowed() {
+      if (!/^(?:www\.)?flyiniris\.com$/i.test(location.hostname) ||
+          /(?:^|;\s*)fi_(?:staff|ours)=1(?:;|$)/.test(document.cookie) ||
+          new URLSearchParams(location.search).get('fi_ours') === '1' || window['ga-disable-' + measurement]) return false;
+      var commands = window.dataLayer || [];
+      for (var i = commands.length - 1; i >= 0; i--) {
+        var row = commands[i];
+        if (row && row[0] === 'consent' && row[2] && row[2].analytics_storage) return row[2].analytics_storage === 'granted';
+      }
+      return true;
+    }
+    function refreshSession() {
+      if (!analyticsAllowed()) { latest = null; return; }
+      var g = window.gtag;
+      if (typeof g !== 'function') {
+        if (!window.google_tag_manager || !window.google_tag_manager['GTM-M74R95NX'] || !window.dataLayer) return;
+        g = function () { window.dataLayer.push(arguments); };
+      }
+      var now = Date.now();
+      if (now - lastAttempt < 10000) return;
+      lastAttempt = now;
+      var pair = {};
+      function keepPair() {
+        if (lastAttempt === now && pair.clientId && pair.sessionId && analyticsAllowed()) latest = { pair: pair, at: now };
+      }
+      g('get', measurement, 'client_id', function (id) {
+        if (typeof id === 'string' && /^\d+\.\d+$/.test(id)) { pair.clientId = id; keepPair(); }
+      });
+      g('get', measurement, 'session_id', function (id) {
+        if (Number.isSafeInteger(Number(id)) && Number(id) > 0) { pair.sessionId = Number(id); keepPair(); }
+      });
+    }
+    function refreshSafely() { try { refreshSession(); } catch (e) { /* an unavailable tag cannot hold up an inquiry */ } }
+    document.addEventListener('focusin', refreshSafely);
+    document.addEventListener('pointerdown', refreshSafely, { passive: true });
+    window.addEventListener('load', refreshSafely, { once: true });
+    window.fiInquiryGaSession = function () {
+      try {
+        refreshSession();
+        if (latest && Date.now() - latest.at < 60000 && analyticsAllowed()) return latest.pair;
+      } catch (e) { /* privacy settings may block access */ }
+      return null;
+    };
+  }
 })();

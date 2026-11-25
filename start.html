@@ -1032,6 +1032,8 @@
     // ===== SUBMITS =====
     function buildInquiryPayload(extra) {
       var tracking = getTrackingData();
+      var gaSession = window.fiInquiryGaSession && window.fiInquiryGaSession();
+      if (gaSession) tracking.gaSession = gaSession;
       var eventId = generateEventId();
       tracking.event_id = eventId;
       var payload = Object.assign({
